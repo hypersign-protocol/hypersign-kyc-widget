@@ -21,7 +21,7 @@
       <span class="">{{ error }}</span>
       <div style="padding: 10px">
         <button class="btn btn-primary" @click="openScanner">
-          <i class="bi bi-qr-code-scan"></i> Scan QR
+          <i class="bi bi-camera"></i> Scan
         </button>
         <button class="btn btn-link" @click="cancelScanner">Cancel</button>
       </div>
