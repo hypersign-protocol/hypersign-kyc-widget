@@ -128,7 +128,7 @@ export default {
 .scanQR {
   width: 250px;
   height: 250px;
-  /* background-color: rgb(160, 157, 157); */
+  background-color: white;
   border: 1px solid grey;
   border-radius: 5px;
   margin: 0 auto;
