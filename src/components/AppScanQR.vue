@@ -20,10 +20,12 @@
       </div>
       <span class="">{{ error }}</span>
       <div style="padding: 10px">
-        <button class="btn btn-primary" @click="openScanner">
+        <button class="btn btn-primary" @click="openScanner" v-if="!isScan">
           <i class="bi bi-camera"></i> Scan
         </button>
-        <button class="btn btn-link" @click="cancelScanner">Cancel</button>
+        <button class="btn btn-link" @click="cancelScanner" v-else>
+          Cancel
+        </button>
       </div>
       <ConsentBox />
     </div>

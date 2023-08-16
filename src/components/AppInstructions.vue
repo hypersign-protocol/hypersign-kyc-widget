@@ -9,7 +9,7 @@
       style="padding: 20px"
     />
     <div class="card-body">
-      <button class="btn btn-primary">Start</button>
+      <button class="btn btn-primary">Let's go!</button>
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>

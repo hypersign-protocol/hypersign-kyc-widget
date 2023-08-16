@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="https://hypersign.id" target="_blank">Powered By Hypersign.id</a>
+    <a href="https://hypersign.id" target="_blank">Powred By Hypersign.id</a>
   </div>
 </template>
 <style scoped>
