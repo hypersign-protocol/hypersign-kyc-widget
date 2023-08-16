@@ -1,7 +1,13 @@
 <template>
   <div class="card maincontainer">
+    <load-ing
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :is-full-page="fullPage"
+    ></load-ing>
     <div class="card-header">
-      <img class="opacity-80" src="../assets/logo.png" width="60px" />
+      <!-- <img class="opacity-80" src="../assets/logo.png" width="60px" /> -->
+      KAVACH
     </div>
     <img
       class="card-img opacity-80"
@@ -9,7 +15,7 @@
       style="padding: 20px"
     />
     <div class="card-body">
-      <button class="btn btn-primary">Let's go!</button>
+      <button class="btn btn-primary" @click="nextStep()">Let's go!</button>
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>
@@ -17,11 +23,21 @@
 
 <script type="text/javascript">
 import PoweredBy from "../components/PoweredBy.vue";
+import { mapMutations } from "vuex";
 
 export default {
   name: "AppInstructions",
   components: {
     PoweredBy,
+  },
+  data() {
+    return {
+      isLoading: false,
+      fullPage: true,
+    };
+  },
+  methods: {
+    ...mapMutations(["nextStep"]),
   },
 };
 </script>

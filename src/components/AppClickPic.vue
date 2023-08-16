@@ -83,6 +83,7 @@
           Download
         </a>
       </div> -->
+      <AppNextPage />
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>
@@ -90,11 +91,13 @@
 
 <script type="text/javascript">
 import PoweredBy from "../components/PoweredBy.vue";
+import AppNextPage from "./AppNextPage.vue";
 
 export default {
   name: "AppClickPic",
   components: {
     PoweredBy,
+    AppNextPage,
   },
   data() {
     return {

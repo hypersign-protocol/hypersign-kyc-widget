@@ -1,19 +1,8 @@
 <template>
-  <div>
-    <!-- Instructions Page-->
-    <AppInstructions />
-
-    <!-- Scan QR code Page -->
-    <AppScanQR />
-
-    <!-- Click Picture Page-->
-    <AppClickPic />
-
-    <!-- Success Page -->
-    <AppFinalSuccess />
-
-    <!-- Fail Page-->
-    <AppFinalFail />
+  <div style="padding-top: 20px">
+    <template>
+      <component :is="getActiveStep.stepName"> </component>
+    </template>
   </div>
 </template>
 
@@ -23,6 +12,7 @@ import AppScanQR from "../components/AppScanQR.vue";
 import AppClickPic from "../components/AppClickPic.vue";
 import AppFinalSuccess from "../components/AppFinalSuccess.vue";
 import AppFinalFail from "../components/AppFinalFail.vue";
+import { mapGetters } from "vuex";
 export default {
   name: "HelloWorld",
   components: {
@@ -32,8 +22,14 @@ export default {
     AppFinalSuccess,
     AppFinalFail,
   },
+  computed: {
+    ...mapGetters(["getActiveStep"]),
+  },
   props: {
     msg: String,
+  },
+  created() {
+    console.log(this.$store.getters.getActiveStep);
   },
 };
 </script>

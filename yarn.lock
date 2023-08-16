@@ -5868,6 +5868,11 @@ vue-loader@^17.0.0:
     hash-sum "^2.0.0"
     watchpack "^2.4.0"
 
+vue-loading-overlay@^3.4.0:
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/vue-loading-overlay/-/vue-loading-overlay-3.4.3.tgz#ea14a0cb0d94ac5c91e45f90c21da6233b3cf1b5"
+  integrity sha512-Q4+RNnI6+szylJ98Abnp9CUDagKphZMt7okznGu1m7tidZX5b9u+a+De6uktWa5WULu/as+IsrWVR8lpmbDDOA==
+
 vue-qrcode-reader@^3.1.8:
   version "3.1.8"
   resolved "https://registry.yarnpkg.com/vue-qrcode-reader/-/vue-qrcode-reader-3.1.8.tgz#baec07b4398f8883362d2dc6b1646ee10e2a1bfc"
@@ -5907,6 +5912,11 @@ vue@^2.6.11, vue@^2.6.14:
   dependencies:
     "@vue/compiler-sfc" "2.7.14"
     csstype "^3.1.0"
+
+vuex@^3.0.0:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.6.2.tgz#236bc086a870c3ae79946f107f16de59d5895e71"
+  integrity sha512-ETW44IqCgBpVomy520DT5jf8n0zoCac+sxWnn+hMe/CzaSejb/eVw2YToiXYX+Ex/AuHHia28vWTq4goAexFbw==
 
 watchpack@^2.4.0:
   version "2.4.0"

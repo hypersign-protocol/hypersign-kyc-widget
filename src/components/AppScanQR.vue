@@ -28,15 +28,17 @@
         </button>
       </div>
       <ConsentBox />
+      <AppNextPage />
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "../components/PoweredBy.vue";
-import ConsentBox from "../components/ConsentBox.vue";
+import PoweredBy from "./PoweredBy.vue";
+import ConsentBox from "./ConsentBox.vue";
 import { QrcodeStream } from "vue-qrcode-reader";
+import AppNextPage from "./AppNextPage.vue";
 export default {
   name: "AppScanQR",
   data() {
@@ -52,6 +54,7 @@ export default {
     PoweredBy,
     ConsentBox,
     QrcodeStream,
+    AppNextPage,
   },
   methods: {
     async onDetect(promise) {
