@@ -7,9 +7,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import store from './store/store.js'
 import Loading from 'vue-loading-overlay'
 import "vue-loading-overlay/dist/vue-loading.css";
+import MessageBox from "./components/commons/MessageBox.vue";
 Vue.config.productionTip = false
 
 Vue.component('load-ing', Loading)
+Vue.component('MessageBox', MessageBox)
 new Vue({
   store,
   render: h => h(App)

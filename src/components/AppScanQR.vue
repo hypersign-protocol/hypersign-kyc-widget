@@ -40,6 +40,7 @@
       <ConsentBox />
       <NextPage />
     </div>
+    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
   </div>
 </template>
@@ -61,6 +62,9 @@ export default {
       isScan: false,
       isLoading: false,
       fullPage: true,
+      toastMessage: "",
+      toastType: "success",
+      isToast: false,
     };
   },
   components: {
@@ -85,7 +89,7 @@ export default {
         if (content) {
           // setting in the store...
           this.setQrString(content);
-
+          this.toast("Verifying the QR code...");
           // TODO: Verify this QR string; faking it for now..
           this.isLoading = true;
           const result = await this.addharQRVerify();
@@ -104,6 +108,7 @@ export default {
       } catch (e) {
         console.error(e);
         this.isLoading = false;
+        this.toast(e.message, "error");
       } finally {
         // Closing the camera
         this.cancelScanner();
@@ -116,11 +121,9 @@ export default {
         const { capabilities } = await promise;
         console.log(capabilities);
         this.loading = false;
-        console.log("Successfully initialized");
-        //await this.wait();
-        // this.nextStep();
       } catch (e) {
         console.error(e);
+        this.toast(e.message, "error");
       }
     },
     onReady(capabilities) {
@@ -152,12 +155,24 @@ export default {
       if (e.name === "StreamApiNotSupportedError") {
         this.error = "Brower seems to be lacking camera feature";
       }
+
+      this.toast(this.error, "error");
     },
     openScanner() {
       this.isScan = true;
     },
     cancelScanner() {
       this.isScan = false;
+    },
+    toast(msg, type = "success") {
+      this.isToast = true;
+      this.toastMessage = msg;
+      this.toastType = type;
+
+      setTimeout(() => {
+        this.isToast = false;
+        this.toastMessage = "";
+      }, 2000);
     },
   },
 };

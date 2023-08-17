@@ -53,6 +53,7 @@
       </div>
       <NextPage />
     </div>
+    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
   </div>
 </template>
@@ -70,6 +71,9 @@ export default {
       isPhoneCheckDone: false,
       isLoadingPage: false,
       phoneNumber: "",
+      toastMessage: "",
+      toastType: "success",
+      isToast: false,
     };
   },
   components: {
@@ -98,6 +102,7 @@ export default {
         this.isLoadingPage = false;
       } catch (e) {
         this.isLoadingPage = false;
+        this.toast(e.message, "error");
         console.log(e);
       }
     },
@@ -110,6 +115,7 @@ export default {
           this.nextStep(5);
         }
       } catch (e) {
+        this.toast(e.message, "error");
         console.log(e);
       }
     },
@@ -118,6 +124,17 @@ export default {
     },
     handleClearInput() {
       this.$refs.otpInput.clearInput();
+    },
+
+    toast(msg, type = "success") {
+      this.isToast = true;
+      this.toastMessage = msg;
+      this.toastType = type;
+
+      setTimeout(() => {
+        this.isToast = false;
+        this.toastMessage = "";
+      }, 2000);
     },
   },
 };

@@ -86,6 +86,7 @@
 
       <NextPage />
     </div>
+    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
   </div>
 </template>
@@ -110,6 +111,9 @@ export default {
       link: "#",
       fullPage: true,
       isLoadingPage: false,
+      toastMessage: "",
+      toastType: "success",
+      isToast: false,
     };
   },
   methods: {
@@ -144,7 +148,8 @@ export default {
         .catch((error) => {
           console.error(error);
           this.isLoading = false;
-          alert("May the browser didn't support or there is some errors.");
+          // alert("May the browser didn't support or there is some errors.");
+          this.toast(error.message, "error");
         });
     },
 
@@ -209,9 +214,18 @@ export default {
       } catch (e) {
         console.error(e);
         this.stopCameraStream();
-        // this.nextStep(5);
-        console.log("Enter a valid phone number linked with your Addhaar");
+        this.toast(e.message, "error");
       }
+    },
+    toast(msg, type = "success") {
+      this.isToast = true;
+      this.toastMessage = msg;
+      this.toastType = type;
+
+      setTimeout(() => {
+        this.isToast = false;
+        this.toastMessage = "";
+      }, 2000);
     },
   },
 };

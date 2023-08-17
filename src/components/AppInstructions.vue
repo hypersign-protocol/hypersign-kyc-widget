@@ -19,7 +19,9 @@
         Let's go!
       </button>
     </div>
-    <div class="card-footer"><PoweredBy /></div>
+    <div class="card-footer">
+      <PoweredBy />
+    </div>
   </div>
 </template>
 
