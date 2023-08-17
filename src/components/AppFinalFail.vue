@@ -9,7 +9,7 @@
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "../components/PoweredBy.vue";
+import PoweredBy from "./commons/PoweredBy.vue";
 export default {
   name: "AppFinalSuccess",
   components: {

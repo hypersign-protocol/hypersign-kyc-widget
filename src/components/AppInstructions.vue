@@ -22,7 +22,7 @@
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "../components/PoweredBy.vue";
+import PoweredBy from "./commons/PoweredBy.vue";
 import { mapMutations } from "vuex";
 
 export default {

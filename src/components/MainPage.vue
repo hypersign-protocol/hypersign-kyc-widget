@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import AppInstructions from "../components/AppInstructions.vue";
-import AppScanQR from "../components/AppScanQR.vue";
-import AppClickPic from "../components/AppClickPic.vue";
-import AppFinalSuccess from "../components/AppFinalSuccess.vue";
-import AppFinalFail from "../components/AppFinalFail.vue";
+import AppInstructions from "./AppInstructions.vue";
+import AppScanQR from "./AppScanQR.vue";
+import AppClickPic from "./AppClickPic.vue";
+import AppFinalSuccess from "./AppFinalSuccess.vue";
+import AppFinalFail from "./AppFinalFail.vue";
 import { mapGetters } from "vuex";
 export default {
   name: "HelloWorld",
@@ -24,12 +24,6 @@ export default {
   },
   computed: {
     ...mapGetters(["getActiveStep"]),
-  },
-  props: {
-    msg: String,
-  },
-  created() {
-    console.log(this.$store.getters.getActiveStep);
   },
 };
 </script>

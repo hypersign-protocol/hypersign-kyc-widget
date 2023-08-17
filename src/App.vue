@@ -1,18 +1,18 @@
 <template>
   <div id="app">
     <!-- <NavBar /> -->
-    <HelloWorld />
+    <MainPage />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import MainPage from "./components/MainPage.vue";
 // import NavBar from "./components/NavBar.vue";
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
+    MainPage,
   },
 };
 </script>
