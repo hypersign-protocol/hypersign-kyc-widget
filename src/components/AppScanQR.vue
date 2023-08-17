@@ -1,5 +1,10 @@
 <template>
   <div class="card maincontainer">
+    <load-ing
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :is-full-page="fullPage"
+    ></load-ing>
     <div class="card-body">
       <span class="">Scan QR code on your Addhaar</span>
       <div class="scanQR">
@@ -39,15 +44,18 @@ import PoweredBy from "./commons/PoweredBy.vue";
 import ConsentBox from "./commons/ConsentBox.vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import NextPage from "./commons/NextPage.vue";
+import { mapActions, mapMutations } from "vuex";
+
 export default {
   name: "AppScanQR",
   data() {
     return {
-      qrDataRaw: "",
       qrData: "",
       error: "",
       loading: false,
       isScan: false,
+      isLoading: false,
+      fullPage: true,
     };
   },
   components: {
@@ -57,13 +65,43 @@ export default {
     NextPage,
   },
   methods: {
+    ...mapMutations(["nextStep", "setQrString"]),
+    ...mapActions(["addharQRVerify"]),
+    wait(time = 3000) {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          resolve();
+        }, time);
+      });
+    },
     async onDetect(promise) {
       try {
         const { content } = await promise;
-        this.qrDataRaw = content;
-        console.log(this.qrDataRaw);
+        if (content) {
+          // setting in the store...
+          this.setQrString(content);
+
+          // TODO: Verify this QR string; faking it for now..
+          this.isLoading = true;
+          const result = await this.addharQRVerify();
+          await this.wait(1000);
+          if (result && result.verified === true) {
+            console.log("QR verified successfully");
+            // Moving to next step...
+            this.nextStep();
+          } else {
+            throw new Error("Invalid QR Code");
+          }
+          this.isLoading = false;
+        } else {
+          throw new Error("Could not scan the QR");
+        }
       } catch (e) {
         console.error(e);
+        this.isLoading = false;
+      } finally {
+        // Closing the camera
+        this.cancelScanner();
       }
     },
     async onInit(promise) {
@@ -74,6 +112,8 @@ export default {
         console.log(capabilities);
         this.loading = false;
         console.log("Successfully initialized");
+        //await this.wait();
+        // this.nextStep();
       } catch (e) {
         console.error(e);
       }

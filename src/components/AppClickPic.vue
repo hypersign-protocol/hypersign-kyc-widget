@@ -1,5 +1,10 @@
 <template>
   <div class="card maincontainer">
+    <load-ing
+      :active.sync="isLoadingPage"
+      :can-cancel="true"
+      :is-full-page="fullPage"
+    ></load-ing>
     <div class="card-body">
       <span class="">Click Your Picture</span>
 
@@ -53,7 +58,11 @@
         </div>
 
         <div style="padding: 10px">
-          <button class="btn btn-primary" v-if="isPhotoTaken && isCameraOpen">
+          <button
+            class="btn btn-primary"
+            v-if="isPhotoTaken && isCameraOpen"
+            @click="submit()"
+          >
             Submit
           </button>
         </div>
@@ -92,6 +101,7 @@
 <script type="text/javascript">
 import PoweredBy from "./commons/PoweredBy.vue";
 import NextPage from "./commons/NextPage.vue";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
   name: "AppClickPic",
@@ -106,9 +116,13 @@ export default {
       isShotPhoto: false,
       isLoading: false,
       link: "#",
+      fullPage: true,
+      isLoadingPage: false,
     };
   },
   methods: {
+    ...mapActions(["addharQRVerify"]),
+    ...mapMutations(["nextStep"]),
     toggleCamera() {
       if (this.isCameraOpen) {
         this.isCameraOpen = false;
@@ -174,6 +188,33 @@ export default {
         .toDataURL("image/jpeg")
         .replace("image/jpeg", "image/octet-stream");
       download.setAttribute("href", canvas);
+    },
+    wait() {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          resolve();
+        }, 3000);
+      });
+    },
+    async submit() {
+      try {
+        this.isLoadingPage = true;
+
+        await this.wait();
+
+        const result = await this.addharQRVerify();
+        if (result) {
+          this.stopCameraStream();
+          if (result.verified === true) {
+            this.nextStep(3);
+          } else {
+            this.nextStep(4);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        this.nextStep(4);
+      }
     },
   },
 };

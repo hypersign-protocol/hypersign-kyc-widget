@@ -12,6 +12,7 @@ import AppScanQR from "./AppScanQR.vue";
 import AppClickPic from "./AppClickPic.vue";
 import AppFinalSuccess from "./AppFinalSuccess.vue";
 import AppFinalFail from "./AppFinalFail.vue";
+import AppOtp from "./AppOtp.vue";
 import { mapGetters } from "vuex";
 export default {
   name: "HelloWorld",
@@ -21,6 +22,7 @@ export default {
     AppClickPic,
     AppFinalSuccess,
     AppFinalFail,
+    AppOtp,
   },
   computed: {
     ...mapGetters(["getActiveStep"]),
