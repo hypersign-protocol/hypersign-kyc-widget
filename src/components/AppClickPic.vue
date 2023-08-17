@@ -6,7 +6,7 @@
       :is-full-page="fullPage"
     ></load-ing>
     <div class="card-body">
-      <span class="">Click Your Picture</span>
+      <h4>Video KYC</h4>
 
       <div class="scanQR web-camera-container">
         <img
@@ -44,8 +44,8 @@
           ></canvas>
         </div>
       </div>
-
-      <div style="padding: 10px">
+      <span class="">Click Your Picture</span>
+      <div>
         <div class="" v-if="isCameraOpen && !isLoading">
           <button
             type="button"
@@ -59,7 +59,7 @@
 
         <div style="padding: 10px">
           <button
-            class="btn btn-primary"
+            class="btn btn-outline-primary"
             v-if="isPhotoTaken && isCameraOpen"
             @click="submit()"
           >
@@ -70,7 +70,10 @@
           <button
             type="button"
             class="btn"
-            :class="{ 'btn-primary': !isCameraOpen, 'btn-link': isCameraOpen }"
+            :class="{
+              'btn-outline-primary': !isCameraOpen,
+              'btn-link': isCameraOpen,
+            }"
             @click="toggleCamera"
           >
             <span v-if="!isCameraOpen"
@@ -81,17 +84,6 @@
         </div>
       </div>
 
-      <!-- <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
-        <a
-          id="downloadPhoto"
-          download="my-photo.jpg"
-          class="button"
-          role="button"
-          @click="downloadImage"
-        >
-          Download
-        </a>
-      </div> -->
       <NextPage />
     </div>
     <div class="card-footer"><PoweredBy /></div>
@@ -121,7 +113,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addharQRVerify"]),
+    ...mapActions(["addharQRVerify", "verifyPhoneNumber"]),
     ...mapMutations(["nextStep"]),
     toggleCamera() {
       if (this.isCameraOpen) {
@@ -206,14 +198,19 @@ export default {
         if (result) {
           this.stopCameraStream();
           if (result.verified === true) {
-            this.nextStep(3);
+            this.nextStep();
           } else {
-            this.nextStep(4);
+            throw new Error(
+              "Enter a valid phone number linked with your Addhaar"
+            );
+            // this.nextStep(5);
           }
         }
       } catch (e) {
         console.error(e);
-        this.nextStep(4);
+        this.stopCameraStream();
+        // this.nextStep(5);
+        console.log("Enter a valid phone number linked with your Addhaar");
       }
     },
   },
@@ -222,7 +219,7 @@ export default {
 <style type="text/css" scoped>
 .maincontainer {
   width: 350px;
-  height: 550px;
+  height: 600px;
   background-color: #f5f5f5;
   border: 1px solid grey;
   border-radius: 20px;

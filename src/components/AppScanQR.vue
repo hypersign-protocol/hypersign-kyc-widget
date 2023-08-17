@@ -6,7 +6,7 @@
       :is-full-page="fullPage"
     ></load-ing>
     <div class="card-body">
-      <span class="">Scan QR code on your Addhaar</span>
+      <h4>Aadhaar Data</h4>
       <div class="scanQR">
         <qrcode-stream
           @detect="onDetect"
@@ -23,9 +23,14 @@
           style="font-size: 170px; color: rgb(59, 58, 58)"
         ></i>
       </div>
+      <span class="">Scan QR code on your Addhaar</span>
       <span class="">{{ error }}</span>
       <div style="padding: 10px">
-        <button class="btn btn-primary" @click="openScanner" v-if="!isScan">
+        <button
+          class="btn btn-outline-primary"
+          @click="openScanner"
+          v-if="!isScan"
+        >
           <i class="bi bi-camera"></i> Scan
         </button>
         <button class="btn btn-link" @click="cancelScanner" v-else>
@@ -160,7 +165,7 @@ export default {
 <style type="text/css" scoped>
 .maincontainer {
   width: 350px;
-  height: 550px;
+  height: 600px;
   background-color: #f5f5f5;
   border: 1px solid grey;
   border-radius: 20px;

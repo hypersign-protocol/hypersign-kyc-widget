@@ -15,7 +15,9 @@
       style="padding: 20px"
     />
     <div class="card-body">
-      <button class="btn btn-primary" @click="nextStep()">Let's go!</button>
+      <button class="btn btn-outline-primary" @click="nextStep()">
+        Let's go!
+      </button>
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>
@@ -44,7 +46,7 @@ export default {
 <style type="text/css" scoped>
 .maincontainer {
   width: 350px;
-  height: 550px;
+  height: 600px;
   background-color: #f5f5f5;
   border: 1px solid grey;
   border-radius: 20px;

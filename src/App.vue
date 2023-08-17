@@ -7,12 +7,18 @@
 
 <script>
 import MainPage from "./components/MainPage.vue";
-// import NavBar from "./components/NavBar.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "App",
   components: {
     MainPage,
+  },
+  methods: {
+    ...mapActions(["setSession"]),
+  },
+  created() {
+    this.setSession();
   },
 };
 </script>

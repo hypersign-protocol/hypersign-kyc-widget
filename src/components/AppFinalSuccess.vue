@@ -20,7 +20,7 @@ export default {
 <style type="text/css" scoped>
 .maincontainer {
   width: 350px;
-  height: 550px;
+  height: 600px;
   background-color: #f5f5f5;
   border: 1px solid grey;
   border-radius: 20px;
