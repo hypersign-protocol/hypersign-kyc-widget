@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { KAVACH_SERVER_BASE_URL } from '../config'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -84,7 +85,7 @@ export default new Vuex.Store({
         addharQRVerify: ({ state }) => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
-                const url = 'http://localhost:3000' + '/api/v1/aadhaar/qr/verify'
+                const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/qr/verify'
                 fetch(url, {
                     method: 'POST',
                     headers: {
@@ -109,7 +110,7 @@ export default new Vuex.Store({
         setSession: () => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
-                const url = 'http://localhost:3000' + '/api/v1/aadhaar/session'
+                const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/session'
                 fetch(url, {
                     method: 'POST',
                     body: undefined
@@ -129,7 +130,7 @@ export default new Vuex.Store({
         verifyPhoneNumber: ({ state }) => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
-                const url = 'http://localhost:3000' + '/api/v1/aadhaar/ph/verify'
+                const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/ph/verify'
                 fetch(url, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -151,7 +152,7 @@ export default new Vuex.Store({
         getFinalResult: () => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
-                const url = 'http://localhost:3000' + '/api/v1/aadhaar/result'
+                const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',
                 }).then(resp => {
