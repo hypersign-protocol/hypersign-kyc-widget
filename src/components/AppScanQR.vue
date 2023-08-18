@@ -39,7 +39,6 @@
           Cancel
         </button>
       </div>
-      <NextPage />
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
@@ -48,7 +47,6 @@
 
 <script type="text/javascript">
 import { QrcodeStream } from "vue-qrcode-reader";
-import NextPage from "./commons/NextPage.vue";
 import { mapActions, mapMutations } from "vuex";
 
 export default {
@@ -68,7 +66,6 @@ export default {
   },
   components: {
     QrcodeStream,
-    NextPage,
   },
   methods: {
     ...mapMutations(["nextStep", "setQrString"]),

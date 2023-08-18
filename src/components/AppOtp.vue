@@ -62,8 +62,6 @@
           Clear
         </button>
       </div>
-
-      <NextPage />
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
@@ -74,7 +72,6 @@
 import OtpInput from "@bachdgvn/vue-otp-input";
 import PoweredBy from "./commons/PoweredBy.vue";
 import { mapActions, mapMutations } from "vuex";
-import NextPage from "./commons/NextPage.vue";
 
 export default {
   name: "AppOtp",
@@ -91,7 +88,6 @@ export default {
   components: {
     OtpInput,
     PoweredBy,
-    NextPage,
   },
   computed: {},
   methods: {

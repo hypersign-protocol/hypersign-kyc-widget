@@ -86,8 +86,6 @@
           </button>
         </div>
       </div>
-
-      <NextPage />
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer"><PoweredBy /></div>
@@ -96,14 +94,12 @@
 
 <script type="text/javascript">
 import PoweredBy from "./commons/PoweredBy.vue";
-import NextPage from "./commons/NextPage.vue";
 import { mapActions, mapMutations } from "vuex";
 
 export default {
   name: "AppClickPic",
   components: {
     PoweredBy,
-    NextPage,
   },
   data() {
     return {
