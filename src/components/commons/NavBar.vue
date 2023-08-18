@@ -1,11 +1,11 @@
 <template>
-  <div class="navbar navbar-expand-md navbar-dark bg-dark">
+  <div class="navbar navbar-expand-md navbar-light">
     <div class="container">
       <a href="#" class="navbar-brand">
-        <!-- <img alt="Vue logo" src="../assets/logo.png" width="50px" -->
-        Kavach
+        <img class="opacity-80" src="../../assets/logo.png" width="100px" />
       </a>
-      <button
+
+      <!-- <button
         class="navbar-toggler"
         data-bs-toggle="collapse"
         data-bs-target="#nav"
@@ -23,7 +23,7 @@
             <a href="" class="nav-link">Store</a>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

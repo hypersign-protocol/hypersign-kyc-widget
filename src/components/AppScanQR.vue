@@ -5,6 +5,7 @@
       :can-cancel="true"
       :is-full-page="fullPage"
     ></load-ing>
+    <NavBar />
     <div class="card-body">
       <h4>Aadhaar Data</h4>
       <div class="scanQR">
@@ -178,16 +179,6 @@ export default {
 };
 </script>
 <style type="text/css" scoped>
-.maincontainer {
-  width: 350px;
-  height: 600px;
-  background-color: #f5f5f5;
-  border: 1px solid grey;
-  border-radius: 20px;
-  box-shadow: 2px 5px 5px grey;
-  margin: 0 auto;
-}
-
 .scanQR {
   width: 250px;
   height: 250px;

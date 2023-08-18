@@ -1,5 +1,6 @@
 <template>
   <div class="card maincontainer">
+    <NavBar />
     <div class="card-body">
       <p><i class="bi bi-x-circle final-msg-icon fail"></i></p>
       <span class="">Failed to verify!</span>
@@ -18,16 +19,6 @@ export default {
 };
 </script>
 <style type="text/css" scoped>
-.maincontainer {
-  width: 350px;
-  height: 550px;
-  background-color: #f5f5f5;
-  border: 1px solid grey;
-  border-radius: 20px;
-  box-shadow: 2px 5px 5px grey;
-  margin: 0 auto;
-}
-
 .final-msg-icon {
   font-size: 150px;
 }

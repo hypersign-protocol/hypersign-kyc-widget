@@ -5,6 +5,7 @@
       :can-cancel="true"
       :is-full-page="true"
     ></load-ing>
+    <NavBar />
     <div class="card-body">
       <h4>Phone Number Verification</h4>
       <div class="col" v-if="!isPhoneCheckDone">
@@ -46,9 +47,6 @@
             test...</small
           >
         </div>
-        <!-- <button class="btn btn-outline-primary" @click="validateOtp()">
-          Next
-        </button> -->
         <button class="btn btn-link" @click="handleClearInput()">Clear</button>
       </div>
       <NextPage />
@@ -139,18 +137,6 @@ export default {
   },
 };
 </script>
-
-<style type="text/css" scoped>
-.maincontainer {
-  width: 350px;
-  height: 550px;
-  background-color: #f5f5f5;
-  border: 1px solid grey;
-  border-radius: 20px;
-  box-shadow: 2px 5px 5px grey;
-  margin: 0 auto;
-}
-</style>
 
 <style lang="less">
 .otp-input {

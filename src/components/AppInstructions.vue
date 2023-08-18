@@ -5,10 +5,9 @@
       :can-cancel="true"
       :is-full-page="fullPage"
     ></load-ing>
-    <div class="card-header">
-      <!-- <img class="opacity-80" src="../assets/logo.png" width="60px" /> -->
-      KAVACH
-    </div>
+    <!-- <div class="card-header"></div> -->
+    <NavBar />
+
     <img
       class="card-img opacity-80"
       src="../assets/page0.png"
@@ -28,7 +27,6 @@
 <script type="text/javascript">
 import PoweredBy from "./commons/PoweredBy.vue";
 import { mapMutations } from "vuex";
-
 export default {
   name: "AppInstructions",
   components: {
@@ -45,14 +43,3 @@ export default {
   },
 };
 </script>
-<style type="text/css" scoped>
-.maincontainer {
-  width: 350px;
-  height: 600px;
-  background-color: #f5f5f5;
-  border: 1px solid grey;
-  border-radius: 20px;
-  box-shadow: 2px 5px 5px grey;
-  margin: 0 auto;
-}
-</style>

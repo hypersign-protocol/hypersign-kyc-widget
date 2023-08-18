@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-top: 20px">
+  <div style="padding-top: 10px">
     <template>
       <component :is="getActiveStep.stepName"> </component>
     </template>
@@ -29,6 +29,3 @@ export default {
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
