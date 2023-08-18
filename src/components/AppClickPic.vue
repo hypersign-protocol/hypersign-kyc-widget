@@ -116,7 +116,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addharQRVerify", "verifyPhoneNumber"]),
+    ...mapActions(["addharQRVerify", "verifyImage"]),
     ...mapMutations(["nextStep"]),
     toggleCamera() {
       if (this.isCameraOpen) {
@@ -198,17 +198,10 @@ export default {
 
         await this.wait();
 
-        const result = await this.addharQRVerify();
+        const result = await this.verifyImage();
         if (result) {
           this.stopCameraStream();
-          if (result.verified === true) {
-            this.nextStep();
-          } else {
-            throw new Error(
-              "Enter a valid phone number linked with your Addhaar"
-            );
-            // this.nextStep(5);
-          }
+          this.nextStep();
         }
       } catch (e) {
         console.error(e);

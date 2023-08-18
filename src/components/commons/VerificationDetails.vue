@@ -37,7 +37,7 @@
           style="text-align: left"
         >
           <div class="row">
-            <div class="col-sm-2">
+            <div class="col">
               <i
                 class="bi bi-check-circle"
                 v-if="detail.status == true"
@@ -45,10 +45,10 @@
               ></i>
               <i class="bi bi-x-circle" v-else style="color: red"></i>
             </div>
-            <div class="col-sm-8">
+            <div class="col-8">
               <span style="font-size: small; color: ">{{ detail.type }}</span>
             </div>
-            <div class="col-sm-2" style="text-align: right">
+            <div class="col" style="text-align: right">
               <span class="badge">{{ detail.score }}</span>
             </div>
           </div>

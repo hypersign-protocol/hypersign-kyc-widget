@@ -10,3 +10,7 @@
 .btn-dark{
     color: black
 }
+
+h1{
+    font-size: revert;
+}

@@ -157,6 +157,31 @@ export default new Vuex.Store({
             })
         },
 
+        verifyImage: () => {
+            return new Promise((resolve, reject) => {
+                console.log('Inside verifyImage')
+                const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
+                fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userImage: ''
+                    }),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                }).then(resp => {
+                    return resp.json()
+                }).then(json => {
+                    if (json.statusCode == 400) {
+                        throw new Error('Bad Request ' + json.message.toString())
+                    }
+                    resolve(json)
+                }).catch(e => {
+                    reject(e.message)
+                })
+            })
+        },
+
         getFinalResult: () => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
