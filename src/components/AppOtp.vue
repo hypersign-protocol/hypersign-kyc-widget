@@ -7,10 +7,13 @@
     ></load-ing>
     <NavBar />
     <div class="card-body">
-      <h4>Phone Number Verification</h4>
-      <div class="col" v-if="!isPhoneCheckDone">
-        <label for="validationCustom01" class="form-label"
-          >Enter Your Aadhaar Linked Phone Number</label
+      <PageHeading
+        :header="'Verify Phone Number'"
+        :subHeader="'Provide your Aadhaar linked phone number and verify your OTP'"
+      />
+      <div class="col p-2" v-if="!isPhoneCheckDone">
+        <label for="validationCustom01" class="form-label" style="float: left"
+          >Phone Number</label
         >
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon1">+91</span>
@@ -23,11 +26,11 @@
             required
           />
         </div>
-        <button class="btn btn-outline-primary" @click="check()">Next</button>
+        <button class="btn btn-outline-dark" @click="check()">Next</button>
       </div>
 
       <div v-else class="p-2 mb-3">
-        <label for="validationCustom01" class="form-label"
+        <label for="validationCustom01" class="form-label" style="float: left"
           >Enter 4 digits OTP:
         </label>
         <div class="input-group">
@@ -47,7 +50,9 @@
             test...</small
           >
         </div>
-        <button class="btn btn-link" @click="handleClearInput()">Clear</button>
+        <button class="btn btn-link btn-dark" @click="handleClearInput()">
+          Clear
+        </button>
       </div>
       <NextPage />
     </div>

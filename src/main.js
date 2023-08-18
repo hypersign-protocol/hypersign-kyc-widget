@@ -10,11 +10,19 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import "./style/global.css"
 import MessageBox from "./components/commons/MessageBox.vue";
 import NavBar from "./components/commons/NavBar.vue";
+import PageHeading from "./components/commons/PageHeading.vue";
+import PoweredBy from "./components/commons/PoweredBy.vue";
+import ConsentBox from "./components/commons/ConsentBox.vue";
+
 Vue.config.productionTip = false
 
 Vue.component('load-ing', Loading)
 Vue.component('MessageBox', MessageBox)
 Vue.component('NavBar', NavBar);
+Vue.component('PageHeading', PageHeading)
+Vue.component('PoweredBy', PoweredBy);
+Vue.component('ConsentBox', ConsentBox);
+
 new Vue({
   store,
   render: h => h(App)

@@ -7,8 +7,10 @@
     ></load-ing>
     <NavBar />
     <div class="card-body">
-      <h4>Video KYC</h4>
-
+      <PageHeading
+        :header="'Liveliness Check'"
+        :subHeader="'Open camera and click your picture'"
+      />
       <div class="scanQR web-camera-container">
         <img
           src="../assets/selfi.png"
@@ -45,7 +47,7 @@
           ></canvas>
         </div>
       </div>
-      <span class="">Click Your Picture</span>
+
       <div>
         <div class="" v-if="isCameraOpen && !isLoading">
           <button
@@ -60,7 +62,7 @@
 
         <div style="padding: 10px">
           <button
-            class="btn btn-outline-primary"
+            class="btn btn-outline-dark"
             v-if="isPhotoTaken && isCameraOpen"
             @click="submit()"
           >
@@ -72,8 +74,8 @@
             type="button"
             class="btn"
             :class="{
-              'btn-outline-primary': !isCameraOpen,
-              'btn-link': isCameraOpen,
+              'btn-outline-dark': !isCameraOpen,
+              'btn-link btn-dark': isCameraOpen,
             }"
             @click="toggleCamera"
           >

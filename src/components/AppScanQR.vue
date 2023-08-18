@@ -7,7 +7,10 @@
     ></load-ing>
     <NavBar />
     <div class="card-body">
-      <h4>Aadhaar Data</h4>
+      <PageHeading
+        :header="'Addhaar Verification'"
+        :subHeader="'Scan QR code on your Addhaar Card'"
+      />
       <div class="scanQR">
         <qrcode-stream
           @detect="onDetect"
@@ -24,21 +27,18 @@
           style="font-size: 170px; color: rgb(59, 58, 58)"
         ></i>
       </div>
-      <span class="">Scan QR code on your Addhaar</span>
-      <span class="">{{ error }}</span>
-      <div style="padding: 10px">
+      <div style="padding: 20px">
         <button
-          class="btn btn-outline-primary"
+          class="btn btn-outline-dark"
           @click="openScanner"
           v-if="!isScan"
         >
           <i class="bi bi-camera"></i> Scan
         </button>
-        <button class="btn btn-link" @click="cancelScanner" v-else>
+        <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
           Cancel
         </button>
       </div>
-      <ConsentBox />
       <NextPage />
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -47,8 +47,6 @@
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "./commons/PoweredBy.vue";
-import ConsentBox from "./commons/ConsentBox.vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import NextPage from "./commons/NextPage.vue";
 import { mapActions, mapMutations } from "vuex";
@@ -69,8 +67,6 @@ export default {
     };
   },
   components: {
-    PoweredBy,
-    ConsentBox,
     QrcodeStream,
     NextPage,
   },
