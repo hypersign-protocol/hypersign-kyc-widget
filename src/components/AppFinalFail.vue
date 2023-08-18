@@ -3,7 +3,8 @@
     <NavBar />
     <div class="card-body">
       <p><i class="bi bi-x-circle final-msg-icon fail"></i></p>
-      <span class="">Failed to verify!</span>
+      <h5 class="">Verification Failed!</h5>
+      <VerificationDetails />
     </div>
     <div class="card-footer"><PoweredBy /></div>
   </div>
@@ -11,10 +12,13 @@
 
 <script type="text/javascript">
 import PoweredBy from "./commons/PoweredBy.vue";
+import VerificationDetails from "./commons/VerificationDetails.vue";
+
 export default {
   name: "AppFinalSuccess",
   components: {
     PoweredBy,
+    VerificationDetails,
   },
 };
 </script>

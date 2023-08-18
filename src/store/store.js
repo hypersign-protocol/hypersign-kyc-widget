@@ -7,6 +7,7 @@ export default new Vuex.Store({
     state: {
         qrString: "",
         phoneNumber: "",
+        finalResult: {},
         steps: [
             {
                 id: 0,
@@ -76,8 +77,11 @@ export default new Vuex.Store({
 
         setPhoneNumber: (state, phoneNumber) => {
             state.phoneNumber = phoneNumber;
-        }
+        },
 
+        setFinalResult: (state, result) => {
+            state.finalResult = { ...result };
+        }
 
 
     },

@@ -96,7 +96,7 @@ export default {
   computed: {},
   methods: {
     ...mapActions(["addharQRVerify", "verifyPhoneNumber", "getFinalResult"]),
-    ...mapMutations(["setPhoneNumber", "nextStep"]),
+    ...mapMutations(["setPhoneNumber", "nextStep", "setFinalResult"]),
     wait(time = 3000) {
       return new Promise((resolve) => {
         return setTimeout(() => {
@@ -134,10 +134,13 @@ export default {
         console.log("OTP completed: ", value);
         // TODO: go for verification
         const result = await this.getFinalResult();
-        if (result && result.verified === true) {
-          this.nextStep(4);
-        } else {
-          this.nextStep(5);
+        if (result) {
+          this.setFinalResult(result);
+          if (result.verified === true) {
+            this.nextStep(4);
+          } else {
+            this.nextStep(5);
+          }
         }
       } catch (e) {
         this.toast(e.message, "error");
