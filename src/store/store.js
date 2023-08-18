@@ -113,6 +113,7 @@ export default new Vuex.Store({
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/session'
                 fetch(url, {
                     method: 'POST',
+                    // credentials: 'include',
                     body: undefined
                 }).then(resp => {
                     return resp.json()
@@ -135,7 +136,10 @@ export default new Vuex.Store({
                     method: 'POST',
                     body: JSON.stringify({
                         phoneNumber: state.phoneNumber
-                    })
+                    }),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
                 }).then(resp => {
                     return resp.json()
                 }).then(json => {

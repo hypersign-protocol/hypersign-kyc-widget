@@ -8,8 +8,8 @@
     <NavBar />
     <div class="card-body">
       <PageHeading
-        :header="'Addhaar Verification'"
-        :subHeader="'Scan QR code on your Addhaar Card'"
+        :header="'Aadhaar Verification'"
+        :subHeader="'Scan QR code on your Aadhaar Card'"
       />
       <div class="scanQR">
         <qrcode-stream

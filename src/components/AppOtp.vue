@@ -11,7 +11,8 @@
         :header="'Verify Phone Number'"
         :subHeader="'Provide your Aadhaar linked phone number and verify your OTP'"
       />
-      <div class="col p-2" v-if="!isPhoneCheckDone">
+
+      <div class="col p-2">
         <label for="validationCustom01" class="form-label" style="float: left"
           >Phone Number</label
         >
@@ -24,14 +25,21 @@
             value="Mark"
             v-model="phoneNumber"
             required
+            :disabled="isPhoneCheckDone"
           />
         </div>
-        <button class="btn btn-outline-dark" @click="check()">Next</button>
+        <button
+          class="btn btn-outline-dark"
+          @click="check()"
+          v-if="!isPhoneCheckDone"
+        >
+          Next
+        </button>
       </div>
 
-      <div v-else class="p-2 mb-3">
+      <div v-if="isPhoneCheckDone" class="p-2 mb-3">
         <label for="validationCustom01" class="form-label" style="float: left"
-          >Enter 4 digits OTP:
+          >4 digits OTP
         </label>
         <div class="input-group">
           <OtpInput
@@ -43,7 +51,7 @@
             :is-input-num="true"
             @on-change="handleOnChange"
             @on-complete="handleOnComplete"
-            style="margin: 0 auto; font-size: 30px"
+            style="font-size: 30px"
           />
           <small style="color: grey; text-align: left"
             >Note: This feature is coming soon. Enter any 4 digits to
@@ -54,6 +62,7 @@
           Clear
         </button>
       </div>
+
       <NextPage />
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -88,6 +97,13 @@ export default {
   methods: {
     ...mapActions(["addharQRVerify", "verifyPhoneNumber", "getFinalResult"]),
     ...mapMutations(["setPhoneNumber", "nextStep"]),
+    wait(time = 3000) {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          resolve();
+        }, time);
+      });
+    },
     async check() {
       try {
         // TODO: validate this.phoneNumber for 10 digits
@@ -98,14 +114,18 @@ export default {
 
         // Start verification
         this.isLoadingPage = true;
+        // await this.wait(); // TODO: remove this dummy
         const result = await this.verifyPhoneNumber();
         if (result && result.verified === true) {
           this.isPhoneCheckDone = true;
+        } else if (result.verified === false) {
+          this.toast("Invalid phone number", "error");
         }
         this.isLoadingPage = false;
       } catch (e) {
         this.isLoadingPage = false;
-        this.toast(e.message, "error");
+        console.log(e);
+        this.toast(e, "error");
         console.log(e);
       }
     },
@@ -115,6 +135,8 @@ export default {
         // TODO: go for verification
         const result = await this.getFinalResult();
         if (result && result.verified === true) {
+          this.nextStep(4);
+        } else {
           this.nextStep(5);
         }
       } catch (e) {
@@ -127,6 +149,9 @@ export default {
     },
     handleClearInput() {
       this.$refs.otpInput.clearInput();
+      this.setPhoneNumber("");
+      this.isPhoneCheckDone = false;
+      this.phoneNumber = "";
     },
 
     toast(msg, type = "success") {

@@ -9,7 +9,7 @@
     <div class="card-body">
       <PageHeading
         :header="'Verify Your Identity Using Aadhaar'"
-        :subHeader="'Follow these simple instructions to verify your Addhaar'"
+        :subHeader="'Follow these simple instructions to verify'"
       />
       <div class="">
         <img
