@@ -7,37 +7,81 @@
     ></load-ing>
     <NavBar />
     <div class="card-body">
-      <PageHeading
-        :header="'Aadhaar Verification'"
-        :subHeader="'Scan QR code on your Aadhaar Card'"
-      />
-      <div class="scanQR">
-        <qrcode-stream
-          @detect="onDetect"
-          @init="onInit"
-          @camera-on="onReady"
-          @error="onError"
-          v-if="isScan"
-        >
-          <span v-if="loading">Waiting for camera...</span>
-        </qrcode-stream>
-        <i
-          v-else
-          class="bi bi-qr-code-scan"
-          style="font-size: 170px; color: rgb(59, 58, 58)"
-        ></i>
+      <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
+      <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
+        <div class="scanQR">
+          <qrcode-stream
+            @detect="onDetect"
+            @init="onInit"
+            @camera-on="onReady"
+            @error="onError"
+            v-if="isScan"
+          >
+            <span v-if="loading">Waiting for camera...</span>
+          </qrcode-stream>
+          <i
+            v-else
+            class="bi bi-qr-code-scan"
+            style="font-size: 170px; color: rgb(59, 58, 58)"
+          ></i>
+        </div>
+        <div style="padding: 20px">
+          <button
+            class="btn btn-outline-dark"
+            @click="openScanner"
+            v-if="!isScan"
+          >
+            <i class="bi bi-camera"></i> Scan
+          </button>
+          <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
+            Cancel
+          </button>
+        </div>
       </div>
-      <div style="padding: 20px">
-        <button
-          class="btn btn-outline-dark"
-          @click="openScanner"
-          v-if="!isScan"
+      <div v-else class="table-responsive-sm">
+        <table
+          class="table"
+          style="text-align: left; font-size: x-small; padding-top: 10px"
         >
-          <i class="bi bi-camera"></i> Scan
-        </button>
-        <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
-          Cancel
-        </button>
+          <tbody>
+            <!-- <tr>
+              <th rowspan="5">
+                <i class="bi bi-person-fill"></i>
+              </th>
+            </tr> -->
+            <tr>
+              <th scope="row">Name</th>
+              <th colspan="2">{{ aadharData.name }}</th>
+              <td rowspan="2" style="text-align: center">
+                <img src="../assets/aadhaar-logo.png" height="30" />
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">DOB</th>
+              <td colspan="3">{{ aadharData.dob }}</td>
+              <!--<td></td>-->
+            </tr>
+            <tr>
+              <th scope="row">Gender</th>
+              <td colspan="3">{{ aadharData.gender }}</td>
+              <!--<td></td>-->
+            </tr>
+            <tr>
+              <th scope="row">Address</th>
+              <td colspan="3">
+                {{ aadharData.house }} {{ aadharData.location }}
+                {{ aadharData.state }} - {{ aadharData.pincode }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="padding: 20px">
+          <button class="btn btn-outline-dark" @click="proceedNext()">
+            Confirm
+          </button>
+          <button class="btn btn-link btn-dark" @click="reset()">Cancel</button>
+        </div>
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -47,8 +91,8 @@
 
 <script type="text/javascript">
 import { QrcodeStream } from "vue-qrcode-reader";
-import { mapActions, mapMutations } from "vuex";
-
+import { mapActions, mapMutations, mapState } from "vuex";
+// import { generateImageFromJ2k } from "../j2k";
 export default {
   name: "AppScanQR",
   data() {
@@ -62,13 +106,32 @@ export default {
       toastMessage: "",
       toastType: "success",
       isToast: false,
+      isQRVerfied: false,
     };
   },
   components: {
     QrcodeStream,
   },
+  computed: {
+    ...mapState(["aadharData"]),
+    isAadhaarQRVerifiedAndDataExtracted() {
+      return (
+        this.isQRVerfied &&
+        this.aadharData &&
+        Object.keys(this.aadharData).length > 0
+      );
+    },
+
+    subheading() {
+      if (!this.isAadhaarQRVerifiedAndDataExtracted) {
+        return "Scan QR code on your Aadhaar Card";
+      } else {
+        return "Confirm Your Details";
+      }
+    },
+  },
   methods: {
-    ...mapMutations(["nextStep", "setQrString"]),
+    ...mapMutations(["nextStep", "setQrString", "setAadhaarData"]),
     ...mapActions(["addharQRVerify"]),
     wait(time = 3000) {
       return new Promise((resolve) => {
@@ -90,8 +153,14 @@ export default {
           await this.wait(1000);
           if (result && result.verified === true) {
             console.log("QR verified successfully");
+            this.isQRVerfied = true;
+            if (result.aadharData) {
+              console.log("Setting aadhaar data in localstorage...");
+              this.setAadhaarData(result.aadharData);
+              // generateImageFromJ2k(result.j2kImage); // TODO: need to figure out how to show image
+            }
             // Moving to next step...
-            this.nextStep();
+            // this.nextStep();
           } else {
             throw new Error("Invalid QR Code");
           }
@@ -119,6 +188,10 @@ export default {
         console.error(e);
         this.toast(e.message, "error");
       }
+    },
+
+    proceedNext() {
+      this.nextStep();
     },
     onReady(capabilities) {
       console.log("Camera is ready");
@@ -157,6 +230,12 @@ export default {
     },
     cancelScanner() {
       this.isScan = false;
+    },
+    reset() {
+      this.isScan = false;
+      this.isToast = false;
+      this.toastMessage = "";
+      this.isQRVerfied = false;
     },
     toast(msg, type = "success") {
       this.isToast = true;

@@ -8,6 +8,7 @@ export default new Vuex.Store({
         qrString: "",
         phoneNumber: "",
         finalResult: {},
+        aadharData: {},
         steps: [
             {
                 id: 0,
@@ -81,9 +82,11 @@ export default new Vuex.Store({
 
         setFinalResult: (state, result) => {
             state.finalResult = { ...result };
+        },
+
+        setAadhaarData: (state, aadharData) => {
+            state.aadharData = { ...aadharData };
         }
-
-
     },
     actions: {
         addharQRVerify: ({ state }) => {

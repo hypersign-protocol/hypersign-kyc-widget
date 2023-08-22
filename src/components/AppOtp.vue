@@ -110,8 +110,8 @@ export default {
 
         // Start verification
         this.isLoadingPage = true;
-        // await this.wait(); // TODO: remove this dummy
         const result = await this.verifyPhoneNumber();
+        await this.wait(1000);
         if (result && result.verified === true) {
           this.isPhoneCheckDone = true;
         } else if (result.verified === false) {
@@ -128,10 +128,13 @@ export default {
     async handleOnComplete(value) {
       try {
         console.log("OTP completed: ", value);
+        this.isLoadingPage = true;
         // TODO: go for verification
         const result = await this.getFinalResult();
+        await this.wait(2000);
         if (result) {
           this.setFinalResult(result);
+          this.isLoadingPage = false;
           if (result.verified === true) {
             this.nextStep(4);
           } else {
@@ -141,6 +144,7 @@ export default {
       } catch (e) {
         this.toast(e.message, "error");
         console.log(e);
+        this.isLoadingPage = true;
       }
     },
     handleOnChange(value) {
