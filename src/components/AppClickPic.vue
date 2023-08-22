@@ -63,13 +63,11 @@
         <div style="padding: 10px">
           <button
             class="btn btn-outline-dark"
-            v-if="isPhotoTaken && isCameraOpen"
             @click="submit()"
+            v-if="isPhotoTaken && isCameraOpen"
           >
-            Submit
+            Next
           </button>
-        </div>
-        <div>
           <button
             type="button"
             class="btn"
