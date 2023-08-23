@@ -1,36 +1,44 @@
 <template>
   <div class="card maincontainer">
-    <load-ing
-      :active.sync="isLoading"
-      :can-cancel="true"
-      :is-full-page="fullPage"
-    ></load-ing>
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <NavBar />
     <div class="card-body">
       <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
         <div class="scanQR">
-          <qrcode-stream
+          <!-- <qrcode-stream
             @detect="onDetect"
             @init="onInit"
             @camera-on="onReady"
             @error="onError"
             v-if="isScan"
           >
-            <span v-if="loading">Waiting for camera...</span>
-          </qrcode-stream>
-          <i
-            v-else
-            class="bi bi-qr-code-scan"
-            style="font-size: 170px; color: rgb(59, 58, 58)"
-          ></i>
+          </qrcode-stream> -->
+
+          <div id="qr-camera">
+            <video id="camera-preview" refs="scanner" autoplay playsinline v-if="isScan">
+
+              <span v-if="loading"> waiting for camera</span>
+
+            </video>
+            <i v-else class="bi bi-qr-code-scan" style="font-size: 200px; color: rgb(59, 58, 58)"></i>
+
+            <canvas id="cv"></canvas>
+
+
+            <div id="qr-overlay" v-if="isScan">
+              <div id="qr-scan-box"></div>
+
+              <div id="qr-scan-line"></div>
+            </div>
+
+          </div>
+
+
+
         </div>
         <div style="padding: 20px">
-          <button
-            class="btn btn-outline-dark"
-            @click="openScanner"
-            v-if="!isScan"
-          >
+          <button class="btn btn-outline-dark" @click="openScanner" v-if="!isScan">
             <i class="bi bi-camera"></i> Scan
           </button>
           <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
@@ -39,10 +47,7 @@
         </div>
       </div>
       <div v-else class="table-responsive-sm">
-        <table
-          class="table"
-          style="text-align: left; font-size: x-small; padding-top: 10px"
-        >
+        <table class="table" style="text-align: left; font-size: x-small; padding-top: 10px">
           <tbody>
             <!-- <tr>
               <th rowspan="5">
@@ -85,12 +90,15 @@
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-    <div class="card-footer"><PoweredBy /></div>
+    <div class="card-footer">
+      <PoweredBy />
+    </div>
   </div>
 </template>
 
 <script type="text/javascript">
-import { QrcodeStream } from "vue-qrcode-reader";
+import jsQR from "jsqr";
+// import { QrcodeStream } from "vue-qrcode-reader";
 import { mapActions, mapMutations, mapState } from "vuex";
 // import { generateImageFromJ2k } from "../j2k";
 export default {
@@ -107,10 +115,12 @@ export default {
       toastType: "success",
       isToast: false,
       isQRVerfied: false,
+      interval: null,
+      stream: null,
     };
   },
   components: {
-    QrcodeStream,
+    // QrcodeStream,
   },
   computed: {
     ...mapState(["aadharData"]),
@@ -140,6 +150,33 @@ export default {
         }, time);
       });
     },
+
+    processQr(imageCapture) {
+      imageCapture.grabFrame()
+        .then(imageBitmap => {
+          const canvas = document.createElement('canvas');
+          canvas.width = imageBitmap.width;
+          canvas.height = imageBitmap.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(imageBitmap, canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800, canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800);
+          const imageData = ctx.getImageData(canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800);
+          ctx.putImageData(imageData, 0, 0);
+          const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "attemptBoth",
+          });
+          if (code) {
+            this.qrData = code.data;
+            this.cancelScanner();
+            this.onDetect({ content: code.data });
+          }
+        })
+        /* eslint-disable-next-line */
+        .catch(e => {
+          // console.error(e);
+        }
+        )
+    }
+    ,
     async onDetect(promise) {
       try {
         const { content } = await promise;
@@ -227,9 +264,96 @@ export default {
     },
     openScanner() {
       this.isScan = true;
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            facingMode: "environment",
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 }
+          }
+        })
+        .then((stream) => {
+          this.stream = stream;
+          const track = this.stream.getVideoTracks()[0];
+          const capabilits = track.getCapabilities();
+          // check autofocus
+          if (capabilits.focusMode?.includes('continuous')) {
+            track.applyConstraints({
+              advanced: [{
+                focusMode: 'continuous'
+
+              }]
+            })
+              .catch(e => {
+                console.error(e);
+              })
+          }
+          if (capabilits.exposureMode?.includes('continuous')) {
+            track.applyConstraints({
+              advanced: [{
+                exposureMode: 'continuous'
+
+              }]
+            })
+              .catch(e => {
+                console.error(e);
+              })
+          }
+
+          if (capabilits.whiteBalanceMode?.includes('continuous')) {
+            track.applyConstraints({
+              advanced: [{
+                whiteBalanceMode: 'continuous'
+
+              }]
+            })
+              .catch(e => {
+                console.error(e);
+              })
+          }
+
+          if (capabilits.zoom?.step !== undefined) {
+            track.applyConstraints({
+              advanced: [{
+                zoom: capabilits.zoom.min
+
+              }]
+            })
+              .catch(e => {
+                console.error(e);
+              })
+          }
+
+          const imageCapture = new ImageCapture(track);
+
+          this.interval = setInterval(() => {
+
+            this.processQr(imageCapture)
+
+
+          }, 0)
+
+
+          const video = document.getElementById("camera-preview");
+
+
+          video.srcObject = stream;
+          video.play();
+
+        })
+        .catch((e) => {
+          console.error(e);
+          this.toast(e.message, "error");
+        });
     },
     cancelScanner() {
       this.isScan = false;
+      clearInterval(this.interval);
+      if (this.stream) {
+        this.stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
     },
     reset() {
       this.isScan = false;
@@ -252,11 +376,70 @@ export default {
 </script>
 <style type="text/css" scoped>
 .scanQR {
-  width: 250px;
-  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
   background-color: white;
-  border: 1px solid grey;
-  border-radius: 5px;
-  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
-</style>
+
+#qr-camera {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+#camera-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  /* Maintain aspect ratio and fill the container */
+}
+
+#qr-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#qr-scan-box {
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+
+}
+
+#qr-scan-line {
+  width: 50%;
+  height: 1px;
+  background-color: white;
+  animation: scanAnimation 2s linear infinite;
+}
+
+@keyframes scanAnimation {
+  0% {
+    transform: translateY(-75px);
+  }
+
+  50% {
+    transform: translateY(75px);
+  }
+
+  100% {
+    transform: translateY(-75px);
+  }
+
+}</style>
