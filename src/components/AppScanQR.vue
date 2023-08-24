@@ -2,6 +2,7 @@
   <div class="card maincontainer">
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <NavBar />
+
     <div class="card-body">
       <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
@@ -15,21 +16,27 @@
           >
           </qrcode-stream> -->
 
+
           <div id="qr-camera">
-            <video id="camera-preview" refs="scanner" autoplay playsinline v-if="isScan">
+
+
+            <video id="camera-preview" refs="scanner" autoplay playsinline style="display: none;" v-if="isScan">
+
 
               <span v-if="loading"> waiting for camera</span>
 
             </video>
             <i v-else class="bi bi-qr-code-scan" style="font-size: 200px; color: rgb(59, 58, 58)"></i>
 
-            <canvas id="cv"></canvas>
 
 
             <div id="qr-overlay" v-if="isScan">
+              <canvas id="cv" autoplay inline ></canvas>
+
               <div id="qr-scan-box"></div>
 
               <div id="qr-scan-line"></div>
+
             </div>
 
           </div>
@@ -93,6 +100,7 @@
     <div class="card-footer">
       <PoweredBy />
     </div>
+
   </div>
 </template>
 
@@ -150,7 +158,17 @@ export default {
         }, time);
       });
     },
+    processQrMoz(imgData) {
+      const code = jsQR(imgData.data, imgData.width, imgData.height, {
+        inversionAttempts: "attemptBoth",
+      });
+      if (code) {
+        this.qrData = code.data;
+        this.cancelScanner();
+        this.onDetect({ content: code.data });
+      }
 
+    },
     processQr(imageCapture) {
       imageCapture.grabFrame()
         .then(imageBitmap => {
@@ -214,18 +232,18 @@ export default {
         this.cancelScanner();
       }
     },
-    async onInit(promise) {
-      console.log("On init");
-      this.loading = true;
-      try {
-        const { capabilities } = await promise;
-        console.log(capabilities);
-        this.loading = false;
-      } catch (e) {
-        console.error(e);
-        this.toast(e.message, "error");
-      }
-    },
+    // async onInit(promise) {
+    //   console.log("On init");
+    //   this.loading = true;
+    //   try {
+    //     const { capabilities } = await promise;
+    //     console.log(capabilities);
+    //     this.loading = false;
+    //   } catch (e) {
+    //     console.error(e);
+    //     this.toast(e.message, "error");
+    //   }
+    // },
 
     proceedNext() {
       this.nextStep();
@@ -268,81 +286,117 @@ export default {
         .getUserMedia({
           video: {
             facingMode: "environment",
-            width: { min: 640, ideal: 1280, max: 1920 },
-            height: { min: 480, ideal: 720, max: 1080 }
+            width: { ideal: 1280, max: 1920 },
+            height: { ideal: 720, max: 1080 }
           }
         })
         .then((stream) => {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
-          const capabilits = track.getCapabilities();
-          // check autofocus
-          if (capabilits.focusMode?.includes('continuous')) {
-            track.applyConstraints({
-              advanced: [{
-                focusMode: 'continuous'
+          if (track.getCapabilities !== undefined) {
 
-              }]
-            })
-              .catch(e => {
-                console.error(e);
+
+            const capabilits = track.getCapabilities();
+            // check autofocus
+            if (capabilits.focusMode?.includes('continuous')) {
+              track.applyConstraints({
+                advanced: [{
+                  focusMode: 'continuous'
+
+                }]
               })
-          }
-          if (capabilits.exposureMode?.includes('continuous')) {
-            track.applyConstraints({
-              advanced: [{
-                exposureMode: 'continuous'
+                .catch(e => {
+                  console.error(e);
+                })
+            }
+            if (capabilits.exposureMode?.includes('continuous')) {
+              track.applyConstraints({
+                advanced: [{
+                  exposureMode: 'continuous'
 
-              }]
-            })
-              .catch(e => {
-                console.error(e);
+                }]
               })
-          }
+                .catch(e => {
+                  console.error(e);
+                })
+            }
 
-          if (capabilits.whiteBalanceMode?.includes('continuous')) {
-            track.applyConstraints({
-              advanced: [{
-                whiteBalanceMode: 'continuous'
+            if (capabilits.whiteBalanceMode?.includes('continuous')) {
+              track.applyConstraints({
+                advanced: [{
+                  whiteBalanceMode: 'continuous'
 
-              }]
-            })
-              .catch(e => {
-                console.error(e);
+                }]
               })
-          }
+                .catch(e => {
+                  console.error(e);
+                })
+            }
 
-          if (capabilits.zoom?.step !== undefined) {
-            track.applyConstraints({
-              advanced: [{
-                zoom: capabilits.zoom.min
+            if (capabilits.zoom?.step !== undefined) {
+              track.applyConstraints({
+                advanced: [{
+                  zoom: capabilits.zoom.min
 
-              }]
-            })
-              .catch(e => {
-                console.error(e);
+                }]
               })
+                .catch(e => {
+                  console.error(e);
+                })
+            }
+          }
+          if ('ImageCapture' in window) {
+            console.log('ImageCapture is supported');
+            const imageCapture = new ImageCapture(track);
+
+            this.interval = setInterval(() => {
+
+              this.processQr(imageCapture)
+
+
+            }, 0)
+          } else {
+            // Mozilla doesn't support ImageCapture but we can use canvas to capture image
+
+            const video = document.getElementById('cv');
+            const ctx = video.getContext('2d');
+            this.interval = setInterval(() => {
+
+              const width = track.getSettings().width;
+              const height = track.getSettings().height;
+
+
+              // display video on canvas
+              ctx.drawImage(video, 0, 0, width, height);
+              
+              // get image data from canvas
+             
+
+
+
+              // this.processQrMoz(imageData)
+            }, 1)
+
+
+
+
           }
 
-          const imageCapture = new ImageCapture(track);
-
-          this.interval = setInterval(() => {
-
-            this.processQr(imageCapture)
-
-
-          }, 0)
 
 
           const video = document.getElementById("camera-preview");
 
+          if (video.srcObject !== undefined) {
+            video.srcObject = stream
+          } else if (video.mozSrcObject !== undefined) {
+            video.mozSrcObject = stream
+          }
 
-          video.srcObject = stream;
           video.play();
 
         })
         .catch((e) => {
-          console.error(e);
+          console.log(e);
           this.toast(e.message, "error");
         });
     },
@@ -375,6 +429,26 @@ export default {
 };
 </script>
 <style type="text/css" scoped>
+#cv {
+  /* display video fullscreen */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Maintain aspect ratio and fill the container */
+
+  /* should be on top of every element */
+  z-index: -1;
+
+  /* hide the original video */
+  
+
+
+
+  
+}
 .scanQR {
   display: flex;
   flex-direction: column;
@@ -398,7 +472,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
+  z-index: -1;
   /* Maintain aspect ratio and fill the container */
 }
 
@@ -422,6 +496,7 @@ export default {
 
 }
 
+
 #qr-scan-line {
   width: 50%;
   height: 1px;
@@ -442,4 +517,5 @@ export default {
     transform: translateY(-75px);
   }
 
-}</style>
+}
+</style>

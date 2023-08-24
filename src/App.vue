@@ -15,10 +15,11 @@ export default {
     MainPage,
   },
   methods: {
-    ...mapActions(["setSession"]),
+    ...mapActions(["setSession","setJWT"]),
   },
-  created() {
-    this.setSession();
+  async created() {
+   await this.setJWT()
+    await this.setSession();
   },
 };
 </script>

@@ -4,5 +4,7 @@ module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === "production" ? "/kavach" : "/",
   devServer: {
     https: true,
+    port: 8080,
+    
   }
 })
