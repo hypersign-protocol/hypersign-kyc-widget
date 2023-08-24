@@ -5,7 +5,9 @@
 
     <div class="card-body">
       <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
+
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
+
         <div class="scanQR">
           <!-- <qrcode-stream
             @detect="onDetect"
@@ -17,10 +19,11 @@
           </qrcode-stream> -->
 
 
+
           <div id="qr-camera">
 
 
-            <video id="camera-preview" refs="scanner" autoplay playsinline style="display: none;" v-if="isScan">
+            <video id="camera-preview" refs="scanner" autoplay playsinline v-if="isScan">
 
 
               <span v-if="loading"> waiting for camera</span>
@@ -31,7 +34,6 @@
 
 
             <div id="qr-overlay" v-if="isScan">
-              <canvas id="cv" autoplay inline ></canvas>
 
               <div id="qr-scan-box"></div>
 
@@ -169,16 +171,21 @@ export default {
       }
 
     },
-    processQr(imageCapture) {
+    processQr(imageCapture, xOffset, yOffset, newSize) {
+
       imageCapture.grabFrame()
         .then(imageBitmap => {
+
           const canvas = document.createElement('canvas');
           canvas.width = imageBitmap.width;
           canvas.height = imageBitmap.height;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(imageBitmap, canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800, canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800);
-          const imageData = ctx.getImageData(canvas.width / 2 - 400, canvas.height / 2 - 400, 800, 800);
-          ctx.putImageData(imageData, 0, 0);
+          // ctx.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
+          // const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height, xOffset, yOffset, newSize, newSize);
+          // ctx2.putImageData(imageData, 0, 0);
+
+          ctx.drawImage(imageBitmap, xOffset, yOffset, newSize, newSize, xOffset, yOffset, newSize, newSize);
+          const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height, {
             inversionAttempts: "attemptBoth",
           });
@@ -286,8 +293,8 @@ export default {
         .getUserMedia({
           video: {
             facingMode: "environment",
-            width: { ideal: 1280, max: 1920 },
-            height: { ideal: 720, max: 1080 }
+            width: { min: 1280, ideal: 1920, max: 3840 },
+            height: { min: 720, ideal: 1080, max: 2160 }
           }
         })
         .then((stream) => {
@@ -349,33 +356,53 @@ export default {
             console.log('ImageCapture is supported');
             const imageCapture = new ImageCapture(track);
 
+            const width = track.getSettings().width;
+            const height = track.getSettings().height;
+            const newSize = Math.min(width, height)
+            const xOffset = (width - newSize) / 2
+            const yOffset = (height - newSize) / 2
+
+
             this.interval = setInterval(() => {
 
-              this.processQr(imageCapture)
+              this.processQr(imageCapture, xOffset, yOffset, newSize)
 
 
             }, 0)
           } else {
             // Mozilla doesn't support ImageCapture but we can use canvas to capture image
 
-            const video = document.getElementById('cv');
-            const ctx = video.getContext('2d');
+            const canvas = document.createElement('canvas');
+
+            const ctx = canvas.getContext('2d');
+            const width = track.getSettings().width;
+            const height = track.getSettings().height;
+            canvas.width = width
+            canvas.height = height
+
+
+            const newSize = Math.min(width, height)
+            const xOffset = (width - newSize) / 2
+            const yOffset = (height - newSize) / 2
+
+
+
             this.interval = setInterval(() => {
 
-              const width = track.getSettings().width;
-              const height = track.getSettings().height;
 
-
-              // display video on canvas
               ctx.drawImage(video, 0, 0, width, height);
-              
-              // get image data from canvas
-             
 
 
 
-              // this.processQrMoz(imageData)
-            }, 1)
+
+              const imageData = ctx.getImageData(xOffset, yOffset, newSize, newSize, xOffset, yOffset, newSize, newSize);
+
+
+
+
+
+              this.processQrMoz(imageData)
+            }, 0)
 
 
 
@@ -429,26 +456,8 @@ export default {
 };
 </script>
 <style type="text/css" scoped>
-#cv {
-  /* display video fullscreen */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Maintain aspect ratio and fill the container */
-
-  /* should be on top of every element */
-  z-index: -1;
-
-  /* hide the original video */
-  
 
 
-
-  
-}
 .scanQR {
   display: flex;
   flex-direction: column;

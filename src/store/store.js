@@ -123,11 +123,7 @@ export default new Vuex.Store({
             commit
         }) => {
             return new Promise((resolve, reject) => {
-                if (localStorage.getItem('authorization')) {
-                    commit('setAuthorization', localStorage.getItem('authorization'))
-
-                    resolve()
-                } else {
+               
                     const url = ENTITY_API_BASE_URL + '/api/v1/app/oauth'
                     fetch(url, {
                         method: 'POST',
@@ -152,7 +148,7 @@ export default new Vuex.Store({
 
                 }
 
-            })
+            )
         },
         setSession: ({
                     state
@@ -164,7 +160,9 @@ export default new Vuex.Store({
                 fetch(url, {
                     method: 'POST',
                     credentials: 'include',
+            
                     headers: {
+                        'content-type': 'application/json',
                         Authorization: state.authorization,
                         
                     },
