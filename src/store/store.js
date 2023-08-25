@@ -102,6 +102,7 @@ export default new Vuex.Store({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: state.authorization,
                     },
                     body: JSON.stringify({
                         qrString: state.qrString
@@ -112,6 +113,7 @@ export default new Vuex.Store({
                     if (json.statusCode == 400) {
                         throw new Error('Bad Request ' + json.message.toString())
                     }
+
                     
                     resolve(json)
                 }).catch(e => {

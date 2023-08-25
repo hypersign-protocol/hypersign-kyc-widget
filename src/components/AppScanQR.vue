@@ -224,6 +224,7 @@ export default {
             // Moving to next step...
             // this.nextStep();
           } else {
+
             throw new Error("Invalid QR Code");
           }
           this.isLoading = false;
