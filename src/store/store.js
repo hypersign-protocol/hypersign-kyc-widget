@@ -100,6 +100,7 @@ export default new Vuex.Store({
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/qr/verify'
                 fetch(url, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: state.authorization,
@@ -189,6 +190,7 @@ export default new Vuex.Store({
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/ph/verify'
                 fetch(url, {
                     method: 'POST',
+                    credentials: 'include',
                     body: JSON.stringify({
                         phoneNumber: state.phoneNumber
                     }),
@@ -216,6 +218,7 @@ export default new Vuex.Store({
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
                 fetch(url, {
                     method: 'POST',
+                    credentials: 'include',
                     body: JSON.stringify({
                         userImage: ''
                     }),
@@ -243,6 +246,7 @@ export default new Vuex.Store({
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',
+                    credentials: 'include',
                     headers:{
                         Authorization: state.authorization,
                         'content-type': 'application/json',
