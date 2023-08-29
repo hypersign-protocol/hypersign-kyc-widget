@@ -156,17 +156,28 @@ export default {
   components: {
     // QrcodeStream,
   },
-  mounted() {
+ async mounted() {
     const cameraSelect = document.getElementById('cameraOptions')
+    try {
+      const permission = await navigator.permissions.query({ name: 'camera' })
+      if (permission.state == 'denied') {
+        this.toast('Please allow camera permission', 'error')
+        return
+      }
+
+    } catch (error) {
+      this.toast(navigator.userAgent,"success")
+    }
+     
     navigator.mediaDevices.enumerateDevices().then(devices => {
       this.cameras = devices.filter(device => device.kind === 'videoinput')
 
 
-      if (this.cameras.length > 0) {
+      if (this.cameras.length > 1) {
         this.cameras.forEach(camera => {
           const option = document.createElement('option')
           option.value = camera.deviceId
-          option.text = camera.label
+          option.text = camera.label === '' ? `Camera ${camera.deviceId}` : camera.label
           option.selected = camera.deviceId === this.cameras[0].deviceId
           cameraSelect.appendChild(option)
         })
@@ -346,10 +357,11 @@ export default {
 
       this.toast(this.error, "error");
     },
-    openScanner() {
+    async openScanner() {
 
+
+     
       this.isScan = true;
-
 
 
       navigator.mediaDevices
@@ -360,7 +372,7 @@ export default {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
           const zoomTrackBar = document.getElementById('zoom')
-          
+
 
           if (track.getCapabilities !== undefined) {
 
@@ -402,18 +414,18 @@ export default {
                 })
             }
 
-            const settings=track.getSettings()
-            if('zoom' in settings){
-              zoomTrackBar.style.display='flex'
-              zoomTrackBar.min=capabilits.zoom.min
-              zoomTrackBar.max=capabilits.zoom.max
-              zoomTrackBar.value=capabilits.zoom.min
-              zoomTrackBar.step=capabilits.zoom.step
-              zoomTrackBar.style.width='100%'
-              zoomTrackBar.oninput=(e)=>{
+            const settings = track.getSettings()
+            if ('zoom' in settings) {
+              zoomTrackBar.style.display = 'flex'
+              zoomTrackBar.min = capabilits.zoom.min
+              zoomTrackBar.max = capabilits.zoom.max
+              zoomTrackBar.value = capabilits.zoom.min
+              zoomTrackBar.step = capabilits.zoom.step
+              zoomTrackBar.style.width = '100%'
+              zoomTrackBar.oninput = (e) => {
                 track.applyConstraints({
                   advanced: [{
-                    zoom: e.target.value? e.target.value:1
+                    zoom: e.target.value ? e.target.value : 1
                   }]
                 })
                   .catch(e => {
@@ -421,10 +433,11 @@ export default {
                   })
               }
 
-            }else{
-              zoomTrackBar.style.display='none'
+            } else {
+              zoomTrackBar.style.display = 'none'
+              this.toast('Zoom not supported', 'error')
             }
-            
+
           }
           if ('ImageCapture' in window) {
             console.log('ImageCapture is supported');
