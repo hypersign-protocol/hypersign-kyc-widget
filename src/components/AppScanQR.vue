@@ -4,9 +4,10 @@
     <NavBar />
 
     <div class="card-body">
-      <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
+      <PageHeading :header="'Aadhar Verification'" :subHeader="subheading" />
 
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
+        <input type="range" style="display: none;" id="zoom">
 
         <div class="scanQR">
           <!-- <qrcode-stream
@@ -46,17 +47,31 @@
 
 
         </div>
-        <div style="padding: 20px">
+        <div style="padding: 10px">
+
+          <select id="cameraOptions" @change="selectionChange">
+            <option value="null" selected>Select Camera</option>
+          </select>
+          <br>
+
+
           <button class="btn btn-outline-dark" @click="openScanner" v-if="!isScan">
             <i class="bi bi-camera"></i> Scan
           </button>
           <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
             Cancel
           </button>
+
+
+
         </div>
       </div>
-      <div v-else class="table-responsive-sm">
+      <div v-else class="table-responsive-sm" id="aadharDataDisplay">
+
+        <img src="../assets/aadhaar-logo.png" height="40" style="opacity: 15%; " />
+
         <table class="table" style="text-align: left; font-size: x-small; padding-top: 10px">
+
           <tbody>
             <!-- <tr>
               <th rowspan="5">
@@ -67,7 +82,10 @@
               <th scope="row">Name</th>
               <th colspan="2">{{ aadharData.name }}</th>
               <td rowspan="2" style="text-align: center">
-                <img src="../assets/aadhaar-logo.png" height="30" />
+
+                <!-- {{ aadharData.jpegImage }} -->
+                <img :src="aadharData.jpegImage" height="45" />
+
               </td>
             </tr>
             <tr>
@@ -96,6 +114,7 @@
           </button>
           <button class="btn btn-link btn-dark" @click="reset()">Cancel</button>
         </div>
+
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -115,6 +134,11 @@ export default {
   name: "AppScanQR",
   data() {
     return {
+      video: {
+        width: { min: 1280, ideal: 1920, max: 3840 },
+        height: { min: 720, ideal: 1080, max: 2160 }
+      },
+      cameras: [],
       qrData: "",
       error: "",
       loading: false,
@@ -131,6 +155,23 @@ export default {
   },
   components: {
     // QrcodeStream,
+  },
+  mounted() {
+    const cameraSelect = document.getElementById('cameraOptions')
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      this.cameras = devices.filter(device => device.kind === 'videoinput')
+
+
+      if (this.cameras.length > 0) {
+        this.cameras.forEach(camera => {
+          const option = document.createElement('option')
+          option.value = camera.deviceId
+          option.text = camera.label
+          option.selected = camera.deviceId === this.cameras[0].deviceId
+          cameraSelect.appendChild(option)
+        })
+      }
+    })
   },
   computed: {
     ...mapState(["aadharData"]),
@@ -159,6 +200,23 @@ export default {
           resolve();
         }, time);
       });
+    },
+    selectionChange(e) {
+      this.cancelScanner()
+      const cameraId = e.target.value
+
+      this.video = {
+        width: { min: 1280, ideal: 1920, max: 3840 },
+        height: { min: 720, ideal: 1080, max: 2160 },
+        deviceId: cameraId ? { exact: cameraId } : undefined
+      }
+
+      this.openScanner()
+
+
+
+
+
     },
     processQrMoz(imgData) {
       const code = jsQR(imgData.data, imgData.width, imgData.height, {
@@ -289,18 +347,21 @@ export default {
       this.toast(this.error, "error");
     },
     openScanner() {
+
       this.isScan = true;
+
+
+
       navigator.mediaDevices
         .getUserMedia({
-          video: {
-            facingMode: "environment",
-            width: { min: 1280, ideal: 1920, max: 3840 },
-            height: { min: 720, ideal: 1080, max: 2160 }
-          }
+          video: this.video,
         })
         .then((stream) => {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
+          const zoomTrackBar = document.getElementById('zoom')
+          
+
           if (track.getCapabilities !== undefined) {
 
 
@@ -341,17 +402,29 @@ export default {
                 })
             }
 
-            if (capabilits.zoom?.step !== undefined) {
-              track.applyConstraints({
-                advanced: [{
-                  zoom: capabilits.zoom.min
-
-                }]
-              })
-                .catch(e => {
-                  console.error(e);
+            const settings=track.getSettings()
+            if('zoom' in settings){
+              zoomTrackBar.style.display='flex'
+              zoomTrackBar.min=capabilits.zoom.min
+              zoomTrackBar.max=capabilits.zoom.max
+              zoomTrackBar.value=capabilits.zoom.min
+              zoomTrackBar.step=capabilits.zoom.step
+              zoomTrackBar.style.width='100%'
+              zoomTrackBar.oninput=(e)=>{
+                track.applyConstraints({
+                  advanced: [{
+                    zoom: e.target.value? e.target.value:1
+                  }]
                 })
+                  .catch(e => {
+                    console.error(e);
+                  })
+              }
+
+            }else{
+              zoomTrackBar.style.display='none'
             }
+            
           }
           if ('ImageCapture' in window) {
             console.log('ImageCapture is supported');
@@ -424,9 +497,11 @@ export default {
 
         })
         .catch((e) => {
-          console.log(e);
-          this.toast(e.message, "error");
+          this.toast(e.name, "error");
+          this.cancelScanner();
         });
+
+
     },
     cancelScanner() {
       this.isScan = false;
@@ -457,13 +532,11 @@ export default {
 };
 </script>
 <style type="text/css" scoped>
-
-
 .scanQR {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
@@ -527,5 +600,19 @@ export default {
     transform: translateY(-75px);
   }
 
+}
+
+
+#cameraOptions {
+  margin-bottom: 5px;
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: 5px;
+  font-size: 14px;
+  color: #495057;
+  background-color: white;
+  background-image: none;
 }
 </style>
