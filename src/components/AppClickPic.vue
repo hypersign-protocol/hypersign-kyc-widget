@@ -1,92 +1,49 @@
 <template>
   <div class="card maincontainer">
-    <load-ing
-      :active.sync="isLoadingPage"
-      :can-cancel="true"
-      :is-full-page="fullPage"
-    ></load-ing>
+    <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <NavBar />
     <div class="card-body">
-      <PageHeading
-        :header="'Liveliness Check'"
-        :subHeader="'Open camera and click your picture'"
-      />
+      <PageHeading :header="'Liveliness Check'" :subHeader="'Open camera and click your picture'" />
       <div class="scanQR web-camera-container">
-        <img
-          src="../assets/selfi.png"
-          width="200"
-          height="200"
-          v-if="!isCameraOpen"
-        />
+        <img src="../assets/selfi.png" width="200" height="200" v-if="!isCameraOpen" />
         <div v-show="isCameraOpen && isLoading" class="camera-loading">
           Waiting for camera...
         </div>
 
-        <div
-          v-if="isCameraOpen"
-          v-show="!isLoading"
-          class="camera-box"
-          :class="{ flash: isShotPhoto }"
-        >
+        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ flash: isShotPhoto }">
           <div class="camera-shutter" :class="{ flash: isShotPhoto }"></div>
 
-          <video
-            v-show="!isPhotoTaken"
-            ref="camera"
-            :width="250"
-            :height="250"
-            autoplay
-          ></video>
+          <video v-show="!isPhotoTaken" ref="camera" :width="250" :height="250" autoplay></video>
 
-          <canvas
-            v-show="isPhotoTaken"
-            id="photoTaken"
-            ref="canvas"
-            :width="250"
-            :height="250"
-          ></canvas>
+          <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="250" :height="250"></canvas>
         </div>
       </div>
 
       <div>
         <div class="" v-if="isCameraOpen && !isLoading">
-          <button
-            type="button"
-            class="btn btn-dark"
-            @click="takePhoto"
-            style="border-radius: 50%"
-          >
+          <button type="button" class="btn btn-dark" @click="takePhoto" style="border-radius: 50%">
             <i class="bi bi-camera" style="color: white; font-size: 26px"></i>
           </button>
         </div>
 
         <div style="padding: 10px">
-          <button
-            class="btn btn-outline-dark"
-            @click="submit()"
-            v-if="isPhotoTaken && isCameraOpen"
-          >
+          <button class="btn btn-outline-dark" @click="submit()" v-if="isPhotoTaken && isCameraOpen">
             Next
           </button>
-          <button
-            type="button"
-            class="btn"
-            :class="{
-              'btn-outline-dark': !isCameraOpen,
-              'btn-link btn-dark': isCameraOpen,
-            }"
-            @click="toggleCamera"
-          >
-            <span v-if="!isCameraOpen"
-              ><i class="bi bi-camera"></i> Open Camera</span
-            >
+          <button type="button" class="btn" :class="{
+            'btn-outline-dark': !isCameraOpen,
+            'btn-link btn-dark': isCameraOpen,
+          }" @click="toggleCamera">
+            <span v-if="!isCameraOpen"><i class="bi bi-camera"></i> Open Camera</span>
             <span v-else>Cancel</span>
           </button>
         </div>
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-    <div class="card-footer"><PoweredBy /></div>
+    <div class="card-footer">
+      <PoweredBy />
+    </div>
   </div>
 </template>
 
@@ -111,11 +68,13 @@ export default {
       toastMessage: "",
       toastType: "success",
       isToast: false,
+      width: 0,
+      height: 0,
     };
   },
   methods: {
     ...mapActions(["addharQRVerify", "verifyImage"]),
-    ...mapMutations(["nextStep"]),
+    ...mapMutations(["nextStep","setImage"]),
     toggleCamera() {
       if (this.isCameraOpen) {
         this.isCameraOpen = false;
@@ -133,7 +92,19 @@ export default {
 
       const constraints = (window.constraints = {
         audio: false,
-        video: true,
+        video: {
+          facingMode: "user",
+          width: {
+            min: 640,
+            ideal: 1280,
+            max: 1920,
+          },
+          height: {
+            min: 480,
+            ideal: 720,
+            max: 1080,
+          }
+        }
       });
 
       navigator.mediaDevices
@@ -141,6 +112,11 @@ export default {
         .then((stream) => {
           this.isLoading = false;
           this.$refs.camera.srcObject = stream;
+
+          const track = stream.getVideoTracks()[0];
+          this.width = track.getSettings().width;
+          this.height = track.getSettings().height;
+
         })
         .catch((error) => {
           console.error(error);
@@ -170,18 +146,29 @@ export default {
       }
 
       this.isPhotoTaken = !this.isPhotoTaken;
-
+      const canvas = this.$refs.canvas;
       const context = this.$refs.canvas.getContext("2d");
-      context.drawImage(this.$refs.camera, 10, 10, 230, 230);
+      const video = this.$refs.camera;
+
+      if (this.isPhotoTaken) {
+        const size = Math.min(this.width, this.height);
+        const x = (this.width - size) / 2;
+        const y = (this.height - size) / 2;
+        context.drawImage(video, x, y, size, size, 5,7, canvas.width-10, canvas.height);
+        const imageData= this.$refs.canvas.toDataURL();
+        this.setImage(imageData);
+
+      }
+
     },
 
     downloadImage() {
-      const download = document.getElementById("downloadPhoto");
-      const canvas = document
-        .getElementById("photoTaken")
-        .toDataURL("image/jpeg")
-        .replace("image/jpeg", "image/octet-stream");
-      download.setAttribute("href", canvas);
+      const link = document.createElement("a");
+      link.download = "photo.png";
+      link.href = this.$refs.canvas.toDataURL();
+      link.click();
+
+
     },
     wait() {
       return new Promise((resolve) => {
@@ -191,20 +178,35 @@ export default {
       });
     },
     async submit() {
+      const that = this
       try {
         this.isLoadingPage = true;
 
-        await this.wait();
+        // await this.wait();
 
-        const result = await this.verifyImage();
+        const result = await this.verifyImage(
+        );
         if (result) {
+        
           this.stopCameraStream();
+          this.isLoadingPage = false;
+          if(result.verified){
+
+            that.toast("Match Found : "+result.verified + "  "+ result.userImageScore +" %")
+          }else{
+            that.toast("Match Not Found : "+result.verified + "  "+ result.userImageScore +" %", "error")
+          }
+
+         await that.wait()
           this.nextStep();
         }
       } catch (e) {
-        console.error(e);
+        
+        this.isLoadingPage = false;
         this.stopCameraStream();
-        this.toast(e.message, "error");
+        this.toast(e, "error");
+        this.toggleCamera()
+
       }
     },
     toast(msg, type = "success") {
@@ -295,9 +297,11 @@ export default {
     0% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.4;
     }
+
     100% {
       opacity: 1;
     }

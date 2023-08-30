@@ -156,8 +156,7 @@ export default {
   components: {
     // QrcodeStream,
   },
- async mounted() {
-    const cameraSelect = document.getElementById('cameraOptions')
+  async mounted() {
     try {
       const permission = await navigator.permissions.query({ name: 'camera' })
       if (permission.state == 'denied') {
@@ -165,25 +164,29 @@ export default {
         return
       }
 
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        this.cameras = devices.filter(device => device.kind === 'videoinput')
+
+        const cameraSelect = document.getElementById('cameraOptions')
+
+        if (this.cameras.length > 1) {
+          this.cameras.forEach(camera => {
+            const option = document.createElement('option')
+            option.value = camera.deviceId
+            option.text = camera.label === '' ? `Camera ${camera.deviceId}` : camera.label
+            option.selected = camera.deviceId === this.cameras[0].deviceId
+            cameraSelect.appendChild(option)
+          })
+        }
+      })
+
+
+
     } catch (error) {
-      this.toast(navigator.userAgent,"success")
+      this.toast(navigator.userAgent, "success")
     }
-     
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-      this.cameras = devices.filter(device => device.kind === 'videoinput')
-
-
-      if (this.cameras.length > 1) {
-        this.cameras.forEach(camera => {
-          const option = document.createElement('option')
-          option.value = camera.deviceId
-          option.text = camera.label === '' ? `Camera ${camera.deviceId}` : camera.label
-          option.selected = camera.deviceId === this.cameras[0].deviceId
-          cameraSelect.appendChild(option)
-        })
-      }
-    })
   },
+
   computed: {
     ...mapState(["aadharData"]),
     isAadhaarQRVerifiedAndDataExtracted() {
@@ -360,7 +363,8 @@ export default {
     async openScanner() {
 
 
-     
+
+      
       this.isScan = true;
 
 
