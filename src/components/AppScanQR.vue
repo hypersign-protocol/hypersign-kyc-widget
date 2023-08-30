@@ -7,7 +7,10 @@
       <PageHeading :header="'Aadhar Verification'" :subHeader="subheading" />
 
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
-        <input type="range" style="display: none;" id="zoom">
+        <label class="switch">
+          <input type="checkbox" id="torch" ref="torch">
+          <span class="slider round"></span>
+        </label>
 
         <div class="scanQR">
           <!-- <qrcode-stream
@@ -151,6 +154,7 @@ export default {
       isQRVerfied: false,
       interval: null,
       stream: null,
+      torch: false
     };
   },
   components: {
@@ -232,6 +236,7 @@ export default {
 
 
     },
+   
     processQrMoz(imgData) {
       const code = jsQR(imgData.data, imgData.width, imgData.height, {
         inversionAttempts: "attemptBoth",
@@ -364,7 +369,7 @@ export default {
 
 
 
-      
+
       this.isScan = true;
 
 
@@ -375,13 +380,14 @@ export default {
         .then((stream) => {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
-          const zoomTrackBar = document.getElementById('zoom')
 
 
           if (track.getCapabilities !== undefined) {
 
 
             const capabilits = track.getCapabilities();
+
+
             // check autofocus
             if (capabilits.focusMode?.includes('continuous')) {
               track.applyConstraints({
@@ -418,29 +424,40 @@ export default {
                 })
             }
 
-            const settings = track.getSettings()
-            if ('zoom' in settings) {
-              zoomTrackBar.style.display = 'flex'
-              zoomTrackBar.min = capabilits.zoom.min
-              zoomTrackBar.max = capabilits.zoom.max
-              zoomTrackBar.value = capabilits.zoom.min
-              zoomTrackBar.step = capabilits.zoom.step
-              zoomTrackBar.style.width = '100%'
-              zoomTrackBar.oninput = (e) => {
+            if (capabilits.torch) {
+              document.getElementsByClassName('switch')[0].style.display = 'inline-block'
+              this.$refs.torch.addEventListener('change', (e)=>{
                 track.applyConstraints({
-                  advanced: [{
-                    zoom: e.target.value ? e.target.value : 1
-                  }]
-                })
-                  .catch(e => {
-                    console.error(e);
-                  })
-              }
+                advanced: [{
+                  torch: e.target.checked
 
-            } else {
-              zoomTrackBar.style.display = 'none'
-              this.toast('Zoom not supported', 'error')
+                }]
+              })
+                .catch(e => {
+                  console.error(e);
+                })
+              })
+              
+
+
+             
+
+
+
+
+
+
+
+
+
             }
+            else {
+              this.toast('Torch is not supported', 'error')
+              document.getElementsByClassName('switch')[0].style.display = 'none'
+
+            }
+
+
 
           }
           if ('ImageCapture' in window) {
@@ -631,5 +648,66 @@ export default {
   color: #495057;
   background-color: white;
   background-image: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 22px;
+  padding: 5px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #2196F3;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
