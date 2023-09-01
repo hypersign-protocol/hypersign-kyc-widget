@@ -110,7 +110,8 @@ export default new Vuex.Store({
                         Authorization: state.authorization,
                     },
                     body: JSON.stringify({
-                        qrString: state.qrString
+                        qrString:  state.qrString
+
                     })
                 }).then(resp => {
                     return resp.json()
