@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { KAVACH_SERVER_BASE_URL,ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../config'
+import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../config'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -9,7 +9,7 @@ export default new Vuex.Store({
         phoneNumber: "",
         finalResult: {},
         aadharData: {},
-        authorization:null,
+        authorization: null,
         steps: [
             {
                 id: 0,
@@ -72,7 +72,7 @@ export default new Vuex.Store({
             state.steps[activeStep.id].isActive = false;
             state.steps[previousStepId].isActive = true;
         },
-        setAuthorization:(state,authorization)=>{
+        setAuthorization: (state, authorization) => {
             state.authorization = authorization
             localStorage.setItem('authorization', authorization)
 
@@ -111,6 +111,7 @@ export default new Vuex.Store({
                     },
                     body: JSON.stringify({
                         qrString:  state.qrString
+
                     })
                 }).then(resp => {
                     return resp.json()
@@ -118,8 +119,6 @@ export default new Vuex.Store({
                     if (json.statusCode == 400) {
                         throw new Error('Bad Request ' + json.message.toString())
                     }
-
-                    
                     resolve(json)
                 }).catch(e => {
                     reject(e.message)
@@ -130,35 +129,35 @@ export default new Vuex.Store({
             commit
         }) => {
             return new Promise((resolve, reject) => {
-               
-                    const url = ENTITY_API_BASE_URL + '/api/v1/app/oauth'
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Api-Secret-Key':ENTITY_APP_SERCRET
-                        },
-                        body:undefined
-                    }).then(resp => {
-                        return resp.json()
-                    }).then(json => {
-                        if (json.statusCode == 400) {
-                            throw new Error('Bad Request ' + json.message.toString())
-                        }
-                        commit('setAuthorization', 'Bearer '+json.access_token)
-                        resolve()
-                    }).catch(e => {
-                        reject(e.message)
-                        localStorage.removeItem('authorization')
-                    })
-                
 
-                }
+                const url = ENTITY_API_BASE_URL + '/api/v1/app/oauth'
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Api-Secret-Key': ENTITY_APP_SERCRET
+                    },
+                    body: undefined
+                }).then(resp => {
+                    return resp.json()
+                }).then(json => {
+                    if (json.statusCode == 400) {
+                        throw new Error('Bad Request ' + json.message.toString())
+                    }
+                    commit('setAuthorization', 'Bearer ' + json.access_token)
+                    resolve()
+                }).catch(e => {
+                    reject(e.message)
+                    localStorage.removeItem('authorization')
+                })
+
+
+            }
 
             )
         },
         setSession: ({
-                    state
+            state
 
         }) => {
             return new Promise((resolve, reject) => {
@@ -167,17 +166,17 @@ export default new Vuex.Store({
                 fetch(url, {
                     method: 'POST',
                     credentials: 'include',
-            
+
                     headers: {
                         'content-type': 'application/json',
                         Authorization: state.authorization,
-                        
+
                     },
                     body: undefined
                 }).then(resp => {
                     return resp.json()
                 }).then(json => {
-                    
+
                     if (json.statusCode == 400) {
                         throw new Error('Bad Request ' + json.message.toString())
                     }
@@ -216,7 +215,7 @@ export default new Vuex.Store({
             })
         },
 
-        verifyImage: ({state}) => {
+        verifyImage: ({ state }) => {
             return new Promise((resolve, reject) => {
                 console.log('Inside verifyImage')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
@@ -244,14 +243,14 @@ export default new Vuex.Store({
             })
         },
 
-        getFinalResult: ({state}) => {
+        getFinalResult: ({ state }) => {
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',
                     credentials: 'include',
-                    headers:{
+                    headers: {
                         Authorization: state.authorization,
                         'content-type': 'application/json',
 
