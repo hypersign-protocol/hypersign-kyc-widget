@@ -1,13 +1,17 @@
 <template>
   <div class="card maincontainer">
-    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+    <load-ing
+      :active.sync="isLoading"
+      :can-cancel="true"
+      :is-full-page="fullPage"
+    ></load-ing>
     <NavBar />
 
     <div class="card-body">
-      <PageHeading :header="'Aadhar Verification'" :subHeader="subheading" />
+      <PageHeading :header="'Aadhaar Verification'" :subHeader="subheading" />
 
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
-        <input type="range" style="display: none;" id="zoom">
+        <input type="range" style="display: none" id="zoom" />
 
         <div class="scanQR">
           <!-- <qrcode-stream
@@ -19,59 +23,58 @@
           >
           </qrcode-stream> -->
 
-
-
           <div id="qr-camera">
-
-
-            <video id="camera-preview" refs="scanner" autoplay playsinline v-if="isScan">
-
-
+            <video
+              id="camera-preview"
+              refs="scanner"
+              autoplay
+              playsinline
+              v-if="isScan"
+            >
               <span v-if="loading"> waiting for camera</span>
-
             </video>
-            <i v-else class="bi bi-qr-code-scan" style="font-size: 200px; color: rgb(59, 58, 58)"></i>
-
-
+            <i
+              v-else
+              class="bi bi-qr-code-scan"
+              style="font-size: 200px; color: rgb(59, 58, 58)"
+            ></i>
 
             <div id="qr-overlay" v-if="isScan">
-
               <div id="qr-scan-box"></div>
 
               <div id="qr-scan-line"></div>
-
             </div>
-
           </div>
-
-
-
         </div>
         <div style="padding: 10px">
-
           <select id="cameraOptions" @change="selectionChange">
             <option value="null" selected>Select Camera</option>
           </select>
-          <br>
+          <br />
 
-
-          <button class="btn btn-outline-dark" @click="openScanner" v-if="!isScan">
+          <button
+            class="btn btn-outline-dark"
+            @click="openScanner"
+            v-if="!isScan"
+          >
             <i class="bi bi-camera"></i> Scan
           </button>
           <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
             Cancel
           </button>
-
-
-
         </div>
       </div>
       <div v-else class="table-responsive-sm" id="aadharDataDisplay">
+        <img
+          src="../assets/aadhaar-logo.png"
+          height="40"
+          style="opacity: 15%"
+        />
 
-        <img src="../assets/aadhaar-logo.png" height="40" style="opacity: 15%; " />
-
-        <table class="table" style="text-align: left; font-size: x-small; padding-top: 10px">
-
+        <table
+          class="table"
+          style="text-align: left; font-size: x-small; padding-top: 10px"
+        >
           <tbody>
             <!-- <tr>
               <th rowspan="5">
@@ -82,10 +85,8 @@
               <th scope="row">Name</th>
               <th colspan="2">{{ aadharData.name }}</th>
               <td rowspan="2" style="text-align: center">
-
                 <!-- {{ aadharData.jpegImage }} -->
                 <img :src="aadharData.jpegImage" height="45" />
-
               </td>
             </tr>
             <tr>
@@ -114,14 +115,12 @@
           </button>
           <button class="btn btn-link btn-dark" @click="reset()">Cancel</button>
         </div>
-
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     <div class="card-footer">
       <PoweredBy />
     </div>
-
   </div>
 </template>
 
@@ -136,7 +135,7 @@ export default {
     return {
       video: {
         width: { min: 1280, ideal: 1920, max: 3840 },
-        height: { min: 720, ideal: 1080, max: 2160 }
+        height: { min: 720, ideal: 1080, max: 2160 },
       },
       cameras: [],
       qrData: "",
@@ -158,32 +157,30 @@ export default {
   },
   async mounted() {
     try {
-      const permission = await navigator.permissions.query({ name: 'camera' })
-      if (permission.state == 'denied') {
-        this.toast('Please allow camera permission', 'error')
-        return
+      const permission = await navigator.permissions.query({ name: "camera" });
+      if (permission.state == "denied") {
+        this.toast("Please allow camera permission", "error");
+        return;
       }
 
-      navigator.mediaDevices.enumerateDevices().then(devices => {
-        this.cameras = devices.filter(device => device.kind === 'videoinput')
+      navigator.mediaDevices.enumerateDevices().then((devices) => {
+        this.cameras = devices.filter((device) => device.kind === "videoinput");
 
-        const cameraSelect = document.getElementById('cameraOptions')
+        const cameraSelect = document.getElementById("cameraOptions");
 
         if (this.cameras.length > 1) {
-          this.cameras.forEach(camera => {
-            const option = document.createElement('option')
-            option.value = camera.deviceId
-            option.text = camera.label === '' ? `Camera ${camera.deviceId}` : camera.label
-            option.selected = camera.deviceId === this.cameras[0].deviceId
-            cameraSelect.appendChild(option)
-          })
+          this.cameras.forEach((camera) => {
+            const option = document.createElement("option");
+            option.value = camera.deviceId;
+            option.text =
+              camera.label === "" ? `Camera ${camera.deviceId}` : camera.label;
+            option.selected = camera.deviceId === this.cameras[0].deviceId;
+            cameraSelect.appendChild(option);
+          });
         }
-      })
-
-
-
+      });
     } catch (error) {
-      this.toast(navigator.userAgent, "success")
+      this.toast(navigator.userAgent, "success");
     }
   },
 
@@ -216,21 +213,16 @@ export default {
       });
     },
     selectionChange(e) {
-      this.cancelScanner()
-      const cameraId = e.target.value
+      this.cancelScanner();
+      const cameraId = e.target.value;
 
       this.video = {
         width: { min: 1280, ideal: 1920, max: 3840 },
         height: { min: 720, ideal: 1080, max: 2160 },
-        deviceId: cameraId ? { exact: cameraId } : undefined
-      }
+        deviceId: cameraId ? { exact: cameraId } : undefined,
+      };
 
-      this.openScanner()
-
-
-
-
-
+      this.openScanner();
     },
     processQrMoz(imgData) {
       const code = jsQR(imgData.data, imgData.width, imgData.height, {
@@ -241,23 +233,36 @@ export default {
         this.cancelScanner();
         this.onDetect({ content: code.data });
       }
-
     },
     processQr(imageCapture, xOffset, yOffset, newSize) {
-
-      imageCapture.grabFrame()
-        .then(imageBitmap => {
-
-          const canvas = document.createElement('canvas');
+      imageCapture
+        .grabFrame()
+        .then((imageBitmap) => {
+          const canvas = document.createElement("canvas");
           canvas.width = imageBitmap.width;
           canvas.height = imageBitmap.height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           // ctx.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
           // const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height, xOffset, yOffset, newSize, newSize);
           // ctx2.putImageData(imageData, 0, 0);
 
-          ctx.drawImage(imageBitmap, xOffset, yOffset, newSize, newSize, xOffset, yOffset, newSize, newSize);
-          const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+          ctx.drawImage(
+            imageBitmap,
+            xOffset,
+            yOffset,
+            newSize,
+            newSize,
+            xOffset,
+            yOffset,
+            newSize,
+            newSize
+          );
+          const imageData = ctx.getImageData(
+            0,
+            0,
+            imageBitmap.width,
+            imageBitmap.height
+          );
           const code = jsQR(imageData.data, imageData.width, imageData.height, {
             inversionAttempts: "attemptBoth",
           });
@@ -268,12 +273,10 @@ export default {
           }
         })
         /* eslint-disable-next-line */
-        .catch(e => {
+        .catch((e) => {
           // console.error(e);
-        }
-        )
-    }
-    ,
+        });
+    },
     async onDetect(promise) {
       try {
         const { content } = await promise;
@@ -296,7 +299,6 @@ export default {
             // Moving to next step...
             // this.nextStep();
           } else {
-
             throw new Error("Invalid QR Code");
           }
           this.isLoading = false;
@@ -361,12 +363,7 @@ export default {
       this.toast(this.error, "error");
     },
     async openScanner() {
-
-
-
-      
       this.isScan = true;
-
 
       navigator.mediaDevices
         .getUserMedia({
@@ -375,150 +372,138 @@ export default {
         .then((stream) => {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
-          const zoomTrackBar = document.getElementById('zoom')
-
+          const zoomTrackBar = document.getElementById("zoom");
 
           if (track.getCapabilities !== undefined) {
-
-
             const capabilits = track.getCapabilities();
             // check autofocus
-            if (capabilits.focusMode?.includes('continuous')) {
-              track.applyConstraints({
-                advanced: [{
-                  focusMode: 'continuous'
-
-                }]
-              })
-                .catch(e => {
-                  console.error(e);
+            if (capabilits.focusMode?.includes("continuous")) {
+              track
+                .applyConstraints({
+                  advanced: [
+                    {
+                      focusMode: "continuous",
+                    },
+                  ],
                 })
+                .catch((e) => {
+                  console.error(e);
+                });
             }
-            if (capabilits.exposureMode?.includes('continuous')) {
-              track.applyConstraints({
-                advanced: [{
-                  exposureMode: 'continuous'
-
-                }]
-              })
-                .catch(e => {
-                  console.error(e);
+            if (capabilits.exposureMode?.includes("continuous")) {
+              track
+                .applyConstraints({
+                  advanced: [
+                    {
+                      exposureMode: "continuous",
+                    },
+                  ],
                 })
-            }
-
-            if (capabilits.whiteBalanceMode?.includes('continuous')) {
-              track.applyConstraints({
-                advanced: [{
-                  whiteBalanceMode: 'continuous'
-
-                }]
-              })
-                .catch(e => {
+                .catch((e) => {
                   console.error(e);
-                })
+                });
             }
 
-            const settings = track.getSettings()
-            if ('zoom' in settings) {
-              zoomTrackBar.style.display = 'flex'
-              zoomTrackBar.min = capabilits.zoom.min
-              zoomTrackBar.max = capabilits.zoom.max
-              zoomTrackBar.value = capabilits.zoom.min
-              zoomTrackBar.step = capabilits.zoom.step
-              zoomTrackBar.style.width = '100%'
+            if (capabilits.whiteBalanceMode?.includes("continuous")) {
+              track
+                .applyConstraints({
+                  advanced: [
+                    {
+                      whiteBalanceMode: "continuous",
+                    },
+                  ],
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
+            }
+
+            const settings = track.getSettings();
+            if ("zoom" in settings) {
+              zoomTrackBar.style.display = "flex";
+              zoomTrackBar.min = capabilits.zoom.min;
+              zoomTrackBar.max = capabilits.zoom.max;
+              zoomTrackBar.value = capabilits.zoom.min;
+              zoomTrackBar.step = capabilits.zoom.step;
+              zoomTrackBar.style.width = "100%";
               zoomTrackBar.oninput = (e) => {
-                track.applyConstraints({
-                  advanced: [{
-                    zoom: e.target.value ? e.target.value : 1
-                  }]
-                })
-                  .catch(e => {
-                    console.error(e);
+                track
+                  .applyConstraints({
+                    advanced: [
+                      {
+                        zoom: e.target.value ? e.target.value : 1,
+                      },
+                    ],
                   })
-              }
-
+                  .catch((e) => {
+                    console.error(e);
+                  });
+              };
             } else {
-              zoomTrackBar.style.display = 'none'
-              this.toast('Zoom not supported', 'error')
+              zoomTrackBar.style.display = "none";
+              this.toast("Zoom not supported", "error");
             }
-
           }
-          if ('ImageCapture' in window) {
-            console.log('ImageCapture is supported');
+          if ("ImageCapture" in window) {
+            console.log("ImageCapture is supported");
             const imageCapture = new ImageCapture(track);
 
             const width = track.getSettings().width;
             const height = track.getSettings().height;
-            const newSize = Math.min(width, height)
-            const xOffset = (width - newSize) / 2
-            const yOffset = (height - newSize) / 2
-
+            const newSize = Math.min(width, height);
+            const xOffset = (width - newSize) / 2;
+            const yOffset = (height - newSize) / 2;
 
             this.interval = setInterval(() => {
-
-              this.processQr(imageCapture, xOffset, yOffset, newSize)
-
-
-            }, 0)
+              this.processQr(imageCapture, xOffset, yOffset, newSize);
+            }, 0);
           } else {
             // Mozilla doesn't support ImageCapture but we can use canvas to capture image
 
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
 
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
             const width = track.getSettings().width;
             const height = track.getSettings().height;
-            canvas.width = width
-            canvas.height = height
+            canvas.width = width;
+            canvas.height = height;
 
-
-            const newSize = Math.min(width, height)
-            const xOffset = (width - newSize) / 2
-            const yOffset = (height - newSize) / 2
-
-
+            const newSize = Math.min(width, height);
+            const xOffset = (width - newSize) / 2;
+            const yOffset = (height - newSize) / 2;
 
             this.interval = setInterval(() => {
-
-
               ctx.drawImage(video, 0, 0, width, height);
 
+              const imageData = ctx.getImageData(
+                xOffset,
+                yOffset,
+                newSize,
+                newSize,
+                xOffset,
+                yOffset,
+                newSize,
+                newSize
+              );
 
-
-
-              const imageData = ctx.getImageData(xOffset, yOffset, newSize, newSize, xOffset, yOffset, newSize, newSize);
-
-
-
-
-
-              this.processQrMoz(imageData)
-            }, 0)
-
-
-
-
+              this.processQrMoz(imageData);
+            }, 0);
           }
-
-
 
           const video = document.getElementById("camera-preview");
 
           if (video.srcObject !== undefined) {
-            video.srcObject = stream
+            video.srcObject = stream;
           } else if (video.mozSrcObject !== undefined) {
-            video.mozSrcObject = stream
+            video.mozSrcObject = stream;
           }
 
           video.play();
-
         })
         .catch((e) => {
           this.toast(e.name, "error");
           this.cancelScanner();
         });
-
-
     },
     cancelScanner() {
       this.isScan = false;
@@ -593,9 +578,7 @@ export default {
   height: 50%;
   position: absolute;
   background: rgba(255, 255, 255, 0.2);
-
 }
-
 
 #qr-scan-line {
   width: 50%;
@@ -616,9 +599,7 @@ export default {
   100% {
     transform: translateY(-75px);
   }
-
 }
-
 
 #cameraOptions {
   margin-bottom: 5px;

@@ -132,10 +132,10 @@ export default {
         // TODO: go for verification
         const result = await this.getFinalResult();
         await this.wait(2000);
-        if (result) {
-          this.setFinalResult(result);
+        if (result && result.credentialSubject) {
+          this.setFinalResult(result.credentialSubject);
           this.isLoadingPage = false;
-          if (result.verified === true) {
+          if (result.credentialSubject.verified === true) {
             this.nextStep(4);
           } else {
             this.nextStep(5);
