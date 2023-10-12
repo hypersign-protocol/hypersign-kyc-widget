@@ -86,7 +86,8 @@ export default {
   },
   computed: {
     shortenMesssage() {
-      return this.msg.length > 40 ? this.msg.subStr(0, 40) : this.msg;
+      console.log(this.msg);
+      return this.msg.length > 40 ? this.msg.substr(0, 40) : this.msg;
     },
   },
   created() {
