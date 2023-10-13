@@ -31,6 +31,12 @@ const router = new Router({
             component: () =>
                 import( /* webpackChunkName: "adminLogin" */ "./day-pass/day-pass-form.vue"),
         },
+        {
+            path: "/day-pass-verify",
+            name: "kyc",
+            component: () =>
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/verify-day-pass.vue"),
+        },
     ]
 });
 
