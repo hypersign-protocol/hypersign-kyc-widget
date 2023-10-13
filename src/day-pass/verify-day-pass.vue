@@ -45,19 +45,27 @@
         </div>
       </div>
       <div style="padding: 10px">
-        <select id="cameraOptions" @change="selectionChange">
+        <!-- <select id="cameraOptions"  @change="selectionChange"> -->
+        <select id="cameraOptions"  >
+
           <option value="null" selected>Select Camera</option>
         </select>
         <br />
 
-        <button
+        <!-- <button
           class="btn btn-outline-dark"
           @click="openScanner"
+          v-if="!isScan"
+        > -->
+        <button
+          class="btn btn-outline-dark"
           v-if="!isScan"
         >
           <i class="bi bi-camera"></i> Scan
         </button>
-        <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
+        <!-- <button class="btn btn-link btn-dark" @click="cancelScanner" v-else> -->
+
+        <button class="btn btn-link btn-dark" v-else>
           Cancel
         </button>
       </div>
@@ -511,6 +519,7 @@ export default {
         this.$refs.uploadBtn.style.color = "green";
         this.$refs.uploadBtn.style.borderColor = "green";
         this.getDailyPassFromUser = false;
+        this.$refs.uploadBtn.style.display = "none";
       }
     },
   },

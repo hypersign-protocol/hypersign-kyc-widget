@@ -183,7 +183,7 @@ export default {
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
-        "https://192.168.29.209:8080/kyc",
+        `https://${window.location.host}/kyc`,
         "mozillaWindow",
         windowFeatures
       );
@@ -197,7 +197,7 @@ export default {
     openPaymentGatewayPopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
-        "https://192.168.29.209:8080/pay",
+        `https://${window.location.host}/pay`,
         "mozillaWindow",
         windowFeatures
       );
