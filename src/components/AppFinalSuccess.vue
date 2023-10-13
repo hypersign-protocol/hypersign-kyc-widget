@@ -22,13 +22,14 @@ export default {
     PoweredBy,
     VerificationDetails,
   },
+  mounted() {
+    window.addEventListener("beforeunload", () => {
+      window.opener.postMessage("popup-closed", "*");
+    });
+  },
 };
 </script>
 <style type="text/css" scoped>
-.final-msg-icon {
-  font-size: 150px;
-}
-
 .success {
   color: green;
 }

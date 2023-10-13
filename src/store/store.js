@@ -94,6 +94,7 @@ export default new Vuex.Store({
         },
 
         setAadhaarData: (state, aadharData) => {
+            localStorage.setItem("aadharData", JSON.stringify(aadharData));
             state.aadharData = { ...aadharData };
         }
     },
@@ -102,6 +103,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/qr/verify'
+
+                if (!(state && state.authorization)) {
+                    state.authorization = localStorage.getItem('authorization');
+                }
                 fetch(url, {
                     method: 'POST',
                     credentials: 'include',

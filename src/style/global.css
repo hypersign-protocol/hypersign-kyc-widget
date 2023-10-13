@@ -18,3 +18,15 @@ body{
 h1{
     font-size: revert;
 }
+
+.center {
+    margin: auto;
+    width: 70%;
+    padding: 0px;
+}
+
+.final-msg-icon {
+    font-size: 150px;
+  }
+
+  

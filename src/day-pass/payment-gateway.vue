@@ -1,33 +1,23 @@
 <template>
-  <div class="card" style="text-align: left; padding: 10px">
+  <div class="card maincontainer" style="text-align: left; padding: 10px">
+    <load-ing
+      :active.sync="isLoadingPage"
+      :can-cancel="true"
+      :is-full-page="true"
+    ></load-ing>
     <div class="mb-3">
-      <label for="basic-url" class="form-label">Choose Payment Option</label>
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="exampleRadios"
-          id="exampleRadios1"
-          value="option1"
-        />
-        <label class="form-check-label" for="exampleRadios1"> Razor Pay </label>
-      </div>
-      <div>
-        <div>
-          <div>Scan the QR code to pay via UPI</div>
-          <div>Once payment is done, press Submit</div>
-          <i class="bi bi-qr-code" style="font-size: 200px"></i>
+      <div v-if="!hasPaid" class="center" style="text-align: center">
+        <div style="text-align: center">
+          Scan the QR code to pay throug your UPI app. Once payment is done,
+          press Submit
         </div>
-        <div>
-          <button class="btn btn-primary">Submit</button>
-        </div>
+        <i class="bi bi-qr-code" style="font-size: 200px"></i>
+        <button class="btn btn-primary" @click="pay()">Submit</button>
       </div>
-
-      <div>
+      <div v-else class="center" style="text-align: center">
         <i class="bi bi-check-circle-fill" style="font-size: 200px"></i>
-        <label style=""
-          >Congratulation, your Day Pass is generated successfully!</label
-        >
+        <!-- <i class="bi bi-check-circle final-msg-icon success"></i> -->
+        <div style="text-align: center">You payment was successfully!</div>
       </div>
     </div>
   </div>
@@ -37,9 +27,33 @@
 // import { HypersignDID } from "hs-ssi-sdk";
 
 export default {
+  data() {
+    return {
+      hasPaid: false,
+      isLoadingPage: false,
+    };
+  },
+  mounted() {
+    window.addEventListener("beforeunload", () => {
+      window.opener.postMessage("pay-popup-closed", "*");
+    });
+  },
   methods: {
     initiateHypersignSDK() {
       //   const hypersignDID = new HypersignDID({ namespace: "testnet" });
+    },
+    wait() {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          resolve();
+        }, 3000);
+      });
+    },
+    async pay() {
+      this.isLoadingPage = true;
+      await this.wait();
+      this.hasPaid = true;
+      this.isLoadingPage = false;
     },
   },
 };

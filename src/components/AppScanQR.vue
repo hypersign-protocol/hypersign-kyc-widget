@@ -146,6 +146,15 @@ export default {
     }
   },
 
+  // watch: {
+  //   aadharData: function () {
+  //     console.log("watching...");
+  //     window.localstorage.setItem(
+  //       "aadharData",
+  //       JSON.stringify(this.aadharData)
+  //     );
+  //   },
+  // },
   computed: {
     ...mapState(["aadharData"]),
     isAadhaarQRVerifiedAndDataExtracted() {
@@ -257,6 +266,7 @@ export default {
             if (result.aadharData) {
               console.log("Setting aadhaar data in localstorage...");
               this.setAadhaarData(result.aadharData);
+
               // generateImageFromJ2k(result.j2kImage); // TODO: need to figure out how to show image
             }
             // Moving to next step...

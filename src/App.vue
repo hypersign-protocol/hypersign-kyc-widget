@@ -1,18 +1,19 @@
 <template>
   <div id="app">
     <!-- <NavBar /> -->
-    <MainPage />
+    <!-- <MainPage /> -->
+    <router-view />
   </div>
 </template>
 
 <script>
-import MainPage from "./day-pass/day-pass.vue";
+// import MainPage from "./day-pass/day-pass.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "App",
   components: {
-    MainPage,
+    // MainPage,
   },
   methods: {
     ...mapActions(["setSession", "setJWT"]),

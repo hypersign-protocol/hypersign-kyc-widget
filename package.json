@@ -9,7 +9,7 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
-    "hs-ssi-sdk": "https://github.com/hypersign-protocol/hid-ssi-js-sdk#recent_development",
+    "vue-router": "^3.0.1",
     "@bachdgvn/vue-otp-input": "^1.0.8",
     "@coreui/vue": "^4.10.1",
     "bootstrap": "^5.3.1",
