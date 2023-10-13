@@ -2,7 +2,7 @@
   <div>
     <div id="dayPass-id">
       <div class="row">
-        <div class="col-md-12 center" style="text-align: center">
+        <div class="col-md-12">
           <i
             class="bi bi-check-circle-fill"
             style="font-size: 50px; color: green"
