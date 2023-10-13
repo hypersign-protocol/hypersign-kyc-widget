@@ -12,10 +12,9 @@
 
       <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
         <label class="switch">
-          <input type="checkbox" id="torch" ref="torch">
+          <input type="checkbox" id="torch" ref="torch" />
           <span class="slider round"></span>
         </label>
-
 
         <div class="scanQR">
           <!-- <qrcode-stream
@@ -69,50 +68,7 @@
         </div>
       </div>
       <div v-else class="table-responsive-sm" id="aadharDataDisplay">
-        <img
-          src="../assets/aadhaar-logo.png"
-          height="40"
-          style="opacity: 15%"
-        />
-
-        <table
-          class="table"
-          style="text-align: left; font-size: x-small; padding-top: 10px"
-        >
-          <tbody>
-            <!-- <tr>
-              <th rowspan="5">
-                <i class="bi bi-person-fill"></i>
-              </th>
-            </tr> -->
-            <tr>
-              <th scope="row">Name</th>
-              <th colspan="2">{{ aadharData.name }}</th>
-              <td rowspan="2" style="text-align: center">
-                <!-- {{ aadharData.jpegImage }} -->
-                <img :src="aadharData.jpegImage" height="45" />
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">DOB</th>
-              <td colspan="3">{{ aadharData.dob }}</td>
-              <!--<td></td>-->
-            </tr>
-            <tr>
-              <th scope="row">Gender</th>
-              <td colspan="3">{{ aadharData.gender }}</td>
-              <!--<td></td>-->
-            </tr>
-            <tr>
-              <th scope="row">Address</th>
-              <td colspan="3">
-                {{ aadharData.house }} {{ aadharData.location }}
-                {{ aadharData.state }} - {{ aadharData.pincode }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
+        <aadhaar-consent></aadhaar-consent>
         <div style="padding: 20px">
           <button class="btn btn-outline-dark" @click="proceedNext()">
             Confirm
@@ -130,6 +86,7 @@
 
 <script type="text/javascript">
 import jsQR from "jsqr";
+import AadhaarConsent from "./AadhaarConsent.vue";
 // import { QrcodeStream } from "vue-qrcode-reader";
 import { mapActions, mapMutations, mapState } from "vuex";
 // import { generateImageFromJ2k } from "../j2k";
@@ -154,11 +111,11 @@ export default {
       isQRVerfied: false,
       interval: null,
       stream: null,
-      torch: false
+      torch: false,
     };
   },
   components: {
-    // QrcodeStream,
+    AadhaarConsent,
   },
   async mounted() {
     try {
@@ -229,7 +186,7 @@ export default {
 
       this.openScanner();
     },
-   
+
     processQrMoz(imgData) {
       const code = jsQR(imgData.data, imgData.width, imgData.height, {
         inversionAttempts: "attemptBoth",
@@ -369,7 +326,6 @@ export default {
       this.toast(this.error, "error");
     },
     async openScanner() {
-
       this.isScan = true;
 
       navigator.mediaDevices
@@ -380,11 +336,8 @@ export default {
           this.stream = stream;
           const track = this.stream.getVideoTracks()[0];
 
-
-
           if (track.getCapabilities !== undefined) {
             const capabilits = track.getCapabilities();
-
 
             // check autofocus
             if (capabilits.focusMode?.includes("continuous")) {
@@ -429,40 +382,26 @@ export default {
             }
 
             if (capabilits.torch) {
-              document.getElementsByClassName('switch')[0].style.display = 'inline-block'
-              this.$refs.torch.addEventListener('change', (e)=>{
-                track.applyConstraints({
-                advanced: [{
-                  torch: e.target.checked
-
-                }]
-              })
-                .catch(e => {
-                  console.error(e);
-                })
-              })
-              
-
-
-             
-
-
-
-
-
-
-
-
-
+              document.getElementsByClassName("switch")[0].style.display =
+                "inline-block";
+              this.$refs.torch.addEventListener("change", (e) => {
+                track
+                  .applyConstraints({
+                    advanced: [
+                      {
+                        torch: e.target.checked,
+                      },
+                    ],
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                  });
+              });
+            } else {
+              this.toast("Torch is not supported", "error");
+              document.getElementsByClassName("switch")[0].style.display =
+                "none";
             }
-            else {
-              this.toast('Torch is not supported', 'error')
-              document.getElementsByClassName('switch')[0].style.display = 'none'
-
-            }
-
-
-
           }
           if ("ImageCapture" in window) {
             console.log("ImageCapture is supported");
@@ -656,8 +595,8 @@ export default {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -668,19 +607,19 @@ export default {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
-input:checked+.slider {
-  background-color: #2196F3;
+input:checked + .slider {
+  background-color: #2196f3;
 }
 
-input:focus+.slider {
-  box-shadow: 0 0 1px #2196F3;
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);

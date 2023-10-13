@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import MainPage from "./components/MainPage.vue";
+import MainPage from "./day-pass/day-pass.vue";
 import { mapActions } from "vuex";
 
 export default {
@@ -15,10 +15,10 @@ export default {
     MainPage,
   },
   methods: {
-    ...mapActions(["setSession","setJWT"]),
+    ...mapActions(["setSession", "setJWT"]),
   },
   async created() {
-   await this.setJWT()
+    await this.setJWT();
     await this.setSession();
   },
 };

@@ -57,7 +57,7 @@
     </div>
   </div>
   <div v-else>
-    <span>No stats found to displayed</span>
+    <!-- <span>No stats found to displayed</span> -->
   </div>
 </template>
 

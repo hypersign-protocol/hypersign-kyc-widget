@@ -98,6 +98,9 @@ import { mapActions, mapMutations } from "vuex";
 
 export default {
   name: "AppClickPic",
+  // props: {
+  //   jumpStep: Number | null,
+  // },
   components: {
     PoweredBy,
   },
@@ -198,7 +201,17 @@ export default {
         const size = Math.min(this.width, this.height);
         const x = (this.width - size) / 2;
         const y = (this.height - size) / 2;
-        context.drawImage(video, x, y, size, size, 5, 7, canvas.width - 10, canvas.height);
+        context.drawImage(
+          video,
+          x,
+          y,
+          size,
+          size,
+          5,
+          7,
+          canvas.width - 10,
+          canvas.height
+        );
 
         const imageData = this.$refs.canvas.toDataURL();
         this.setImage(imageData);
@@ -227,29 +240,36 @@ export default {
 
         const result = await this.verifyImage();
         if (result) {
-
           this.stopCameraStream();
           this.isLoadingPage = false;
           if (result.verified) {
-
-            that.toast("Match Found : " + result.verified + "  " + result.userImageScore + " %")
-            await that.wait()
+            that.toast(
+              "Match Found : " +
+                result.verified +
+                "  " +
+                result.userImageScore +
+                " %"
+            );
+            await that.wait();
             this.isLoadingPage = false;
 
-            this.nextStep();
+            this.nextStep(4);
           } else {
-            that.toast("Match Not Found : " + result.verified + "  " + result.userImageScore + " %", "error")
+            that.toast(
+              "Match Not Found : " +
+                result.verified +
+                "  " +
+                result.userImageScore +
+                " %",
+              "error"
+            );
 
-            await that.wait()
+            await that.wait();
             this.isLoadingPage = false;
-            this.toggleCamera()
+            this.toggleCamera();
           }
-
-
         }
       } catch (e) {
-
-
         this.isLoadingPage = false;
         this.stopCameraStream();
         this.toast(e, "error");

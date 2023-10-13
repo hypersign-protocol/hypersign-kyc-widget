@@ -5,7 +5,7 @@
       <p>
         <i class="bi bi-check-circle final-msg-icon success"></i>
       </p>
-      <h5 class="">Verified Successfully!</h5>
+      <h5 class="">You ID is verified!</h5>
 
       <VerificationDetails />
     </div>

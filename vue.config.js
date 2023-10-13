@@ -5,6 +5,6 @@ module.exports = defineConfig({
   devServer: {
     https: true,
     port: 8080,
-    
+
   }
 })
