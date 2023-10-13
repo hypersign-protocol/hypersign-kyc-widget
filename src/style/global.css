@@ -11,6 +11,19 @@ body{
     box-shadow: 2px 5px 5px #80808087;
     margin: 0 auto;
   }
+
+
+  .maincontainerForm {
+    width: 700px;
+    height: 100%;
+    background-color: #f5f5f5;
+    border: 1px solid grey;
+    border-radius: 20px;
+    box-shadow: 2px 5px 5px #80808087;
+    margin: 0 auto;
+  }
+
+
 .btn-dark{
     color: black
 }
@@ -29,4 +42,3 @@ h1{
     font-size: 150px;
   }
 
-  

@@ -1,164 +1,185 @@
 <!-- verify day pass component -->
 
 <template>
-  <div class="card maincontainer" style="text-align: left">
-    <div style="text-align: center">
-      <h3>Verify Day Pass</h3>
-      <hr style="margin: 0" />
-    </div>
-    <div
-      id="dailyPassGetter"
-      style="text-align: center"
-      v-if="getDailyPassFromUser"
-    >
-      <div class="scanQR">
-        <!-- <qrcode-stream
-            @detect="onDetect"
-            @init="onInit"
-            @camera-on="onReady"
-            @error="onError"
-            v-if="isScan"
-          >
-          </qrcode-stream> -->
-
-        <div id="qr-camera">
-          <video
-            id="camera-preview"
-            refs="scanner"
-            autoplay
-            playsinline
-            v-if="isScan"
-          >
-            <span v-if="loading"> waiting for camera</span>
-          </video>
-          <i
-            v-else
-            class="bi bi-qr-code-scan"
-            style="font-size: 200px; color: rgb(59, 58, 58)"
-          ></i>
-
-          <div id="qr-overlay" v-if="isScan">
-            <div id="qr-scan-box"></div>
-
-            <div id="qr-scan-line"></div>
-          </div>
-        </div>
-      </div>
-      <div style="padding: 10px">
-        <!-- <select id="cameraOptions"  @change="selectionChange"> -->
-        <select id="cameraOptions"  >
-
-          <option value="null" selected>Select Camera</option>
-        </select>
-        <br />
-
-        <!-- <button
-          class="btn btn-outline-dark"
-          @click="openScanner"
-          v-if="!isScan"
-        > -->
-        <button
-          class="btn btn-outline-dark"
-          v-if="!isScan"
-        >
-          <i class="bi bi-camera"></i> Scan
-        </button>
-        <!-- <button class="btn btn-link btn-dark" @click="cancelScanner" v-else> -->
-
-        <button class="btn btn-link btn-dark" v-else>
-          Cancel
-        </button>
-      </div>
-      <hr />
-      <div style="display: inline-flex; justify-content: center">
-        <div class="upload-btn-wrapper">
-          <button class="btn" ref="uploadBtn" @click="triggerFileInput">
-            Upload a PDF
-          </button>
-          <input
-            type="file"
-            ref="fileInput"
-            @change="handleFileUpload"
-            accept=".pdf"
-            style="display: none"
-          />
-        </div>
-      </div>
+  <div class="card maincontainerForm" style="text-align: left">
+    <div class="card-header" style="text-align: center">
+      <h4>Day Pass Verification</h4>
     </div>
 
-    <div id="dailyPassVerification" style="overflow-y: scroll" v-else>
-      <div style="max-height: 600px; overflow-y: scroll"></div>
+    <div class="card-body">
       <div
-        class="card"
-        v-for="eachcredential in dummyData.verifiableCredential"
-        style="margin-bottom: 3%"
-        v-bind:key="dummyData.verifiableCredential.indexOf(eachcredential)"
+        id="dailyPassGetter"
+        style="text-align: center"
+        class="row"
+        v-if="getDailyPassFromUser"
       >
-        <div class="card-header">
+        <div class="col-md-12">
           <div class="row">
-            <div class="col-md-12">
-              <span
-                ><i class="fa-solid fa-id-card"></i>
-                {{ eachcredential.type[1] }}</span
-              >
-              <span class="card-title" style="float: right !important">
-                <img :src="images.greentick" height="21" width="21" />
-              </span>
-            </div>
-          </div>
+            <div class="col-md-6">
+              <div class="scanQR">
+                <div id="qr-camera">
+                  <video
+                    id="camera-preview"
+                    refs="scanner"
+                    autoplay
+                    playsinline
+                    v-if="isScan"
+                  >
+                    <span v-if="loading"> waiting for camera</span>
+                  </video>
+                  <i
+                    v-else
+                    class="bi bi-qr-code-scan"
+                    style="font-size: 200px; color: rgb(59, 58, 58)"
+                  ></i>
 
-          <div class="row">
-            <div class="col-md-12" style="font-size: 11px; color: #808080b3">
-              {{ eachcredential.id }}
-              <i
-                class="far fa-copy ml-1"
-                style="cursor: pointer"
-                title="Click to copy credential id"
-                @click="copyToClip(eachcredential.id, 'Credential Id')"
-              ></i>
+                  <div id="qr-overlay" v-if="isScan">
+                    <div id="qr-scan-box"></div>
+
+                    <div id="qr-scan-line"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding: 10px">
+                <select id="cameraOptions">
+                  <option value="null" selected>Select Camera</option>
+                </select>
+                <br />
+                <button class="btn btn-outline-dark" v-if="!isScan">
+                  <i class="bi bi-camera"></i> Scan
+                </button>
+                <button class="btn btn-link btn-dark" v-else>Cancel</button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div style="display: inline-flex; justify-content: center">
+                <div class="upload-btn-wrapper">
+                  <div class="card-file">
+                    <h3>Upload Files</h3>
+                    <div class="drop_box">
+                      <header>
+                        <h4>Drag and Drop Day Pass here</h4>
+                      </header>
+                      <p>Files Supported: PDF</p>
+                      <input
+                        type="file"
+                        ref="fileInput"
+                        @change="handleFileUpload"
+                        accept=".pdf"
+                        hidden
+                        id="fileID"
+                        style="display: none"
+                      />
+                      <button
+                        class="btn"
+                        ref="uploadBtn"
+                        @click="triggerFileInput"
+                      >
+                        Upload A Day Pass
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <ul class="list-group" style="max-height: 250px; overflow: scroll">
-            <li class="list-group-item">
-              <span style="font-weight: bold">Issuer : </span>
-              {{ shorten(eachcredential.issuer) }}
-              <i
-                class="far fa-copy ml-1"
-                style="cursor: pointer"
-                title="Click to copy issuer DID"
-                @click="copyToClip(eachcredential.issuer, 'Issuer DID')"
-              ></i>
-            </li>
-            <li
-              class="list-group-item"
-              v-for="eachSubjectField in Object.keys(
-                eachcredential.credentialSubject
-              )"
-              v-bind:key="
-                Object.keys(eachcredential.credentialSubject)[eachSubjectField]
-              "
-            >
-              <span style="font-weight: bold">{{ eachSubjectField }} :</span>
-              <span v-if="eachSubjectField === 'id'">
-                {{
-                  shorten(eachcredential.credentialSubject[eachSubjectField])
-                }}
-                <i
-                  class="far fa-copy ml-1"
-                  style="cursor: pointer"
-                  title="Click to copy subject DID"
-                  @click="copyToClip(eachcredential.issuer, 'Subject DID')"
-                ></i>
-              </span>
-              <span v-else>
-                {{ eachcredential.credentialSubject[eachSubjectField] }}
-              </span>
-            </li>
-          </ul>
+      </div>
+
+      <div
+        id="dailyPassVerification"
+        class="row"
+        style="overflow-y: scroll"
+        v-else
+      >
+        <div class="col-md-12">
+          <div style="max-height: 600px; overflow-y: scroll"></div>
+          <div
+            class="card"
+            v-for="eachcredential in dummyData.verifiableCredential"
+            style="margin-bottom: 3%"
+            v-bind:key="dummyData.verifiableCredential.indexOf(eachcredential)"
+          >
+            <div class="card-header">
+              <div class="row">
+                <div class="col-md-12">
+                  <span
+                    ><i class="fa-solid fa-id-card"></i>
+                    {{ eachcredential.type[1] }}</span
+                  >
+                  <span class="card-title" style="float: right !important">
+                    <img :src="images.greentick" height="21" width="21" />
+                  </span>
+                </div>
+              </div>
+
+              <div class="row">
+                <div
+                  class="col-md-12"
+                  style="font-size: 11px; color: #808080b3"
+                >
+                  {{ eachcredential.id }}
+                  <i
+                    class="far fa-copy ml-1"
+                    style="cursor: pointer"
+                    title="Click to copy credential id"
+                    @click="copyToClip(eachcredential.id, 'Credential Id')"
+                  ></i>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul
+                class="list-group"
+                style="max-height: 250px; overflow: scroll"
+              >
+                <li class="list-group-item">
+                  <span style="font-weight: bold">Issuer : </span>
+                  {{ shorten(eachcredential.issuer) }}
+                  <i
+                    class="far fa-copy ml-1"
+                    style="cursor: pointer"
+                    title="Click to copy issuer DID"
+                    @click="copyToClip(eachcredential.issuer, 'Issuer DID')"
+                  ></i>
+                </li>
+                <li
+                  class="list-group-item"
+                  v-for="eachSubjectField in Object.keys(
+                    eachcredential.credentialSubject
+                  )"
+                  v-bind:key="
+                    Object.keys(eachcredential.credentialSubject)[
+                      eachSubjectField
+                    ]
+                  "
+                >
+                  <span style="font-weight: bold"
+                    >{{ eachSubjectField }} :</span
+                  >
+                  <span v-if="eachSubjectField === 'id'">
+                    {{
+                      shorten(
+                        eachcredential.credentialSubject[eachSubjectField]
+                      )
+                    }}
+                    <i
+                      class="far fa-copy ml-1"
+                      style="cursor: pointer"
+                      title="Click to copy subject DID"
+                      @click="copyToClip(eachcredential.issuer, 'Subject DID')"
+                    ></i>
+                  </span>
+                  <span v-else>
+                    {{ eachcredential.credentialSubject[eachSubjectField] }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <!-- <div class="card-footer"></div> -->
+          </div>
         </div>
-        <!-- <div class="card-footer"></div> -->
       </div>
     </div>
   </div>
@@ -710,5 +731,71 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.card-file {
+  border-radius: 10px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+  width: 300px;
+  height: 300px;
+  background-color: #ffffff;
+  padding: 10px 30px 40px;
+}
+
+.card-file h3 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.drop_box {
+  margin: 10px 0;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 3px dotted #a3a3a3;
+  border-radius: 5px;
+}
+
+.drop_box h4 {
+  font-size: 16px;
+  font-weight: 400;
+  color: #2e2e2e;
+}
+
+.drop_box p {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #a3a3a3;
+}
+
+.btn {
+  text-decoration: none;
+  background-color: #005af0;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  outline: none;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  text-decoration: none;
+  background-color: #ffffff;
+  color: #005af0;
+  padding: 10px 20px;
+  border: none;
+  outline: 1px solid #010101;
+}
+.form input {
+  margin: 10px 0;
+  width: 100%;
+  background-color: #e2e2e2;
+  border: none;
+  outline: none;
+  padding: 12px 20px;
+  border-radius: 4px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="card" style="text-align: left">
+  <div class="card maincontainerForm" style="text-align: left">
     <div class="card-header" style="text-align: center">
       <h4>Day Pass Issuance</h4>
     </div>
