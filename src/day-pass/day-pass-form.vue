@@ -1,12 +1,14 @@
 <template>
   <div class="card" style="text-align: left">
     <div class="card-header" style="text-align: center">
-      <h4>Day Pass Issuance Form</h4>
+      <h4>Day Pass Issuance</h4>
     </div>
-    <div class="card-body">
+    <div class="card-body" v-if="!showDayPass">
       <div class="mb-3">
         <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
-          <label for="basic-url" class="form-label">Verify Your Id</label>
+          <label for="basic-url" class="form-label fw-bold"
+            >Choose ID Provider and verify your identity</label
+          >
           <div class="form-check">
             <input
               class="form-check-input"
@@ -17,7 +19,7 @@
               @click="openkycpopup()"
             />
             <label class="form-check-label" for="exampleRadios1">
-              Aadhaar Id
+              Aadhaar Id By <a href="#"> Cavach.id </a>
             </label>
           </div>
 
@@ -53,18 +55,18 @@
       </div>
 
       <div class="mb-3">
-        <label for="basic-url" class="form-label">Name</label>
+        <label for="basic-url" class="form-label fw-bold">Full Name</label>
 
         <input
           type="text"
           class="form-control"
           id="fullName"
           v-model="aadharData.name"
-          placeholder="Full Name"
+          placeholder="Your Full Name"
         />
       </div>
       <div class="mb-3">
-        <label for="basic-url" class="form-label">Phone Number</label>
+        <label for="basic-url" class="form-label fw-bold">Phone Number</label>
         <div class="input-group">
           <span class="input-group-text" id="basic-addon3">+91</span>
           <input
@@ -79,7 +81,7 @@
         </div>
       </div>
       <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label"
+        <label for="exampleFormControlInput1" class="form-label fw-bold"
           >Email address</label
         >
         <input
@@ -91,7 +93,9 @@
       </div>
 
       <div class="mb-3">
-        <label for="basic-url" class="form-label">Select Workspace</label>
+        <label for="basic-url" class="form-label fw-bold"
+          >Select Workspace</label
+        >
         <select class="form-select" aria-label="Default select example">
           <option selected>Select Workspace you are looking for</option>
           <option value="1">HSR Layout</option>
@@ -102,7 +106,7 @@
 
       <div class="mb-3">
         <div v-if="!hasPaid">
-          <label for="basic-url" class="form-label"
+          <label for="basic-url" class="form-label fw-bold"
             >Choose Payment Option</label
           >
           <div class="form-check">
@@ -141,16 +145,23 @@
       </div>
 
       <div class="mb-3">
-        <button class="btn btn-primary">Next</button>
+        <button class="btn btn-primary" @click="submitForm()">Submit</button>
       </div>
+    </div>
+    <div v-else class="card-body">
+      <day-pass-final></day-pass-final>
     </div>
   </div>
 </template>
 
 <script>
+import DayPassFinal from "./day-pass-final.vue";
 // import { mapState } from "vuex";
 
 export default {
+  components: {
+    DayPassFinal,
+  },
   computed: {
     // ...mapState(["aadharData"]),
     isAadhaarQRVerifiedAndDataExtracted() {
@@ -165,6 +176,7 @@ export default {
     return {
       aadharData: {},
       hasPaid: false,
+      showDayPass: false,
     };
   },
   methods: {
@@ -212,6 +224,35 @@ export default {
         }
       } catch (e) {
         console.error("Could not parse str");
+      }
+    },
+
+    submitForm() {
+      try {
+        //
+
+        if (!this.hasPaid) {
+          return alert("Please finish your payment before proceeding");
+        }
+
+        let proccedWithoutIdConfirmation = false;
+
+        if (!this.isAadhaarQRVerifiedAndDataExtracted) {
+          proccedWithoutIdConfirmation = confirm(
+            "You did not verify your Identity. You need to verify your ID manually at the veuene during checkin and might have to stand in long queue or wait. To make your and others checking processs seamless, we suggest you verify and procees.\n\n Press Cancel to verify your ID, preess OK to proceed without ID verification"
+          );
+        }
+
+        if (proccedWithoutIdConfirmation) {
+          console.log(proccedWithoutIdConfirmation);
+          this.showDayPass = true;
+        }
+
+        if (this.hasPaid && this.isAadhaarQRVerifiedAndDataExtracted) {
+          this.showDayPass = true;
+        }
+      } catch (e) {
+        console.error(e.message);
       }
     },
   },
