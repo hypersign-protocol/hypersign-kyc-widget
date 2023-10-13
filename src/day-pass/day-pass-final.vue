@@ -1,6 +1,7 @@
 <template>
   <div>
     <div id="dayPass-id">
+      <h1>Day Pass</h1>
       <div class="row">
         <div class="col-md-12">
           <i
