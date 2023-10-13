@@ -163,12 +163,7 @@ export default {
     DayPassFinal,
   },
   computed: {
-    // ...mapState(["aadharData"]),
     isAadhaarQRVerifiedAndDataExtracted() {
-      // const aadhaarDataStr = localStorage.getItem("aadharData");
-      // // if (aadhaarDataStr) {
-      // //   this.aadharData = JSON.parse(aadhaarDataStr);
-      // // }
       return this.aadharData && Object.keys(this.aadharData).length > 0;
     },
   },
