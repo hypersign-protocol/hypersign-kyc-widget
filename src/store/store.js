@@ -10,6 +10,11 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
+
+        idCredential: {},
+        invoiceCredential: {},
+        dayPassCredential: {},
+
         steps: [
             {
                 id: 0,
@@ -81,22 +86,38 @@ export default new Vuex.Store({
             state.qrString = qrString;
         },
         setImage: (state, imageData) => {
-            state.imageData = imageData;
+            // state.imageData = imageData;
+            state.invoiceCredential = { ...imageData };
+            localStorage.setItem("invoiceCredential", JSON.stringify(state.invoiceCredential));
         },
 
 
         setPhoneNumber: (state, phoneNumber) => {
-            state.phoneNumber = phoneNumber;
+            // state.phoneNumber = phoneNumber;
+            state.idCredential = { ...phoneNumber };
+            localStorage.setItem("idCredential", JSON.stringify(state.idCredential));
         },
 
         setFinalResult: (state, result) => {
-            state.finalResult = { ...result };
+            state.dayPassCredential = { ...result };
+            localStorage.setItem("dayPassCredential", JSON.stringify(state.dayPassCredential));
         },
 
         setAadhaarData: (state, aadharData) => {
             localStorage.setItem("aadharData", JSON.stringify(aadharData));
             state.aadharData = { ...aadharData };
-        }
+        },
+
+        // setidCredential: (state, credential) => {
+        //     console.log('setidCredential called ')
+        //     state.idCredential = { ...credential };
+        // },
+        // setinvoiceCredential: (state, credential) => {
+        //     state.invoiceCredential = { ...credential };
+        // },
+        // setdayPassCredential: (state, credential) => {
+        //     state.dayPassCredential = { ...credential };
+        // }
     },
     actions: {
         addharQRVerify: ({ state }) => {

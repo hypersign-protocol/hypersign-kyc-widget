@@ -33,7 +33,7 @@
     '@context': 'https://schema.org/Invoice',
     accountId: '123123',
     broker: 'RazorPay',
-    confirmationNumber: '12314',
+    invoiceNumber: '12314',
     customer: 'user',
     provider: 'Beehive Workspace',
     paymentMethod: 'UPI',
@@ -43,13 +43,14 @@
 ## Daypass: sch:hid:testnet:zHJTSuEmcGn5oCe7K58BrGbxULe7DnRzkBF7yVHZEveEJ:1.0
 ```js
 
-    {fullname: '',
-    companyName: '',
-    issuanceDate: '',
-    expirationDate: '',
-    center: '',
-    issuer: '',
-    confirmationNumber: '' // confirmationNumber from InvoiceCredential}
+    {
+        fullname: '',
+        companyName: '',
+        issuanceDate: '',
+        expirationDate: '',
+        center: '',
+        issuer: '',
+        invoiceNumber: ''
 
 ```
 

@@ -18,19 +18,18 @@
               style="font-size: 50px; color: green"
             ></i>
           </div> -->
-          <p>Hi {{ dayPass.fullname }}</p>
+          <p>Hi {{ dayPassCredential.name }}</p>
           <p>
             Thank you for booking Day pass with
-            <span style="font-weight: bold">{{ dayPass.center }}</span
+            <span style="font-weight: bold">{{ dayPassCredential.center }}</span
             >.
           </p>
           <p>Please find the details:</p>
           <ul>
-            <li>ID: {{ dayPass.id }}</li>
-            <li>Name: {{ dayPass.fullname }}</li>
-            <li>Company Name: {{ dayPass.companyName }}</li>
-            <li>Issued On: {{ dayPass.issuanceDate }}</li>
-            <li>Valid Until: {{ dayPass.expirationDate }}</li>
+            <li>ID: {{ dayPassCredential.id }}</li>
+            <li>Name: {{ dayPassCredential.name }}</li>
+            <li>Issued On: {{ dayPassCredential.issuanceDate }}</li>
+            <li>Valid Until: {{ dayPassCredential.expirationDate }}</li>
           </ul>
           <p>
             Thank you for booking with us,
@@ -67,11 +66,14 @@
 <script>
 import html2pdf from "html2pdf.js";
 import QrcodeVue from "qrcode.vue";
+import { mapState } from "vuex";
+
 export default {
   components: {
     QrcodeVue,
   },
   computed: {
+    ...mapState(["dayPassCredential"]),
     dayPassStr() {
       return JSON.stringify(this.dayPass);
     },
@@ -84,13 +86,21 @@ export default {
         companyName: "Hypermine Pvt. Ltd",
         issuanceDate: "12-12-2023",
         expirationDate: "12-12-2023",
-        center: "Garuda Bhive, BTM",
+        center: "HSR Layout",
         issuer: "Bhive",
         confirmationNumber: "",
         email: "vishu.anndn3@gmail.com",
         phoneNumber: "8444927388",
       },
     };
+  },
+
+  mounted() {
+    // const dayPassCredentialStr = localStorage.getItem("dayPassCredential");
+    // const dayPassCredential = JSON.parse(dayPassCredentialStr);
+    // this.dayPass = {
+    //   ...dayPassCredential,
+    // };
   },
 
   methods: {

@@ -190,6 +190,7 @@ import util from "../utils/utils-mixin";
 
 export default {
   name: "verify-day-pass",
+  computed: {},
   components: {},
   data() {
     return {
@@ -219,167 +220,42 @@ export default {
       images: {
         greentick: require("../assets/green-tick.png"),
       },
+      vcTemplate: {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          "https://w3id.org/security/suites/ed25519-2020/v1",
+        ],
+        id: "vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
+        type: ["VerifiableCredential"],
+        expirationDate: "2023-10-26T18:33:00Z",
+        issuanceDate: "2023-10-13T06:32:24Z",
+        issuer: "did:hid:testnet:zDoQZwzkctBQvYEEL8Xz7fx5tpyeYcQ38hSRJXpSVDyhb",
+        credentialSubject: {},
+        credentialSchema: {
+          id: "sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0",
+          type: "JsonSchemaValidator2018",
+        },
+        credentialStatus: {
+          id: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/credential/vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
+          type: "CredentialStatusList2017",
+        },
+        proof: {
+          type: "Ed25519Signature2020",
+          created: "2023-10-13T06:34:04Z",
+          verificationMethod:
+            "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
+          proofPurpose: "assertionMethod",
+          proofValue:
+            "z43QywET6jir6zdmP79UmVQgQUhwZfyP8Uq28cUH2YzvUMfzHrwqGGszWWq2MH51JPhpoXx4EVx9AS7gfdjszVDp9",
+        },
+      },
       dummyData: {
         "@context": [
           "https://www.w3.org/2018/credentials/v1",
           "https://w3id.org/security/suites/ed25519-2020/v1",
         ],
         type: ["VerifiablePresentation"],
-        verifiableCredential: [
-          {
-            "@context": [
-              "https://www.w3.org/2018/credentials/v1",
-              {
-                hs: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/schema/sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0:",
-              },
-              {
-                name: "hs:name",
-              },
-              {
-                dob: "hs:dob",
-              },
-              {
-                phoneNumber: "hs:phoneNumber",
-              },
-              {
-                email: "hs:email",
-              },
-              "https://w3id.org/security/suites/ed25519-2020/v1",
-            ],
-            id: "vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-            type: ["VerifiableCredential", "Person"],
-            expirationDate: "2023-10-26T18:33:00Z",
-            issuanceDate: "2023-10-13T06:32:24Z",
-            issuer:
-              "did:hid:testnet:zDoQZwzkctBQvYEEL8Xz7fx5tpyeYcQ38hSRJXpSVDyhb",
-            credentialSubject: {
-              name: "Pratap",
-              dob: "17/11/1997",
-              phoneNumber: "7003844972",
-              email: "pratapmridha@gmail.com",
-              id: "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh",
-            },
-            credentialSchema: {
-              id: "sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0",
-              type: "JsonSchemaValidator2018",
-            },
-            credentialStatus: {
-              id: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/credential/vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-              type: "CredentialStatusList2017",
-            },
-            proof: {
-              type: "Ed25519Signature2020",
-              created: "2023-10-13T06:34:04Z",
-              verificationMethod:
-                "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
-              proofPurpose: "assertionMethod",
-              proofValue:
-                "z43QywET6jir6zdmP79UmVQgQUhwZfyP8Uq28cUH2YzvUMfzHrwqGGszWWq2MH51JPhpoXx4EVx9AS7gfdjszVDp9",
-            },
-          },
-          {
-            "@context": [
-              "https://www.w3.org/2018/credentials/v1",
-              {
-                hs: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/schema/sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0:",
-              },
-              {
-                name: "hs:name",
-              },
-              {
-                dob: "hs:dob",
-              },
-              {
-                phoneNumber: "hs:phoneNumber",
-              },
-              {
-                email: "hs:email",
-              },
-              "https://w3id.org/security/suites/ed25519-2020/v1",
-            ],
-            id: "vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-            type: ["VerifiableCredential", "Person"],
-            expirationDate: "2023-10-26T18:33:00Z",
-            issuanceDate: "2023-10-13T06:32:24Z",
-            issuer:
-              "did:hid:testnet:zDoQZwzkctBQvYEEL8Xz7fx5tpyeYcQ38hSRJXpSVDyhb",
-            credentialSubject: {
-              name: "Pratap",
-              dob: "17/11/1997",
-              phoneNumber: "7003844972",
-              email: "pratapmridha@gmail.com",
-              id: "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh",
-            },
-            credentialSchema: {
-              id: "sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0",
-              type: "JsonSchemaValidator2018",
-            },
-            credentialStatus: {
-              id: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/credential/vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-              type: "CredentialStatusList2017",
-            },
-            proof: {
-              type: "Ed25519Signature2020",
-              created: "2023-10-13T06:34:04Z",
-              verificationMethod:
-                "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
-              proofPurpose: "assertionMethod",
-              proofValue:
-                "z43QywET6jir6zdmP79UmVQgQUhwZfyP8Uq28cUH2YzvUMfzHrwqGGszWWq2MH51JPhpoXx4EVx9AS7gfdjszVDp9",
-            },
-          },
-          {
-            "@context": [
-              "https://www.w3.org/2018/credentials/v1",
-              {
-                hs: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/schema/sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0:",
-              },
-              {
-                name: "hs:name",
-              },
-              {
-                dob: "hs:dob",
-              },
-              {
-                phoneNumber: "hs:phoneNumber",
-              },
-              {
-                email: "hs:email",
-              },
-              "https://w3id.org/security/suites/ed25519-2020/v1",
-            ],
-            id: "vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-            type: ["VerifiableCredential", "Person"],
-            expirationDate: "2023-10-26T18:33:00Z",
-            issuanceDate: "2023-10-13T06:32:24Z",
-            issuer:
-              "did:hid:testnet:zDoQZwzkctBQvYEEL8Xz7fx5tpyeYcQ38hSRJXpSVDyhb",
-            credentialSubject: {
-              name: "Pratap",
-              dob: "17/11/1997",
-              phoneNumber: "7003844972",
-              email: "pratapmridha@gmail.com",
-              id: "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh",
-            },
-            credentialSchema: {
-              id: "sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0",
-              type: "JsonSchemaValidator2018",
-            },
-            credentialStatus: {
-              id: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/credential/vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-              type: "CredentialStatusList2017",
-            },
-            proof: {
-              type: "Ed25519Signature2020",
-              created: "2023-10-13T06:34:04Z",
-              verificationMethod:
-                "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
-              proofPurpose: "assertionMethod",
-              proofValue:
-                "z43QywET6jir6zdmP79UmVQgQUhwZfyP8Uq28cUH2YzvUMfzHrwqGGszWWq2MH51JPhpoXx4EVx9AS7gfdjszVDp9",
-            },
-          },
-        ],
+        verifiableCredential: [],
         id: "vp:hid:testnet:zDSqkoboWhRUaCn7AQZSDk45Nk1ciCxzPtJAhYL2QqLPo",
         holder: "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh",
         proof: {
@@ -437,10 +313,61 @@ export default {
         this.$refs.uploadBtn.innerText = selectedFile.name;
         this.$refs.uploadBtn.style.color = "green";
         this.$refs.uploadBtn.style.borderColor = "green";
+
+        // dayPass
+        const dayPassCredentialStr = localStorage.getItem("dayPassCredential");
+        const dayPassCredential = JSON.parse(dayPassCredentialStr);
+        const vcTemplateForDayPassCredential = { ...this.vcTemplate };
+
+        vcTemplateForDayPassCredential.type = [
+          "VerifiableCredential",
+          "DaypassCredential",
+        ];
+
+        vcTemplateForDayPassCredential.issuer = dayPassCredential.issuer;
+        vcTemplateForDayPassCredential.credentialSubject = {
+          ...dayPassCredential,
+        };
+        this.dummyData.verifiableCredential.push(
+          vcTemplateForDayPassCredential
+        );
+
+        // idCrend
+        const idCredentialStr = localStorage.getItem("idCredential");
+        const idCredential = JSON.parse(idCredentialStr);
+        const vcTemplateForIdCredential = { ...this.vcTemplate };
+        vcTemplateForIdCredential.type = [
+          "VerifiableCredential",
+          "AadhaarIdCredential",
+        ];
+        vcTemplateForIdCredential.issuer = idCredential.issuer;
+        vcTemplateForIdCredential.credentialSubject = {
+          ...idCredential,
+        };
+        this.dummyData.verifiableCredential.push(vcTemplateForIdCredential);
+
+        // invocie
+        const invoiceCredentialStr = localStorage.getItem("invoiceCredential");
+        const invoiceCredential = JSON.parse(invoiceCredentialStr);
+        const vcTemplateForInvoiceCredential = { ...this.vcTemplate };
+        vcTemplateForInvoiceCredential.type = [
+          "VerifiableCredential",
+          "InvoiceCredential",
+        ];
+        vcTemplateForInvoiceCredential.issuer = invoiceCredential.provider;
+        vcTemplateForInvoiceCredential.credentialSubject = {
+          ...invoiceCredential,
+        };
+        this.dummyData.verifiableCredential.push(
+          vcTemplateForInvoiceCredential
+        );
+
         this.getDailyPassFromUser = false;
         this.$refs.uploadBtn.style.display = "none";
       }
     },
+
+    addVCtoPresentation() {},
   },
   mixins: [util],
 };

@@ -12,7 +12,7 @@
           press Submit
         </div>
         <i class="bi bi-qr-code" style="font-size: 200px"></i>
-        <button class="btn btn-primary" @click="pay()">Submit</button>
+        <button class="btn btn-outline-dark" @click="pay()">Submit</button>
       </div>
       <div v-else class="center" style="text-align: center">
         <i class="bi bi-check-circle-fill" style="font-size: 200px"></i>

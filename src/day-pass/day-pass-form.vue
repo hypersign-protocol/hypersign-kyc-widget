@@ -61,7 +61,7 @@
           type="text"
           class="form-control"
           id="fullName"
-          v-model="aadharData.name"
+          v-model="dayPassCredential.name"
           placeholder="Your Full Name"
         />
       </div>
@@ -74,6 +74,7 @@
             class="form-control"
             id="basic-url"
             aria-describedby="basic-addon3 basic-addon4"
+            v-model="dayPassCredential.phoneNumber"
           />
         </div>
         <div class="form-text" id="basic-addon4">
@@ -89,6 +90,7 @@
           class="form-control"
           id="exampleFormControlInput1"
           placeholder="name@example.com"
+          v-model="dayPassCredential.email"
         />
       </div>
 
@@ -145,7 +147,9 @@
       </div>
 
       <div class="mb-3">
-        <button class="btn btn-primary" @click="submitForm()">Submit</button>
+        <button class="btn btn-outline-dark" @click="submitForm()">
+          Submit
+        </button>
       </div>
     </div>
     <div v-else class="card-body">
@@ -157,7 +161,7 @@
 <script>
 import DayPassFinal from "./day-pass-final.vue";
 // import { mapState } from "vuex";
-
+import { mapMutations } from "vuex";
 export default {
   components: {
     DayPassFinal,
@@ -169,12 +173,25 @@ export default {
   },
   data() {
     return {
+      idCredential: {},
+      invoiceCredential: {},
+      dayPassCredential: {},
+
       aadharData: {},
       hasPaid: false,
       showDayPass: false,
     };
   },
+
   methods: {
+    ...mapMutations([
+      "setPhoneNumber",
+      "nextStep",
+      "setFinalResult",
+      "setQrString",
+      "setImage",
+      "setFinalResult",
+    ]),
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
@@ -206,19 +223,37 @@ export default {
     onPayPopupClosed() {
       console.log("Pay Popup closed");
       this.hasPaid = true;
+
+      this.invoiceCredential.accountId = "123123";
+      this.invoiceCredential.broker = "RazorPay";
+      this.invoiceCredential.invoiceNumber = "12314";
+      this.invoiceCredential.customer = "user";
+      this.invoiceCredential.provider = "Beehive";
+      this.invoiceCredential.paymentMethod = "UPI";
+      this.invoiceCredential.paymentStatus = "Success";
+      this.setImage(this.invoiceCredential);
     },
     onPopupClosed() {
       try {
         console.log("KYC Popup closed");
-
         const aadharDataStr = localStorage.getItem("aadharData");
         if (aadharDataStr) {
           this.aadharData = JSON.parse(aadharDataStr);
+          this.idCredential = {
+            name: this.aadharData.name,
+            dob: this.aadharData.dob,
+            docType: "Aadhaar",
+            issuer: "Cavach.Id",
+          };
+          console.log("Seeint setidcredential...");
+          this.dayPassCredential.name = this.idCredential.name;
+          this.setPhoneNumber(this.idCredential);
+          // this.setPhoneNumber1(this.idCredential);
         } else {
           console.log("Could not find aadharDataStr");
         }
       } catch (e) {
-        console.error("Could not parse str");
+        console.error(e);
       }
     },
 
@@ -245,6 +280,23 @@ export default {
 
         if (this.hasPaid && this.isAadhaarQRVerifiedAndDataExtracted) {
           this.showDayPass = true;
+        }
+
+        if (this.showDayPass) {
+          this.dayPassCredential.invoiceNumber =
+            this.invoiceCredential.invoiceNumber;
+          const now = Date.now();
+
+          if (!this.dayPassCredential.name) {
+            this.dayPassCredential.name = this.idCredential.name;
+          }
+
+          this.dayPassCredential.issuanceDate = now;
+          this.dayPassCredential.expirationDate =
+            now + new Date().getDate() + 1;
+          this.dayPassCredential.issuer = "Beehive";
+          this.dayPassCredential.center = "HSR Layout";
+          this.setFinalResult(this.dayPassCredential);
         }
       } catch (e) {
         console.error(e.message);
