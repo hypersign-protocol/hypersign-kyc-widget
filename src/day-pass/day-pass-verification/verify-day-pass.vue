@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import util from "../utils/utils-mixin";
+import util from "../../utils/utils-mixin";
 
 export default {
   name: "verify-day-pass",
@@ -218,7 +218,7 @@ export default {
 
       // file: null,
       images: {
-        greentick: require("../assets/green-tick.png"),
+        greentick: require("../../assets/green-tick.png"),
       },
       vcTemplate: {
         "@context": [

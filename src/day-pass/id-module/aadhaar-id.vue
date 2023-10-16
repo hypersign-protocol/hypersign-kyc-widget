@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import AppInstructions from "../components/AppInstructions.vue";
-import AppScanQR from "../components/AppScanQR.vue";
-import AppClickPic from "../components/AppClickPic.vue";
-import AppFinalSuccess from "../components/AppFinalSuccess.vue";
+import AppInstructions from "../../components/AppInstructions.vue";
+import AppScanQR from "../../components/AppScanQR.vue";
+import AppClickPic from "../../components/AppClickPic.vue";
+import AppFinalSuccess from "../../components/AppFinalSuccess.vue";
 import { mapGetters } from "vuex";
 
 export default {

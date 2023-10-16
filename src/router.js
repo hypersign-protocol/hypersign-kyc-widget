@@ -17,25 +17,25 @@ const router = new Router({
             path: "/kyc",
             name: "kyc",
             component: () =>
-                import( /* webpackChunkName: "adminLogin" */ "./day-pass/aadhaar-id.vue"),
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/id-module/aadhaar-id.vue"),
         },
         {
             path: "/pay",
             name: "pay",
             component: () =>
-                import( /* webpackChunkName: "adminLogin" */ "./day-pass/payment-gateway.vue"),
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/payment-module/payment-gateway.vue"),
         },
         {
             path: "/day-pass",
             name: "kyc",
             component: () =>
-                import( /* webpackChunkName: "adminLogin" */ "./day-pass/day-pass-form.vue"),
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/day-pass-issuance/day-pass-form.vue"),
         },
         {
             path: "/day-pass-verify",
             name: "kyc",
             component: () =>
-                import( /* webpackChunkName: "adminLogin" */ "./day-pass/verify-day-pass.vue"),
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/day-pass-verification/verify-day-pass.vue"),
         },
     ]
 });
