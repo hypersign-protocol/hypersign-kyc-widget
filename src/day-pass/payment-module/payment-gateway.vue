@@ -25,33 +25,53 @@
 
 <script>
 // import { HypersignDID } from "hs-ssi-sdk";
-
+import { mapActions } from "vuex";
+import issuerDidDocument from "./issuer";
 export default {
   data() {
     return {
       hasPaid: false,
       isLoadingPage: false,
+      invoiceCredentialTemplate: {
+        schemaContext: ["https://schema.org"],
+        type: [],
+        subjectDid: issuerDidDocument.id, // TODO: pass did of users
+        issuerDid: issuerDidDocument.id,
+        expirationDate: "2027-12-31T23:59:59Z",
+        verificationMethodId: issuerDidDocument.verificationMethod[0].id,
+        fields: {
+          accountId: "123123",
+          broker: "RazorPay",
+          invoiceNumber: "12314",
+          customer: "user",
+          provider: "Beehive",
+          paymentMethod: "UPI",
+          paymentStatus: "Success",
+        },
+        namespace: "testnet",
+        persist: false,
+      },
+      invoiceCredential: {},
     };
   },
   mounted() {
     window.addEventListener("beforeunload", () => {
-      window.opener.postMessage("pay-popup-closed", "*");
+      window.opener.postMessage(
+        {
+          event: "pay-popup-closed",
+          message: this.invoiceCredential,
+        },
+        "*"
+      );
     });
   },
   methods: {
-    initiateHypersignSDK() {
-      //   const hypersignDID = new HypersignDID({ namespace: "testnet" });
-    },
-    wait() {
-      return new Promise((resolve) => {
-        return setTimeout(() => {
-          resolve();
-        }, 3000);
-      });
-    },
+    ...mapActions(["issueCredential"]),
     async pay() {
       this.isLoadingPage = true;
-      await this.wait();
+      this.invoiceCredential = await this.issueCredential(
+        this.invoiceCredentialTemplate
+      );
       this.hasPaid = true;
       this.isLoadingPage = false;
     },

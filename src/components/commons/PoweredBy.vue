@@ -1,7 +1,7 @@
 <template>
   <div>
     <a href="https://hypersign.id" target="_blank"
-      >Powered By
+      >{{ this.footerLabel }}
       <img
         src="../../assets/hypersign_black_transparent_rect.png"
         width="70px"
@@ -20,3 +20,13 @@ a {
   color: black;
 }
 </style>
+<script>
+export default {
+  props: {
+    footerLabel: {
+      type: String,
+      default: "Powered By",
+    },
+  },
+};
+</script>

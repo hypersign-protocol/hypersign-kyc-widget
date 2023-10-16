@@ -1,5 +1,10 @@
 <template>
   <div class="card maincontainerForm" style="text-align: left">
+    <load-ing
+      :active.sync="isLoadingPage"
+      :can-cancel="true"
+      :is-full-page="true"
+    ></load-ing>
     <div class="card-header" style="text-align: center">
       <h4>Day Pass Issuance</h4>
     </div>
@@ -155,34 +160,61 @@
     <div v-else class="card-body">
       <day-pass-final></day-pass-final>
     </div>
+    <div class="card-footer" style="text-align: center">
+      <PoweredBy footer-label="Secured By"></PoweredBy>
+      <span style="font-size: small; color: rgb(97, 95, 95)">{{
+        this.getUserDID?.did
+      }}</span>
+    </div>
   </div>
 </template>
 
 <script>
 import DayPassFinal from "./day-pass-final.vue";
-// import { mapState } from "vuex";
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions, mapGetters } from "vuex";
+import PoweredBy from "../../components/commons/PoweredBy.vue";
 export default {
   components: {
     DayPassFinal,
+    PoweredBy,
   },
   computed: {
     isAadhaarQRVerifiedAndDataExtracted() {
       return this.aadharData && Object.keys(this.aadharData).length > 0;
     },
+    ...mapGetters(["getUserDID"]),
+  },
+  async mounted() {
+    try {
+      this.isLoadingPage = true;
+      if (this.getUserDID?.did) {
+        this.isLoadingPage = false;
+        return;
+      }
+      const didRes = await this.createDid();
+      const data = {
+        didDocument: didRes.didDocument,
+        verificationMethodId: didRes.didDocument.verificationMethod[0].id,
+      };
+      const resp = await this.registerDid({ ...data });
+      console.log(resp);
+    } catch (e) {
+      console.error(e.message || e);
+    } finally {
+      this.isLoadingPage = false;
+    }
   },
   data() {
     return {
       idCredential: {},
       invoiceCredential: {},
       dayPassCredential: {},
-
+      isLoadingPage: false,
       aadharData: {},
       hasPaid: false,
       showDayPass: false,
     };
   },
-
   methods: {
     ...mapMutations([
       "setPhoneNumber",
@@ -192,6 +224,7 @@ export default {
       "setImage",
       "setFinalResult",
     ]),
+    ...mapActions(["createDid", "registerDid"]),
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
