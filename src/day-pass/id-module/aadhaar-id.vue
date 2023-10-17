@@ -40,7 +40,7 @@ export default {
         // schemaContext: ["https://schema.org"],
         // type: [],
         schemaId:
-          "sch:hid:testnet:z2YPXosqAbYztVmqYFTW1VfXo2Z6dnafyVPgZ2n9jBmMa:1.0",
+          "sch:hid:testnet:z3PAnHTPFpoP6JUxU2qEECLEs7RsAJUSYdHfei3NJUsWw:1.0",
         subjectDid: issuerDidDocument.id, // TODO: pass did of users
         issuerDid: issuerDidDocument.id,
         expirationDate: "2027-12-31T23:59:59Z",
@@ -50,9 +50,13 @@ export default {
           docType: "Aadhaar ID",
           issuer: "Cavach.id",
           name: "",
+          jpegImage: "",
+          gender: "",
+          house: "",
         },
         namespace: "testnet",
         persist: false,
+        // registerCredentialStatus: false,
       },
       idCredential: {},
       isLoadingPage: false,
@@ -91,6 +95,9 @@ export default {
 
           this.idCredentialTemplate.fields.name = aadhaarData.name;
           this.idCredentialTemplate.fields.dob = aadhaarData.dob;
+          this.idCredentialTemplate.fields.gender = aadhaarData.gender;
+          this.idCredentialTemplate.fields.house = aadhaarData.house;
+          // this.idCredentialTemplate.fields.jpegImage = ""; //TODO aadhaarData.jpegImage;
           this.idCredential = await this.issueCredential(
             this.idCredentialTemplate
           );

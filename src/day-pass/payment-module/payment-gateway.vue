@@ -52,6 +52,7 @@ export default {
         },
         namespace: "testnet",
         persist: false,
+        // registerCredentialStatus: false,
       },
       invoiceCredential: {},
     };

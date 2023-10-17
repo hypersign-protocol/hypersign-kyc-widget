@@ -70,6 +70,17 @@
         />
       </div>
       <div class="mb-3">
+        <label for="basic-url" class="form-label fw-bold">Address</label>
+
+        <input
+          type="text"
+          class="form-control"
+          id="address"
+          v-model="dayPassCredentialTemplate.fields.house"
+          placeholder="Your Address"
+        />
+      </div>
+      <div class="mb-3">
         <label for="basic-url" class="form-label fw-bold">Phone Number</label>
         <div class="input-group">
           <span class="input-group-text" id="basic-addon3">+91</span>
@@ -81,9 +92,9 @@
             v-model="dayPassCredentialTemplate.fields.phoneNumber"
           />
         </div>
-        <div class="form-text" id="basic-addon4">
+        <!-- <div class="form-text" id="basic-addon4">
           Phone number linked with your ID
-        </div>
+        </div> -->
       </div>
       <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label fw-bold"
@@ -102,11 +113,17 @@
         <label for="basic-url" class="form-label fw-bold"
           >Select Workspace</label
         >
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Select Workspace you are looking for</option>
-          <option value="1">HSR Layout</option>
-          <option value="2">Indra Nagar</option>
-          <option value="3">Marathalli</option>
+        <select
+          class="form-select"
+          required
+          v-model="dayPassCredentialTemplate.fields.center"
+        >
+          <option selected value="">
+            Select Workspace you are looking for
+          </option>
+          <option value="HSR Layout">HSR Layout</option>
+          <option value="Indra Nagar">Indra Nagar</option>
+          <option value="Marathalli">Marathalli</option>
         </select>
       </div>
 
@@ -247,6 +264,7 @@ export default {
       idCredential: {},
       invoiceCredential: {},
       dayPassCredential: {},
+
       dayPassCredentialTemplate: {
         // schemaContext: ["https://schema.org"],
         // type: [],
@@ -267,6 +285,7 @@ export default {
         },
         namespace: "testnet",
         persist: false,
+        // registerCredentialStatus: false,
       },
       isLoadingPage: false,
       shouldIssueCredential: false,
@@ -339,6 +358,8 @@ export default {
           this.idCredential = message.message;
           this.dayPassCredentialTemplate.fields.name =
             this.idCredential.credentialSubject.name;
+          this.dayPassCredentialTemplate.fields.house =
+            this.idCredential.credentialSubject.house;
           this.setidCredential(this.idCredential);
         } else {
           throw new Error(message?.message || "Something went wrong");
@@ -385,7 +406,9 @@ export default {
           this.dayPassCredentialTemplate.fields.expirationDate =
             now + new Date().getDate() + 1;
 
-          this.dayPassCredentialTemplate.fields.center = "HSR Layout"; // TODO: update this.
+          // this.dayPassCredentialTemplate.fields.center = "HSR Layout"; // TODO: update this.
+
+          delete this.dayPassCredentialTemplate.fields.house;
 
           this.dayPassCredential = await this.issueCredential(
             this.dayPassCredentialTemplate
