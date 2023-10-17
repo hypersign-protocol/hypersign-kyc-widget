@@ -5,7 +5,7 @@
       :can-cancel="true"
       :is-full-page="true"
     ></load-ing>
-    <div id="dayPass-id">
+    <div id="dayPass-id" style="background: beige">
       <h1>Day Pass</h1>
       <div class="row">
         <div class="col-md-12">
@@ -84,24 +84,24 @@
             <span style="font-weight: bold">Happy Working!!</span>
           </p>
         </div>
-        <div class="col-md-6">
-          <qrcode-vue
+        <div class="col-md-6" v-if="this.QRCodeURl != ''">
+          <!-- <qrcode-vue
             :value="dayPassStr"
             :size="300"
             level="H"
             style="padding-left: 10px"
-          />
+          /> -->
+          <img :src="QRCodeURl" />
           <div>Show this QR code at the checkin desk at venue</div>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12 center">
+      <div class="col-md-12">
         <button
           type="button"
           class="btn btn-outline-dark"
           @click="downloadDayPass()"
-          style="margin-left: 57%"
         >
           Print Your Day Pass
         </button>
@@ -113,12 +113,16 @@
 
 <script>
 import html2pdf from "html2pdf.js";
-import QrcodeVue from "qrcode.vue";
+// import QrcodeVue from "qrcode.vue";
 import { mapGetters, mapActions } from "vuex";
+import zlib from "browserify-zlib";
+import QRCode from "qrcode";
+// var Buffer = require("buffer").Buffer;
+// var zlib = require("zlib");
 
 export default {
   components: {
-    QrcodeVue,
+    // QrcodeVue,
   },
   computed: {
     ...mapGetters([
@@ -128,7 +132,7 @@ export default {
       "getidCredential",
     ]),
     dayPassStr() {
-      return JSON.stringify(this.dayPass);
+      return JSON.stringify(this.presentation);
     },
   },
   data() {
@@ -136,6 +140,7 @@ export default {
       dayPass: {},
       isLoadingPage: false,
       presentation: {},
+      QRCodeURl: "",
     };
   },
 
@@ -169,6 +174,8 @@ export default {
         domain: "https://127.0.0.1:8080", // TODO: fix hardcoding, window.location.origin,
         challenge: "12345",
       });
+
+      this.compressAndGeneratedQRCode();
     } catch (e) {
       console.error(e.message);
       this.isLoadingPage = false;
@@ -179,6 +186,17 @@ export default {
 
   methods: {
     ...mapActions(["generatePresentation"]),
+
+    async compressAndGeneratedQRCode() {
+      const d = JSON.stringify(this.presentation);
+      // TODO: Need to compress more
+      const deflated = zlib.deflateSync(d).toString("base64");
+      this.QRCodeURl = await QRCode.toDataURL(deflated, {
+        width: 300,
+        scale: 1,
+      });
+    },
+
     downloadDayPass() {
       html2pdf(document.getElementById("dayPass-id"), {
         margin: 1,

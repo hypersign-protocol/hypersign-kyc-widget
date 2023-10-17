@@ -10,11 +10,6 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
-
-        idCredential: {},
-        invoiceCredential: {},
-        dayPassCredential: {},
-
         steps: [
             {
                 id: 0,
@@ -60,20 +55,18 @@ export default new Vuex.Store({
                 skip: false,
 
             }
-        ]
+        ],
+
+        // Day Pass related
+        idCredential: {},
+        invoiceCredential: {},
+        dayPassCredential: {},
+        userDID: {},
     },
     getters: {
         getActiveStep: (state) => {
             // console.log(state)
             return state.steps.find(x => x.isActive == true)
-        },
-        getUserDID: () => {
-            const userDIDStr = localStorage.getItem('userDID')
-            if (userDIDStr) {
-                return JSON.parse(userDIDStr)
-            } else {
-                return null
-            }
         },
 
         getAuthorization: (state) => {
@@ -85,7 +78,25 @@ export default new Vuex.Store({
             return state.aadharData
         },
 
-        getinvoiceCredential: () => {
+        // Day Pass related
+        getUserDID: (state) => {
+            if (state.userDID && Object.keys(state.userDID).length > 0) {
+                return state.userDID
+            }
+
+            const userDIDStr = localStorage.getItem('userDID')
+            if (userDIDStr) {
+                return JSON.parse(userDIDStr)
+            } else {
+                return null
+            }
+        },
+
+        getinvoiceCredential: (state) => {
+            if (state.invoiceCredential && Object.keys(state.invoiceCredential).length > 0) {
+                return state.invoiceCredential
+            }
+
             const invoiceCredentialStr = localStorage.getItem('invoiceCredential')
             if (invoiceCredentialStr) {
                 return JSON.parse(invoiceCredentialStr)
@@ -94,7 +105,10 @@ export default new Vuex.Store({
             }
         },
 
-        getidCredential: () => {
+        getidCredential: (state) => {
+            if (state.idCredential && Object.keys(state.idCredential).length > 0) {
+                return state.invoiceCredential
+            }
             const invoiceCredentialStr = localStorage.getItem('idCredential')
             if (invoiceCredentialStr) {
                 return JSON.parse(invoiceCredentialStr)
@@ -103,7 +117,10 @@ export default new Vuex.Store({
             }
         },
 
-        getdayPassCredential: () => {
+        getdayPassCredential: (state) => {
+            if (state.dayPassCredential && Object.keys(state.dayPassCredential).length > 0) {
+                return state.dayPassCredential
+            }
             const invoiceCredentialStr = localStorage.getItem('dayPassCredential')
             if (invoiceCredentialStr) {
                 return JSON.parse(invoiceCredentialStr)
@@ -128,18 +145,20 @@ export default new Vuex.Store({
             state.steps[activeStep.id].isActive = false;
             state.steps[previousStepId].isActive = true;
         },
+
         setAuthorization: (state, authorization) => {
             state.authorization = authorization
             localStorage.setItem('authorization', authorization)
 
         },
+
         setQrString: (state, qrString) => {
             state.qrString = qrString;
         },
+
         setImage: (state, imageData) => {
             state.imageData = imageData;
         },
-
 
         setPhoneNumber: (state, phoneNumber) => {
             state.phoneNumber = phoneNumber;
@@ -150,24 +169,27 @@ export default new Vuex.Store({
         },
 
         setAadhaarData: (state, aadharData) => {
-            // localStorage.setItem("aadharData", JSON.stringify(aadharData));
             state.aadharData = { ...aadharData };
         },
 
+        // Day Pass related
         setidCredential: (state, credential) => {
+            state.idCredential = { ...credential }
             localStorage.setItem("idCredential", JSON.stringify(credential));
         },
+
         setinvoiceCredential: (state, credential) => {
+            state.invoiceCredential = { ...credential }
             localStorage.setItem("invoiceCredential", JSON.stringify(credential));
         },
 
         setdayPassCredential: (state, credential) => {
+            state.dayPassCredential = { ...credential }
             localStorage.setItem("dayPassCredential", JSON.stringify(credential));
         },
 
         setUserDID: (state, userID) => {
-            console.log(state.userDID);
-            console.log('setting userDID in localStorage')
+            state.userDID = { ...userID }
             localStorage.setItem("userDID", JSON.stringify(userID));
         }
     },
@@ -348,6 +370,7 @@ export default new Vuex.Store({
             })
         },
 
+        // Day Pass related
         createDid({ getters }) {
             return new Promise((resolve, reject) => {
                 fetch(ENTITY_API_BASE_URL + "/api/v1/did/create", {

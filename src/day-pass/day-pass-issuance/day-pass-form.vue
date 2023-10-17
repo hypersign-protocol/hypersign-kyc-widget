@@ -323,7 +323,7 @@ export default {
         console.log("KYC Popup closed");
         if (message && message.success) {
           this.idCredential = message.message;
-          this.dayPassCredential.name =
+          this.dayPassCredentialTemplate.fields.name =
             this.idCredential.credentialSubject.name;
           this.setidCredential(this.idCredential);
         } else {
