@@ -159,6 +159,8 @@
         <button class="btn btn-outline-dark" @click="submitForm()">
           Submit
         </button>
+
+        <button class="btn btn-link" @click="refresh()">Reset</button>
       </div>
     </div>
     <div v-else class="card-body">
@@ -275,7 +277,17 @@ export default {
       "setinvoiceCredential",
       "setidCredential",
     ]),
-    ...mapActions(["createDid", "registerDid", "issueCredential"]),
+    ...mapActions([
+      "createDid",
+      "registerDid",
+      "issueCredential",
+      "refreshStore",
+    ]),
+    refresh() {
+      this.refreshStore();
+      window.location.reload();
+    },
+
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(

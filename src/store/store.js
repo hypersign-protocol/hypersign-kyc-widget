@@ -458,6 +458,19 @@ export default new Vuex.Store({
                     reject(err.message || err);
                 })
             })
+        },
+
+        refreshStore({ state }) {
+            localStorage.removeItem('idCredential')
+            localStorage.removeItem('invoiceCredential')
+            localStorage.removeItem('dayPassCredential')
+            localStorage.removeItem('userDID')
+
+            state.userDID = {}
+            state.idCredential = {}
+            state.invoiceCredential = {}
+            state.dayPassCredential = {}
+
         }
     },
 })  

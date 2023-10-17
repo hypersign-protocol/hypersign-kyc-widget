@@ -105,6 +105,10 @@
         >
           Print Your Day Pass
         </button>
+
+        <button type="button" class="btn btn-link" @click="refreshStore()">
+          Request New Day Pass
+        </button>
       </div>
     </div>
     <p></p>
@@ -185,7 +189,11 @@ export default {
   },
 
   methods: {
-    ...mapActions(["generatePresentation"]),
+    ...mapActions(["generatePresentation", "refreshStore"]),
+
+    refresh() {
+      this.refreshStore();
+    },
 
     async compressAndGeneratedQRCode() {
       const d = JSON.stringify(this.presentation);
