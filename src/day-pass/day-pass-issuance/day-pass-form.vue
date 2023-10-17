@@ -10,7 +10,7 @@
     </div>
     <div class="card-body" v-if="!showDayPass">
       <div class="mb-3">
-        <div v-if="!isAadhaarQRVerifiedAndDataExtracted">
+        <div v-if="!isIdVerifed">
           <label for="basic-url" class="form-label fw-bold"
             >Choose ID Provider and verify your identity</label
           >
@@ -174,13 +174,14 @@ import DayPassFinal from "./day-pass-final.vue";
 import { mapMutations, mapActions, mapGetters } from "vuex";
 import PoweredBy from "../../components/commons/PoweredBy.vue";
 export default {
+  name: "DayPass",
   components: {
     DayPassFinal,
     PoweredBy,
   },
   computed: {
-    isAadhaarQRVerifiedAndDataExtracted() {
-      return this.aadharData && Object.keys(this.aadharData).length > 0;
+    isIdVerifed() {
+      return this.idCredential && Object.keys(this.idCredential).length > 0;
     },
     ...mapGetters(["getUserDID"]),
   },
@@ -208,9 +209,16 @@ export default {
     return {
       idCredential: {},
       invoiceCredential: {},
-      dayPassCredential: {},
+      dayPassCredential: {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        center: "",
+        issuanceDate: "",
+        expirationDate: "",
+        issuer: "Behive Ltd",
+      },
       isLoadingPage: false,
-      aadharData: {},
       hasPaid: false,
       showDayPass: false,
     };
@@ -234,8 +242,14 @@ export default {
       );
 
       window.addEventListener("message", (event) => {
-        if (event.data === "popup-closed") {
-          this.onPopupClosed();
+        console.log("Inside : openkycpopup ");
+        if (event.data.event === "id-popup-closed") {
+          console.log(
+            "Inside : openkycpopup :event.data.event  " + event.data.event
+          );
+          this.onIdPopupClosed(event.data.message);
+        } else {
+          console.log(event.data);
         }
       });
     },
@@ -248,42 +262,28 @@ export default {
       );
 
       window.addEventListener("message", (event) => {
-        if (event.data === "pay-popup-closed") {
-          this.onPayPopupClosed();
+        if (event.data.event === "pay-popup-closed") {
+          this.onPayPopupClosed(event.data.message);
         }
       });
     },
-    onPayPopupClosed() {
+    onPayPopupClosed(credential) {
       console.log("Pay Popup closed");
       this.hasPaid = true;
-
-      this.invoiceCredential.accountId = "123123";
-      this.invoiceCredential.broker = "RazorPay";
-      this.invoiceCredential.invoiceNumber = "12314";
-      this.invoiceCredential.customer = "user";
-      this.invoiceCredential.provider = "Beehive";
-      this.invoiceCredential.paymentMethod = "UPI";
-      this.invoiceCredential.paymentStatus = "Success";
+      this.invoiceCredential = credential;
       this.setImage(this.invoiceCredential);
     },
-    onPopupClosed() {
+
+    onIdPopupClosed(message) {
       try {
         console.log("KYC Popup closed");
-        const aadharDataStr = localStorage.getItem("aadharData");
-        if (aadharDataStr) {
-          this.aadharData = JSON.parse(aadharDataStr);
-          this.idCredential = {
-            name: this.aadharData.name,
-            dob: this.aadharData.dob,
-            docType: "Aadhaar",
-            issuer: "Cavach.Id",
-          };
-          console.log("Seeint setidcredential...");
-          this.dayPassCredential.name = this.idCredential.name;
+        if (message && message.success) {
+          this.idCredential = message.message;
+          this.dayPassCredential.name =
+            this.idCredential.credentialSubject.name;
           this.setPhoneNumber(this.idCredential);
-          // this.setPhoneNumber1(this.idCredential);
         } else {
-          console.log("Could not find aadharDataStr");
+          throw new Error(message?.message || "Something went wrong");
         }
       } catch (e) {
         console.error(e);
@@ -300,7 +300,7 @@ export default {
 
         let proccedWithoutIdConfirmation = false;
 
-        if (!this.isAadhaarQRVerifiedAndDataExtracted) {
+        if (!this.isIdVerifed) {
           proccedWithoutIdConfirmation = confirm(
             "You did not verify your Identity. You need to verify your ID manually at the veuene during checkin and might have to stand in long queue or wait. To make your and others checking processs seamless, we suggest you verify and procees.\n\n Press Cancel to verify your ID, preess OK to proceed without ID verification"
           );
@@ -311,7 +311,7 @@ export default {
           this.showDayPass = true;
         }
 
-        if (this.hasPaid && this.isAadhaarQRVerifiedAndDataExtracted) {
+        if (this.hasPaid && this.isIdVerifed) {
           this.showDayPass = true;
         }
 
@@ -327,7 +327,7 @@ export default {
           this.dayPassCredential.issuanceDate = now;
           this.dayPassCredential.expirationDate =
             now + new Date().getDate() + 1;
-          this.dayPassCredential.issuer = "Beehive";
+          // this.dayPassCredential.issuer = "Beehive";
           this.dayPassCredential.center = "HSR Layout";
           this.setFinalResult(this.dayPassCredential);
         }

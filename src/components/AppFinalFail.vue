@@ -20,6 +20,9 @@ export default {
     PoweredBy,
     VerificationDetails,
   },
+  mounted() {
+    this.$emit("finalresult", "Fail");
+  },
 };
 </script>
 <style type="text/css" scoped>

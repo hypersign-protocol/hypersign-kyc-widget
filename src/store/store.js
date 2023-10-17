@@ -20,38 +20,44 @@ export default new Vuex.Store({
                 id: 0,
                 isActive: true,
                 stepName: 'AppInstructions',
-                previous: 0
+                previous: 0,
+                skip: false,
             },
             {
                 id: 1,
                 isActive: true,
                 stepName: 'AppScanQR',
-                previous: 0
+                previous: 0,
+                skip: false,
             },
             {
                 id: 2,
                 isActive: false,
                 stepName: 'AppClickPic',
-                previous: 1
+                previous: 1,
+                skip: true,
 
             },
             {
                 id: 3,
                 isActive: false,
                 stepName: 'AppOtp',
-                previous: 2
+                previous: 2,
+                skip: false,
             },
             {
                 id: 4,
                 isActive: false,
                 stepName: 'AppFinalSuccess',
-                previous: 3
+                previous: 3,
+                skip: false,
             },
             {
                 id: 5,
                 isActive: false,
                 stepName: 'AppFinalFail',
-                previous: 3
+                previous: 3,
+                skip: false,
 
             }
         ]
@@ -68,7 +74,17 @@ export default new Vuex.Store({
             } else {
                 return {}
             }
+        },
+
+        getAuthorization: (state) => {
+            state.authorization = localStorage.getItem('authorization');
+            return state.authorization
+        },
+
+        getAadhaarData: (state) => {
+            return state.aadharData
         }
+
     },
     mutations: {
 
@@ -112,7 +128,7 @@ export default new Vuex.Store({
         },
 
         setAadhaarData: (state, aadharData) => {
-            localStorage.setItem("aadharData", JSON.stringify(aadharData));
+            // localStorage.setItem("aadharData", JSON.stringify(aadharData));
             state.aadharData = { ...aadharData };
         },
 
@@ -175,6 +191,7 @@ export default new Vuex.Store({
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Api-Secret-Key': ENTITY_APP_SERCRET,
+                        // "origin": ENTITY_API_BASE_URL
                     },
                     body: undefined
                 }).then(resp => {
@@ -309,13 +326,13 @@ export default new Vuex.Store({
             })
         },
 
-        createDid() {
+        createDid({ getters }) {
             return new Promise((resolve, reject) => {
                 fetch(ENTITY_API_BASE_URL + "/api/v1/did/create", {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json',
-                        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Ijc4ZGQ0MjQ0MDU4YzU3ZDVhYTY1MjY4MzU2ZTliZDQ2N2Y4MyIsInVzZXJJZCI6InZpc2h3YXNiaHVzaGFuMDAxQGdtYWlsLmNvbSIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImlhdCI6MTY5NzQ1NTk1NiwiZXhwIjoxNjk3NDcwMzU2fQ.70Oze-qnKAf-dM1QNkxu0m9DwXyOeEXhevQRAW4Mqbo",
+                        Authorization: getters.getAuthorization,
                     },
                     body: JSON.stringify({ namespace: 'testnet' })
                 }).then(resp => {
@@ -328,7 +345,7 @@ export default new Vuex.Store({
             })
         },
 
-        registerDid({ state, commit }, data) {
+        registerDid({ state, getters, commit }, data) {
             console.log(data)
             console.log(state.authorization)
             return new Promise((resolve, reject) => {
@@ -336,7 +353,7 @@ export default new Vuex.Store({
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Ijc4ZGQ0MjQ0MDU4YzU3ZDVhYTY1MjY4MzU2ZTliZDQ2N2Y4MyIsInVzZXJJZCI6InZpc2h3YXNiaHVzaGFuMDAxQGdtYWlsLmNvbSIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImlhdCI6MTY5NzQ1NTk1NiwiZXhwIjoxNjk3NDcwMzU2fQ.70Oze-qnKAf-dM1QNkxu0m9DwXyOeEXhevQRAW4Mqbo",
+                        Authorization: getters.getAuthorization,
                     },
                     body: JSON.stringify({ didDocument: data.didDocument, verificationMethodId: data.verificationMethodId })
                 }).then(resp => {
@@ -358,14 +375,14 @@ export default new Vuex.Store({
             })
         },
 
-        issueCredential({ state }, data) {
+        issueCredential({ state, getters }, data) {
             console.log(state.phoneNumber)
             return new Promise((resolve, reject) => {
                 fetch(ENTITY_API_BASE_URL + "/api/v1/credential/issue", {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Ijc4ZGQ0MjQ0MDU4YzU3ZDVhYTY1MjY4MzU2ZTliZDQ2N2Y4MyIsInVzZXJJZCI6InZpc2h3YXNiaHVzaGFuMDAxQGdtYWlsLmNvbSIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImlhdCI6MTY5NzQ1NTk1NiwiZXhwIjoxNjk3NDcwMzU2fQ.70Oze-qnKAf-dM1QNkxu0m9DwXyOeEXhevQRAW4Mqbo",
+                        Authorization: getters.getAuthorization,
                     },
                     body: JSON.stringify(data)
                 }).then(resp => {

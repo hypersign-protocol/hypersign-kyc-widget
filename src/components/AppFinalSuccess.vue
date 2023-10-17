@@ -23,9 +23,7 @@ export default {
     VerificationDetails,
   },
   mounted() {
-    window.addEventListener("beforeunload", () => {
-      window.opener.postMessage("popup-closed", "*");
-    });
+    this.$emit("finalresult", "Ok");
   },
 };
 </script>
