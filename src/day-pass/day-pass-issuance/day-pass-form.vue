@@ -49,13 +49,12 @@
             >
               Your ID is verified!
             </label>
-          </div>
-          <!-- <button class="btn btn-success btn-sm" disabled>
             <span
-              ><i class="bi bi-check-circle" style="color: white"></i> Your ID
-              is verified!</span
-            >
-          </button> -->
+              title="Click to view your ID credential"
+              style="cursor: grab; padding: 2px"
+              ><i class="bi bi-credit-card-2-front-fill"></i
+            ></span>
+          </div>
         </div>
       </div>
 
@@ -66,7 +65,7 @@
           type="text"
           class="form-control"
           id="fullName"
-          v-model="dayPassCredential.name"
+          v-model="dayPassCredentialTemplate.fields.name"
           placeholder="Your Full Name"
         />
       </div>
@@ -79,7 +78,7 @@
             class="form-control"
             id="basic-url"
             aria-describedby="basic-addon3 basic-addon4"
-            v-model="dayPassCredential.phoneNumber"
+            v-model="dayPassCredentialTemplate.fields.phoneNumber"
           />
         </div>
         <div class="form-text" id="basic-addon4">
@@ -95,7 +94,7 @@
           class="form-control"
           id="exampleFormControlInput1"
           placeholder="name@example.com"
-          v-model="dayPassCredential.email"
+          v-model="dayPassCredentialTemplate.fields.email"
         />
       </div>
 
@@ -147,6 +146,11 @@
             >
               Your Payment is done successfully!
             </label>
+            <span
+              title="Click to view your invoice credential"
+              style="cursor: grab; padding: 2px"
+              ><i class="bi bi-credit-card-2-back-fill"></i
+            ></span>
           </div>
         </div>
       </div>
@@ -173,6 +177,7 @@
 import DayPassFinal from "./day-pass-final.vue";
 import { mapMutations, mapActions, mapGetters } from "vuex";
 import PoweredBy from "../../components/commons/PoweredBy.vue";
+import issuerDidDocument from "./issuer";
 export default {
   name: "DayPass",
   components: {
@@ -183,22 +188,52 @@ export default {
     isIdVerifed() {
       return this.idCredential && Object.keys(this.idCredential).length > 0;
     },
-    ...mapGetters(["getUserDID"]),
+    hasPaid() {
+      return (
+        this.invoiceCredential && Object.keys(this.invoiceCredential).length > 0
+      );
+    },
+    showDayPass() {
+      return (
+        this.dayPassCredential && Object.keys(this.dayPassCredential).length > 0
+      );
+    },
+    ...mapGetters([
+      "getUserDID",
+      "getdayPassCredential",
+      "getinvoiceCredential",
+      "getidCredential",
+    ]),
   },
   async mounted() {
     try {
       this.isLoadingPage = true;
+
+      if (this.getinvoiceCredential) {
+        this.invoiceCredential = this.getinvoiceCredential;
+      }
+
+      if (this.getdayPassCredential) {
+        this.dayPassCredential = this.getdayPassCredential;
+      }
+
+      if (this.getidCredential) {
+        this.idCredential = this.getidCredential;
+        this.dayPassCredentialTemplate.fields.name =
+          this.idCredential.credentialSubject.name;
+      }
+
       if (this.getUserDID?.did) {
         this.isLoadingPage = false;
         return;
       }
+
       const didRes = await this.createDid();
       const data = {
         didDocument: didRes.didDocument,
         verificationMethodId: didRes.didDocument.verificationMethod[0].id,
       };
-      const resp = await this.registerDid({ ...data });
-      console.log(resp);
+      await this.registerDid({ ...data });
     } catch (e) {
       console.error(e.message || e);
     } finally {
@@ -209,30 +244,38 @@ export default {
     return {
       idCredential: {},
       invoiceCredential: {},
-      dayPassCredential: {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        center: "",
-        issuanceDate: "",
-        expirationDate: "",
-        issuer: "Behive Ltd",
+      dayPassCredential: {},
+      dayPassCredentialTemplate: {
+        schemaContext: ["https://schema.org"],
+        type: [],
+        subjectDid: issuerDidDocument.id, // TODO: pass did of users
+        issuerDid: issuerDidDocument.id,
+        expirationDate: "2027-12-31T23:59:59Z",
+        verificationMethodId: issuerDidDocument.verificationMethod[0].id,
+        fields: {
+          name: "",
+          email: "",
+          phoneNumber: "",
+          center: "",
+          issuanceDate: "",
+          expirationDate: "",
+          issuer: "Behive Ltd",
+        },
+        namespace: "testnet",
+        persist: false,
       },
       isLoadingPage: false,
-      hasPaid: false,
-      showDayPass: false,
+      shouldIssueCredential: false,
     };
   },
   methods: {
     ...mapMutations([
-      "setPhoneNumber",
       "nextStep",
-      "setFinalResult",
-      "setQrString",
-      "setImage",
-      "setFinalResult",
+      "setdayPassCredential",
+      "setinvoiceCredential",
+      "setidCredential",
     ]),
-    ...mapActions(["createDid", "registerDid"]),
+    ...mapActions(["createDid", "registerDid", "issueCredential"]),
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
@@ -253,6 +296,7 @@ export default {
         }
       });
     },
+
     openPaymentGatewayPopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
@@ -267,11 +311,11 @@ export default {
         }
       });
     },
+
     onPayPopupClosed(credential) {
       console.log("Pay Popup closed");
-      this.hasPaid = true;
       this.invoiceCredential = credential;
-      this.setImage(this.invoiceCredential);
+      this.setinvoiceCredential(this.invoiceCredential);
     },
 
     onIdPopupClosed(message) {
@@ -281,7 +325,7 @@ export default {
           this.idCredential = message.message;
           this.dayPassCredential.name =
             this.idCredential.credentialSubject.name;
-          this.setPhoneNumber(this.idCredential);
+          this.setidCredential(this.idCredential);
         } else {
           throw new Error(message?.message || "Something went wrong");
         }
@@ -290,10 +334,8 @@ export default {
       }
     },
 
-    submitForm() {
+    async submitForm() {
       try {
-        //
-
         if (!this.hasPaid) {
           return alert("Please finish your payment before proceeding");
         }
@@ -308,31 +350,41 @@ export default {
 
         if (proccedWithoutIdConfirmation) {
           console.log(proccedWithoutIdConfirmation);
-          this.showDayPass = true;
+          this.shouldIssueCredential = true;
         }
 
         if (this.hasPaid && this.isIdVerifed) {
-          this.showDayPass = true;
+          this.shouldIssueCredential = true;
         }
 
-        if (this.showDayPass) {
-          this.dayPassCredential.invoiceNumber =
+        if (this.shouldIssueCredential) {
+          this.isLoadingPage = true;
+          this.dayPassCredentialTemplate.fields.invoiceNumber =
             this.invoiceCredential.invoiceNumber;
           const now = Date.now();
 
-          if (!this.dayPassCredential.name) {
-            this.dayPassCredential.name = this.idCredential.name;
+          if (!this.dayPassCredentialTemplate.fields.name) {
+            this.dayPassCredentialTemplate.fields.name = this.idCredential.name;
           }
 
-          this.dayPassCredential.issuanceDate = now;
-          this.dayPassCredential.expirationDate =
+          this.dayPassCredentialTemplate.fields.issuanceDate = now;
+          this.dayPassCredentialTemplate.fields.expirationDate =
             now + new Date().getDate() + 1;
-          // this.dayPassCredential.issuer = "Beehive";
-          this.dayPassCredential.center = "HSR Layout";
-          this.setFinalResult(this.dayPassCredential);
+
+          this.dayPassCredentialTemplate.fields.center = "HSR Layout"; // TODO: update this.
+
+          this.dayPassCredential = await this.issueCredential(
+            this.dayPassCredentialTemplate
+          );
+
+          this.setdayPassCredential(this.dayPassCredential);
+          this.isLoadingPage = false;
         }
       } catch (e) {
+        this.isLoadingPage = false;
         console.error(e.message);
+      } finally {
+        this.isLoadingPage = false;
       }
     },
   },

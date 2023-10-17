@@ -18,18 +18,23 @@
               style="font-size: 50px; color: green"
             ></i>
           </div> -->
-          <p>Hi {{ dayPassCredential.name }}</p>
+          <p>Hi {{ dayPass.credentialSubject.name }}</p>
           <p>
             Thank you for booking Day pass with
-            <span style="font-weight: bold">{{ dayPassCredential.center }}</span
+            <span style="font-weight: bold">{{
+              dayPass.credentialSubject.center
+            }}</span
             >.
           </p>
           <p>Please find the details:</p>
           <ul>
-            <li>ID: {{ dayPassCredential.id }}</li>
-            <li>Name: {{ dayPassCredential.name }}</li>
-            <li>Issued On: {{ dayPassCredential.issuanceDate }}</li>
-            <li>Valid Until: {{ dayPassCredential.expirationDate }}</li>
+            <li>ID: {{ dayPass.id }}</li>
+            <li>Name: {{ dayPass.credentialSubject.name }}</li>
+            <li>Issued On: {{ dayPass.credentialSubject.issuanceDate }}</li>
+            <li>
+              Valid Until:
+              {{ dayPass.credentialSubject.expirationDate }}
+            </li>
           </ul>
           <p>
             Thank you for booking with us,
@@ -66,41 +71,28 @@
 <script>
 import html2pdf from "html2pdf.js";
 import QrcodeVue from "qrcode.vue";
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
     QrcodeVue,
   },
   computed: {
-    ...mapState(["dayPassCredential"]),
+    ...mapGetters(["getdayPassCredential"]),
     dayPassStr() {
       return JSON.stringify(this.dayPass);
     },
   },
   data() {
     return {
-      dayPass: {
-        id: "day-pass-123",
-        fullname: "Vishwas Anand Bhushan",
-        companyName: "Hypermine Pvt. Ltd",
-        issuanceDate: "12-12-2023",
-        expirationDate: "12-12-2023",
-        center: "HSR Layout",
-        issuer: "Bhive",
-        confirmationNumber: "",
-        email: "vishu.anndn3@gmail.com",
-        phoneNumber: "8444927388",
-      },
+      dayPass: {},
     };
   },
 
   mounted() {
-    // const dayPassCredentialStr = localStorage.getItem("dayPassCredential");
-    // const dayPassCredential = JSON.parse(dayPassCredentialStr);
-    // this.dayPass = {
-    //   ...dayPassCredential,
-    // };
+    if (this.getdayPassCredential) {
+      this.dayPass = this.getdayPassCredential;
+    }
   },
 
   methods: {

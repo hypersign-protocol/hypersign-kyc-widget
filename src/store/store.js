@@ -72,7 +72,7 @@ export default new Vuex.Store({
             if (userDIDStr) {
                 return JSON.parse(userDIDStr)
             } else {
-                return {}
+                return null
             }
         },
 
@@ -83,6 +83,33 @@ export default new Vuex.Store({
 
         getAadhaarData: (state) => {
             return state.aadharData
+        },
+
+        getinvoiceCredential: () => {
+            const invoiceCredentialStr = localStorage.getItem('invoiceCredential')
+            if (invoiceCredentialStr) {
+                return JSON.parse(invoiceCredentialStr)
+            } else {
+                return null
+            }
+        },
+
+        getidCredential: () => {
+            const invoiceCredentialStr = localStorage.getItem('idCredential')
+            if (invoiceCredentialStr) {
+                return JSON.parse(invoiceCredentialStr)
+            } else {
+                return null
+            }
+        },
+
+        getdayPassCredential: () => {
+            const invoiceCredentialStr = localStorage.getItem('dayPassCredential')
+            if (invoiceCredentialStr) {
+                return JSON.parse(invoiceCredentialStr)
+            } else {
+                return null
+            }
         }
 
     },
@@ -110,21 +137,16 @@ export default new Vuex.Store({
             state.qrString = qrString;
         },
         setImage: (state, imageData) => {
-            // state.imageData = imageData;
-            state.invoiceCredential = { ...imageData };
-            localStorage.setItem("invoiceCredential", JSON.stringify(state.invoiceCredential));
+            state.imageData = imageData;
         },
 
 
         setPhoneNumber: (state, phoneNumber) => {
-            // state.phoneNumber = phoneNumber;
-            state.idCredential = { ...phoneNumber };
-            localStorage.setItem("idCredential", JSON.stringify(state.idCredential));
+            state.phoneNumber = phoneNumber;
         },
 
         setFinalResult: (state, result) => {
-            state.dayPassCredential = { ...result };
-            localStorage.setItem("dayPassCredential", JSON.stringify(state.dayPassCredential));
+            state.finalResult = { ...result };
         },
 
         setAadhaarData: (state, aadharData) => {
@@ -132,16 +154,16 @@ export default new Vuex.Store({
             state.aadharData = { ...aadharData };
         },
 
-        // setidCredential: (state, credential) => {
-        //     console.log('setidCredential called ')
-        //     state.idCredential = { ...credential };
-        // },
-        // setinvoiceCredential: (state, credential) => {
-        //     state.invoiceCredential = { ...credential };
-        // },
-        // setdayPassCredential: (state, credential) => {
-        //     state.dayPassCredential = { ...credential };
-        // }
+        setidCredential: (state, credential) => {
+            localStorage.setItem("idCredential", JSON.stringify(credential));
+        },
+        setinvoiceCredential: (state, credential) => {
+            localStorage.setItem("invoiceCredential", JSON.stringify(credential));
+        },
+
+        setdayPassCredential: (state, credential) => {
+            localStorage.setItem("dayPassCredential", JSON.stringify(credential));
+        },
 
         setUserDID: (state, userID) => {
             console.log(state.userDID);
