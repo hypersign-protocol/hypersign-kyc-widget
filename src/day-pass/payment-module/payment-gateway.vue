@@ -33,8 +33,10 @@ export default {
       hasPaid: false,
       isLoadingPage: false,
       invoiceCredentialTemplate: {
-        schemaContext: ["https://schema.org"],
-        type: [],
+        // schemaContext: ["https://schema.org"],
+        // type: [],
+        schemaId:
+          "sch:hid:testnet:zBQcabxBSYke3gNNeWeAzBkxqGfzZEYnS29jYe3oQynZS:1.0",
         subjectDid: issuerDidDocument.id, // TODO: pass did of users
         issuerDid: issuerDidDocument.id,
         expirationDate: "2027-12-31T23:59:59Z",

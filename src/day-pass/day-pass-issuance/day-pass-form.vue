@@ -248,8 +248,10 @@ export default {
       invoiceCredential: {},
       dayPassCredential: {},
       dayPassCredentialTemplate: {
-        schemaContext: ["https://schema.org"],
-        type: [],
+        // schemaContext: ["https://schema.org"],
+        // type: [],
+        schemaId:
+          "sch:hid:testnet:zEm5JG2iBuds4oMvmrNJavYxR3eXp7eszfgdhtsnjGAb2:1.0",
         subjectDid: issuerDidDocument.id, // TODO: pass did of users
         issuerDid: issuerDidDocument.id,
         expirationDate: "2027-12-31T23:59:59Z",

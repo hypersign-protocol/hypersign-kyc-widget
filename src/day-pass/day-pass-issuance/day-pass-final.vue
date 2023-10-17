@@ -40,7 +40,7 @@
               Valid Until:
               {{ dayPass.credentialSubject?.expirationDate }}
             </li>
-            <li v-if="this.getidCredential">
+            <li v-if="this.hasIdVerified">
               <div class="form-check">
                 <input
                   class="form-check-input"
@@ -59,7 +59,7 @@
                 </label>
               </div>
             </li>
-            <li v-if="this.getinvoiceCredential">
+            <li v-if="this.hasPaymentDone">
               <div class="form-check">
                 <input
                   class="form-check-input"
@@ -106,7 +106,7 @@
           Print Your Day Pass
         </button>
 
-        <button type="button" class="btn btn-link" @click="refreshStore()">
+        <button type="button" class="btn btn-link" @click="refresh()">
           Request New Day Pass
         </button>
       </div>
@@ -135,6 +135,37 @@ export default {
       "getinvoiceCredential",
       "getidCredential",
     ]),
+
+    hasIdVerified() {
+      if (
+        this.getidCredential &&
+        Object.keys(this.getidCredential).length > 0
+      ) {
+        return true;
+      }
+      return false;
+    },
+
+    hasDayPassIssued() {
+      if (
+        this.getdayPassCredential &&
+        Object.keys(this.getdayPassCredential).length > 0
+      ) {
+        return true;
+      }
+      return false;
+    },
+
+    hasPaymentDone() {
+      if (
+        this.getinvoiceCredential &&
+        Object.keys(this.getinvoiceCredential).length > 0
+      ) {
+        return true;
+      }
+      return false;
+    },
+
     dayPassStr() {
       return JSON.stringify(this.presentation);
     },
@@ -160,15 +191,15 @@ export default {
         throw new Error("No user ID found");
       }
 
-      if (this.getdayPassCredential) {
+      if (this.hasDayPassIssued) {
         credentialDocuments.push(this.getdayPassCredential);
       }
 
-      if (this.getinvoiceCredential) {
+      if (this.hasPaymentDone) {
         credentialDocuments.push(this.getinvoiceCredential);
       }
 
-      if (this.getidCredential) {
+      if (this.hasIdVerified) {
         credentialDocuments.push(this.getidCredential);
       }
 
@@ -204,6 +235,9 @@ export default {
         width: 300,
         scale: 1,
       });
+
+      // TODO:  remove this once we figure out how to extract presentation from pdf
+      localStorage.setItem("presentation", d);
     },
 
     downloadDayPass() {

@@ -37,8 +37,10 @@ export default {
   data() {
     return {
       idCredentialTemplate: {
-        schemaContext: ["https://schema.org"],
-        type: [],
+        // schemaContext: ["https://schema.org"],
+        // type: [],
+        schemaId:
+          "sch:hid:testnet:z2YPXosqAbYztVmqYFTW1VfXo2Z6dnafyVPgZ2n9jBmMa:1.0",
         subjectDid: issuerDidDocument.id, // TODO: pass did of users
         issuerDid: issuerDidDocument.id,
         expirationDate: "2027-12-31T23:59:59Z",

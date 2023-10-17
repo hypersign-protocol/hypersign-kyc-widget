@@ -5,6 +5,11 @@
     <div class="card-header" style="text-align: center">
       <h4>Day Pass Verification</h4>
     </div>
+    <load-ing
+      :active.sync="isLoadingPage"
+      :can-cancel="true"
+      :is-full-page="true"
+    ></load-ing>
 
     <div class="card-body">
       <div
@@ -109,7 +114,22 @@
                     {{ eachcredential.type[1] }}</span
                   >
                   <span class="card-title" style="float: right !important">
-                    <img :src="images.greentick" height="21" width="21" />
+                    <!-- <img :src="images.greentick" height="21" width="21" /> -->
+                    <i
+                      class="bi bi-check-circle-fill"
+                      style="color: green; font-size: medium"
+                      v-if="
+                        result?.credentialResults?.find(
+                          (x) => x.credentialId === eachcredential.id
+                        )?.verified
+                      "
+                    ></i>
+
+                    <i
+                      class="bi bi-x-circle-fill"
+                      style="color: red; font-size: medium"
+                      v-else
+                    ></i>
                   </span>
                 </div>
               </div>
@@ -187,7 +207,7 @@
 
 <script>
 import util from "../../utils/utils-mixin";
-
+import { mapActions } from "vuex";
 export default {
   name: "verify-day-pass",
   computed: {},
@@ -215,61 +235,15 @@ export default {
       stream: null,
       torch: false,
       //
-
       // file: null,
       images: {
         greentick: require("../../assets/green-tick.png"),
       },
-      vcTemplate: {
-        "@context": [
-          "https://www.w3.org/2018/credentials/v1",
-          "https://w3id.org/security/suites/ed25519-2020/v1",
-        ],
-        id: "vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-        type: ["VerifiableCredential"],
-        expirationDate: "2023-10-26T18:33:00Z",
-        issuanceDate: "2023-10-13T06:32:24Z",
-        issuer: "did:hid:testnet:zDoQZwzkctBQvYEEL8Xz7fx5tpyeYcQ38hSRJXpSVDyhb",
-        credentialSubject: {},
-        credentialSchema: {
-          id: "sch:hid:testnet:zVDWj2bfmqGWTqRhZZvacvXxtYhsGLopDMd4zr6D6PNq:1.0",
-          type: "JsonSchemaValidator2018",
-        },
-        credentialStatus: {
-          id: "https://api.jagrat.hypersign.id/hypersign-protocol/hidnode/ssi/credential/vc:hid:testnet:zHtT39tW5zMJ2fK4FpZoJUp7fabijCrQfs9ghUnDjHMp1",
-          type: "CredentialStatusList2017",
-        },
-        proof: {
-          type: "Ed25519Signature2020",
-          created: "2023-10-13T06:34:04Z",
-          verificationMethod:
-            "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
-          proofPurpose: "assertionMethod",
-          proofValue:
-            "z43QywET6jir6zdmP79UmVQgQUhwZfyP8Uq28cUH2YzvUMfzHrwqGGszWWq2MH51JPhpoXx4EVx9AS7gfdjszVDp9",
-        },
-      },
-      dummyData: {
-        "@context": [
-          "https://www.w3.org/2018/credentials/v1",
-          "https://w3id.org/security/suites/ed25519-2020/v1",
-        ],
-        type: ["VerifiablePresentation"],
-        verifiableCredential: [],
-        id: "vp:hid:testnet:zDSqkoboWhRUaCn7AQZSDk45Nk1ciCxzPtJAhYL2QqLPo",
-        holder: "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh",
-        proof: {
-          type: "Ed25519Signature2020",
-          created: "2023-10-13T06:40:45Z",
-          verificationMethod:
-            "did:hid:testnet:z2FBEMuH3QkegJ6ffhFcaJG4hWSw71U2tk4kfgQ9ShdYh#key-1",
-          proofPurpose: "authentication",
-          challenge: "3aaa1ff5-bd84-4f45-8f60-24f8a6b8835e",
-          proofValue:
-            "z39bXxX8hgbNZ4f6auEs683Q8CDMEtHVmaX6xSE7FpNfbihUDaCUBykPRb9NCcaCep2W7EJV5T6S3g4ieKgSPtRJP",
-        },
-      },
+
+      dummyData: {},
+      result: {},
       getDailyPassFromUser: true,
+      isLoadingPage: false,
     };
   },
   async mounted() {
@@ -301,73 +275,46 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["verifyPresentation"]),
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
 
-    handleFileUpload(event) {
-      const selectedFile = event.target.files[0];
-      if (selectedFile) {
-        // You can handle the file here, e.g., upload it or display its details
-        console.log("Selected file:", selectedFile.name);
-        this.$refs.uploadBtn.innerText = selectedFile.name;
-        this.$refs.uploadBtn.style.color = "green";
-        this.$refs.uploadBtn.style.borderColor = "green";
+    async handleFileUpload(event) {
+      try {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+          // You can handle the file here, e.g., upload it or display its details
+          console.log("Selected file:", selectedFile.name);
+          this.$refs.uploadBtn.innerText = selectedFile.name;
+          this.$refs.uploadBtn.style.color = "green";
+          this.$refs.uploadBtn.style.borderColor = "green";
 
-        // dayPass
-        const dayPassCredentialStr = localStorage.getItem("dayPassCredential");
-        const dayPassCredential = JSON.parse(dayPassCredentialStr);
-        const vcTemplateForDayPassCredential = { ...this.vcTemplate };
+          //
+          this.isLoadingPage = true;
+          const presentationStr = localStorage.getItem("presentation");
+          if (presentationStr) {
+            const presentation = JSON.parse(presentationStr);
+            this.result = await this.verifyPresentation({ presentation });
+            this.dummyData = {};
+            this.dummyData = { ...presentation };
+          } else {
+            console.log("No presentaiton found in storage");
+          }
 
-        vcTemplateForDayPassCredential.type = [
-          "VerifiableCredential",
-          "DaypassCredential",
-        ];
-
-        vcTemplateForDayPassCredential.issuer = dayPassCredential.issuer;
-        vcTemplateForDayPassCredential.credentialSubject = {
-          ...dayPassCredential,
-        };
-        this.dummyData.verifiableCredential.push(
-          vcTemplateForDayPassCredential
-        );
-
-        // idCrend
-        const idCredentialStr = localStorage.getItem("idCredential");
-        const idCredential = JSON.parse(idCredentialStr);
-        const vcTemplateForIdCredential = { ...this.vcTemplate };
-        vcTemplateForIdCredential.type = [
-          "VerifiableCredential",
-          "AadhaarIdCredential",
-        ];
-        vcTemplateForIdCredential.issuer = idCredential.issuer;
-        vcTemplateForIdCredential.credentialSubject = {
-          ...idCredential,
-        };
-        this.dummyData.verifiableCredential.push(vcTemplateForIdCredential);
-
-        // invocie
-        const invoiceCredentialStr = localStorage.getItem("invoiceCredential");
-        const invoiceCredential = JSON.parse(invoiceCredentialStr);
-        const vcTemplateForInvoiceCredential = { ...this.vcTemplate };
-        vcTemplateForInvoiceCredential.type = [
-          "VerifiableCredential",
-          "InvoiceCredential",
-        ];
-        vcTemplateForInvoiceCredential.issuer = invoiceCredential.provider;
-        vcTemplateForInvoiceCredential.credentialSubject = {
-          ...invoiceCredential,
-        };
-        this.dummyData.verifiableCredential.push(
-          vcTemplateForInvoiceCredential
-        );
-
-        this.getDailyPassFromUser = false;
-        this.$refs.uploadBtn.style.display = "none";
+          this.isLoadingPage = false;
+          this.getDailyPassFromUser = false;
+          this.$refs.uploadBtn.style.display = "none";
+        } else {
+          console.log("No file selected");
+        }
+      } catch (error) {
+        console.error(error);
+        this.isLoading = false;
+      } finally {
+        this.isLoading = false;
       }
     },
-
-    addVCtoPresentation() {},
   },
   mixins: [util],
 };

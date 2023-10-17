@@ -460,11 +460,32 @@ export default new Vuex.Store({
             })
         },
 
+        verifyPresentation({ state, getters }, data) {
+            console.log(state.phoneNumber)
+            return new Promise((resolve, reject) => {
+                fetch(ENTITY_API_BASE_URL + "/api/v1/presentation/verify", {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: getters.getAuthorization,
+                    },
+                    body: JSON.stringify(data)
+                }).then(resp => {
+                    return resp.json()
+                }).then(json => {
+                    resolve(json);
+                }).catch(err => {
+                    reject(err.message || err);
+                })
+            })
+        },
+
         refreshStore({ state }) {
             localStorage.removeItem('idCredential')
             localStorage.removeItem('invoiceCredential')
             localStorage.removeItem('dayPassCredential')
             localStorage.removeItem('userDID')
+            localStorage.removeItem('presentation')
 
             state.userDID = {}
             state.idCredential = {}
