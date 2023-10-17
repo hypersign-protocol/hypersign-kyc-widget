@@ -193,6 +193,7 @@ export default {
 
     refresh() {
       this.refreshStore();
+      window.location.reload();
     },
 
     async compressAndGeneratedQRCode() {
@@ -208,7 +209,7 @@ export default {
     downloadDayPass() {
       html2pdf(document.getElementById("dayPass-id"), {
         margin: 1,
-        filename: "i-was-html.pdf",
+        filename: "day-pass-" + `${this.dayPass.id}.pdf`,
       });
     },
   },

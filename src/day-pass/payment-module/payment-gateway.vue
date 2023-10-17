@@ -54,17 +54,6 @@ export default {
       invoiceCredential: {},
     };
   },
-  mounted() {
-    window.addEventListener("beforeunload", () => {
-      window.opener.postMessage(
-        {
-          event: "pay-popup-closed",
-          message: this.invoiceCredential,
-        },
-        "*"
-      );
-    });
-  },
   methods: {
     ...mapActions(["issueCredential"]),
     async pay() {
@@ -74,6 +63,14 @@ export default {
       );
       this.hasPaid = true;
       this.isLoadingPage = false;
+
+      window.opener.postMessage(
+        {
+          event: "pay-popup-closed",
+          message: this.invoiceCredential,
+        },
+        "*"
+      );
     },
   },
 };
