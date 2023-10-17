@@ -1,5 +1,10 @@
 <template>
   <div>
+    <load-ing
+      :active.sync="isLoadingPage"
+      :can-cancel="true"
+      :is-full-page="true"
+    ></load-ing>
     <div id="dayPass-id">
       <h1>Day Pass</h1>
       <div class="row">
@@ -18,22 +23,60 @@
               style="font-size: 50px; color: green"
             ></i>
           </div> -->
-          <p>Hi {{ dayPass.credentialSubject.name }}</p>
+          <p>Hi {{ dayPass.credentialSubject?.name }}</p>
           <p>
             Thank you for booking Day pass with
             <span style="font-weight: bold">{{
-              dayPass.credentialSubject.center
+              dayPass.credentialSubject?.center
             }}</span
             >.
           </p>
           <p>Please find the details:</p>
           <ul>
-            <li>ID: {{ dayPass.id }}</li>
-            <li>Name: {{ dayPass.credentialSubject.name }}</li>
-            <li>Issued On: {{ dayPass.credentialSubject.issuanceDate }}</li>
+            <li>ID: {{ dayPass?.id }}</li>
+            <li>Name: {{ dayPass.credentialSubject?.name }}</li>
+            <li>Issued On: {{ dayPass.credentialSubject?.issuanceDate }}</li>
             <li>
               Valid Until:
-              {{ dayPass.credentialSubject.expirationDate }}
+              {{ dayPass.credentialSubject?.expirationDate }}
+            </li>
+            <li v-if="this.getidCredential">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckChecked"
+                  checked
+                  disabled
+                />
+                <label
+                  class="form-check-label"
+                  for="flexCheckChecked"
+                  style="color: green"
+                >
+                  Your Id is verified!
+                </label>
+              </div>
+            </li>
+            <li v-if="this.getinvoiceCredential">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckChecked"
+                  checked
+                  disabled
+                />
+                <label
+                  class="form-check-label"
+                  for="flexCheckChecked"
+                  style="color: green"
+                >
+                  Your Payment is done!
+                </label>
+              </div>
             </li>
           </ul>
           <p>
@@ -71,14 +114,19 @@
 <script>
 import html2pdf from "html2pdf.js";
 import QrcodeVue from "qrcode.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
     QrcodeVue,
   },
   computed: {
-    ...mapGetters(["getdayPassCredential"]),
+    ...mapGetters([
+      "getUserDID",
+      "getdayPassCredential",
+      "getinvoiceCredential",
+      "getidCredential",
+    ]),
     dayPassStr() {
       return JSON.stringify(this.dayPass);
     },
@@ -86,16 +134,51 @@ export default {
   data() {
     return {
       dayPass: {},
+      isLoadingPage: false,
+      presentation: {},
     };
   },
 
-  mounted() {
+  async mounted() {
     if (this.getdayPassCredential) {
       this.dayPass = this.getdayPassCredential;
+    }
+
+    try {
+      this.isLoadingPage = true;
+      const credentialDocuments = [];
+      if (!this.getUserDID) {
+        throw new Error("No user ID found");
+      }
+
+      if (this.getdayPassCredential) {
+        credentialDocuments.push(this.getdayPassCredential);
+      }
+
+      if (this.getinvoiceCredential) {
+        credentialDocuments.push(this.getinvoiceCredential);
+      }
+
+      if (this.getidCredential) {
+        credentialDocuments.push(this.getidCredential);
+      }
+
+      this.presentation = await this.generatePresentation({
+        credentialDocuments: credentialDocuments,
+        holderDid: this.getUserDID.did,
+        domain: "https://127.0.0.1:8080", // TODO: fix hardcoding, window.location.origin,
+        challenge: "12345",
+      });
+    } catch (e) {
+      console.error(e.message);
+      this.isLoadingPage = false;
+    } finally {
+      this.isLoadingPage = false;
     }
   },
 
   methods: {
+    ...mapActions(["generatePresentation"]),
     downloadDayPass() {
       html2pdf(document.getElementById("dayPass-id"), {
         margin: 1,

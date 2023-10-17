@@ -415,6 +415,26 @@ export default new Vuex.Store({
                     reject(err.message || err);
                 })
             })
+        },
+
+        generatePresentation({ state, getters }, data) {
+            console.log(state.phoneNumber)
+            return new Promise((resolve, reject) => {
+                fetch(ENTITY_API_BASE_URL + "/api/v1/presentation", {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: getters.getAuthorization,
+                    },
+                    body: JSON.stringify(data)
+                }).then(resp => {
+                    return resp.json()
+                }).then(json => {
+                    resolve(json?.presentation);
+                }).catch(err => {
+                    reject(err.message || err);
+                })
+            })
         }
     },
 })  
