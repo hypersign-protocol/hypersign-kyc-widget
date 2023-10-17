@@ -57,10 +57,19 @@ export default {
       invoiceCredential: {},
     };
   },
+  mounted() {
+    const url = new URL(window.location);
+    this.invoiceCredentialTemplate.subjectDid = url.searchParams.get("did");
+    if (!this.invoiceCredentialTemplate.subjectDid) {
+      this.invoiceCredentialTemplate.subjectDid =
+        this.invoiceCredentialTemplate.issuerDid;
+    }
+  },
   methods: {
     ...mapActions(["issueCredential"]),
     async pay() {
       this.isLoadingPage = true;
+      this.invoiceCredentialTemplate.subjectDid = this.subjectDID;
       this.invoiceCredential = await this.issueCredential(
         this.invoiceCredentialTemplate
       );

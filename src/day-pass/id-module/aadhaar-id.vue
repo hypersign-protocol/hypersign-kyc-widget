@@ -67,13 +67,12 @@ export default {
     // ...mapState(["aadharData"]),
   },
   mounted() {
-    // if (this.getAadhaarData) {
-    //   this.isAlreadyVerifed = true;
-    //   this.getResult("Ok");
-    // }
-    // window.addEventListener("beforeunload", () => {
-    //   window.opener.postMessage("popup-closed", "*");
-    // });
+    const url = new URL(window.location);
+    this.idCredentialTemplate.subjectDid = url.searchParams.get("did");
+    if (!this.idCredentialTemplate.subjectDid) {
+      this.idCredentialTemplate.subjectDid =
+        this.idCredentialTemplate.issuerDid;
+    }
   },
   methods: {
     ...mapActions(["issueCredential"]),

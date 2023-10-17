@@ -107,7 +107,7 @@ export default new Vuex.Store({
 
         getidCredential: (state) => {
             if (state.idCredential && Object.keys(state.idCredential).length > 0) {
-                return state.invoiceCredential
+                return state.idCredential
             }
             const invoiceCredentialStr = localStorage.getItem('idCredential')
             if (invoiceCredentialStr) {

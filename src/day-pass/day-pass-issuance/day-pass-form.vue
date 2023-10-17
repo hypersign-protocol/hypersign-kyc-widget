@@ -72,13 +72,13 @@
       <div class="mb-3">
         <label for="basic-url" class="form-label fw-bold">Address</label>
 
-        <input
-          type="text"
+        <textarea
+          type="text-area"
           class="form-control"
           id="address"
           v-model="dayPassCredentialTemplate.fields.house"
           placeholder="Your Address"
-        />
+        ></textarea>
       </div>
       <div class="mb-3">
         <label for="basic-url" class="form-label fw-bold">Phone Number</label>
@@ -204,6 +204,10 @@ export default {
     PoweredBy,
   },
   computed: {
+    isDIDCreated() {
+      return this.getUserDID && Object.keys(this.getUserDID).length > 0;
+    },
+
     isIdVerifed() {
       return this.idCredential && Object.keys(this.idCredential).length > 0;
     },
@@ -240,6 +244,8 @@ export default {
         this.idCredential = this.getidCredential;
         this.dayPassCredentialTemplate.fields.name =
           this.idCredential.credentialSubject.name;
+        this.dayPassCredentialTemplate.fields.house =
+          this.idCredential.credentialSubject.house;
       }
 
       if (this.getUserDID?.did) {
@@ -312,7 +318,7 @@ export default {
     openkycpopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
-        `https://${window.location.host}/kyc`,
+        `${window.location.origin}/kyc?did=${this.getUserDID?.did}`,
         "mozillaWindow",
         windowFeatures
       );
@@ -333,7 +339,7 @@ export default {
     openPaymentGatewayPopup() {
       const windowFeatures = "left=100,top=100,width=500,height=700";
       window.open(
-        `https://${window.location.host}/pay`,
+        `${window.location.origin}/pay?did=${this.getUserDID?.did}`,
         "mozillaWindow",
         windowFeatures
       );
@@ -402,6 +408,9 @@ export default {
             this.dayPassCredentialTemplate.fields.name = this.idCredential.name;
           }
 
+          this.dayPassCredentialTemplate.subjectDid = this.getUserDID?.did
+            ? this.getUserDID?.did
+            : this.dayPassCredentialTemplate.issuerDid;
           this.dayPassCredentialTemplate.fields.issuanceDate = now;
           this.dayPassCredentialTemplate.fields.expirationDate =
             now + new Date().getDate() + 1;
