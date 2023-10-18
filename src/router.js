@@ -11,7 +11,9 @@ const router = new Router({
     routes: [
         {
             path: "/",
-            redirect: "/day-pass"
+            name: "dash-board",
+            component: () =>
+                import( /* webpackChunkName: "adminLogin" */ "./day-pass/dash-board.vue")
         },
         {
             path: "/kyc",
