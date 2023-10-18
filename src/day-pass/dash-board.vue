@@ -1,5 +1,6 @@
 <template>
   <div class="card maincontainerForm">
+    <IsChromium></IsChromium>
     <div class="card-header" style="text-align: center">
       <h4>Day Pass</h4>
     </div>

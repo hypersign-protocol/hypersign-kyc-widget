@@ -14,6 +14,7 @@ import PageHeading from "./components/commons/PageHeading.vue";
 import PoweredBy from "./components/commons/PoweredBy.vue";
 import ConsentBox from "./components/commons/ConsentBox.vue";
 import router from "./router";
+import IsChromium from "./components/commons/IsChromium.vue";
 Vue.config.productionTip = false
 
 Vue.component('load-ing', Loading)
@@ -22,6 +23,7 @@ Vue.component('NavBar', NavBar);
 Vue.component('PageHeading', PageHeading)
 Vue.component('PoweredBy', PoweredBy);
 Vue.component('ConsentBox', ConsentBox);
+Vue.component('IsChromium', IsChromium);
 
 new Vue({
   store,

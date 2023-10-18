@@ -1,5 +1,6 @@
 <template>
   <div class="card maincontainerForm" style="text-align: left">
+    <IsChromium></IsChromium>
     <load-ing
       :active.sync="isLoadingPage"
       :can-cancel="true"
