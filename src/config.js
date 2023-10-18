@@ -1,8 +1,10 @@
-// export const KAVACH_SERVER_BASE_URL = "http://localhost:3009"
 export const ENTITY_API_BASE_URL = "https://api.entity.hypersign.id"
-export const ENTITY_APP_SERCRET = '0a88981d30e66a8b188760b081c14.02178535aa9c0ee9fe6cf4e2e3902559f12357c93d44df1959229122def5be650303272f2dc4d5443cb7275c25e2566e5'
+
+// when you change the APP secret, make sure to change issuer.js did docs in id-module, day-pass module and payment-module since those issuers dids are associated with the current app,
+export const ENTITY_APP_SERCRET = '29a393a5d70094e409824359fc5d5.befc6c6f32d622e1c29ca900299a5695251b2407ca7cf6db8e6b2569dc13f937a4b83f4fa78738715d6267d3733e4f139'
 export const KAVACH_SERVER_BASE_URL = "https://stage.hypermine.in/kavach"
+// export const PAYMENT_ISSUER_DID = 'did:hid:testnet:zDjJ8QnGt2E1aP6FeNAVhUQhyJtwz8N8EfFqyNdG2Tj6Y'
+// export const ID_ISSUER_DID = 'did:hid:testnet:zCjjdBk3X41pmMQmcLxBGhvd7D6RNfgExWHx8XzoHHcvR'
+// export const DAYPASS_ISSUER_DID = 'did:hid:testnet:zEXEUhoTrNrQuEQepDaNYBx9aFHVrEFUzSE2MH8vyuxNn'
 
 
-
-export const ENTITY_API_SECRET = "05bd3256ad5d5c304ea27bcbe9b8c.543b5c8a25eebf766bafc6522ec9ad14213813e4f971bcdaaf7d238082c68daa0de3518886acf804d0373efb35d29b317"

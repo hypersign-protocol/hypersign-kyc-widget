@@ -235,7 +235,6 @@ export default new Vuex.Store({
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Api-Secret-Key': ENTITY_APP_SERCRET,
-                        // "origin": ENTITY_API_BASE_URL
                     },
                     body: undefined
                 }).then(resp => {
@@ -492,6 +491,24 @@ export default new Vuex.Store({
             state.invoiceCredential = {}
             state.dayPassCredential = {}
 
+        },
+
+        resolveDID({ getters }, did) {
+            return new Promise((resolve, reject) => {
+                fetch(ENTITY_API_BASE_URL + "/api/v1/did/resolve/" + did, {
+                    method: "GET",
+                    headers: {
+                        'content-type': 'application/json',
+                        Authorization: getters.getAuthorization,
+                    }
+                }).then(resp => {
+                    return resp.json()
+                }).then(json => {
+                    resolve({ ...json?.didDocument });
+                }).catch(err => {
+                    reject(err.message || err);
+                })
+            })
         }
     },
 })  
