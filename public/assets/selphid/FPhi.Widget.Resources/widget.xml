@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facephi-widget-conf version="1.0"
+    status_height="50"
+    >
+
+    <view id="UCCapture_landscape">
+
+        <documentBorder id="document"
+            statusColor="#00000099"
+            statusColorVariant="white"
+            backgroundColor="#00000066"
+            backgroundColorVariant="white"
+            documentBorder="4.8"
+            documentBorderRadius="8"
+            documentBorderColor="#ffffff"
+            documentBorderDetectedColor="#27b96b"
+            font="Poppins-Regular.ttf"
+            font_size="18.0"
+            font_color="#ffffff"
+            />
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <text id="diagnostic"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        valign="CENTER"
+        align="CENTER"
+        />
+
+        <text id="warning"
+        color="#ff0000"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Warning"
+        />
+
+        <buttonImage id="button_exit" value="cruz-icon.png"/>
+        <buttonImage id="button_info" value="info-icon.png"/>
+        <buttonImage id="button_camera" value="camera-icon.png"/>
+
+        <initialTip id="initial_tip"
+        backgroundColor="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        line_height="19"
+        color="#767d85"
+        image="info-icon.png"
+        />
+
+        <button id="button_initial_tip"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_initial_tip"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="CENTER"
+        radius="6"
+        />
+
+    </view>
+    <view id="UCCapture_portrait">
+
+        <documentBorder id="document"
+        statusColor="#00000099"
+        statusColorVariant="#20222C"
+        backgroundColor="#00000066"
+        backgroundColorVariant="#20222C"
+        documentBorder="4.8"
+        documentBorderRadius="8"
+        documentBorderColor="#ffffff"
+        documentBorderDetectedColor="#27b96b"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        font_color="#ffffff"
+        />
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        />
+        <text id="diagnostic"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        valign="CENTER"
+        align="CENTER"
+        />
+
+        <text id="warning"
+        color="#ff0000"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Warning"
+        />
+
+        <text id="text_detail"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="15.0"
+        line_height="18.0"
+        mode="Normal"
+        />
+
+        <buttonImage id="button_exit" value="cruz-icon.png"/>
+        <buttonImage id="button_info" value="info-icon.png"/>
+        <buttonImage id="button_camera" value="camera-icon.png"/>
+
+        <image id="logo" value="logo-group.png"/>
+
+        <initialTip id="initial_tip"
+        backgroundColor="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        line_height="19"
+        color="#767d85"
+        image="info-icon.png"
+        />
+
+        <button id="button_initial_tip"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_initial_tip"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="CENTER"
+        radius="6"
+        />
+
+    </view>
+
+    <view id="UCCaptureStatus_landscape">
+
+        <documentBorder id="document"
+        statusColor="#00000099"
+        statusColorVariant="#20222C"
+        backgroundColor="#00000066"
+        backgroundColorVariant="#20222C"
+        documentBorder="4.8"
+        documentBorderRadius="8"
+        documentBorderColor="#ffffff"
+        documentBorderDetectedColor="#888888"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        font_color="#ffffff"
+        />
+
+        <imageProc id="preview" overlay="#27b96b66" mode="Normal"/>
+        <imageProc id="previewFail" overlay="#e8522a66" mode="Warning"/>
+        <image id="previewImgOk" value="check-icon.png" mode="Normal"/>
+        <image id="previewImgFail" value="cross-icon.png" mode="Warning"/>
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="21.0"
+        align="LEFT"
+        valign="CENTER"
+        />
+
+        <buttonImage id="button_exit" value="cruz-icon.png"/>
+        <buttonImage id="button_info" value="info-icon.png"/>
+    </view>
+    <view id="UCCaptureStatus_portrait">
+
+        <documentBorder id="document"
+        statusColor="#00000099"
+        statusColorVariant="#20222C"
+        backgroundColor="#00000066"
+        backgroundColorVariant="#20222C"
+        documentBorder="4.8"
+        documentBorderRadius="8"
+        documentBorderColor="#ffffff"
+        documentBorderDetectedColor="#888888"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        font_color="#ffffff"
+        />
+
+        <imageProc id="preview" overlay="#27b96b66" mode="Normal"/>
+        <imageProc id="previewFail" overlay="#e8522a66" mode="Warning"/>
+        <image id="previewImgOk" value="check-icon.png" mode="Normal"/>
+        <image id="previewImgFail" value="cross-icon.png" mode="Warning"/>
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="21.0"
+        align="LEFT"
+        valign="CENTER"
+        />
+
+        <buttonImage id="button_exit" value="cruz-icon.png"/>
+        <buttonImage id="button_info" value="info-icon.png"/>
+
+        <image id="logo" value="logo-group.png"/>
+    </view>
+
+    <view id="UCPreview">
+
+        <documentBorder id="document"
+        statusColor="#000000"
+        statusColorVariant="#000000"
+        backgroundColor="#ffffff"
+        backgroundColorVariant="#ffffff"
+        documentBorder="2.8"
+        documentBorderRadius="8"
+        documentBorderColor="grey"
+        documentBorderDetectedColor="grey"/>
+
+        <imageProc id="preview"/>
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <text id="warning"
+        color="#000000"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Warning"
+        valign="CENTER"
+        />
+
+        <button id="button_ok"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_ok"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="6"
+        />
+
+        <button id="button_repeat"
+        background="ffffff"
+        decorator="#7636FC"
+        foreground="#7636FC"
+        content="button_repeat"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="6"
+        />
+
+    </view>
+
+    <view id="UCFlip">
+
+        <documentFlipper id="documentFlipper"
+        statusColor="#00000099"
+        statusColorVariant="#20222C"
+        backgroundColor="#00000066"
+        backgroundColorVariant="#20222C"
+        documentBorder="4.8"
+        documentBorderRadius="8"
+        documentBorderColor="#ffffff"
+        documentBorderDetectedColor="#888888"/>
+
+        <text id="text"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <buttonImage id="button_exit" value="cruz-icon.png"/>
+        <buttonImage id="button_info" value="info-icon.png"/>
+
+    </view>
+
+    <view id="Error">
+        <background id="background" color="#ffffff"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+        <text id="warning"
+        color="#ff0000"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        valign="CENTER"
+        align="CENTER"
+        />
+
+    </view>
+    <view id="UCTutorial1_landscape">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="LEFT"
+        valign="CENTER"
+        />
+
+        <video id="video" value="1_centra_doc.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_skip"
+        background="#00000000"
+        decorator="#ffffff"
+        foreground="#ffffff"
+        content="button_skip"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+        <button id="button_next"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_next"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+    </view>
+    <view id="UCTutorial1_portrait">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="CENTER"
+        valign="CENTER"
+        />
+
+        <video id="video" value="1_centra_doc.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_skip"
+        background="#00000000"
+        decorator="#ffffff"
+        foreground="#ffffff"
+        content="button_skip"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+        <button id="button_next"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_next"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+    </view>
+    <view id="UCTutorial2_landscape">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="LEFT"
+        valign="CENTER"
+        />
+
+        <video id="video" value="2_mantenlo_quieto.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_skip"
+        background="#00000000"
+        decorator="#ffffff"
+        foreground="#ffffff"
+        content="button_skip"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+        <button id="button_next"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_next"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+    </view>
+    <view id="UCTutorial2_portrait">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="CENTER"
+        valign="CENTER"
+        />
+
+        <video id="video" value="2_mantenlo_quieto.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_skip"
+        background="#00000000"
+        decorator="#ffffff"
+        foreground="#ffffff"
+        content="button_skip"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+        <button id="button_next"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_next"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+
+    </view>
+    <view id="UCTutorial3_landscape">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="LEFT"
+        valign="CENTER"
+        />
+
+        <video id="video" value="3_contraluces.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_finish"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_finish"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+    </view>
+    <view id="UCTutorial3_portrait">
+
+        <text id="tip"
+        color="#ffffff"
+        font="Poppins-Regular.ttf"
+        font_size="18.0"
+        align="CENTER"
+        />
+
+        <text id="tip_detail"
+        color="#ffffff"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        line_height="27.0"
+        align="CENTER"
+        valign="CENTER"
+        />
+
+        <video id="video" value="3_contraluces.mp4"/>
+
+        <button id="button_back"
+        background="#00000000"
+        decorator="#00000000"
+        foreground="#ffffff"
+        content="button_back"
+        content_type="TEXT_ID"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        align="LEFT"
+        radius="6"
+        />
+
+        <button id="button_finish"
+        background="#ffffff"
+        decorator="#ffffff"
+        foreground="grey"
+        content="button_finish"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="20.0"
+        align="CENTER"
+        radius="6"
+        />
+    </view>
+    <view id="WaitRecording">
+
+        <background id="background" color="#ffffff"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+
+        <documentBorder id="document"
+        statusColor="#49317d"
+        backgroundColor="#ffffff"
+        documentBorder="2.8"
+        documentBorderRadius="8"
+        documentBorderColor="#ffffff"
+        documentBorderDetectedColor="#ffffff"/>
+
+        <progressRecord
+        id="progressRecord"
+        background_color="#e9ecef"
+        progress_color="#86449a"
+        />
+
+        <text id="text"
+        color="#939298"
+        font="Poppins-SemiBold.ttf"
+        font_size="15.0"
+        valign="CENTER"
+        />
+    </view>
+
+    <view id="UCTimeoutPreview">
+
+        <background id="background" color="#ffffff"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+
+        <rectangle id="titleBox" color="#FFFFFF" />
+
+        <image id="imageFront" value="timeout.png"/>
+
+        <text id="text_detail"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="16"
+        font_weight="400"
+        mode="Normal"
+        />
+
+        <text id="text_detail2"
+        color="#2B303C"
+        font="Poppins-ExtraBold.ttf"
+        font_size="24"
+        font_weight="800"
+        mode="Normal"
+        />
+
+        <button id="button_ok"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_manual"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <button id="button_repeat"
+        background="#ffffff"
+        decorator="#7636FC"
+        foreground="#7636FC"
+        content="button_manual_close"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <buttonImage id="button_exit" value="cross-black.png"/>
+
+    </view>
+
+    <view id="InfoFront">
+
+        <background id="background" color="#ffffff"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+
+        <image id="imageFront" value="imageFront.png"/>
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        valign="CENTER"
+        />
+
+        <button id="button_start"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_start"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16"
+        align="CENTER"
+        radius="5"
+        />
+
+        <buttonImage id="button_exit" value="cross-black.png"/>
+
+    </view>
+
+    <view id="InfoBack">
+
+        <background id="background" color="#ffffff"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+
+        <image id="imageFront" value="imageBack.png"/>
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="16.0"
+        valign="CENTER"
+        />
+
+        <button id="button_start"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_start"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16"
+        align="CENTER"
+        radius="5"
+        />
+
+
+        <buttonImage id="button_exit" value="cross-black.png"/>
+    </view>
+
+    <view id="PreviewFront">
+
+        <imageProc id="preview"
+        backgroundColor="#ffffff"
+        />
+
+        <documentBorder id="document"
+        statusColor="#ffffff"
+        backgroundColor="#ffffff"
+        documentBorder="2.8"
+        documentBorderRadius="8"
+        documentBorderColor="#7636FC"
+        documentBorderDetectedColor="#7636FC"/>
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="18.5"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <button id="button_ok"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_ok"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <button id="button_repeat"
+        background="#ffffff"
+        decorator="#7636FC"
+        foreground="#7636FC"
+        content="button_repeat"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <buttonImage id="button_rotate" value="rotate-icon.png"/>
+        <buttonImage id="button_exit" value="cross-black.png"/>
+
+    </view>
+
+    <view id="PreviewBack">
+
+        <imageProc id="preview"
+        backgroundColor="#ffffff"
+        />
+
+        <documentBorder id="document"
+        statusColor="#ffffff"
+        backgroundColor="#ffffff"
+        documentBorder="2.8"
+        documentBorderRadius="8"
+        documentBorderColor="#7636FC"
+        documentBorderDetectedColor="#7636FC"/>
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="21"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <button id="button_ok"
+        background="#7636FC"
+        decorator="#7636FC"
+        foreground="#FFFFFF"
+        content="button_ok"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <button id="button_repeat"
+        background="#ffffff"
+        decorator="#7636FC"
+        foreground="#7636FC"
+        content="button_repeat"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="16.0"
+        align="CENTER"
+        valign="CENTER"
+        radius="5"
+        />
+
+        <buttonImage id="button_rotate" value="rotate-icon.png"/>
+        <buttonImage id="button_exit" value="cross-black.png"/>
+    </view>
+
+
+</facephi-widget-conf>
+

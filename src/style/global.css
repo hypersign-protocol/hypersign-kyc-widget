@@ -3,8 +3,8 @@ body{
 }
 
 .maincontainer {
-    width: 350px;
-    height: 650px;
+    width: 750px;
+    height: 850px;
     background-color: #f5f5f5;
     border: 1px solid grey;
     border-radius: 20px;
@@ -17,4 +17,11 @@ body{
 
 h1{
     font-size: revert;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }

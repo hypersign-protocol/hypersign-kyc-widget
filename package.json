@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@bachdgvn/vue-otp-input": "^1.0.8",
+    "@facephi/selphi-widget-web": "./lib/facephi-selphi-widget-web-5.35.0.tgz",
+    "@facephi/selphid-widget-web": "./lib/facephi-selphid-widget-web-4.21.0.tgz",
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "bootstrap-vue": "^2.23.1",

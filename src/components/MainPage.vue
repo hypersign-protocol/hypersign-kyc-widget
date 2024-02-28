@@ -13,7 +13,12 @@ import AppClickPic from "./AppClickPic.vue";
 import AppFinalSuccess from "./AppFinalSuccess.vue";
 import AppFinalFail from "./AppFinalFail.vue";
 import AppOtp from "./AppOtp.vue";
+import Liveliness from './e-kyc/Liveliness.vue';
+import IdDocs from './e-kyc/IdentityDocuments.vue'
+import PreviewData from './e-kyc/Preview.vue'
+import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
+
 export default {
   name: "HelloWorld",
   components: {
@@ -23,6 +28,10 @@ export default {
     AppFinalSuccess,
     AppFinalFail,
     AppOtp,
+    Liveliness,
+    IdDocs,
+    PreviewData,
+    FinalResult
   },
   computed: {
     ...mapGetters(["getActiveStep"]),

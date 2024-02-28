@@ -36,8 +36,7 @@
   </div> -->
 
   <!-- doing in a bad way for the time being -->
-  <div
-    style="
+  <div style="
       background-color: rgba(253, 170, 170, 0.972);
       bottom: 0;
       width: 100%;
@@ -49,14 +48,11 @@
       padding-right: 5px;
       font-size: small;
       color: darkslategrey;
-    "
-    v-if="type === 'error'"
-  >
+    " v-if="type === 'error'">
     {{ shortenMesssage }}
   </div>
 
-  <div
-    style="
+  <div style="
       background-color: rgb(184, 230, 184);
       bottom: 0;
       width: 100%;
@@ -68,9 +64,7 @@
       padding-right: 5px;
       font-size: small;
       color: darkslategrey;
-    "
-    v-else
-  >
+    " v-else>
     {{ msg }}
   </div>
 </template>
@@ -87,7 +81,7 @@ export default {
   computed: {
     shortenMesssage() {
       console.log(this.msg);
-      return this.msg.length > 40 ? this.msg.substr(0, 40) : this.msg;
+      return this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
     },
   },
   created() {

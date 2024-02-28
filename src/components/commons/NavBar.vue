@@ -2,7 +2,7 @@
   <div class="navbar navbar-expand-md navbar-light">
     <div class="container">
       <a href="#" class="navbar-brand">
-        <img class="opacity-80" src="../../assets/logo.png" width="100px" />
+        <img class="opacity-80" src="../../../public/assets/img/logo.png" width="100px" />
       </a>
 
       <!-- <button

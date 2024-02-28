@@ -1,0 +1,854 @@
+{
+    "pipeline": [
+        {
+            "type": "StateOutputFilter",
+            "id": "state_filter",
+            "resources": [
+                {
+                    "type": "CONFIG",
+                    "id": "state_filter_config",
+                    "version": "1.0.0",
+                    "values": {
+                        "preserved_keys": [
+                            "best_image_index",
+                            "capturer_metadata_vector"
+                        ]
+                    }
+                }
+            ],
+            "dependencies": [],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "type": "ExtractTransforms",
+            "id": "guess_transformations",
+            "dependencies": [
+                "state_filter"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "image"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Orientation",
+                    "id": "to_up",
+                    "parameter": "original_to_up"
+                },
+                {
+                    "type": "Orientation",
+                    "id": "to_original",
+                    "parameter": "up_to_original"
+                },
+                {
+                    "type": "Size",
+                    "id": "s1",
+                    "parameter": "size"
+                }
+            ]
+        },
+        {
+            "type": "TransformImage",
+            "id": "image_to_face_up",
+            "dependencies": [
+                "guess_transformations"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "image"
+                },
+                {
+                    "type": "Orientation",
+                    "id": "to_up",
+                    "parameter": "orientation"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "type": "DocumentDetector",
+            "id": "module_document_detector",
+            "dependencies": [
+                "state_filter"
+            ],
+            "resources": [
+                {
+                    "type": "MODEL",
+                    "id": "facephi_document_detector_1_2_model",
+                    "version": "1.0.0",
+                    "source": "facephi_document_detector_1_2_model.dat"
+                },
+                {
+                    "type": "CONFIG",
+                    "id": "document_detector_config",
+                    "version": "1.2.0",
+                    "values": {
+                        "min_boxes": [
+                            [
+                                10.0,
+                                16.0,
+                                24.0
+                            ],
+                            [
+                                32.0,
+                                48.0
+                            ],
+                            [
+                                64.0,
+                                96.0
+                            ],
+                            [
+                                128.0,
+                                192.0,
+                                256.0
+                            ]
+                        ],
+                        "center_variance": 0.10,
+                        "score_threshold_min": 0.659,
+                        "input_height": 224,
+                        "input_width": 224,
+                        "iou_threshold": 0.35,
+                        "input_range_min": -1.0,
+                        "input_range_max": 1.0,
+                        "columns_inference": 0,
+                        "box_center_variance": 0.5,
+                        "strides": [
+                            8.0,
+                            16.0,
+                            32.0,
+                            64
+                        ]
+                    }
+                }
+            ],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "original_image"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "document_location_confidence",
+                    "parameter": "document_location_confidence"
+                }
+            ]
+        },
+        {
+            "type": "DocumentShapeEvaluator",
+            "id": "module_document_shape_evaluator",
+            "dependencies": [
+                "state_filter",
+                "module_document_detector"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "original_image"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "document_location_confidence",
+                    "parameter": "document_location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "float",
+                    "id": "document_relative_width",
+                    "parameter": "document_relative_width"
+                },
+                {
+                    "type": "float",
+                    "id": "document_relative_area",
+                    "parameter": "document_relative_area"
+                },
+                {
+                    "type": "float",
+                    "id": "document_distance_to_border",
+                    "parameter": "document_distance_to_border"
+                },
+                {
+                    "type": "float",
+                    "id": "document_bounding_box_aspect_ratio",
+                    "parameter": "document_bounding_box_aspect_ratio"
+                },
+                {
+                    "type": "float",
+                    "id": "document_corner_aspect_ratio",
+                    "parameter": "document_corner_aspect_ratio"
+                },
+                {
+                    "type": "float",
+                    "id": "document_roll",
+                    "parameter": "document_roll"
+                },
+                {
+                    "type": "DocumentDiagnostic",
+                    "id": "document_shape_diagnostic",
+                    "parameter": "document_shape_diagnostic"
+                }
+            ]
+        },
+        {
+            "type": "DocumentIQAEvaluator",
+            "id": "module_diqa",
+            "dependencies": [
+                "state_filter",
+                "module_document_detector"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "original_image"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "document_location_confidence",
+                    "parameter": "document_location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "DocumentDiagnostic",
+                    "id": "diqa_diagnostic",
+                    "parameter": "iqa_diagnostic"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_blur",
+                    "parameter": "iqa_blur"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_exposure",
+                    "parameter": "iqa_exposure"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_exposure_median",
+                    "parameter": "iqa_exposure_median"
+                }
+            ]
+        },
+        {
+            "type": "DocumentBestImageEvaluator",
+            "id": "module_document_best_image_evaluator",
+            "dependencies": [
+                "state_filter",
+                "module_diqa",
+                "module_document_shape_evaluator"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "float",
+                    "id": "diqa_exposure",
+                    "parameter": "iqa_exposure"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_blur",
+                    "parameter": "iqa_blur"
+                },
+                {
+                    "type": "float",
+                    "id": "document_relative_width",
+                    "parameter": "document_relative_width"
+                },
+                {
+                    "type": "float",
+                    "id": "document_roll",
+                    "parameter": "document_roll"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "float",
+                    "id": "document_best_image_score",
+                    "parameter": "image_score"
+                }
+            ]
+        },
+        {
+            "type": "DocumentCapturer",
+            "id": "module_document_capturer",
+            "dependencies": [
+                "state_filter",
+                "module_document_detector",
+                "module_diqa",
+                "module_document_best_image_evaluator"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "original_image",
+                    "parameter": "original_image"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "document_location_confidence",
+                    "parameter": "document_location_confidence"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_blur",
+                    "parameter": "iqa_blur"
+                },
+                {
+                    "type": "DocumentDiagnostic",
+                    "id": "diqa_diagnostic",
+                    "parameter": "iqa_diagnostic"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_exposure",
+                    "parameter": "iqa_exposure"
+                },
+                {
+                    "type": "float",
+                    "id": "diqa_exposure_median",
+                    "parameter": "iqa_exposure_median"
+                },
+                {
+                    "type": "float",
+                    "id": "document_best_image_score",
+                    "parameter": "image_score"
+                },
+                {
+                    "type": "size_t",
+                    "id": "best_image_index",
+                    "parameter": "best_image_index"
+                },
+                {
+                    "type": "MetadataVector",
+                    "id": "capturer_metadata_vector",
+                    "parameter": "capturer_metadata_vector"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "DocumentDiagnostic",
+                    "id": "capture_diqa_diagnostic",
+                    "parameter": "iqa_diagnostic"
+                },
+                {
+                    "type": "float",
+                    "id": "capture_diqa_blur",
+                    "parameter": "iqa_blur"
+                },
+                {
+                    "type": "float",
+                    "id": "capture_diqa_exposure",
+                    "parameter": "iqa_exposure"
+                },
+                {
+                    "type": "float",
+                    "id": "capture_diqa_exposure_median",
+                    "parameter": "iqa_exposure_median"
+                },
+                {
+                    "type": "Image",
+                    "id": "capture_best_image",
+                    "parameter": "best_image"
+                },
+                {
+                    "type": "float",
+                    "id": "capture_best_image_score",
+                    "parameter": "image_score"
+                },
+                {
+                    "type": "DocumentDiagnostic",
+                    "id": "document_capturer_diagnostic",
+                    "parameter": "capturer_diagnostic"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "capture_best_image_location_confidence",
+                    "parameter": "document_location_confidence"
+                },
+                {
+                    "type": "size_t",
+                    "id": "best_image_index",
+                    "parameter": "best_image_index"
+                },
+                {
+                    "type": "MetadataVector",
+                    "id": "capturer_metadata_vector",
+                    "parameter": "capturer_metadata_vector"
+                }
+            ]
+        },
+        {
+            "type": "DocumentAligner",
+            "id": "module_document_aligner",
+            "dependencies": [
+                "state_filter",
+                "module_document_capturer"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "capture_best_image",
+                    "parameter": "original_image"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "capture_best_image_location_confidence",
+                    "parameter": "document_location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Image",
+                    "id": "best_image_aligned",
+                    "parameter": "document_aligned"
+                }
+            ]
+        },
+        {
+            "type": "FaceDetector",
+            "id": "module_face_detector",
+            "dependencies": [
+                "state_filter",
+                "module_document_aligner"
+            ],
+            "resources": [
+                {
+                    "type": "MODEL",
+                    "id": "facephi_face_detector_1_0_model",
+                    "version": "1.0.0",
+                    "source": "facephi_face_detector_1_0_model.dat"
+                },
+                {
+                    "type": "CONFIG",
+                    "id": "face_detector_config",
+                    "version": "1.0.0",
+                    "values": {
+                        "score_threshold": 0.95,
+                        "box_center_variance": 0.5,
+                        "center_variance": 0.10,
+                        "columns_inference": 6,
+                        "score_threshold_min": 0.95,
+                        "input_height": 160,
+                        "input_width": 160,
+                        "input_range_max": 1.0,
+                        "input_range_min": -1.0,
+                        "iou_threshold": 0.35,
+                        "min_boxes": [
+                            [
+                                10.0,
+                                16.0,
+                                24.0
+                            ],
+                            [
+                                32.0,
+                                48.0
+                            ],
+                            [
+                                64.0,
+                                96.0
+                            ],
+                            [
+                                128.0,
+                                192.0,
+                                256.0
+                            ]
+                        ],
+                        "strides": [
+                            8.0,
+                            16.0,
+                            32.0,
+                            64.0
+                        ]
+                    }
+                }
+            ],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "best_image_aligned",
+                    "parameter": "original_image"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "LocationConfidenceVector",
+                    "id": "__face_collection",
+                    "parameter": "face_collection"
+                }
+            ]
+        },
+        {
+            "type": "FaceSelector",
+            "id": "module_face_selector",
+            "dependencies": [
+                "state_filter",
+                "module_face_detector"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "FaceLocationVector",
+                    "id": "__face_collection",
+                    "parameter": "face_collection"
+                },
+                {
+                    "type": "FaceDiagnostic",
+                    "id": "faces_limit_diagnostic",
+                    "parameter": "faces_limit_diagnostic"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "face_location_confidence",
+                    "parameter": "face_selected"
+                }
+            ]
+        },
+        {
+            "type": "FaceSelectedTransformer",
+            "id": "module_face_selected_transformer",
+            "dependencies": [
+                "state_filter",
+                "module_face_selector",
+                "module_document_aligner",
+                "module_document_capturer"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "face_location_confidence",
+                    "parameter": "face_selected"
+                },
+                {
+                    "type": "Image",
+                    "id": "best_image_aligned",
+                    "parameter": "document_aligned"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "capture_best_image_location_confidence",
+                    "parameter": "document_location_confidence"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "type": "LocationConfidenceToLocation",
+            "id": "module_location_confidence_to_location_face",
+            "dependencies": [
+                "state_filter",
+                "module_face_selected_transformer"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "face_location_confidence",
+                    "parameter": "location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Location",
+                    "id": "face_location_transformed",
+                    "parameter": "location_output"
+                }
+            ]
+        },
+        {
+            "type": "CropImageWithLocation",
+            "id": "module_crop_image_with_location_face",
+            "dependencies": [
+                "state_filter",
+                "module_location_confidence_to_location_face",
+                "module_document_capturer"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Location",
+                    "id": "face_location_transformed",
+                    "parameter": "location_input"
+                },
+                {
+                    "type": "Image",
+                    "id": "capture_best_image",
+                    "parameter": "image_to_crop"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Image",
+                    "id": "face_image_cropped",
+                    "parameter": "image_cropped"
+                }
+            ]
+        },
+        {
+            "type": "DocumentMrzDetector",
+            "id": "module_document_mrz_detector",
+            "dependencies": [
+                "state_filter",
+                "module_document_aligner"
+            ],
+            "resources": [
+                {
+                    "type": "MODEL",
+                    "id": "facephi_mrz_detector_1_0_model",
+                    "version": "1.0.0",
+                    "source": "facephi_mrz_detector_1_0_model.dat"
+                },
+                {
+                    "type": "CONFIG",
+                    "id": "document_mrz_detector_config",
+                    "version": "1.2.0",
+                    "values": {
+                        "min_boxes": [
+                            [
+                                10.0,
+                                16.0,
+                                24.0
+                            ],
+                            [
+                                32.0,
+                                48.0
+                            ],
+                            [
+                                64.0,
+                                96.0
+                            ],
+                            [
+                                128.0,
+                                192.0,
+                                256.0
+                            ]
+                        ],
+                        "center_variance": 0.10,
+                        "score_threshold_min": 0.5,
+                        "input_height": 120,
+                        "input_width": 160,
+                        "iou_threshold": 0.35,
+                        "input_range_min": -1.0,
+                        "input_range_max": 1.0,
+                        "columns_inference": 10,
+                        "box_center_variance": 0.5,
+                        "strides": [
+                            8.0,
+                            16.0,
+                            32.0,
+                            64
+                        ]
+                    }
+                }
+            ],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "best_image_aligned",
+                    "parameter": "document_aligned"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "mrz_location_confidence",
+                    "parameter": "mrz_location_confidence"
+                }
+            ]
+        },
+        {
+            "type": "DocumentMrzLocationTransformer",
+            "id": "module_mrz_transformation",
+            "dependencies": [
+                "state_filter",
+                "module_document_capturer",
+                "module_document_mrz_detector",
+                "module_document_aligner"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "best_image_aligned",
+                    "parameter": "document_aligned"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "capture_best_image_location_confidence",
+                    "parameter": "document_location_confidence"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "mrz_location_confidence",
+                    "parameter": "mrz_location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "mrz_location_confidence_transformed",
+                    "parameter": "mrz_location_confidence"
+                }
+            ]
+        },
+        {
+            "type": "LocationConfidenceToLocation",
+            "id": "module_location_confidence_to_location_mrz",
+            "dependencies": [
+                "state_filter",
+                "module_mrz_transformation"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "LocationConfidence",
+                    "id": "mrz_location_confidence_transformed",
+                    "parameter": "location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Location",
+                    "id": "mrz_location_transformed",
+                    "parameter": "location_output"
+                }
+            ]
+        },
+        {
+            "type": "CropImageWithLocation",
+            "id": "module_crop_image_with_location_mrz",
+            "dependencies": [
+                "state_filter",
+                "module_location_confidence_to_location_mrz",
+                "module_document_capturer"
+            ],
+            "resources": [],
+            "inputs": [
+                {
+                    "type": "Location",
+                    "id": "mrz_location_transformed",
+                    "parameter": "location_input"
+                },
+                {
+                    "type": "Image",
+                    "id": "capture_best_image",
+                    "parameter": "image_to_crop"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "Image",
+                    "id": "mrz_image_cropped",
+                    "parameter": "image_cropped"
+                }
+            ]
+        },
+        {
+            "type": "DocumentOcrMrzDetector",
+            "id": "module_ocr_detector",
+            "dependencies": [
+                "state_filter",
+                "module_document_capturer",
+                "module_mrz_transformation"
+            ],
+            "resources": [
+                {
+                    "type": "MODEL",
+                    "id": "facephi_ocr_mrz_1_0_model",
+                    "version": "1.0.0",
+                    "source": "facephi_ocr_mrz_1_0_model.dat"
+                },
+                {
+                    "type": "CONFIG",
+                    "id": "document_ocr_mrz_detector_config",
+                    "version": "1.2.0",
+                    "values": {
+                        "min_boxes": [
+                            [
+                                10.0,
+                                16.0,
+                                24.0
+                            ],
+                            [
+                                32.0,
+                                48.0
+                            ],
+                            [
+                                64.0,
+                                96.0
+                            ],
+                            [
+                                128.0,
+                                192.0,
+                                256.0
+                            ]
+                        ],
+                        "center_variance": 0.10,
+                        "score_threshold_min": 0.659,
+                        "input_height": 32,
+                        "input_width": 584,
+                        "iou_threshold": 0.35,
+                        "input_range_min": -1.0,
+                        "input_range_max": 1.0,
+                        "columns_inference": 0,
+                        "box_center_variance": 0.5,
+                        "strides": [
+                            8.0,
+                            16.0,
+                            32.0,
+                            64
+                        ]
+                    }
+                }
+            ],
+            "inputs": [
+                {
+                    "type": "Image",
+                    "id": "capture_best_image",
+                    "parameter": "original_image"
+                },
+                {
+                    "type": "LocationConfidence",
+                    "id": "mrz_location_confidence_transformed",
+                    "parameter": "mrz_location_confidence"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "String",
+                    "id": "ocr_result",
+                    "parameter": "mrz_ocr_string"
+                }
+            ]
+        }
+    ],
+    "settings": {
+        "paths": [
+            "./build/resources/models",
+            "./build/resources/images",
+            "./build/resources/pipelines",
+            "./data/modules/configurations"
+        ]
+    },
+    "version": "2.0.0"
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <!--Buttons-->
+    <token id="button_skip">SKIP</token>
+    <token id="button_ready">READY</token>
+    <token id="button_start">START</token>
+    <token id="button_audio_text">Audio tips</token>
+    <token id="button_repeat">REPEAT</token>
+    <token id="button_finish">FINISH</token>
+    <token id="button_next">NEXT</token>
+    <token id="button_back">BACK</token>
+    <token id="start_extractor_title">Place your face inside the circle&#10;and press start&#10;to start capturing</token>
+    <token id="extracting_title">Hold position, with your face&#10;in the center of the shape</token>
+    <token id="results_message_low">We recommend to repeat the&#10;enrollment</token>
+    <token id="results_message_good">The registration is good,&#10;but you can improve it</token>
+    <token id="results_message_excellent">The quality of the registration&#10;is excellent. Congratulations!</token>
+    <token id="results_quality_message">(Registration quality)</token>
+    <token id="results_quality_low">Poor</token>
+    <token id="results_quality_good">Good</token>
+    <token id="results_quality_excellent">Excellent</token>
+    <token id="error_message_face">Put your face in the&#10;center of the shape</token>
+    <token id="livenessErrorGlasses">If you are wearing glasses,&#10;avoid the reflections next time</token>
+    <token id="livenessErrorDark">Look for an illuminated place&#10;with no backlighting next time</token>
+    <token id="livenessErrorPerformance">Your pc performance is lower&#10;than expected</token>
+    <token id="livenessErrorNoMovement">Movement not detected</token>
+    <token id="livenessErrorWrongDirection">Wrong movement detected</token>
+    <token id="livenessErrorTooFar">Please, get closer to the camera</token>
+    <token id="timeout">Maximum time allowed exceeded,&#10;please try again later</token>
+    <token id="waitRecording">Processing data,&#10;Please wait...</token>
+
+    <token id="liveness_move_stabilizing">Stand still, with your face&#10;in the centre of the circle</token>
+    <token id="liveness_move_stabilizing_ok"></token>
+    <token id="liveness_move_stabilizing_not_stabilized">Stand still, with your face&#10;in the centre of the circle</token>
+    <token id="liveness_move_stabilizing_not_stabilized_too_far">You are too far away&#10;Move your face a little closer</token>
+    <token id="liveness_move_stabilizing_not_stabilized_sun_glasses">Stand still, with your face&#10;in the centre of the circle</token>
+    <token id="liveness_move_stabilizing_not_stabilized_too_close">You are too close&#10;Turn your face away a little</token>
+    <token id="liveness_move_stabilizing_not_stabilized_too_movement">Too much movement&#10;Please remain still</token>
+    <token id="liveness_move_stabilizing_not_stabilized_low_performance">Stand still, with your face&#10;in the centre of the circle</token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_frontal">Remain with your face&#10;looking straight ahead</token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_frontal_too_left">Turn your head slightly to the left</token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_frontal_too_right">Turn your head slightly to the right </token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_frontal_too_down">Turn your head slightly up</token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_frontal_too_up">Turn your head slightly down</token>
+    <token id="liveness_move_stabilizing_not_stabilized_no_color">Try to find a better&#10;lighting condition</token>
+    <token id="liveness_move_stabilizing_not_stabilized_low_quality">Try to find a better&#10;lighting condition</token>
+    <token id="liveness_move_stabilizing_not_stabilized_low_face_quality">Try to find a better&#10;lighting condition</token>
+    <token id="liveness_move_stabilizing_not_stabilized_low_pattern_quality">Please keep a&#10;neutral facial pose</token>
+    <token id="liveness_move_stabilizing_ok_glasses"></token>
+    <token id="liveness_move_processing">Processing images...</token>
+    
+</translations>
