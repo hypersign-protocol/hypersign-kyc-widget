@@ -5,25 +5,31 @@
         <img class="opacity-80" src="../../../public/assets/img/logo.png" width="100px" />
       </a>
 
-      <!-- <button
-        class="navbar-toggler"
-        data-bs-toggle="collapse"
-        data-bs-target="#nav"
-        aria-controls="nav"
-        aria-label="Expanded nav"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="nav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a href="" class="nav-link active">Home</a>
-          </li>
-          <li class="nav-item">
-            <a href="" class="nav-link">Store</a>
-          </li>
-        </ul>
-      </div> -->
+
+      <span style="float:right;
+      padding-right: 10px;
+      float: right;
+      padding-top: 4px;
+      padding-left: 10px;
+      border: 1px solid #808080eb;
+      border-radius: 33px;
+      padding-bottom: 4px;
+      background: #80808024;
+      " v-if="getActiveStep.name">
+        {{ getActiveStep.name }} ({{ getActiveStep.id }} / {{ steps.length - 2 }})
+      </span>
     </div>
   </div>
 </template>
+
+
+
+<script>
+import { mapState, mapGetters } from "vuex";
+export default {
+  computed: {
+    ...mapState(["steps",]),
+    ...mapGetters(["getActiveStep"])
+  }
+}
+</script>

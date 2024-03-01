@@ -1,62 +1,55 @@
 <template>
-    <div class="card maincontainer" style="text-align: center;">
-        <NavBar />
-        <div class="card-body">
-            <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" />
+    <div class="card-body">
+        <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" />
 
-            <div class="row">
-                <div class="col-md-12" style="text-align: left">
-                    <strong>Your Id Document</strong>
-                    <div class="card center" style="padding:5px">
-                        <img :src="extractedImage" style="width:500px" />
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 1%;">
-                <div class="col-md-12" style="text-align: left">
-                    <strong>Extracted Data</strong>
-                    <div class="card" style="padding: 10px">
-                        <table class="table" style="text-align: left">
-                            <tr>
-                                <td>Name</td>
-                                <td>{{ `${extractedData.firstName} ${extractedData.lastName}` }}</td>
-                            </tr>
-
-                            <tr>
-                                <td>Date Of Birth</td>
-                                <td>{{ `${extractedData.dateOfBirth}` }}</td>
-                            </tr>
-
-                            <tr>
-                                <td>Nationality </td>
-                                <td>{{ `${extractedData.nationality}` }}</td>
-                            </tr>
-
-                            <tr>
-                                <td> Gender </td>
-                                <td>{{ `${extractedData.gender}` }}</td>
-                            </tr>
-
-                            <tr>
-                                <td>Document Number</td>
-                                <td>{{ `${extractedData.documentNumber}` }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" style="margin-top: 1%;">
-                <div class="col-md-12">
-                    <button class="btn btn-outline-dark" @click="submit()">
-                        Submit
-                    </button>
+        <div class="row">
+            <div class="col-md-12" style="text-align: left">
+                <strong>Your Id Document</strong>
+                <div class="card center" style="padding:5px">
+                    <img :src="extractedImage" style="width:500px" />
                 </div>
             </div>
         </div>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-        <div class="card-footer">
-            <PoweredBy style="text-align: center;" />
+        <div class="row" style="margin-top: 1%;">
+            <div class="col-md-12" style="text-align: left">
+                <strong>Extracted Data</strong>
+                <div class="card" style="padding: 10px">
+                    <table class="table" style="text-align: left">
+                        <tr>
+                            <td>Name</td>
+                            <td>{{ `${extractedData.firstName} ${extractedData.lastName}` }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Date Of Birth</td>
+                            <td>{{ `${extractedData.dateOfBirth}` }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Nationality </td>
+                            <td>{{ `${extractedData.nationality}` }}</td>
+                        </tr>
+
+                        <tr>
+                            <td> Gender </td>
+                            <td>{{ `${extractedData.gender}` }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Document Number</td>
+                            <td>{{ `${extractedData.documentNumber}` }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 1%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-dark" @click="submit()">
+                    Submit
+                </button>
+            </div>
         </div>
     </div>
 </template>

@@ -1,22 +1,15 @@
 <template>
-  <div class="card maincontainer" style="text-align: center;">
+  <div class="card-body">
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-    <NavBar />
-    <div class="card-body">
-      <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
-      <div class="">
-        <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%" width="100%" />
-        <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
-          <button class="btn btn-outline-dark" @click="nextStep()">
-            Let's go!
-          </button>
-        </div>
-        <ConsentBox />
+    <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
+    <div class="">
+      <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%" width="100%" />
+      <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
+        <button class="btn btn-outline-dark" @click="nextStep()">
+          Let's go!
+        </button>
       </div>
-    </div>
-    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-    <div class="card-footer">
-      <PoweredBy />
+      <ConsentBox />
     </div>
   </div>
 </template>

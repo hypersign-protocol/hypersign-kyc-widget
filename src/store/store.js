@@ -22,18 +22,21 @@ export default new Vuex.Store({
                 id: 1,
                 isActive: false,
                 stepName: 'Liveliness',
+                name: 'Facial Recognition',
                 previous: 0
             },
             {
                 id: 2,
                 isActive: false,
                 stepName: 'IdDocs',
+                name: 'Government-issued ID',
                 previous: 1
             },
             {
                 id: 3,
                 isActive: false,
                 stepName: 'PreviewData',
+                name: 'User Consent',
                 previous: 2
             },
             {

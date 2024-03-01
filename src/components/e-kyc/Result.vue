@@ -1,51 +1,39 @@
 <template>
-    <div class="card maincontainer">
-        <NavBar />
-
-        <div class="card-body">
-            <PageHeading :header="'Congratulations!'" style="text-align: center;" />
-
-
-            <div class="center" style="margin-top: 3%">
-                <div class="row" v-if="getFinalResult">
-                    <div class="col-md-12 center">
-                        <ul style="list-style-type:none;">
-                            <li>
-                                <i class="bi bi-check-circle final-msg-icon success"></i>
-                            </li>
-                            <li>
-                                <h5>Your identity is verified!</h5>
-                            </li>
-                            <li>
-                                <h7>You will be redirected back to verifier app in {{ maxTimeOut
-                                }}</h7>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="row" v-else>
-                    <div class="col-md-12">
-                        <ul style="list-style-type:none;">
-                            <li>
-                                <i class="bi bi-x-circle final-msg-icon fail"></i>
-                            </li>
-                            <li>
-                                <h5>We are sorry!</h5>
-                            </li>
-                            <li>
-                                <h7>We could not verify your identity</h7>
-                            </li>
-                        </ul>
-                    </div>
+    <div class="card-body">
+        <PageHeading :header="'Congratulations!'" style="text-align: center;" />
+        <div class="center" style="margin-top: 3%">
+            <div class="row" v-if="getFinalResult">
+                <div class="col-md-12 center">
+                    <ul style="list-style-type:none;">
+                        <li>
+                            <i class="bi bi-check-circle final-msg-icon success"></i>
+                        </li>
+                        <li>
+                            <h5>Your identity is verified!</h5>
+                        </li>
+                        <li>
+                            <h7>You will be redirected back to verifier app in {{ maxTimeOut
+                            }}</h7>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-        </div>
-
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-        <div class="card-footer">
-            <PoweredBy style="text-align: center;" />
+            <div class="row" v-else>
+                <div class="col-md-12">
+                    <ul style="list-style-type:none;">
+                        <li>
+                            <i class="bi bi-x-circle final-msg-icon fail"></i>
+                        </li>
+                        <li>
+                            <h5>We are sorry!</h5>
+                        </li>
+                        <li>
+                            <h7>We could not verify your identity</h7>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </template>

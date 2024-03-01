@@ -219,51 +219,49 @@ export default {
 
 
 <template>
-    <div class="card maincontainer">
-        <NavBar />
-        <div class="card-body">
-            <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
-                style="text-align: center;" />
-            <div class="row">
-                <!-- SelphID Web Widget Container: Properties and events setup -->
-                <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
-                    <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
-                        :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
-                        :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
-                        :previewCapture="previewCapture" :forceLandscape="forceLandscape" :captureTimeout="captureTimeout"
-                        :captureRetries="captureRetries" :imageFormat="imageFormat" :imageQuality="imageQuality"
-                        :documentType="documentType" :scanMode="scanMode" :blurredThreshold="blurredThreshold"
-                        :showLog="showLog" :debugMode="debugMode" :documentMode="documentMode"
-                        @onmoduleloaded="onModuleLoaded" @onextractionfinished="onExtractionFinished"
-                        @onusercancelled="onUserCancelled" @onexceptioncaptured="onExceptionCaptured"
-                        @onextractiontimeout="onExtractionTimeout" @ontrackstatus="onTrackStatus"></facephi-selphid>
-                    <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
+    <div class="card-body">
+        <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
+            style="text-align: center;" />
+        <div class="row" style="text-align: left;">
+            <!-- SelphID Web Widget Container: Properties and events setup -->
+            <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
+                <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
+                    :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode" :cameraWidth="cameraWidth"
+                    :cameraHeight="cameraHeight" :cameraSelection="cameraSelection" :previewCapture="previewCapture"
+                    :forceLandscape="forceLandscape" :captureTimeout="captureTimeout" :captureRetries="captureRetries"
+                    :imageFormat="imageFormat" :imageQuality="imageQuality" :documentType="documentType"
+                    :scanMode="scanMode" :blurredThreshold="blurredThreshold" :showLog="showLog" :debugMode="debugMode"
+                    :documentMode="documentMode" @onmoduleloaded="onModuleLoaded"
+                    @onextractionfinished="onExtractionFinished" @onusercancelled="onUserCancelled"
+                    @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
+                    @ontrackstatus="onTrackStatus"></facephi-selphid>
+                <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
+            </div>
+            <!-- Widget demo configuration elements -->
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+                <!-- <div>SelphID Web Widget Demo</div> -->
+
+                <div class="d-flex flex-column my-3">
+                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted"
+                        v-on:click.self="enableWidget">
+                        Start capture
+                    </button>
+                    <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
+                        :disabled="!isWidgetStarted" v-on:click.self="disableWidget">
+                        Stop capture
+                    </button>
                 </div>
-                <!-- Widget demo configuration elements -->
-                <div class="col-12 col-md-3 mt-3 mt-md-0">
-                    <!-- <div>SelphID Web Widget Demo</div> -->
 
-                    <div class="d-flex flex-column my-3">
-                        <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
-                            :disabled="isWidgetStarted" v-on:click.self="enableWidget">
-                            Start capture
-                        </button>
-                        <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
-                            :disabled="!isWidgetStarted" v-on:click.self="disableWidget">
-                            Stop capture
-                        </button>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cameraResolution">Camera Resolution</label>
-                        <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
-                            :value=cameraResolution @change="onCameraResolutionChange($event)">
-                            <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
-                                {{ FPhiCameraResolutions[key].title }}
-                            </option>
-                        </select>
-                    </div>
-                    <!-- 
+                <div class="form-group">
+                    <label for="cameraResolution">Camera Resolution</label>
+                    <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
+                        :value=cameraResolution @change="onCameraResolutionChange($event)">
+                        <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
+                            {{ FPhiCameraResolutions[key].title }}
+                        </option>
+                    </select>
+                </div>
+                <!-- 
       <div class="form-group form-check m-0">
         <input type="checkbox" id="previewCapture" class="form-check-input" v-model="previewCapture"
           :disabled="isWidgetStarted" />
@@ -287,13 +285,7 @@ export default {
       <div class="form-group mt-2">
         <div>Widget Version: <span id="widgetVersion">{{ widgetVersion }}</span></div>
       </div> -->
-                </div>
             </div>
-        </div>
-
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-        <div class="card-footer">
-            <PoweredBy style="text-align: center;" />
         </div>
     </div>
 </template>
