@@ -15,12 +15,10 @@
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "./commons/PoweredBy.vue";
 import { mapMutations, mapActions } from "vuex";
 export default {
   name: "AppInstructions",
   components: {
-    PoweredBy,
   },
   async created() {
 

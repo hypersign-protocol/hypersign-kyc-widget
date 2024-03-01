@@ -16,7 +16,7 @@
       padding-bottom: 4px;
       background: #80808024;
       " v-if="getActiveStep.name">
-        {{ getActiveStep.name }} ({{ getActiveStep.id }} / {{ steps.length - 2 }})
+        {{ getActiveStep.name }} ({{ getActiveStep.id }}/{{ steps.length - 2 }})
       </span>
     </div>
   </div>

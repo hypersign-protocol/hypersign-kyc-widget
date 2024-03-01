@@ -26,7 +26,6 @@ import IdDocs from './e-kyc/IdentityDocuments.vue'
 import PreviewData from './e-kyc/Preview.vue'
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
-import Stepper from "./commons/Stepper.vue"
 
 export default {
   name: "HelloWorld",
@@ -40,8 +39,7 @@ export default {
     Liveliness,
     IdDocs,
     PreviewData,
-    FinalResult,
-    Stepper
+    FinalResult
   },
   computed: {
     ...mapGetters(["getActiveStep"]),

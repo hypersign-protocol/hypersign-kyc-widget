@@ -4,13 +4,11 @@
 
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphi-widget-web";
-import PoweredBy from "../commons/PoweredBy.vue";
 import { mapActions, mapMutations, } from "vuex";
 
 export default {
     name: 'LiveLiness',
     components: {
-        PoweredBy,
     },
     data: function () {
         return {
@@ -203,7 +201,7 @@ export default {
 
 <template>
     <div class="card-body">
-        <PageHeading :header="'Liveliness Check'" :subHeader="'Open camera to prove your are human and alive :)'" />
+        <PageHeading :header="'Facial Recognition'" :subHeader="'We need to verify if you are a real human'" />
         <div class="row h-100">
             <!-- Selphi Web Widget Container: Properties and events setup -->
             <div class="col-12 col-md-9" style="position: relative; min-height: 500px; max-height: 90%;">

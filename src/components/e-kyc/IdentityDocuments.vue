@@ -15,11 +15,9 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, } from "vuex";
-import PoweredBy from "../commons/PoweredBy.vue";
 export default {
     name: 'IdDocs',
     components: {
-        PoweredBy,
     },
     data: function () {
         return {

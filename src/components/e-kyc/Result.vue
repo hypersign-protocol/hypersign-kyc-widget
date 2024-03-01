@@ -41,12 +41,10 @@
 
 <script type="text/javascript">
 import { mapGetters } from "vuex";
-import PoweredBy from "../commons/PoweredBy.vue";
-
 export default {
     name: 'FinalResult',
     components: {
-        PoweredBy,
+
     },
     data: () => {
         return {

@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import PoweredBy from "../commons/PoweredBy.vue";
 import { mapActions, mapMutations } from "vuex";
 
 export default {
@@ -69,7 +68,7 @@ export default {
         }
     },
     components: {
-        PoweredBy,
+
     },
     data: function () {
         return {
