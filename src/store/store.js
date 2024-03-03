@@ -12,6 +12,7 @@ export default new Vuex.Store({
         aadharData: {},
         authorization: null,
         steps: [
+
             {
                 id: 0,
                 isActive: true,
@@ -26,27 +27,33 @@ export default new Vuex.Store({
             },
             {
                 id: 2,
-                isActive: false,
-                stepName: 'Liveliness',
-                name: 'Facial Recognition',
+                isActive: true,
+                stepName: 'VaultPIN',
                 previous: 1
             },
             {
                 id: 3,
+                isActive: false,
+                stepName: 'Liveliness',
+                name: 'Facial Recognition',
+                previous: 2
+            },
+            {
+                id: 4,
                 isActive: false,
                 stepName: 'IdDocs',
                 name: 'Government-issued ID',
                 previous: 2
             },
             {
-                id: 4,
+                id: 5,
                 isActive: false,
                 stepName: 'PreviewData',
                 name: 'User Consent',
                 previous: 3
             },
             {
-                id: 5,
+                id: 6,
                 isActive: false,
                 stepName: 'FinalResult',
                 previous: 4
@@ -58,10 +65,10 @@ export default new Vuex.Store({
         hasLivelinessDone: false,
         hasKycDone: false,
         kycExtractedData: {},
-        cavachAccessToken: "",
-        redirectUrl: "",
+        // cavachAccessToken: "",
+        // redirectUrl: "",
         finalResults: false,
-        session: "",
+        //session: "",
         livelinessResult: {},
         ocrIDDocResult: {},
         livelinessCapturedData: {
@@ -80,9 +87,10 @@ export default new Vuex.Store({
     getters: {
         getActiveStep: (state) => {
             // console.log(state)
-            const stepIndex = localStorage.getItem("currentStep") //state.steps.find(x => x.isActive == true)
-            console.log(stepIndex)
-            let step = stepIndex ? state.steps[stepIndex] : state.steps.find(x => x.isActive == true);
+            // const stepIndex = localStorage.getItem("currentStep") //
+            const step = state.steps.find(x => x.isActive == true)
+            // console.log(stepIndex)
+            // let step = stepIndex ? state.steps[stepIndex] : state.steps.find(x => x.isActive == true);
             if (!step) {
                 const step = state.steps.find(x => x.isActive == true)
                 return step
@@ -93,11 +101,14 @@ export default new Vuex.Store({
 
 
         //-----------------------------------------------------------------e-kyc
-        getCavachAccessToken(state) {
-            return state.cavachAccessToken
+        getSession() {
+            return localStorage.getItem("session")
         },
-        getRedirectUrl(state) {
-            return state.redirectUrl
+        getCavachAccessToken() {
+            return localStorage.getItem("cavachAccessToken")
+        },
+        getRedirectUrl() {
+            return localStorage.getItem("redirectUrl")
         },
         getFinalResult(state) {
             return state.finalResult
@@ -111,16 +122,16 @@ export default new Vuex.Store({
             //     throw new Error("Error in initialization, please contact admin")
             // }
 
-            // const activeStep = state.steps.find(x => x.isActive == true)
-            const stepIndex = localStorage.getItem("currentStep")
-            let activeStep = state.steps[stepIndex]
-            if (!activeStep) {
-                activeStep = state.steps.find(x => x.isActive == true)
-            }
+            const activeStep = state.steps.find(x => x.isActive == true)
+            // const stepIndex = localStorage.getItem("currentStep")
+            // let activeStep = state.steps[stepIndex]
+            // if (!activeStep) {
+            //     activeStep = state.steps.find(x => x.isActive == true)
+            // }
             const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
-            localStorage.setItem("currentStep", nextStepId)
+            // localStorage.setItem("currentStep", nextStepId)
 
         },
 
@@ -164,17 +175,20 @@ export default new Vuex.Store({
             state.hasLivelinessDone = payload;
         },
         setSession(state, payload) {
-            state.session = payload;
+            console.log(state.hasKycDone)
+            localStorage.setItem("session", payload)
         },
         setKycExtractedData(state, payload) {
             state.kycExtractedData = payload;
             state.hasKycDone = true;
         },
         setCavachAccessToken(state, payload) {
-            state.cavachAccessToken = payload
+            console.log(state.kycCapturedData)
+            localStorage.setItem("cavachAccessToken", payload)
         },
         setRedirectUrl(state, payload) {
-            state.redirectUrl = payload
+            console.log(state.kycCapturedData)
+            localStorage.setItem("redirectUrl", payload)
         },
         setResult(state, payload) {
             state.finalResult = payload
@@ -377,12 +391,12 @@ export default new Vuex.Store({
 
 
         //-----------------------------------------------------------------e-kyc
-        getNewSession: ({ commit, state }, payload) => {
+        getNewSession: ({ commit, getters }, payload) => {
             return new Promise((resolve, reject) => {
                 const url = `${apiServerBaseUrl}/e-kyc/verification/session`;
                 const headers = {
-                    'Authorization': 'Bearer ' + state.cavachAccessToken,
-                    'Origin': "http://localhost:8080/",
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
                     "content-type": "application/json"
                 };
                 return fetch(url, {
@@ -408,11 +422,11 @@ export default new Vuex.Store({
             })
         },
 
-        verifyResult: ({ commit, state }) => {
+        verifyResult: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
                 const url = `${apiServerBaseUrl}/e-kyc/verification/result`;
                 const headers = {
-                    'Authorization': 'Bearer ' + state.cavachAccessToken,
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
                     "content-type": "application/json"
                 };
@@ -420,7 +434,7 @@ export default new Vuex.Store({
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
-                        sessionId: state.session
+                        sessionId: getters.getSession
                     })
                 })
                     .then(response => response.json())
@@ -442,14 +456,14 @@ export default new Vuex.Store({
             })
         },
 
-        verifyLiveliness: ({ commit, state }) => {
+        verifyLiveliness: ({ commit, state, getters }) => {
             return new Promise((resolve, reject) => {
                 if (state.livelinessCapturedData.tokenSelfiImage === "" || !state.hasLivelinessDone) {
                     return reject('User has not performed liveliness check')
                 }
                 const url = `${apiServerBaseUrl}/e-kyc/verification/passive-liveliness`;
                 const headers = {
-                    'Authorization': 'Bearer ' + state.cavachAccessToken,
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
                     "content-type": "application/json"
                 };
@@ -457,7 +471,7 @@ export default new Vuex.Store({
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
-                        sessionId: state.session,
+                        sessionId: getters.getSession,
                         tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage
                     })
                 })
@@ -481,14 +495,14 @@ export default new Vuex.Store({
             })
         },
 
-        verifyOcrIDDoc: ({ commit, state }) => {
+        verifyOcrIDDoc: ({ commit, state, getters }) => {
             return new Promise((resolve, reject) => {
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
                 const url = `${apiServerBaseUrl}/e-kyc/verification/ocr-id-doc`;
                 const headers = {
-                    'Authorization': 'Bearer ' + state.cavachAccessToken,
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
                     "content-type": "application/json"
                 };
@@ -500,7 +514,7 @@ export default new Vuex.Store({
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                         tokenFaceImage: state.kycCapturedData.tokenFaceImage,
                         countryCode: state.kycCapturedData.countryCode,
-                        sessionId: state.session,
+                        sessionId: getters.getSession,
                     })
                 })
                     .then(response => response.json())

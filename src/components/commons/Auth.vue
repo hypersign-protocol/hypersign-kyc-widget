@@ -22,8 +22,8 @@ export default {
     }
     this.$store.commit('setThridPartyAuth', payload);
     console.log('Inside mounted Auth')
-    this.nextStep()
-    this.$router.push({ path: "/home" })
+    this.nextStep(3)
+    this.$router.push({ path: "/" })
   }
 };
 

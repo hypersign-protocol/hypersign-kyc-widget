@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card-body">
+    <div class="card-body" style="min-height:750px;">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
       <div class="">
@@ -19,31 +19,38 @@
 </template>
 
 <script type="text/javascript">
-import { mapMutations, mapActions } from "vuex";
+import { mapMutations, mapActions, mapGetters } from "vuex";
 export default {
   name: "AppInstructions",
   components: {
   },
+  computed: {
+    ...mapGetters(["getCavachAccessToken", "getRedirectUrl"])
+  },
   async created() {
-
-    //console.log('Before calling register user...');
-    //this.registerUser()
-    //console.log('After calling register user...');
-
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
     if (!params.cavachAccessToken || !params.redirectUrl) {
-      console.log('Error: 401')
-      this.toast('Error initalization of widget!', "error");
-      return;
+
+      console.log({
+        cavachAccessToken: this.getCavachAccessToken,
+        redirectUrl: this.getRedirectUrl
+      })
+      if (this.getCavachAccessToken != '' && !this.getRedirectUrl != '') {
+        console.log('Error: 401')
+        this.toast('Error initalization of widget!', "error");
+        return;
+      }
+
     }
 
-    this.setCavachAccessToken(params.cavachAccessToken)
-    this.setRedirectUrl(params.redirectUrl)
+
+    this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
+    this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
 
     try {
       this.isLoading = true;
-      // await this.getNewSession()
+      await this.getNewSession()
       this.isLoading = false;
     } catch (e) {
       this.toast(e.message, "error");

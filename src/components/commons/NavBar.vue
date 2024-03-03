@@ -16,7 +16,7 @@
       padding-bottom: 4px;
       background: #80808024;
       " v-if="getActiveStep.name">
-        {{ getActiveStep.name }} ({{ getActiveStep.id }}/{{ steps.length - 2 }})
+        {{ getActiveStep.name }} ({{ getActiveStep.id - 2 }}/{{ kycStepsLength }})
       </span>
     </div>
   </div>
@@ -29,7 +29,12 @@ import { mapState, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState(["steps",]),
-    ...mapGetters(["getActiveStep"])
+    ...mapGetters(["getActiveStep"]),
+    kycStepsLength() {
+      return this.steps.filter(step => step.name != null).length
+    }
+
+
   }
 }
 </script>

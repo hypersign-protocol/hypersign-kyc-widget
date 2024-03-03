@@ -1,13 +1,15 @@
 <template>
-
-    <div class="body">
-        <Button @click="loginWithGoogle" data-cy="login-with-google">
-            Continue with Google
-        </Button>
+    <div class="card-body" style="max-height:750px;">
+        <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
+        <div class="center">
+            <div class="widget-card">
+                <button class="btn btn-outline-dark" @click="loginWithGoogle" data-cy="login-with-google">
+                    Continue with Google
+                </button>
+            </div>
+        </div>
     </div>
-
 </template>
-
 
 <script>
 import webAuth from '../utils/auth0Connection';
@@ -27,5 +29,4 @@ export default {
 
 
 }
-
 </script>

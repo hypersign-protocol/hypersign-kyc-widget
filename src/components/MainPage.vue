@@ -26,6 +26,7 @@ import PreviewData from './e-kyc/Preview.vue'
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
 import SignIn from "./e-kyc/SignIn.vue"
+import VaultPIN from './e-kyc/VaultPIN.vue'
 
 export default {
   name: "HelloWorld",
@@ -40,10 +41,11 @@ export default {
     IdDocs,
     PreviewData,
     FinalResult,
-    SignIn
+    SignIn,
+    VaultPIN
   },
   computed: {
     ...mapGetters(["getActiveStep"]),
   },
 };
-</script>
+</script>./commons/PIN.vue

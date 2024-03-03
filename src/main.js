@@ -13,6 +13,7 @@ import NavBar from "./components/commons/NavBar.vue";
 import PageHeading from "./components/commons/PageHeading.vue";
 import PoweredBy from "./components/commons/PoweredBy.vue";
 import ConsentBox from "./components/commons/ConsentBox.vue";
+import InfoMessage from "./components/commons/InfoMessage.vue";
 import router from "./router";
 Vue.config.productionTip = false
 
@@ -22,6 +23,7 @@ Vue.component('NavBar', NavBar);
 Vue.component('PageHeading', PageHeading)
 Vue.component('PoweredBy', PoweredBy);
 Vue.component('ConsentBox', ConsentBox);
+Vue.component('InfoMessage', InfoMessage)
 
 new Vue({
   router,

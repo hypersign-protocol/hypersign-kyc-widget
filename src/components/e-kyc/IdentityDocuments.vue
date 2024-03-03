@@ -1,17 +1,3 @@
-
-<style>
-.maincontainer {
-    width: 750px;
-    height: 850px;
-    background-color: #f5f5f5;
-    border: 1px solid grey;
-    border-radius: 20px;
-    box-shadow: 2px 5px 5px #80808087;
-    margin: 0 auto;
-}
-</style>
-
-
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, } from "vuex";
@@ -224,15 +210,15 @@ export default {
             <!-- SelphID Web Widget Container: Properties and events setup -->
             <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
                 <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
-                    :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode" :cameraWidth="cameraWidth"
-                    :cameraHeight="cameraHeight" :cameraSelection="cameraSelection" :previewCapture="previewCapture"
-                    :forceLandscape="forceLandscape" :captureTimeout="captureTimeout" :captureRetries="captureRetries"
-                    :imageFormat="imageFormat" :imageQuality="imageQuality" :documentType="documentType"
-                    :scanMode="scanMode" :blurredThreshold="blurredThreshold" :showLog="showLog" :debugMode="debugMode"
-                    :documentMode="documentMode" @onmoduleloaded="onModuleLoaded"
-                    @onextractionfinished="onExtractionFinished" @onusercancelled="onUserCancelled"
-                    @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
-                    @ontrackstatus="onTrackStatus"></facephi-selphid>
+                    :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
+                    :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
+                    :previewCapture="previewCapture" :forceLandscape="forceLandscape" :captureTimeout="captureTimeout"
+                    :captureRetries="captureRetries" :imageFormat="imageFormat" :imageQuality="imageQuality"
+                    :documentType="documentType" :scanMode="scanMode" :blurredThreshold="blurredThreshold"
+                    :showLog="showLog" :debugMode="debugMode" :documentMode="documentMode"
+                    @onmoduleloaded="onModuleLoaded" @onextractionfinished="onExtractionFinished"
+                    @onusercancelled="onUserCancelled" @onexceptioncaptured="onExceptionCaptured"
+                    @onextractiontimeout="onExtractionTimeout" @ontrackstatus="onTrackStatus"></facephi-selphid>
                 <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
             </div>
             <!-- Widget demo configuration elements -->
@@ -240,8 +226,8 @@ export default {
                 <!-- <div>SelphID Web Widget Demo</div> -->
 
                 <div class="d-flex flex-column my-3">
-                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted"
-                        v-on:click.self="enableWidget">
+                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
+                        :disabled="isWidgetStarted" v-on:click.self="enableWidget">
                         Start capture
                     </button>
                     <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
