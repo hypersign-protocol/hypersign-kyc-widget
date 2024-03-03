@@ -5,7 +5,6 @@
         <NavBar />
         <!-- <Stepper /> -->
         <component :is="getActiveStep.stepName"> </component>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
         <div class="card-footer">
           <PoweredBy />
         </div>
@@ -26,6 +25,7 @@ import IdDocs from './e-kyc/IdentityDocuments.vue'
 import PreviewData from './e-kyc/Preview.vue'
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
+import SignIn from "./e-kyc/SignIn.vue"
 
 export default {
   name: "HelloWorld",
@@ -39,7 +39,8 @@ export default {
     Liveliness,
     IdDocs,
     PreviewData,
-    FinalResult
+    FinalResult,
+    SignIn
   },
   computed: {
     ...mapGetters(["getActiveStep"]),

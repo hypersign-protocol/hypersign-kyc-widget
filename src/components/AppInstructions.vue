@@ -1,16 +1,20 @@
 <template>
-  <div class="card-body">
-    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-    <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
-    <div class="">
-      <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%" width="100%" />
-      <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
-        <button class="btn btn-outline-dark" @click="nextStep()">
-          Let's go!
-        </button>
+  <div>
+    <div class="card-body">
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+      <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
+      <div class="">
+        <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
+          width="100%" />
+        <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
+          <button class="btn btn-outline-dark" @click="nextStep()">
+            Let's go!
+          </button>
+        </div>
+        <ConsentBox />
       </div>
-      <ConsentBox />
     </div>
+    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
   </div>
 </template>
 
@@ -21,6 +25,10 @@ export default {
   components: {
   },
   async created() {
+
+    //console.log('Before calling register user...');
+    //this.registerUser()
+    //console.log('After calling register user...');
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -35,7 +43,7 @@ export default {
 
     try {
       this.isLoading = true;
-      await this.getNewSession()
+      // await this.getNewSession()
       this.isLoading = false;
     } catch (e) {
       this.toast(e.message, "error");
@@ -53,7 +61,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
-    ...mapActions(["getNewSession"]),
+    ...mapActions(["getNewSession", "registerUser"]),
     toast(msg, type = "success") {
       this.isToast = true;
       this.toastMessage = msg;

@@ -13,7 +13,7 @@ import NavBar from "./components/commons/NavBar.vue";
 import PageHeading from "./components/commons/PageHeading.vue";
 import PoweredBy from "./components/commons/PoweredBy.vue";
 import ConsentBox from "./components/commons/ConsentBox.vue";
-
+import router from "./router";
 Vue.config.productionTip = false
 
 Vue.component('load-ing', Loading)
@@ -24,6 +24,7 @@ Vue.component('PoweredBy', PoweredBy);
 Vue.component('ConsentBox', ConsentBox);
 
 new Vue({
+  router,
   store,
   render: h => h(App)
 }).$mount('#app')

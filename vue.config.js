@@ -3,8 +3,8 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   devServer: {
-    https: true,
-    port: 8080,
-    
+    https: false,
+    port: 4999,
+
   }
 })

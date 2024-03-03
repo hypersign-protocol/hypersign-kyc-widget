@@ -21,29 +21,35 @@ export default new Vuex.Store({
             {
                 id: 1,
                 isActive: false,
-                stepName: 'Liveliness',
-                name: 'Facial Recognition',
+                stepName: 'SignIn',
                 previous: 0
             },
             {
                 id: 2,
                 isActive: false,
-                stepName: 'IdDocs',
-                name: 'Government-issued ID',
+                stepName: 'Liveliness',
+                name: 'Facial Recognition',
                 previous: 1
             },
             {
                 id: 3,
                 isActive: false,
-                stepName: 'PreviewData',
-                name: 'User Consent',
+                stepName: 'IdDocs',
+                name: 'Government-issued ID',
                 previous: 2
             },
             {
                 id: 4,
                 isActive: false,
-                stepName: 'FinalResult',
+                stepName: 'PreviewData',
+                name: 'User Consent',
                 previous: 3
+            },
+            {
+                id: 5,
+                isActive: false,
+                stepName: 'FinalResult',
+                previous: 4
             },
         ],
 
@@ -66,12 +72,22 @@ export default new Vuex.Store({
             tokenFaceImage: "",
             countryCode: "",
 
-        }
+        },
+
+        // --- 
+        authenticationAccessToken: {},
     },
     getters: {
         getActiveStep: (state) => {
             // console.log(state)
-            return state.steps.find(x => x.isActive == true)
+            const stepIndex = localStorage.getItem("currentStep") //state.steps.find(x => x.isActive == true)
+            console.log(stepIndex)
+            let step = stepIndex ? state.steps[stepIndex] : state.steps.find(x => x.isActive == true);
+            if (!step) {
+                const step = state.steps.find(x => x.isActive == true)
+                return step
+            }
+            return step
         },
 
 
@@ -95,10 +111,17 @@ export default new Vuex.Store({
             //     throw new Error("Error in initialization, please contact admin")
             // }
 
-            const activeStep = state.steps.find(x => x.isActive == true)
+            // const activeStep = state.steps.find(x => x.isActive == true)
+            const stepIndex = localStorage.getItem("currentStep")
+            let activeStep = state.steps[stepIndex]
+            if (!activeStep) {
+                activeStep = state.steps.find(x => x.isActive == true)
+            }
             const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
+            localStorage.setItem("currentStep", nextStepId)
+
         },
 
         previousStep: (state) => {
@@ -169,7 +192,15 @@ export default new Vuex.Store({
 
         setKycCapturedData(state, payload) {
             state.kycCapturedData = { ...payload }
+        },
+
+        // ---
+        setThridPartyAuth(state, payload) {
+            state.authenticationAccessToken = { ...payload }
         }
+
+
+
     },
     actions: {
         addharQRVerify: ({ state }) => {
@@ -486,6 +517,55 @@ export default new Vuex.Store({
                                 return reject(new Error('Error verifying ID document, error code: ' + json.serviceFacialAuthenticationResult))
                             }
                         }
+                    }).catch((e) => {
+                        reject(new Error(`Verifying the result  ${e}`))
+                    })
+            })
+        },
+
+
+        registerUser: () => {
+            return new Promise((resolve, reject) => {
+                // if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
+                //     return reject('User has not performed ID capturing')
+                // }
+                const url = 'https://authserver.hypersign.id/hs/api/v2/register'
+                const headers = {
+                    // 'Authorization': 'Bearer ' + state.cavachAccessToken,
+                    "content-type": "application/json"
+                };
+                return fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        "user": {
+                            "name": "Vishwas Anand",
+                            "email": "vishwasbhushan001@gmail.com",
+                            "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED"
+                        },
+                        "isThridPartyAuth": true,
+                        "expirationDate": "2030-12-31T00:00:00.000Z",
+                        "thridPartyAuthProvider": "Google",
+                        "accessToken": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9maWRhdG8udXMuYXV0aDAuY29tLyJ9..lxXchyqq4gth8OKr.vM1CL6P7ZxtW5gUkm8HBbjOAee9wxQ9KZGim9TkoMYozwvvsPGP1ZS9qlEngTtQzGUzolNNZ3w47rFxACw39cRmAJmR_BcLKzDy9ldAcXkUQJn7-MXmnQDqSLKQoz7XDROpc0CF0iiJDSwMiqIXyK2qXXS_LiP26MQMR-twVcs08-09UTC4vUJwcl5fVzCBB_6pnbvPqaj2j92HHyQflD4N0dzBqwlqHu84I4TG7bScwUE-r52VLprmC1g2RJzk-2wfor5Sgs81PLrhKw40G2BkaPBDSYTjK9TjEmcIuNhJOjFUQlU099Cyptw.mRcMQXhsKn4Q8AgupJzgbQ"
+                    })
+                })
+                    .then(response => response.json())
+                    .then(json => {
+
+                        console.log(json)
+                        resolve(json)
+                        // if (json.statusCode && (json.statusCode != (200 || 201))) {
+                        //     return reject(json.message)
+                        // } else if (json.error) {
+                        //     return reject(json)
+                        // } else {
+                        // if (json && json.serviceFacialAuthenticationResult === 0) {
+                        //     // commit('setOcrIdDocResult', json);
+                        //     return resolve(json)
+                        // } else {
+                        //     return reject(new Error('Error verifying ID document, error code: ' + json.serviceFacialAuthenticationResult))
+                        // }
+                        //}
                     }).catch((e) => {
                         reject(new Error(`Verifying the result  ${e}`))
                     })
