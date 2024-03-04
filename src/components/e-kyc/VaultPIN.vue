@@ -1,18 +1,20 @@
 <template>
-    <div class="card-body" style="max-height:750px;">
-        <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+    <div style="min-height: 850px">
+        <div class="card-body" style="max-height:750px;">
+            <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-        <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
-        <div class="center" v-if="ifNewUser">
+            <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
+            <div class="center" v-if="ifNewUser">
+                <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+            </div>
 
-            <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+            <div class="center" v-else>
+                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+            </div>
         </div>
-
-        <div class="center" v-else>
-            <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
-        </div>
-
+        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     </div>
+
 </template>
 
 <script type="text/javascript">
@@ -32,34 +34,51 @@ export default {
         ...mapMutations(['nextStep']),
         ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById"]),
         async unlockVaultAndSyncData(data) {
-            if (data) {
-                console.log('Inside unlockVaultAndSyncData handler')
-                console.log('before calling unlocakVault')
-                this.isLoadingPage = true;
-                if (!this.ifNewUser) {
-                    await this.syncUserDataById()
+            try {
+                if (data) {
+                    console.log('Inside unlockVaultAndSyncData handler')
+                    console.log('before calling unlocakVault')
+                    this.isLoadingPage = true;
+                    if (!this.ifNewUser) {
+                        await this.syncUserDataById()
+                    }
+                    const res = await this.unlockVault();
+                    if (!res) {
+                        console.log('before calling lockVault')
+                        await this.lockVault()
+                        console.log('before calling syncUserData')
+                        this.syncUserData()
+                    }
+                    console.log('after calling syncUserData')
+                    this.isLoadingPage = false
+                    this.nextStep()
+                } else {
+                    this.isLoadingPage = false
                 }
-                const res = await this.unlockVault();
-                if (!res) {
-                    console.log('before calling lockVault')
-                    await this.lockVault()
-                    console.log('before calling syncUserData')
-                    this.syncUserData()
-                }
-                console.log('after calling syncUserData')
-                this.isLoadingPage = false
-                this.nextStep()
-            } else {
-                console.error('Could not set PIN')
+
+            } catch (e) {
+                this.toast(e.message, 'error')
                 this.isLoadingPage = false
             }
+        },
+        toast(msg, type = "success") {
+            this.isToast = true;
+            this.toastMessage = msg;
+            this.toastType = type;
 
-        }
+            setTimeout(() => {
+                this.isToast = false;
+                this.toastMessage = "";
+            }, 2000);
+        },
     },
     data() {
         return {
             isLoadingPage: false,
-            fullPage: true
+            fullPage: true,
+            toastMessage: "",
+            toastType: "success",
+            isToast: false
         }
     },
 }

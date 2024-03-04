@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 import PIN from '../commons/PIN.vue'
-import { mapMutations, mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
     name: "VaultPin",
@@ -39,19 +39,8 @@ export default {
     },
     methods: {
         ...mapMutations(['nextStep', "setVaultPin"]),
-        ...mapActions(["unlockVault"]),
         async submit() {
-            // try {
-            //     const result = await this.unlockVault()
-            //     if (result) {
-            //         this.nextStep()
-            //     }
-            // } catch (e) {
-            //     console.error(e)
-            // }
-
             if (this.pin === this.reEnterPin) {
-                // this.reEnterPin = 'Vishwas1@' // TODO remove this later
                 this.setVaultPin(this.reEnterPin)
                 this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
             } else {

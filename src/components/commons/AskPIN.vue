@@ -36,14 +36,6 @@ export default {
     methods: {
         ...mapMutations(['nextStep', "setVaultPin"]),
         async submit() {
-            // try {
-            //     const result = await this.unlockVault()
-            //     if (result) {
-            //         this.nextStep()
-            //     }
-            // } catch (e) {
-            //     console.error(e)
-            // }
             this.setVaultPin(this.pin)
             this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
         },

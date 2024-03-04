@@ -725,32 +725,45 @@ export default new Vuex.Store({
 
         // --- vault
         async lockVault({ commit, getters }) {
-            const vaultPin = getters.getVaultPin
-            let vaultRaw = getters.getVaultDataRaw
-            if (!vaultRaw) {
-                vaultRaw = {
-                    here: "something"
+            try {
+                const vaultPin = getters.getVaultPin
+                let vaultRaw = getters.getVaultDataRaw
+                if (!vaultRaw) {
+                    vaultRaw = {
+                        here: "something"
+                    }
+                    commit('setVaultRaw', JSON.stringify(vaultRaw))
+
                 }
-                commit('setVaultRaw', JSON.stringify(vaultRaw))
+                console.log('Before calling encrypt ')
+                console.log({ vaultRaw, vaultPin })
+                const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
+                commit('setVaultData', encryptedData)
+                return true
+            } catch (e) {
+                throw new Error('Error: Could not lock vault')
 
             }
-            console.log('Before calling encrypt ')
-            console.log({ vaultRaw, vaultPin })
-            const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
-            commit('setVaultData', encryptedData)
-            return true
         },
 
         async unlockVault({ commit, getters }) {
-            const vaultPin = getters.getVaultPin
-            const vaultData = getters.getVaultData
-            console.log('Inside unlocked vault, vaultData ' + vaultData)
-            if (!vaultData || vaultData === 'undefined') {
-                return false
+            try {
+                const vaultPin = getters.getVaultPin
+                const vaultData = getters.getVaultData
+                console.log('Inside unlocked vault, vaultData ' + vaultData)
+                if (!vaultData || vaultData === 'undefined') {
+                    return false
+                }
+                const decryptedData = await decrypt(vaultData, vaultPin)
+                if (decryptedData === "") {
+                    throw new Error('Error: Could not unlock vault, please check your PIN')
+                }
+                commit('setVaultRaw', decryptedData)
+                return true
+            } catch (e) {
+                throw new Error(e.message)
             }
-            const decryptedData = await decrypt(vaultData, vaultPin)
-            commit('setVaultRaw', decryptedData)
-            return true
+
         },
 
         async updateVaultData() {
