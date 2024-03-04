@@ -85,6 +85,39 @@ export default new Vuex.Store({
         // --- 
         authenticationAccessToken: {},
         ifNewUser: false,
+
+        // userVaultDataRaw 
+        userVaultDataRaw: {
+            "password": "",
+            "mnemonic": "",
+            "hypersign": {
+                "did": "",
+                "keys": {
+                    "type": "Ed25519VerificationKey2020",
+                    "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
+                    "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
+                },
+                "credentials": [],
+                "credentialsTemp": [],
+                "requestingAppInfo": "",
+                "thridPartyAuths": [],
+                "dids": {
+                    "did:hid:testnet:z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc": {
+                        "didDoc": {},
+                        "hdPathIndex": 0,
+                        "status": "private",
+                        "keys": {
+                            "type": "Ed25519VerificationKey2020",
+                            "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
+                            "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
+                        }
+                    }
+                },
+                "didDoc": {
+
+                }
+            }
+        }
     },
     getters: {
         getActiveStep: (state) => {
@@ -729,11 +762,12 @@ export default new Vuex.Store({
                 const vaultPin = getters.getVaultPin
                 let vaultRaw = getters.getVaultDataRaw
                 if (!vaultRaw) {
-                    vaultRaw = {
-                        here: "something"
-                    }
-                    commit('setVaultRaw', JSON.stringify(vaultRaw))
+                    // vaultRaw = {
+                    //     here: "something"
+                    // }
+                    // commit('setVaultRaw', JSON.stringify(vaultRaw))
 
+                    return false
                 }
                 console.log('Before calling encrypt ')
                 console.log({ vaultRaw, vaultPin })

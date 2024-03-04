@@ -1,62 +1,31 @@
 <template>
   <div class="card maincontainer">
-    <load-ing
-      :active.sync="isLoadingPage"
-      :can-cancel="true"
-      :is-full-page="true"
-    ></load-ing>
+    <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="true"></load-ing>
     <NavBar />
     <div class="card-body">
-      <PageHeading
-        :header="'Verify Phone Number'"
-        :subHeader="'Provide your Aadhaar linked phone number and verify your OTP'"
-      />
+      <PageHeading :header="'Verify Phone Number'"
+        :subHeader="'Provide your Aadhaar linked phone number and verify your OTP'" />
 
       <div class="col p-2">
-        <label for="validationCustom01" class="form-label" style="float: left"
-          >Phone Number</label
-        >
+        <label for="validationCustom01" class="form-label" style="float: left">Phone Number</label>
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon1">+91</span>
-          <input
-            type="number"
-            class="form-control"
-            id="validationCustom01"
-            value="Mark"
-            v-model="phoneNumber"
-            required
-            :disabled="isPhoneCheckDone"
-          />
+          <input type="number" class="form-control" id="validationCustom01" value="Mark" v-model="phoneNumber" required
+            :disabled="isPhoneCheckDone" />
         </div>
-        <button
-          class="btn btn-outline-dark"
-          @click="check()"
-          v-if="!isPhoneCheckDone"
-        >
+        <button class="btn btn-outline-dark" @click="check()" v-if="!isPhoneCheckDone">
           Next
         </button>
       </div>
 
       <div v-if="isPhoneCheckDone" class="p-2 mb-3">
-        <label for="validationCustom01" class="form-label" style="float: left"
-          >4 digits OTP
+        <label for="validationCustom01" class="form-label" style="float: left">4 digits OTP
         </label>
         <div class="input-group">
-          <OtpInput
-            ref="otpInput"
-            input-classes="otp-input"
-            separator="-"
-            :num-inputs="4"
-            :should-auto-focus="true"
-            :is-input-num="true"
-            @on-change="handleOnChange"
-            @on-complete="handleOnComplete"
-            style="font-size: 30px"
-          />
-          <small style="color: grey; text-align: left"
-            >Note: This feature is coming soon. Enter any 4 digits to
-            test...</small
-          >
+          <OtpInput ref="otpInput" input-classes="otp-input" separator="-" :num-inputs="4" :should-auto-focus="true"
+            :is-input-num="true" @on-change="handleOnChange" @on-complete="handleOnComplete" style="font-size: 30px" />
+          <small style="color: grey; text-align: left">Note: This feature is coming soon. Enter any 4 digits to
+            test...</small>
         </div>
         <button class="btn btn-link btn-dark" @click="handleClearInput()">
           Clear
@@ -64,7 +33,9 @@
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
-    <div class="card-footer"><PoweredBy /></div>
+    <div class="card-footer">
+      <PoweredBy />
+    </div>
   </div>
 </template>
 
@@ -171,7 +142,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style scoped>
 .otp-input {
   width: 40px;
   height: 40px;
@@ -181,10 +152,12 @@ export default {
   border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   text-align: center;
+
   &.error {
     border: 1px solid red !important;
   }
 }
+
 .otp-input::-webkit-inner-spin-button,
 .otp-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
