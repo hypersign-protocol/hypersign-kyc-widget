@@ -33,11 +33,11 @@ export default {
         };
     },
 
-    // computed: {
-    //     pins() {
-    //         return this.pin1 + this.pin2 + this.pin3 + this.pin4 + this.pin5;
-    //     }
-    // },
+    computed: {
+        pins() {
+            return this.pin1 + this.pin2 + this.pin3 + this.pin4 + this.pin5;
+        }
+    },
 
     mounted() {
         this.$refs.input1.focus();
@@ -51,6 +51,7 @@ export default {
         },
         done() {
             console.log("Your PIN is: " + this.pins);
+            this.$emit('pinTakenEvent', this.pins)
         },
         selectInput(num) {
             this.$refs["input" + num].select();

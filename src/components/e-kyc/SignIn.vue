@@ -4,7 +4,7 @@
         <div class="center">
             <div class="widget-card">
                 <button class="btn btn-outline-dark" @click="loginWithGoogle" data-cy="login-with-google">
-                    Continue with Google
+                    <i class="bi bi-google"></i> Continue with Google
                 </button>
             </div>
         </div>

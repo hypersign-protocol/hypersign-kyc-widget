@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../config'
+import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
 Vue.use(Vuex)
 const apiServerBaseUrl = 'http://ent-0b22db9.localhost:3001/api/v1';
 
@@ -83,6 +84,7 @@ export default new Vuex.Store({
 
         // --- 
         authenticationAccessToken: {},
+        ifNewUser: false,
     },
     getters: {
         getActiveStep: (state) => {
@@ -110,29 +112,49 @@ export default new Vuex.Store({
         getRedirectUrl() {
             return localStorage.getItem("redirectUrl")
         },
+        getAuthServerAuthToken() {
+            return localStorage.getItem("authServerAuthToken")
+        },
         getFinalResult(state) {
             return state.finalResult
-        }
+        },
+
+        getProfile() {
+            const profileStr = localStorage.getItem('profile')
+            if (profileStr) {
+                return JSON.parse(profileStr)
+            } else {
+                return null
+            }
+        },
+
+
+        // ---------------------------------------------------------------- User vault
+        getVaultPin() {
+            return localStorage.getItem('vaultPin')
+        },
+        getVaultLockStatus() {
+            return localStorage.getItem('vaultLockStatus')
+        },
+        getVaultData() {
+            return localStorage.getItem('vaultData')
+        },
+        getVaultDataRaw() {
+            const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
+            if (vaultDataRawStr) {
+                return JSON.parse(vaultDataRawStr)
+            } else {
+                return null
+            }
+        },
     },
     mutations: {
 
         nextStep: (state, jumpToStepId = null) => {
-
-            // if (!session || session === "") {
-            //     throw new Error("Error in initialization, please contact admin")
-            // }
-
             const activeStep = state.steps.find(x => x.isActive == true)
-            // const stepIndex = localStorage.getItem("currentStep")
-            // let activeStep = state.steps[stepIndex]
-            // if (!activeStep) {
-            //     activeStep = state.steps.find(x => x.isActive == true)
-            // }
             const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
-            // localStorage.setItem("currentStep", nextStepId)
-
         },
 
         previousStep: (state) => {
@@ -211,8 +233,44 @@ export default new Vuex.Store({
         // ---
         setThridPartyAuth(state, payload) {
             state.authenticationAccessToken = { ...payload }
-        }
+        },
 
+        setProfile(state, payload) {
+            console.log(state.hasKycDone)
+            localStorage.setItem('profile', JSON.stringify(payload))
+        },
+
+        setAuthServerAuthToken(state, payload) {
+            console.log(state.hasKycDone)
+            return localStorage.setItem("authServerAuthToken", payload)
+        },
+
+
+        // --- vault
+        setVaultPin(state, payload) {
+            console.log(state.hasKycDone)
+            return localStorage.setItem('vaultPin', payload)
+        },
+
+        setVaultData(state, payload) {
+            console.log(state.hasKycDone)
+            return localStorage.setItem('vaultData', payload)
+        },
+
+        setVaultRaw(state, payload) {
+            console.log(state.hasKycDone)
+
+            return localStorage.setItem('vaultDataRaw', JSON.stringify(payload))
+        },
+
+        // setVaultLockStatus(state, payload) {
+
+        // }
+
+        setAsNewUser(state, payload) {
+            console.log(state.hasKycDone)
+            state.ifNewUser = payload;
+        }
 
 
     },
@@ -538,54 +596,114 @@ export default new Vuex.Store({
         },
 
 
-        registerUser: () => {
+        // ----------------------------------------------------------------
+        registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
-                // if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
-                //     return reject('User has not performed ID capturing')
-                // }
                 const url = 'https://authserver.hypersign.id/hs/api/v2/register'
                 const headers = {
-                    // 'Authorization': 'Bearer ' + state.cavachAccessToken,
                     "content-type": "application/json"
                 };
+                const { email, name, accessToken } = getters.getProfile
                 return fetch(url, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
                         "user": {
-                            "name": "Vishwas Anand",
-                            "email": "vishwasbhushan001@gmail.com",
-                            "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED"
+                            "name": name,
+                            "email": email,
+                            "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED" // TODO
                         },
                         "isThridPartyAuth": true,
                         "expirationDate": "2030-12-31T00:00:00.000Z",
                         "thridPartyAuthProvider": "Google",
-                        "accessToken": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9maWRhdG8udXMuYXV0aDAuY29tLyJ9..lxXchyqq4gth8OKr.vM1CL6P7ZxtW5gUkm8HBbjOAee9wxQ9KZGim9TkoMYozwvvsPGP1ZS9qlEngTtQzGUzolNNZ3w47rFxACw39cRmAJmR_BcLKzDy9ldAcXkUQJn7-MXmnQDqSLKQoz7XDROpc0CF0iiJDSwMiqIXyK2qXXS_LiP26MQMR-twVcs08-09UTC4vUJwcl5fVzCBB_6pnbvPqaj2j92HHyQflD4N0dzBqwlqHu84I4TG7bScwUE-r52VLprmC1g2RJzk-2wfor5Sgs81PLrhKw40G2BkaPBDSYTjK9TjEmcIuNhJOjFUQlU099Cyptw.mRcMQXhsKn4Q8AgupJzgbQ"
+                        "accessToken": accessToken
                     })
                 })
                     .then(response => response.json())
                     .then(json => {
+                        if (json) {
+                            if (json.error) {
+                                return reject(json.error)
+                            }
 
-                        console.log(json)
-                        resolve(json)
-                        // if (json.statusCode && (json.statusCode != (200 || 201))) {
-                        //     return reject(json.message)
-                        // } else if (json.error) {
-                        //     return reject(json)
-                        // } else {
-                        // if (json && json.serviceFacialAuthenticationResult === 0) {
-                        //     // commit('setOcrIdDocResult', json);
-                        //     return resolve(json)
-                        // } else {
-                        //     return reject(new Error('Error verifying ID document, error code: ' + json.serviceFacialAuthenticationResult))
-                        // }
-                        //}
+                            if (json.status === 403) {
+                                commit('setAsNewUser', false)
+                            } else {
+                                commit('setAsNewUser', true)
+
+                            }
+
+                            commit('setAuthServerAuthToken', json.authToken)
+                            resolve(json)
+                        }
                     }).catch((e) => {
                         reject(new Error(`Verifying the result  ${e}`))
                     })
             })
         },
 
+
+        syncUserData: ({ commit, getters }) => {
+            return new Promise((resolve, reject) => {
+                const { email } = getters.getProfile
+                if (!email) {
+                    return reject(new Error('Invalid email, or user is not logged in'))
+                }
+                const url = 'https://authserver.hypersign.id/hs/api/v2/sync/' + email
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json) {
+                            if (json.error) {
+                                return reject(json.error)
+                            }
+                            commit('setVaultData', json.encryptedMessage)
+                            resolve()
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Verifying the result  ${e}`))
+                    })
+            })
+        },
+
+
+        // --- vault
+        async lockVault({ commit, getters }) {
+            const vaultPin = getters.getVaultPin
+            const vaultRaw = getters.getVaultDataRaw
+            if (!vaultRaw) {
+                throw new Error('vaultRaw not found')
+            }
+            const encryptedData = await encrypt(vaultRaw, vaultPin)
+            commit('setVaultData', encryptedData)
+            return true
+        },
+
+        async unlockVault({ commit, getters }) {
+            const vaultPin = getters.getVaultPin
+            const vaultData = getters.getVaultData
+            if (!vaultData) {
+                throw new Error('Vault data not found')
+            }
+            const decryptedData = await decrypt(vaultData, vaultPin)
+            commit('setVaultRaw', decryptedData)
+            return true
+        },
+
+        async updateVaultData() {
+            //  fetch current unlocked vault data
+            // const r1= await this.unlockVault()
+            // update that data
+            // lock the vault 
+        }
     },
 
 
