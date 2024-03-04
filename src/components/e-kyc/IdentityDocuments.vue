@@ -24,7 +24,7 @@ export default {
             askSimpleMode: false,
             cameraWidth: 1280,
             cameraHeight: 720,
-            specificdata: ["XXX"],
+            specificdata: ["PSP"], // PSP -  for passport
             cameraSelection: true,
             previewCapture: false,
             forceLandscape: false,
