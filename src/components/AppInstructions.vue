@@ -7,7 +7,7 @@
         <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
           width="100%" />
         <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
-          <button class="btn btn-outline-dark" @click="nextStep()">
+          <button class="btn btn-outline-dark btn-lg" @click="nextStep()">
             Let's go!
           </button>
         </div>

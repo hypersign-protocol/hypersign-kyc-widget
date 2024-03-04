@@ -144,7 +144,7 @@ REquest body:
         "docId": "randomId"
     },
     "document": {
-        "encryptedMessage": "asdsadasdasdad................................................................"
+        "encryptedMessage": ""
     }
 }
 ```

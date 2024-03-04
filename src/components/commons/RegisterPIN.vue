@@ -41,13 +41,21 @@ export default {
         ...mapMutations(['nextStep', "setVaultPin"]),
         ...mapActions(["unlockVault"]),
         async submit() {
-            try {
-                const result = await this.unlockVault()
-                if (result) {
-                    this.nextStep()
-                }
-            } catch (e) {
-                console.error(e)
+            // try {
+            //     const result = await this.unlockVault()
+            //     if (result) {
+            //         this.nextStep()
+            //     }
+            // } catch (e) {
+            //     console.error(e)
+            // }
+
+            if (this.pin === this.reEnterPin) {
+                // this.reEnterPin = 'Vishwas1@' // TODO remove this later
+                this.setVaultPin(this.reEnterPin)
+                this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
+            } else {
+                alert('Pins did not match')
             }
         },
         getPin(data) {
@@ -58,12 +66,7 @@ export default {
             console.log('Re enter Pin ' + data)
             this.reEnterPin = data;
 
-            if (this.pin === this.reEnterPin) {
-                this.reEnterPin = 'Vishwas1@' // TODO remove this later
-                this.setVaultPin(this.reEnterPin)
-            } else {
-                alert('Pins did not match')
-            }
+
         }
     }
 }

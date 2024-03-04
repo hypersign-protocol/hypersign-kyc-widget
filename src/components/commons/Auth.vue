@@ -1,3 +1,7 @@
+<template>
+  <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+</template>
+
 <script>
 
 import { mapGetters, mapMutations, mapActions } from 'vuex';
@@ -8,9 +12,15 @@ export default {
   computed: {
     ...mapGetters(["getActiveStep"])
   },
+  data() {
+    return {
+      isLoadingPage: false,
+      fullPage: true
+    }
+  },
   methods: {
     ...mapMutations(["nextStep"]),
-    ...mapActions(["registerUser", "syncUserData"]),
+    ...mapActions(["registerUser"]),
     getUserInfo(accessToken) {
       if (accessToken) {
         const that = this;
@@ -40,18 +50,23 @@ export default {
 
       ///
       this.getUserInfo(accessToken)
+      this.isLoadingPage = true
+      console.log('Before calling registerUser')
+      await this.registerUser()
+      console.log('After calling registerUser')
 
-      const resp = await this.registerUser()
-      console.log(resp)
 
-      this.syncUserData()
+
       ///
       console.log('Inside mounted Auth')
       this.nextStep(3)
+      this.isLoadingPage = false
       this.$router.push({ path: "/" })
 
     } catch (e) {
-      this.nextStep(2)
+      console.log('error =' + e)
+      this.isLoadingPage = false
+      this.nextStep(1)
       this.$router.push({ path: "/" })
     }
 

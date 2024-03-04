@@ -643,12 +643,60 @@ export default new Vuex.Store({
         },
 
 
-        syncUserData: ({ commit, getters }) => {
+        syncUserData: ({ getters }) => {
             return new Promise((resolve, reject) => {
                 const { email } = getters.getProfile
                 if (!email) {
                     return reject(new Error('Invalid email, or user is not logged in'))
                 }
+                console.log('Inside sycnUserData vaultDat ' + localStorage.getItem('vaultData'))
+                if (!localStorage.getItem('vaultData')) {
+                    return reject(new Error('Invalid vault data'))
+                }
+                // const url = 'https://authserver.hypersign.id/hs/api/v2/sync/' + email
+
+                const url = 'https://authserver.hypersign.id/hs/api/v2/sync'
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+
+                return fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        "user": {
+                            "userId": email,
+                            "sequenceNo": 0,
+                            "docId": "randomId"
+                        },
+                        "document": {
+                            "encryptedMessage": localStorage.getItem('vaultData')
+                        }
+                    })
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json) {
+                            if (json.error) {
+                                return reject(json.error)
+                            }
+                            // commit('setVaultData', json.encryptedMessage)
+                            resolve()
+                        }
+                    }).catch((e) => {
+                        reject(e)
+                    })
+            })
+        },
+
+        syncUserDataById: ({ getters, commit }) => {
+            return new Promise((resolve, reject) => {
+                const { email } = getters.getProfile
+                if (!email) {
+                    return reject(new Error('Invalid email, or user is not logged in'))
+                }
+
                 const url = 'https://authserver.hypersign.id/hs/api/v2/sync/' + email
                 const headers = {
                     "content-type": "application/json",
@@ -669,7 +717,7 @@ export default new Vuex.Store({
                             resolve()
                         }
                     }).catch((e) => {
-                        reject(new Error(`Verifying the result  ${e}`))
+                        reject(e)
                     })
             })
         },
@@ -678,11 +726,17 @@ export default new Vuex.Store({
         // --- vault
         async lockVault({ commit, getters }) {
             const vaultPin = getters.getVaultPin
-            const vaultRaw = getters.getVaultDataRaw
+            let vaultRaw = getters.getVaultDataRaw
             if (!vaultRaw) {
-                throw new Error('vaultRaw not found')
+                vaultRaw = {
+                    here: "something"
+                }
+                commit('setVaultRaw', JSON.stringify(vaultRaw))
+
             }
-            const encryptedData = await encrypt(vaultRaw, vaultPin)
+            console.log('Before calling encrypt ')
+            console.log({ vaultRaw, vaultPin })
+            const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
             commit('setVaultData', encryptedData)
             return true
         },
@@ -690,8 +744,9 @@ export default new Vuex.Store({
         async unlockVault({ commit, getters }) {
             const vaultPin = getters.getVaultPin
             const vaultData = getters.getVaultData
-            if (!vaultData) {
-                throw new Error('Vault data not found')
+            console.log('Inside unlocked vault, vaultData ' + vaultData)
+            if (!vaultData || vaultData === 'undefined') {
+                return false
             }
             const decryptedData = await decrypt(vaultData, vaultPin)
             commit('setVaultRaw', decryptedData)

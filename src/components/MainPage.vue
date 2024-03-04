@@ -3,8 +3,8 @@
     <template>
       <div class="card maincontainer" style="text-align: center;">
         <NavBar />
-        <!-- <Stepper /> -->
-        <component :is="getActiveStep.stepName"> </component>
+        <component :is="getActiveStep.stepName">
+        </component>
         <div class="card-footer">
           <PoweredBy />
         </div>
@@ -47,5 +47,6 @@ export default {
   computed: {
     ...mapGetters(["getActiveStep"]),
   },
+
 };
 </script>./commons/PIN.vue
