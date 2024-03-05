@@ -1,17 +1,85 @@
+<style scoped>
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-item {
+  margin-top: 50px;
+  margin-bottom: 35px;
+  display: flex;
+  align-items: center;
+
+}
+
+.checkbox-item-input {
+  width: 2.5em;
+  height: 2.5em;
+}
+
+.container {
+  display: flex;
+}
+
+.box {
+  /* width: 200px;
+  height: 100px; */
+  margin: 10px;
+  /* background-color: lightblue;
+  border: 1px solid #ccc; */
+  box-sizing: border-box;
+  padding: 20px
+}
+
+.checkbox-item input {
+  margin-right: 5px;
+}
+</style>
+
 <template>
   <div>
-    <div class="card-body" style="min-height:750px;">
+    <div class="card-body" style="min-height:700px;">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <PageHeading :header="'Cavach KYC'" :subHeader="'Follow these simple instructions for your KYC request'" />
+      <PageHeading :header="'Hypersign KYC'"
+        :subHeader="'Follow these simple instructions to complete your KYC request'" />
+
+      <div class="container">
+        <div class="box">
+          <img class="opacity-80" src="../assets/page0.png" style="height:100%; width: 100%" width="100%" />
+        </div>
+        <div class="box">
+          <div class="checkbox-container">
+            <div class="checkbox-item form-check">
+              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                checked disabled>
+            </div>
+            <div class="checkbox-item form-check">
+              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                checked disabled>
+            </div>
+            <div class="checkbox-item form-check">
+              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                disabled :checked="hasLivelinessDone">
+            </div>
+            <div class="checkbox-item form-check">
+              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                disabled :checked="hasKycDone">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
       <div class="">
-        <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
-          width="100%" />
+        <!-- <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
+          width="100%" /> -->
         <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
-          <button class="btn btn-outline-dark btn-lg" @click="nextStep()">
+          <button class="btn btn-outline-dark btn-lg" @click="nextStep(nextStepNumeber)">
             Let's go!
           </button>
         </div>
-        <ConsentBox />
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -19,42 +87,23 @@
 </template>
 
 <script type="text/javascript">
-import { mapMutations, mapActions, mapGetters } from "vuex";
+import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 export default {
   name: "AppInstructions",
   components: {
   },
   computed: {
-    ...mapGetters(["getCavachAccessToken", "getRedirectUrl"])
+    ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
+    ...mapState(['hasLivelinessDone', 'hasKycDone'])
   },
   async created() {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
-    if (!params.cavachAccessToken || !params.redirectUrl) {
-
-      console.log({
-        cavachAccessToken: this.getCavachAccessToken,
-        redirectUrl: this.getRedirectUrl
-      })
-      if (this.getCavachAccessToken != '' && !this.getRedirectUrl != '') {
-        console.log('Error: 401')
-        this.toast('Error initalization of widget!', "error");
-        return;
-      }
-
+    await this.checkIfCredentialAlreadyExistsInVault()
+    if (this.hasLivelinessDone) {
+      this.nextStepNumeber = 3 + 1
     }
 
-
-    this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
-    this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
-
-    try {
-      this.isLoading = true;
-      await this.getNewSession()
-      this.isLoading = false;
-    } catch (e) {
-      this.toast(e.message, "error");
-      this.isLoading = false;
+    if (this.hasKycDone) {
+      this.nextStepNumeber = 3 + 3
     }
   },
   data() {
@@ -64,11 +113,12 @@ export default {
       toastMessage: "",
       toastType: "success",
       isToast: false,
+      nextStepNumeber: 3,
     };
   },
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
-    ...mapActions(["getNewSession", "registerUser"]),
+    ...mapActions(["getNewSession", "registerUser", "checkIfCredentialAlreadyExistsInVault"]),
     toast(msg, type = "success") {
       this.isToast = true;
       this.toastMessage = msg;

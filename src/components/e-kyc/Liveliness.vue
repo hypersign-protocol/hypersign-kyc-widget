@@ -1,4 +1,3 @@
-
 <style></style>
 
 
@@ -210,10 +209,14 @@ export default {
                     :interactible="interactible" :stabilizationStage="stabilizationStage"
                     :cameraSwitchButton="cameraSwitchButton" :faceTracking="faceTracking" :timeout="timeout"
                     :imageFormat="imageFormat" :imageQuality="imageQuality" :cropFactor="cropFactor" :showLog="showLog"
-                    @onmoduleloaded="onModuleLoaded" @onstabilizing="onStabilizing" @onextractionfinish="onExtractionFinish"
-                    @onusercancel="onUserCancel" @onexceptioncaptured="onExceptionCaptured"
-                    @onextractiontimeout="onExtractionTimeout" @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
+                    @onmoduleloaded="onModuleLoaded" @onstabilizing="onStabilizing"
+                    @onextractionfinish="onExtractionFinish" @onusercancel="onUserCancel"
+                    @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
+                    @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
                     @ontrackstatus="onTrackStatus"></facephi-selphi>
+                <div v-else>
+                    <img src="../../assets/fr-instruction.gif" />
+                </div>
                 <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
             </div>
 
@@ -222,8 +225,8 @@ export default {
                 <!-- <div>Selphi Web Widget Demo</div> -->
 
                 <div class="d-flex flex-column my-3">
-                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted"
-                        v-on:click.self="enableWidget">Start capture
+                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
+                        :disabled="isWidgetStarted" v-on:click.self="enableWidget">Start capture
                     </button>
                     <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
                         :disabled="!isWidgetStarted" v-on:click.self="disableWidget">Stop capture

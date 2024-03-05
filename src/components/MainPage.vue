@@ -5,9 +5,9 @@
         <NavBar />
         <component :is="getActiveStep.stepName">
         </component>
-        <div class="card-footer">
+        <!-- <div class="card-footer">
           <PoweredBy />
-        </div>
+        </div> -->
       </div>
     </template>
   </div>

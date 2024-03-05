@@ -24,47 +24,22 @@ Response Body:
         "@context": [
             "https://www.w3.org/2018/credentials/v1",
             "https://raw.githubusercontent.com/hypersign-protocol/hypersign-contexts/main/HypersignCredentialStatus2023.jsonld",
-            {
-                "@context": {
-                    "@protected": true,
-                    "@version": 1.1,
-                    "id": "@id",
-                    "type": "@type",
-                    "HypersignEmailCredential": {
-                        "@context": {
-                            "@propagate": true,
-                            "@protected": true,
-                            "xsd": "http://www.w3.org/2001/XMLSchema#",
-                            "name": {
-                                "@id": "https://hypersign-schema.org/name",
-                                "@type": "xsd:string"
-                            },
-                            "email": {
-                                "@id": "https://hypersign-schema.org/email",
-                                "@type": "xsd:string"
-                            }
-                        },
-                        "@id": "https://hypersign-schema.org"
-                    }
-                }
-            },
             "https://w3id.org/security/suites/ed25519-2020/v1"
         ],
         "id": "vc:hid:testnet:z6Mki9PTNNLXmdVnWQMHdyMfj1qV8G3M5VGbuRxBByLv2a93",
         "type": [
             "VerifiableCredential",
-            "HypersignEmailCredential"
+            "PersonhoodCredential"
         ],
         "expirationDate": "2025-03-03T05:33:30Z",
         "issuanceDate": "2024-03-03T05:31:51Z",
         "issuer": "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1",
         "credentialSubject": {
-            "name": "Pratap Mridha",
-            "email": "pratapmridha@gmail.com",
+            "baseSixtyFourImage": "data:",
             "id": "did:hid:testnet:z6MkpmVuREXbmV16ihExTpXSSrs4R6JDZTcfR9dGH6A9E7i9"
         },
         "credentialSchema": {
-            "id": "sch:hid:testnet:z6MkoTFHzx3XPXAvAVAN9CWMh91vH53m4kTFiVPypC22c7fB:1.0",
+            "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
             "type": "JsonSchemaValidator2018"
         },
         "credentialStatus": {

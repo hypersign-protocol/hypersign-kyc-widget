@@ -59,7 +59,7 @@ export default {
 
       ///
       console.log('Inside mounted Auth')
-      this.nextStep(3)
+      this.nextStep(1)
       this.isLoadingPage = false
       this.$router.push({ path: "/" })
 

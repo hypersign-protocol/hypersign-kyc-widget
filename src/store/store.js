@@ -16,19 +16,19 @@ export default new Vuex.Store({
             {
                 id: 0,
                 isActive: true,
-                stepName: 'AppInstructions',
+                stepName: 'SignIn',
                 previous: 0
             },
             {
                 id: 1,
                 isActive: false,
-                stepName: 'SignIn',
+                stepName: 'VaultPIN',
                 previous: 0
             },
             {
                 id: 2,
-                isActive: true,
-                stepName: 'VaultPIN',
+                isActive: false,
+                stepName: 'AppInstructions',
                 previous: 1
             },
             {
@@ -59,6 +59,20 @@ export default new Vuex.Store({
                 previous: 4
             },
         ],
+        schemaIds: {
+            PersonhoodCredential: {
+                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+            },
+            CitizenshipCredential: {
+                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+            },
+            DateOfBirthCredential: {
+                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+            }
+        },
 
 
         //-----------------------------------------------------------------e-kyc
@@ -158,7 +172,7 @@ export default new Vuex.Store({
                     return hypersign.did
                 }
             }
-        }
+        },
     },
     mutations: {
 
@@ -207,6 +221,9 @@ export default new Vuex.Store({
         //-----------------------------------------------------------------e-kyc
         setLivelinessDone(state, payload) {
             state.hasLivelinessDone = payload;
+        },
+        setKycDone(state, payload) {
+            state.hasKycDone = payload;
         },
         setSession(state, payload) {
             console.log(state.hasKycDone)
@@ -530,7 +547,7 @@ export default new Vuex.Store({
             })
         },
 
-        verifyLiveliness: ({ commit, state, getters }) => {
+        verifyLiveliness: ({ commit, state, getters, dispatch }) => {
             return new Promise((resolve, reject) => {
                 if (state.livelinessCapturedData.tokenSelfiImage === "" || !state.hasLivelinessDone) {
                     return reject('User has not performed liveliness check')
@@ -559,6 +576,7 @@ export default new Vuex.Store({
                         } else {
                             if (json && json.serviceLivenessResult === 3) {
                                 commit('setLivelinessResult', json);
+                                dispatch('updateVaultCredentials', json.credential);
                                 return resolve(json)
                             } else {
                                 reject(new Error('Error verifying liveliness check, error code: ' + json.serviceLivenessResult))
@@ -570,7 +588,7 @@ export default new Vuex.Store({
             })
         },
 
-        verifyOcrIDDoc: ({ commit, state, getters }) => {
+        verifyOcrIDDoc: ({ commit, state, getters, dispatch }) => {
             return new Promise((resolve, reject) => {
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
@@ -602,6 +620,14 @@ export default new Vuex.Store({
                         } else {
                             if (json && json.serviceFacialAuthenticationResult === 0) {
                                 commit('setOcrIdDocResult', json);
+                                if (json.credentials && json.credentials.length > 0) {
+
+                                    json.credentials.forEach(credential => {
+                                        console.log('Updating each credentila in vault credential id ' + credential.id)
+                                        dispatch('updateVaultCredentials', credential);
+                                    })
+                                }
+
                                 return resolve(json)
                             } else {
                                 return reject(new Error('Error verifying ID document, error code: ' + json.serviceFacialAuthenticationResult))
@@ -782,6 +808,8 @@ export default new Vuex.Store({
                     return false
                 }
                 const decryptedData = await decrypt(vaultData, vaultPin)
+                console.log('Decrypted vault........')
+                console.log(decryptedData)
                 if (decryptedData === "") {
                     throw new Error('Error: Could not unlock vault, please check your PIN')
                 }
@@ -794,12 +822,67 @@ export default new Vuex.Store({
 
         },
 
-        async updateVaultData() {
-            //  fetch current unlocked vault data
-            // const r1= await this.unlockVault()
-            // update that data
-            // lock the vault 
-        }
+        async updateVaultCredentials({ commit, getters, dispatch }, payload) {
+            try {
+
+                // check if vault is unlocked
+                if (getters.getVaultLockStatus === true) {
+                    throw new Error('Vault is locked, please unlock first')
+                }
+
+                const vaultDataRaw = getters.getVaultDataRaw
+                vaultDataRaw.hypersign.credentials.push(payload)
+                commit('setVaultRaw', JSON.stringify(vaultDataRaw))
+                await dispatch('lockVault')
+                dispatch('syncUserData')
+
+
+            } catch (e) {
+                throw new Error(e.message)
+            }
+        },
+
+        async checkIfCredentialAlreadyExistsInVault({ commit, getters, state }) {
+            // check if vault is unlocked, else throw error
+            if (getters.getVaultLockStatus === true) {
+                throw new Error('Vault is locked, please unlock first')
+            }
+            // get the raw data from vault
+            const vaultDataRaw = getters.getVaultDataRaw
+            const { hypersign } = vaultDataRaw
+            const { credentials } = hypersign
+
+
+            const { schemaIds } = state
+            console.log('Starting the process....')
+            Object.keys(schemaIds).forEach(schema => {
+                console.log('For each schemaId, schemaTyep ' + schema)
+                const { schemaId, issuer } = schemaIds[schema]
+
+                const credential = credentials.some(credential => {
+                    if ((credential.credentialSchema.id === schemaId) && (credential.issuer === issuer)) {
+                        return credential
+                    }
+                })
+
+                if (credential) {
+                    console.log('Found a credential in vault schema' + schema)
+                    if (schema === 'PersonhoodCredential') {
+                        console.log("commiting setLivelinessDone")
+                        commit('setLivelinessDone', true)
+                    }
+
+                    if (['CitizenshipCredential', 'DateOfBirthCredential'].findIndex(x => x === schema) >= 0) {
+                        console.log("commiting setKycDone")
+                        commit('setKycDone', true)
+                    }
+                }
+            })
+
+
+
+
+        },
     },
 
 

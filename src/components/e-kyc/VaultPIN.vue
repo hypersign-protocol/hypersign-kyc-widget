@@ -1,6 +1,6 @@
 <template>
-    <div style="min-height: 850px">
-        <div class="card-body" style="max-height:750px;min-height: 850px">
+    <div>
+        <div class="card-body" style="min-height:750px;">
             <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
             <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
@@ -77,6 +77,7 @@ export default {
                 this.isLoadingPage = false
             }
         },
+
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
             console.log(this.userVaultDataRaw.mnemonic)
