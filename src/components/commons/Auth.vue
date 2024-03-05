@@ -21,7 +21,7 @@ export default {
   methods: {
     ...mapMutations(["nextStep"]),
     ...mapActions(["registerUser"]),
-    getUserInfo(accessToken) {
+    async getUserInfo(accessToken) {
       if (accessToken) {
         const that = this;
         webAuth.client.userInfo(accessToken, function (err, user) {

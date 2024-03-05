@@ -13,7 +13,6 @@ export default new Vuex.Store({
         aadharData: {},
         authorization: null,
         steps: [
-
             {
                 id: 0,
                 isActive: true,
@@ -85,39 +84,6 @@ export default new Vuex.Store({
         // --- 
         authenticationAccessToken: {},
         ifNewUser: false,
-
-        // userVaultDataRaw 
-        userVaultDataRaw: {
-            "password": "",
-            "mnemonic": "",
-            "hypersign": {
-                "did": "",
-                "keys": {
-                    "type": "Ed25519VerificationKey2020",
-                    "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                    "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
-                },
-                "credentials": [],
-                "credentialsTemp": [],
-                "requestingAppInfo": "",
-                "thridPartyAuths": [],
-                "dids": {
-                    "did:hid:testnet:z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc": {
-                        "didDoc": {},
-                        "hdPathIndex": 0,
-                        "status": "private",
-                        "keys": {
-                            "type": "Ed25519VerificationKey2020",
-                            "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                            "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
-                        }
-                    }
-                },
-                "didDoc": {
-
-                }
-            }
-        }
     },
     getters: {
         getActiveStep: (state) => {
@@ -180,6 +146,19 @@ export default new Vuex.Store({
                 return null
             }
         },
+
+        getUserDID() {
+            // TODO check if user vault is unlocked 
+            const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
+            if (vaultDataRawStr) {
+                const vaultDataRaw = JSON.parse(vaultDataRawStr)
+
+                const { hypersign } = vaultDataRaw
+                if (hypersign) {
+                    return hypersign.did
+                }
+            }
+        }
     },
     mutations: {
 
@@ -293,17 +272,21 @@ export default new Vuex.Store({
         setVaultRaw(state, payload) {
             console.log(state.hasKycDone)
 
-            return localStorage.setItem('vaultDataRaw', JSON.stringify(payload))
+            return localStorage.setItem('vaultDataRaw', payload)
         },
 
-        // setVaultLockStatus(state, payload) {
+        setVaultLockStatus(state, payload) {
+            console.log(state.hasKycDone)
 
-        // }
+            return localStorage.setItem('vaultLockStatus', payload)
+        },
 
         setAsNewUser(state, payload) {
             console.log(state.hasKycDone)
             state.ifNewUser = payload;
-        }
+        },
+
+
 
 
     },
@@ -563,7 +546,8 @@ export default new Vuex.Store({
                     headers,
                     body: JSON.stringify({
                         sessionId: getters.getSession,
-                        tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage
+                        tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
+                        userDID: getters.getUserDID
                     })
                 })
                     .then(response => response.json())
@@ -606,6 +590,7 @@ export default new Vuex.Store({
                         tokenFaceImage: state.kycCapturedData.tokenFaceImage,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
+                        userDID: getters.getUserDID
                     })
                 })
                     .then(response => response.json())
@@ -771,8 +756,12 @@ export default new Vuex.Store({
                 }
                 console.log('Before calling encrypt ')
                 console.log({ vaultRaw, vaultPin })
+                if (getters.getVaultLockStatus === true) {
+                    throw new Error('Vault is already locked')
+                }
                 const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
                 commit('setVaultData', encryptedData)
+                commit('setVaultLockStatus', true)
                 return true
             } catch (e) {
                 throw new Error('Error: Could not lock vault')
@@ -785,6 +774,10 @@ export default new Vuex.Store({
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
                 console.log('Inside unlocked vault, vaultData ' + vaultData)
+                console.log(getters.getVaultLockStatus)
+                if (getters.getVaultLockStatus === false) {
+                    throw new Error('Vault is already unlocked')
+                }
                 if (!vaultData || vaultData === 'undefined') {
                     return false
                 }
@@ -793,6 +786,7 @@ export default new Vuex.Store({
                     throw new Error('Error: Could not unlock vault, please check your PIN')
                 }
                 commit('setVaultRaw', decryptedData)
+                commit('setVaultLockStatus', false)
                 return true
             } catch (e) {
                 throw new Error(e.message)

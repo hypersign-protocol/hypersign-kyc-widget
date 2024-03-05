@@ -6,7 +6,7 @@
 
 <script>
 // import MainPage from "./components/MainPage.vue";
-
+import { encrypt, decrypt } from './components/utils/symmetricCrypto';
 export default {
   name: "App",
   components: {
@@ -15,6 +15,17 @@ export default {
   methods: {
   },
   async created() {
+    const message = JSON.stringify({
+      hello: "world",
+    })
+
+    const pin = "Vishwas1@gmail"
+    const encryptedMessage = await encrypt(message, pin)
+    const decryptMessage = await decrypt(encryptedMessage, pin)
+    console.log({
+      encryptedMessage,
+      decryptMessage
+    })
   },
 
 };

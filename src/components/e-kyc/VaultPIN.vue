@@ -54,15 +54,14 @@ export default {
                         console.log('before calling lockVault')
                         const res = await this.lockVault()
                         console.log('before calling syncUserData')
-                        if (!res && this.ifNewUser) {
-                            // create a wallet                            
+                        if (!res) { // TODO need to  put ifNewUser in localStorage instead of state
+                            // create a wallet    
+                            this.generateMnemonic1()
                             // create a did
+                            await this.generateDID()
                             // setup raw data
-                            const rawData = {
-                                here: "something"
-                            }
                             // store 
-                            this.setVaultRaw(rawData)
+                            this.setVaultRaw(this.userVaultDataRaw)
                         }
                         this.syncUserData()
                     }
