@@ -206,6 +206,7 @@ export default {
     <div class="card-body">
         <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
             style="text-align: center;" />
+        <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
         <div class="row" style="text-align: left;">
             <!-- SelphID Web Widget Container: Properties and events setup -->
             <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
@@ -219,6 +220,9 @@ export default {
                     @onmoduleloaded="onModuleLoaded" @onextractionfinished="onExtractionFinished"
                     @onusercancelled="onUserCancelled" @onexceptioncaptured="onExceptionCaptured"
                     @onextractiontimeout="onExtractionTimeout" @ontrackstatus="onTrackStatus"></facephi-selphid>
+                <div class="center" v-else>
+                    <img src="../../assets/ocr-instruction.gif" v-if="!isLoading" />
+                </div>
                 <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
             </div>
             <!-- Widget demo configuration elements -->

@@ -19,7 +19,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["nextStep"]),
+    ...mapMutations(["nextStep", "setProfile"]),
     ...mapActions(["registerUser"]),
     async getUserInfo(accessToken) {
       if (accessToken) {
@@ -49,19 +49,21 @@ export default {
 
 
       ///
+      console.log('Before calling getUserInfo')
       this.getUserInfo(accessToken)
-      this.isLoadingPage = true
-      console.log('Before calling registerUser')
-      await this.registerUser()
-      console.log('After calling registerUser')
+      this.isLoadingPage = true;
 
+      setTimeout(async () => {
 
-
-      ///
-      console.log('Inside mounted Auth')
-      this.nextStep(1)
-      this.isLoadingPage = false
-      this.$router.push({ path: "/" })
+        console.log('Before calling registerUser')
+        await this.registerUser()
+        console.log('After calling registerUser')
+        ///
+        console.log('Inside mounted Auth')
+        this.nextStep(1)
+        this.isLoadingPage = false
+        this.$router.push({ path: "/" })
+      }, 1500)
 
     } catch (e) {
       console.log('error =' + e)

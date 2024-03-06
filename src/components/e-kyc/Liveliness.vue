@@ -201,6 +201,7 @@ export default {
 <template>
     <div class="card-body">
         <PageHeading :header="'Facial Recognition'" :subHeader="'We need to verify if you are a real human'" />
+        <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
         <div class="row h-100">
             <!-- Selphi Web Widget Container: Properties and events setup -->
             <div class="col-12 col-md-9" style="position: relative; min-height: 500px; max-height: 90%;">
@@ -215,7 +216,7 @@ export default {
                     @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
                     @ontrackstatus="onTrackStatus"></facephi-selphi>
                 <div v-else>
-                    <img src="../../assets/fr-instruction.gif" />
+                    <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
                 </div>
                 <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
             </div>

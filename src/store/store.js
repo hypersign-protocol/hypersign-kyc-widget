@@ -734,7 +734,7 @@ export default new Vuex.Store({
 
         syncUserDataById: ({ getters, commit }) => {
             return new Promise((resolve, reject) => {
-                const { email } = getters.getProfile
+                const { email } = JSON.parse(localStorage.getItem('profile'))
                 if (!email) {
                     return reject(new Error('Invalid email, or user is not logged in'))
                 }
