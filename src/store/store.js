@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../config'
 import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
+
 Vue.use(Vuex)
 const apiServerBaseUrl = 'http://ent-0b22db9.localhost:3001/api/v1';
 
@@ -65,11 +66,11 @@ export default new Vuex.Store({
                 issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
             },
             CitizenshipCredential: {
-                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i1:1.0",
                 issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
             },
             DateOfBirthCredential: {
-                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i2:1.0",
                 issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
             }
         },
@@ -154,11 +155,7 @@ export default new Vuex.Store({
         },
         getVaultDataRaw() {
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
-            if (vaultDataRawStr) {
-                return JSON.parse(vaultDataRawStr)
-            } else {
-                return null
-            }
+            return JSON.parse(vaultDataRawStr)
         },
 
         getUserDID() {
@@ -271,31 +268,30 @@ export default new Vuex.Store({
 
         setAuthServerAuthToken(state, payload) {
             console.log(state.hasKycDone)
-            return localStorage.setItem("authServerAuthToken", payload)
+            localStorage.setItem("authServerAuthToken", payload)
         },
 
 
         // --- vault
         setVaultPin(state, payload) {
             console.log(state.hasKycDone)
-            return localStorage.setItem('vaultPin', payload)
+            localStorage.setItem('vaultPin', payload)
         },
 
         setVaultData(state, payload) {
             console.log(state.hasKycDone)
-            return localStorage.setItem('vaultData', payload)
+            localStorage.setItem('vaultData', payload)
         },
 
         setVaultRaw(state, payload) {
             console.log(state.hasKycDone)
-
-            return localStorage.setItem('vaultDataRaw', payload)
+            localStorage.setItem('vaultDataRaw', payload)
         },
 
         setVaultLockStatus(state, payload) {
             console.log(state.hasKycDone)
 
-            return localStorage.setItem('vaultLockStatus', payload)
+            localStorage.setItem('vaultLockStatus', payload)
         },
 
         setAsNewUser(state, payload) {
@@ -568,7 +564,7 @@ export default new Vuex.Store({
                     })
                 })
                     .then(response => response.json())
-                    .then(json => {
+                    .then(async json => {
                         if (json.statusCode && (json.statusCode != (200 || 201))) {
                             return reject(json.message)
                         } else if (json.error) {
@@ -576,7 +572,7 @@ export default new Vuex.Store({
                         } else {
                             if (json && json.serviceLivenessResult === 3) {
                                 commit('setLivelinessResult', json);
-                                dispatch('updateVaultCredentials', json.credential);
+                                await dispatch('updateVaultCredentials', json.credential);
                                 return resolve(json)
                             } else {
                                 reject(new Error('Error verifying liveliness check, error code: ' + json.serviceLivenessResult))
@@ -655,7 +651,8 @@ export default new Vuex.Store({
                         "user": {
                             "name": name,
                             "email": email,
-                            "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED" // TODO
+                            "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED", // TODO
+                            // "nameSpace": "hypersign-kyc"
                         },
                         "isThridPartyAuth": true,
                         "expirationDate": "2030-12-31T00:00:00.000Z",
@@ -693,7 +690,7 @@ export default new Vuex.Store({
                 if (!email) {
                     return reject(new Error('Invalid email, or user is not logged in'))
                 }
-                console.log('Inside sycnUserData vaultDat ' + localStorage.getItem('vaultData'))
+
                 if (!localStorage.getItem('vaultData')) {
                     return reject(new Error('Invalid vault data'))
                 }
@@ -712,7 +709,8 @@ export default new Vuex.Store({
                         "user": {
                             "userId": email,
                             "sequenceNo": 0,
-                            "docId": "randomId"
+                            "docId": "randomId",
+                            // "nameSpace": "hypersign-kyc"
                         },
                         "document": {
                             "encryptedMessage": localStorage.getItem('vaultData')
@@ -770,9 +768,13 @@ export default new Vuex.Store({
         // --- vault
         async lockVault({ commit, getters }) {
             try {
+                console.log('Inside lockVault')
                 const vaultPin = getters.getVaultPin
                 let vaultRaw = getters.getVaultDataRaw
+                console.log()
                 if (!vaultRaw) {
+                    console.log('Inside lockVault:: vaultRaw not found')
+
                     // vaultRaw = {
                     //     here: "something"
                     // }
@@ -785,9 +787,17 @@ export default new Vuex.Store({
                 if (getters.getVaultLockStatus === true) {
                     throw new Error('Vault is already locked')
                 }
+
+                const old = getters.getVaultData;
                 const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
-                commit('setVaultData', encryptedData)
-                commit('setVaultLockStatus', true)
+                console.log({ encryptedData, vaultRaw })
+                await commit('setVaultData', encryptedData)
+                console.log({
+                    'olddata': old,
+                    'newData': getters.getVaultData
+                })
+
+                await commit('setVaultLockStatus', true)
                 return true
             } catch (e) {
                 throw new Error('Error: Could not lock vault')
@@ -813,6 +823,7 @@ export default new Vuex.Store({
                 if (decryptedData === "") {
                     throw new Error('Error: Could not unlock vault, please check your PIN')
                 }
+                // commit('setVaultRaw', JSON.stringify({ "heelo": "world" })) // decryptedData
                 commit('setVaultRaw', decryptedData)
                 commit('setVaultLockStatus', false)
                 return true
@@ -824,7 +835,7 @@ export default new Vuex.Store({
 
         async updateVaultCredentials({ commit, getters, dispatch }, payload) {
             try {
-
+                console.log('Inside  updateVaultCredentials')
                 // check if vault is unlocked
                 if (getters.getVaultLockStatus === true) {
                     throw new Error('Vault is locked, please unlock first')
@@ -833,8 +844,20 @@ export default new Vuex.Store({
                 const vaultDataRaw = getters.getVaultDataRaw
                 vaultDataRaw.hypersign.credentials.push(payload)
                 commit('setVaultRaw', JSON.stringify(vaultDataRaw))
+                console.log('Before calling lockVault ... ')
                 await dispatch('lockVault')
-                dispatch('syncUserData')
+                console.log('After calling lockVault ... ')
+
+                console.log('Before calling syncUserData ... this will be trigged in 2 sec')
+                setTimeout(async () => {
+                    dispatch('syncUserData')
+                    console.log('After calling syncUserData ... ')
+                }, 2000)
+
+
+
+
+
 
 
             } catch (e) {

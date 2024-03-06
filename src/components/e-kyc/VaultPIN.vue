@@ -46,25 +46,27 @@ export default {
                     console.log('Inside unlockVaultAndSyncData handler')
                     console.log('before calling unlocakVault')
                     this.isLoadingPage = true;
-                    if (!this.ifNewUser) {
+
+                    console.log('Checking if new or existing use')
+                    if (this.ifNewUser) {
+                        console.log('check if this is new user')
+                        console.log('generate mnemonic ')
+                        this.generateMnemonic1()
+                        console.log('generate did ')
+                        await this.generateDID()
+                        console.log('set raw data')
+                        this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+                        console.log('form encrypted data and store in local storage')
+                        await this.lockVault()
+                        console.log('sync data')
+                        await this.syncUserData()
+                    } else {
+                        console.log('For existing user ')
                         await this.syncUserDataById()
+                        console.log('unlockVault ')
+                        await this.unlockVault()
                     }
-                    const res = await this.unlockVault();
-                    if (!res) {
-                        console.log('before calling lockVault')
-                        const res = await this.lockVault()
-                        console.log('before calling syncUserData')
-                        if (!res) { // TODO need to  put ifNewUser in localStorage instead of state
-                            // create a wallet    
-                            this.generateMnemonic1()
-                            // create a did
-                            await this.generateDID()
-                            // setup raw data
-                            // store 
-                            this.setVaultRaw(this.userVaultDataRaw)
-                        }
-                        this.syncUserData()
-                    }
+
                     console.log('after calling syncUserData')
                     this.isLoadingPage = false
                     this.nextStep()
