@@ -44,17 +44,10 @@ export default new Vuex.Store({
                 isActive: false,
                 stepName: 'IdDocs',
                 name: 'Government-issued ID',
-                previous: 2
-            },
-            {
-                id: 5,
-                isActive: false,
-                stepName: 'PreviewData',
-                name: 'User Consent',
                 previous: 3
             },
             {
-                id: 6,
+                id: 5,
                 isActive: false,
                 stepName: 'FinalResult',
                 previous: 4
@@ -227,8 +220,8 @@ export default new Vuex.Store({
             localStorage.setItem("session", payload)
         },
         setKycExtractedData(state, payload) {
-            state.kycExtractedData = payload;
-            state.hasKycDone = true;
+            state.kycExtractedData = payload.data;
+            state.hasKycDone = payload.status;
         },
         setCavachAccessToken(state, payload) {
             console.log(state.kycCapturedData)

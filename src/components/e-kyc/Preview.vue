@@ -1,19 +1,9 @@
 <template>
-    <div class="card-body">
-        <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" />
-
-        <!-- <div class="row">
-            <div class="col-md-12" style="text-align: left">
-                <strong>Your Id Document</strong>
-                <div class="card center" style="padding:5px">
-                    <img :src="extractedImage" style="width:500px" />
-                </div>
-            </div>
-        </div> -->
-
+    <div>
+        <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
         <div class="row" style="margin-top: 1%;">
             <div class="col-md-12" style="text-align: left">
-                <strong>Extracted Data</strong>
+                Please verify if your infromations are correct:
                 <div class="card widget-card" style="padding: 10px; width: 100%">
                     <table class="table" style="text-align: left">
                         <tr>
@@ -57,11 +47,11 @@
 
         <div class="row" style="margin-top: 1%;">
             <div class="col-md-12">
-                <button class="btn btn-light" @click="previousStep()">
-                    Back
+                <button class="btn btn-light" @click="rescan()">
+                    Rescan
                 </button>
                 <button class="btn btn-outline-dark" @click="submit()">
-                    Submit
+                    Continue
                 </button>
             </div>
         </div>
@@ -78,9 +68,6 @@ export default {
         extractedData() {
             return this.$store.state.kycExtractedData.extractionRaw.ocr
         },
-        extractedImage() {
-            return this.$store.state.kycExtractedData.images?.frontDocument
-        }
     },
     components: {
 
@@ -114,17 +101,31 @@ export default {
 
         async submit() {
             try {
-                this.isLoading = true;
-                this.toast('Submitting your data...', "warning");
-                const result = await this.verifyResult()
-                console.log(result)
-                this.isLoading = false;
-                this.nextStep();
+                console.log("before emitting verifyIdDocEvent inside preivew ")
+                // this.isLoading = true;
+                // this.toast('Submitting your data...', "warning");
+                this.$emit('verifyIdDocEvent', true)
+                // const result = await this.verifyResult()
+                // console.log(result)
+                // this.isLoading = false;
+                // this.nextStep();
             } catch (e) {
                 this.toast(e.message, "error");
-                this.isLoading = false;
+                // this.isLoading = false;
             }
 
+        },
+
+        async rescan() {
+            console.log("Start rescanning...")
+            await this.$store.commit('setKycExtractedData', { data: {}, status: false })
+            await this.$store.commit('setKycCapturedData', {
+                tokenFrontDocumentImage: "",
+                tokenFaceImage: "",
+                countryCode: "",
+
+            })
+            //this.nextStep(4)
         }
 
     }

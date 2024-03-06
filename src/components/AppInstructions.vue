@@ -94,16 +94,18 @@ export default {
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone'])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'steps'])
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
     if (this.hasLivelinessDone) {
-      this.nextStepNumeber = 3 + 1
+      const idDocVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
+      this.nextStepNumeber = idDocVerificationStep.id
     }
 
     if (this.hasKycDone) {
-      this.nextStepNumeber = 3 + 3
+      const idDocVerificationStep = this.steps.find(step => step.stepName == 'FinalResult')
+      this.nextStepNumeber = idDocVerificationStep.id
     }
   },
   data() {

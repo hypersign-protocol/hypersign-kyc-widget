@@ -1,9 +1,16 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, } from "vuex";
+import PreviewData from './Preview.vue'
 export default {
     name: 'IdDocs',
     components: {
+        PreviewData
+    },
+    computed: {
+        ifExtractedData() {
+            return Object.keys(this.$store.state.kycExtractedData).length > 0 ? true : false;
+        },
     },
     data: function () {
         return {
@@ -104,7 +111,7 @@ export default {
         onExtractionFinished: async function (extractionResult) {
             if (extractionResult.detail.images.frontDocument && extractionResult.detail.images.faceImage) {
                 const data = extractionResult.detail
-                await this.$store.commit('setKycExtractedData', data)
+                await this.$store.commit('setKycExtractedData', { data, status: true })
                 await this.$store.commit('setKycCapturedData', {
                     tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
                     tokenFaceImage: extractionResult.detail.images.faceImage,
@@ -113,23 +120,14 @@ export default {
 
                 this.isWidgetStarted = false
 
-                try {
-                    this.isLoading = true;
-                    this.toast('Uploading and verifying your document...', "warning");
-                    await this.verifyOcrIDDoc()
-                    this.nextStep();
-                    this.isLoading = false;
-                } catch (e) {
-                    this.toast(e.message, "error");
-                    this.isLoading = false;
-                }
+
 
             } else {
                 // ...
             }
 
             this.isWidgetStarted = false;
-            this.widgetResult = 'Success! Extraction complete';
+            // this.widgetResult = 'Success! Extraction complete';
         },
 
         onExceptionCaptured: function (exceptionResult) {
@@ -194,7 +192,25 @@ export default {
         generateBrowserCache: function (license) {
             // Pre-load recources in cache (requires headers configuration)
             FPhi.SelphID.generateBrowserCache(this.bundlndlePath, license);
-        }
+        },
+
+        async verifyIdDocEventHandler(data) {
+            console.log("verifyIdDocEventHandler inside ")
+
+            try {
+                if (!data) {
+                    throw new Error('Invalid event data')
+                }
+                this.isLoading = true;
+                this.toast('Uploading and verifying your document...', "warning");
+                await this.verifyOcrIDDoc()
+                this.nextStep();
+                this.isLoading = false;
+            } catch (e) {
+                this.toast(e.message, "error");
+                this.isLoading = false;
+            }
+        },
     },
 
 }
@@ -207,7 +223,7 @@ export default {
         <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
             style="text-align: center;" />
         <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-        <div class="row" style="text-align: left;">
+        <div class="row" style="text-align: left;" v-if="!ifExtractedData">
             <!-- SelphID Web Widget Container: Properties and events setup -->
             <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
                 <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
@@ -221,7 +237,7 @@ export default {
                     @onusercancelled="onUserCancelled" @onexceptioncaptured="onExceptionCaptured"
                     @onextractiontimeout="onExtractionTimeout" @ontrackstatus="onTrackStatus"></facephi-selphid>
                 <div class="center" v-else>
-                    <img src="../../assets/ocr-instruction.gif" v-if="!isLoading" />
+                    <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" />
                 </div>
                 <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
             </div>
@@ -274,6 +290,9 @@ export default {
         <div>Widget Version: <span id="widgetVersion">{{ widgetVersion }}</span></div>
       </div> -->
             </div>
+        </div>
+        <div class="row" v-else>
+            <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" />
         </div>
     </div>
 </template>
