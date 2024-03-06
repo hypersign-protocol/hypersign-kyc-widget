@@ -1,7 +1,7 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, } from "vuex";
-import PreviewData from './Preview.vue'
+import PreviewData from '../commons/Preview.vue'
 export default {
     name: 'IdDocs',
     components: {
@@ -295,4 +295,4 @@ export default {
             <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" />
         </div>
     </div>
-</template>
+</template>../commons/Preview.vue

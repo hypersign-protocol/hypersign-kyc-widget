@@ -22,7 +22,7 @@ import AppFinalFail from "./AppFinalFail.vue";
 import AppOtp from "./AppOtp.vue";
 import Liveliness from './e-kyc/Liveliness.vue';
 import IdDocs from './e-kyc/IdentityDocuments.vue'
-import PreviewData from './e-kyc/Preview.vue'
+
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
 import SignIn from "./e-kyc/SignIn.vue"
@@ -39,7 +39,6 @@ export default {
     AppOtp,
     Liveliness,
     IdDocs,
-    PreviewData,
     FinalResult,
     SignIn,
     VaultPIN
@@ -50,3 +49,4 @@ export default {
 
 };
 </script>./commons/PIN.vue
+./commons/Preview.vue
