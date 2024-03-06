@@ -104,7 +104,7 @@ export default {
     }
 
     if (this.hasKycDone) {
-      const idDocVerificationStep = this.steps.find(step => step.stepName == 'FinalResult')
+      const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
       this.nextStepNumeber = idDocVerificationStep.id
     }
   },

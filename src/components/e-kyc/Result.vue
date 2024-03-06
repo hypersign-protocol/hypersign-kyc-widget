@@ -73,7 +73,7 @@ export default {
         },
         stopTimer() {
             clearInterval(this.timer);
-            window.location.href = this.getRedirectUrl;
+            // window.location.href = this.getRedirectUrl;
         },
     }
 }

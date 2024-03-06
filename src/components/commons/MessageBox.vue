@@ -11,8 +11,8 @@
 
 .toast {
   background-color: green;
-  bottom: 0;
-  width: 100%;
+  bottom: 16px;
+  width: 96%;
   height: 30px;
   border-radius: 2px;
   z-index: 99999;
@@ -38,8 +38,8 @@
   <!-- doing in a bad way for the time being -->
   <div style="
       background-color: rgba(253, 170, 170, 0.972);
-      bottom: 0;
-      width: 100%;
+      bottom: 16px;
+  width: 96%;
       height: 20px;
       border-radius: 2px;
       z-index: 99999;
@@ -54,8 +54,8 @@
 
   <div style="
       background-color: rgb(184, 230, 184);
-      bottom: 0;
-      width: 100%;
+      bottom: 16px;
+  width: 96%;
       height: 20px;
       border-radius: 2px;
       z-index: 99999;

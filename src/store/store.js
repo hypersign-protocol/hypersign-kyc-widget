@@ -14,6 +14,7 @@ export default new Vuex.Store({
         aadharData: {},
         authorization: null,
         steps: [
+
             {
                 id: 0,
                 isActive: true,
@@ -49,8 +50,15 @@ export default new Vuex.Store({
             {
                 id: 5,
                 isActive: false,
-                stepName: 'FinalResult',
+                stepName: 'UserConsent',
+                name: 'Provide User Consent',
                 previous: 4
+            },
+            {
+                id: 6,
+                isActive: false,
+                stepName: 'FinalResult',
+                previous: 5
             },
         ],
         schemaIds: {
@@ -149,6 +157,15 @@ export default new Vuex.Store({
         getVaultDataRaw() {
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
             return JSON.parse(vaultDataRawStr)
+        },
+
+        getVaultDataCredentials(filterCondition = {}) {
+            console.log('filterCondition =' + filterCondition)
+            const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
+            const vaultDataRaw = JSON.parse(vaultDataRawStr)
+            const { hypersign } = vaultDataRaw
+            const { credentials } = hypersign
+            return credentials;
         },
 
         getUserDID() {

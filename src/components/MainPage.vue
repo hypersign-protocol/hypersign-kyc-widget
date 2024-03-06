@@ -27,6 +27,7 @@ import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
 import SignIn from "./e-kyc/SignIn.vue"
 import VaultPIN from './e-kyc/VaultPIN.vue'
+import UserConsent from './e-kyc/UserConsent.vue'
 
 export default {
   name: "HelloWorld",
@@ -41,7 +42,8 @@ export default {
     IdDocs,
     FinalResult,
     SignIn,
-    VaultPIN
+    VaultPIN,
+    UserConsent
   },
   computed: {
     ...mapGetters(["getActiveStep"]),

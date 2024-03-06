@@ -2,6 +2,12 @@ body{
     background-color: #191127;
 }
 
+
+.bottom {
+    position: absolute;
+    bottom: 0; /* set the bottom to 0*/
+  }
+  
 .maincontainer {
     width: 750px;
     min-height: 850px;

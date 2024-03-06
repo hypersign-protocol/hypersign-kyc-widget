@@ -12,7 +12,8 @@
             </div>
 
         </div>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" class="bottom" />
+        <!-- <MessageBox msg="Hello" type="success" v-if="true" class="bottom" /> -->
     </div>
 </template>
 

@@ -3,8 +3,8 @@
         <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
         <div class="row" style="margin-top: 1%;">
             <div class="col-md-12" style="text-align: left">
-                Please verify if your infromations are correct:
-                <div class="card widget-card" style="padding: 10px; width: 100%">
+                <InfoMessage message="Please verify if your infromations are correct" />
+                <div class="card widget-card" style="width: 90%;margin:auto;">
                     <table class="table" style="text-align: left">
                         <tr>
                             <td>Id No</td>
@@ -62,9 +62,11 @@
 <script>
 import { mapActions, mapMutations } from "vuex";
 
+
 export default {
     name: 'PreviewData',
     computed: {
+
         extractedData() {
             return this.$store.state.kycExtractedData.extractionRaw.ocr
         },
@@ -131,3 +133,11 @@ export default {
     }
 }
 </script>
+
+<style type="text/css" scoped>
+.consent-message {
+    font-size: smaller;
+    margin-left: 44px;
+    color: grey;
+}
+</style>
