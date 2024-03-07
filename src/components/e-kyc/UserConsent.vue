@@ -18,6 +18,7 @@
 
                         <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                         <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
+                        <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
                     </div>
                     <div class="col-10 credential-row-type">
                         {{ eachCredential.type[1] }}
