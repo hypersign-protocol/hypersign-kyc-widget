@@ -40,7 +40,7 @@
 
 
 <script type="text/javascript">
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
     name: 'FinalResult',
     components: {
@@ -53,7 +53,8 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["getRedirectUrl", "getFinalResult"]),
+        ...mapGetters(["getRedirectUrl", "getFinalResult",]),
+        ...mapState(["idToken"])
     },
     mounted() {
         if (this.getFinalResult) {
@@ -73,7 +74,7 @@ export default {
         },
         stopTimer() {
             clearInterval(this.timer);
-            // window.location.href = this.getRedirectUrl;
+            window.location.href = `${this.getRedirectUrl}?idToken=${this.idToken}`;
         },
     }
 }

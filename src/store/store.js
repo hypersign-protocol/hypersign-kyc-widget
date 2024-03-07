@@ -100,6 +100,8 @@ export default new Vuex.Store({
         // --- 
         authenticationAccessToken: {},
         ifNewUser: false,
+        userPresentationConsent: {},
+        idToken: ""
     },
     getters: {
         getActiveStep: (state) => {
@@ -309,9 +311,13 @@ export default new Vuex.Store({
             state.ifNewUser = payload;
         },
 
+        setUserPresentationConsent(state, payload) {
+            state.userPresentationConsent = payload;
+        },
 
-
-
+        setIdToken(state, payload) {
+            state.idToken = payload;
+        }
     },
     actions: {
         addharQRVerify: ({ state }) => {
@@ -519,19 +525,23 @@ export default new Vuex.Store({
             })
         },
 
-        verifyResult: ({ commit, getters }) => {
+        verifyResult: ({ commit, getters, state }) => {
             return new Promise((resolve, reject) => {
-                const url = `${apiServerBaseUrl}/e-kyc/verification/result`;
+                if (Object.keys(state.userPresentationConsent).length <= 0) {
+                    return reject(new Error('No user consent found'))
+                }
+                const url = `${apiServerBaseUrl}/e-kyc/verification/consent`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
                     "content-type": "application/json"
-                };
+                }
                 return fetch(url, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
-                        sessionId: getters.getSession
+                        sessionId: getters.getSession,
+                        presentation: state.userPresentationConsent
                     })
                 })
                     .then(response => response.json())
@@ -543,6 +553,7 @@ export default new Vuex.Store({
                         } else {
                             if (json && json.success === true) {
                                 commit('setResult', json.success);
+                                commit('setIdToken', json.idToken);
                             }
 
                             resolve(json)

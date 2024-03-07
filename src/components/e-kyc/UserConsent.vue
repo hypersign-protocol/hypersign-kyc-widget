@@ -77,7 +77,7 @@ export default {
     },
     methods: {
         ...mapActions(['verifyResult']),
-        ...mapMutations(['nextStep', 'previousStep']),
+        ...mapMutations(['nextStep', 'previousStep', 'setUserPresentationConsent']),
         toast(msg, type = "success") {
             this.isToast = true;
             this.toastMessage = msg;
@@ -94,8 +94,8 @@ export default {
                 // TODO: Generating the presention with all the VCs
                 this.toast('Submitting your data...', "success");
                 const presentation = await this.generatePresentation()
+                this.setUserPresentationConsent(presentation)
                 console.log(presentation)
-
                 // TODO:  sign this presentation 
 
                 // const signedPresentation  = await this.signPresentation(presentation)
