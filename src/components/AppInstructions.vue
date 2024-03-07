@@ -5,7 +5,7 @@
 }
 
 .checkbox-item {
-  margin-top: 50px;
+  margin-top: 30px;
   margin-bottom: 35px;
   display: flex;
   align-items: center;
@@ -45,25 +45,26 @@
 
       <div class="container">
         <div class="box">
-          <img class="opacity-80" src="../assets/page0.png" style="height:100%; width: 100%" width="100%" />
+          <img class="opacity-80" src="../assets/page0.png" style="width: 100%" width="100%" />
         </div>
         <div class="box">
           <div class="checkbox-container">
             <div class="checkbox-item form-check">
-              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                checked disabled>
+              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                disabled :checked="hasLivelinessDone"> -->
+
+              <i class="bi bi-check2-circle" v-if="hasLivelinessDone" style="font-size:xxx-large"></i>
             </div>
             <div class="checkbox-item form-check">
-              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                checked disabled>
+              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                disabled :checked="hasKycDone"> -->
+
+              <i class="bi bi-check2-circle" v-if="hasKycDone" style="font-size:xxx-large"></i>
             </div>
+
             <div class="checkbox-item form-check">
-              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasLivelinessDone">
-            </div>
-            <div class="checkbox-item form-check">
-              <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasKycDone">
+              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
+                disabled> -->
             </div>
           </div>
         </div>
