@@ -64,15 +64,19 @@ export default new Vuex.Store({
         schemaIds: {
             PersonhoodCredential: {
                 schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
-                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+                issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
             },
             CitizenshipCredential: {
-                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i1:1.0",
-                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+                schemaId: "sch:hid:testnet:z6Mkkm7paF78CWtrpviRkwb83t99u34Up7tjjnap8yw1pWfz:1.0",
+                issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
             },
             DateOfBirthCredential: {
-                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i2:1.0",
-                issuer: "did:hid:testnet:z6MktWXeAc7j2ShkwEcPDW9JaYYcaTExxbbJKiZhDxo6reC1"
+                schemaId: "sch:hid:testnet:z6MkfaUxChNFzjsUzxNSHkJ928WcXPFhbNb4cXp1U6yce7t3:1.0",
+                issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
+            },
+            PassportCredential: {
+                schemaId: "sch:hid:testnet:z6MkgMXXQL7YD7BufNLbjrwueoj4nmih9xujJ6aozJDmzFWx:1.0",
+                issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
             }
         },
 
@@ -81,10 +85,7 @@ export default new Vuex.Store({
         hasLivelinessDone: false,
         hasKycDone: false,
         kycExtractedData: {},
-        // cavachAccessToken: "",
-        // redirectUrl: "",
         finalResults: false,
-        //session: "",
         livelinessResult: {},
         ocrIDDocResult: {},
         livelinessCapturedData: {
@@ -94,7 +95,6 @@ export default new Vuex.Store({
             tokenFrontDocumentImage: "",
             tokenFaceImage: "",
             countryCode: "",
-
         },
 
         // --- 
@@ -105,11 +105,7 @@ export default new Vuex.Store({
     },
     getters: {
         getActiveStep: (state) => {
-            // console.log(state)
-            // const stepIndex = localStorage.getItem("currentStep") //
             const step = state.steps.find(x => x.isActive == true)
-            // console.log(stepIndex)
-            // let step = stepIndex ? state.steps[stepIndex] : state.steps.find(x => x.isActive == true);
             if (!step) {
                 const step = state.steps.find(x => x.isActive == true)
                 return step
@@ -493,7 +489,7 @@ export default new Vuex.Store({
 
 
 
-        //-----------------------------------------------------------------e-kyc
+        // -----------------------------------------------------------------e-kyc
         getNewSession: ({ commit, getters }, payload) => {
             return new Promise((resolve, reject) => {
                 const url = `${apiServerBaseUrl}/e-kyc/verification/session`;
@@ -704,7 +700,6 @@ export default new Vuex.Store({
             })
         },
 
-
         syncUserData: ({ getters }) => {
             return new Promise((resolve, reject) => {
                 const { email } = getters.getProfile
@@ -786,43 +781,27 @@ export default new Vuex.Store({
         },
 
 
-        // --- vault
+        // ------------------------------------------------------------------ vault
         async lockVault({ commit, getters }) {
             try {
-                console.log('Inside lockVault')
                 const vaultPin = getters.getVaultPin
                 let vaultRaw = getters.getVaultDataRaw
-                console.log()
                 if (!vaultRaw) {
-                    console.log('Inside lockVault:: vaultRaw not found')
-
-                    // vaultRaw = {
-                    //     here: "something"
-                    // }
-                    // commit('setVaultRaw', JSON.stringify(vaultRaw))
-
                     return false
                 }
-                console.log('Before calling encrypt ')
-                console.log({ vaultRaw, vaultPin })
+
                 if (getters.getVaultLockStatus === true) {
                     throw new Error('Vault is already locked')
                 }
 
-                const old = getters.getVaultData;
                 const encryptedData = await encrypt(JSON.stringify(vaultRaw), vaultPin)
-                console.log({ encryptedData, vaultRaw })
-                await commit('setVaultData', encryptedData)
-                console.log({
-                    'olddata': old,
-                    'newData': getters.getVaultData
-                })
 
+                await commit('setVaultData', encryptedData)
                 await commit('setVaultLockStatus', true)
+
                 return true
             } catch (e) {
                 throw new Error('Error: Could not lock vault')
-
             }
         },
 
@@ -830,8 +809,7 @@ export default new Vuex.Store({
             try {
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
-                console.log('Inside unlocked vault, vaultData ' + vaultData)
-                console.log(getters.getVaultLockStatus)
+
                 if (getters.getVaultLockStatus === false) {
                     throw new Error('Vault is already unlocked')
                 }
@@ -839,14 +817,16 @@ export default new Vuex.Store({
                     return false
                 }
                 const decryptedData = await decrypt(vaultData, vaultPin)
-                console.log('Decrypted vault........')
-                console.log(decryptedData)
+
                 if (decryptedData === "") {
                     throw new Error('Error: Could not unlock vault, please check your PIN')
                 }
-                // commit('setVaultRaw', JSON.stringify({ "heelo": "world" })) // decryptedData
-                commit('setVaultRaw', decryptedData)
-                commit('setVaultLockStatus', false)
+
+                if (decryptedData) {
+                    commit('setVaultRaw', decryptedData)
+                    commit('setVaultLockStatus', false)
+                }
+
                 return true
             } catch (e) {
                 throw new Error(e.message)
@@ -856,7 +836,6 @@ export default new Vuex.Store({
 
         async updateVaultCredentials({ commit, getters, dispatch }, payload) {
             try {
-                console.log('Inside  updateVaultCredentials')
                 // check if vault is unlocked
                 if (getters.getVaultLockStatus === true) {
                     throw new Error('Vault is locked, please unlock first')
@@ -864,23 +843,14 @@ export default new Vuex.Store({
 
                 const vaultDataRaw = getters.getVaultDataRaw
                 vaultDataRaw.hypersign.credentials.push(payload)
-                commit('setVaultRaw', JSON.stringify(vaultDataRaw))
-                console.log('Before calling lockVault ... ')
-                await dispatch('lockVault')
-                console.log('After calling lockVault ... ')
+                if (vaultDataRaw) commit('setVaultRaw', JSON.stringify(vaultDataRaw))
 
-                console.log('Before calling syncUserData ... this will be trigged in 2 sec')
+                await dispatch('lockVault')
+
                 setTimeout(async () => {
                     dispatch('syncUserData')
                     console.log('After calling syncUserData ... ')
                 }, 2000)
-
-
-
-
-
-
-
             } catch (e) {
                 throw new Error(e.message)
             }
@@ -895,39 +865,34 @@ export default new Vuex.Store({
             const vaultDataRaw = getters.getVaultDataRaw
             const { hypersign } = vaultDataRaw
             const { credentials } = hypersign
-
-
             const { schemaIds } = state
-            console.log('Starting the process....')
-            Object.keys(schemaIds).forEach(schema => {
-                console.log('For each schemaId, schemaTyep ' + schema)
-                const { schemaId, issuer } = schemaIds[schema]
 
+            Object.keys(schemaIds).forEach(schema => {
+                const { schemaId, issuer } = schemaIds[schema]
                 const credential = credentials.some(credential => {
-                    if ((credential.credentialSchema.id === schemaId) && (credential.issuer === issuer)) {
-                        return credential
+                    if (credential) {
+                        if ((credential.credentialSchema.id === schemaId) && (credential.issuer === issuer)) {
+                            return credential
+                        }
                     }
                 })
 
                 if (credential) {
-                    console.log('Found a credential in vault schema' + schema)
                     if (schema === 'PersonhoodCredential') {
                         console.log("commiting setLivelinessDone")
                         commit('setLivelinessDone', true)
                     }
 
-                    if (['CitizenshipCredential', 'DateOfBirthCredential'].findIndex(x => x === schema) >= 0) {
-                        console.log("commiting setKycDone")
+                    // if (['CitizenshipCredential', 'DateOfBirthCredential'].findIndex(x => x === schema) >= 0) {
+                    //     console.log("commiting setKycDone")
+                    //     commit('setKycDone', true)
+                    // }
+
+                    if (schema === 'PassportCredential') {
                         commit('setKycDone', true)
                     }
                 }
             })
-
-
-
-
-        },
-    },
-
-
+        }
+    }
 })

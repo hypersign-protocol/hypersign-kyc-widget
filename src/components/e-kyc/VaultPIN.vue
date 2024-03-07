@@ -43,31 +43,19 @@ export default {
         async unlockVaultAndSyncData(data) {
             try {
                 if (data) {
-                    console.log('Inside unlockVaultAndSyncData handler')
-                    console.log('before calling unlocakVault')
                     this.isLoadingPage = true;
 
-                    console.log('Checking if new or existing use')
                     if (this.ifNewUser) {
-                        console.log('check if this is new user')
-                        console.log('generate mnemonic ')
                         this.generateMnemonic1()
-                        console.log('generate did ')
                         await this.generateDID()
-                        console.log('set raw data')
-                        this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
-                        console.log('form encrypted data and store in local storage')
+                        if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
                         await this.lockVault()
-                        console.log('sync data')
                         await this.syncUserData()
                     } else {
-                        console.log('For existing user ')
                         await this.syncUserDataById()
-                        console.log('unlockVault ')
                         await this.unlockVault()
                     }
 
-                    console.log('after calling syncUserData')
                     this.isLoadingPage = false
                     this.nextStep()
                 } else {
