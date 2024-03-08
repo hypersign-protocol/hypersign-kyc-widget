@@ -14,7 +14,6 @@ export default new Vuex.Store({
         aadharData: {},
         authorization: null,
         steps: [
-
             {
                 id: 0,
                 isActive: true,
@@ -178,6 +177,15 @@ export default new Vuex.Store({
                 }
             }
         },
+
+        getPresentationRequest() {
+            return localStorage.getItem("presentationRequest")
+        },
+        getPresentationRequestParsed() {
+            const base64EncodedPr = localStorage.getItem("presentationRequest")
+            const prStr = atob(base64EncodedPr)
+            return JSON.parse(prStr)
+        },
     },
     mutations: {
 
@@ -246,6 +254,11 @@ export default new Vuex.Store({
             console.log(state.kycCapturedData)
             localStorage.setItem("redirectUrl", payload)
         },
+        setPresentationRequest(state, payload) {
+            console.log(state.kycCapturedData)
+            localStorage.setItem("presentationRequest", payload)
+        },
+
         setResult(state, payload) {
             state.finalResult = payload
         },

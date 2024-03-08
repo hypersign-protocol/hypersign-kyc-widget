@@ -48,7 +48,7 @@ export default {
     },
     data: () => {
         return {
-            maxTimeOut: 10,
+            maxTimeOut: 5,
             timer: null
         }
     },

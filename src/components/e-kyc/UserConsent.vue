@@ -2,13 +2,39 @@
 
     <div class="card-body" style="max-height:750px;">
         <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-        <PageHeading :header="'User Consent'"
-            :subHeader="'The verifier app is requesting the following data from you, click Authorize to share'"
-            style="text-align: center;" />
+        <PageHeading :header="'User Consent'" style="text-align: center;" />
+
+        <div class="widget-card" style="width: 90%;margin:auto;     margin-top: 30px;"
+            v-if="getPresentationRequestParsed">
+            <div class="container credential-row">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMsJ_pm-uPdm_MyNyRNpB9RXlnp3f9Fs1GPQ&usqp=CAU"
+                            style="height:80px" v-if="getPresentationRequestParsed.logoUrl">
+                        <i class="bi bi-robot" style="font-size:xxx-large;" v-else></i>
+                    </div>
+                    <div class="col-md-10" style="text-align: left;">
+                        <div class="row" v-if="getPresentationRequestParsed.domain">
+                            <div class="col-md-12">
+                                {{ getPresentationRequestParsed.domain }}
+                            </div>
+                        </div>
+                        <div class="row" style="color: grey; font-size: large;">
+                            <div class="col-md-12">
+                                <span v-if="getPresentationRequestParsed.reason">
+                                    {{ getPresentationRequestParsed.reason }}
+                                </span>
+                                <span v-else>
+                                    verifier app needs your information to allow you serivce
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="widget-card " style="width: 90%;margin:auto;     margin-top: 30px;">
-
-
             <div class="container">
                 <div class="row credential-row" v-for="eachCredential in getVaultDataCredentials"
                     v-bind:key="eachCredential.id">
@@ -31,10 +57,10 @@
                         </div>
                     </div>
                 </div>
-                <p>
+                <!-- <p>
                     <InfoMessage
                         message="Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups. Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups." />
-                </p>
+                </p> -->
             </div>
         </div>
         <p style="margin-top: 1%">
@@ -67,14 +93,14 @@ export default {
         this.hypersignVP = new HypersignVerifiablePresentation();
     },
     computed: {
-        ...mapGetters(['getVaultDataCredentials', 'getUserDID']),
+        ...mapGetters(['getVaultDataCredentials', 'getUserDID', 'getPresentationRequestParsed']),
         credentailsTypesInWallet() {
             const types = this.getVaultDataCredentials.map(x => x.type)
             const allTypes = [].concat(...types)
             const uniqueTypes = Array.from(new Set(allTypes))
             const uniqueTypesWithoutDefaultTypes = uniqueTypes.filter(x => x != 'VerifiableCredential')
             return uniqueTypesWithoutDefaultTypes
-        }
+        },
     },
     methods: {
         ...mapActions(['verifyResult']),

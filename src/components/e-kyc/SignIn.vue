@@ -24,7 +24,7 @@ import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 export default {
     name: 'SignIn',
     computed: {
-        ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
+        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest"]),
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     data() {
@@ -38,7 +38,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep",]),
+        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest"]),
         ...mapActions(["getNewSession", "registerUser"]),
         loginWithGoogle() {
             console.log('Inside sign in with google')
@@ -61,8 +61,8 @@ export default {
     async created() {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.cavachAccessToken || !params.redirectUrl) {
-            if (this.getCavachAccessToken != '' && !this.getRedirectUrl != '') {
+        if (!params.cavachAccessToken || !params.redirectUrl || !params.pr) {
+            if (this.getCavachAccessToken != '' && this.getRedirectUrl != '' && this.getPresentationRequest != '') {
                 console.log('Error: 401')
                 this.error = true
                 this.toast('Error initalization of widget!', "error");
@@ -72,6 +72,7 @@ export default {
 
         this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
         this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
+        this.setPresentationRequest(params.pr || this.getPresentationRequest)
 
         try {
             this.isLoading = true;
