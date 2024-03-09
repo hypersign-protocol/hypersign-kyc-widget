@@ -38,7 +38,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest"]),
+        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain']),
         ...mapActions(["getNewSession", "registerUser"]),
         loginWithGoogle() {
             console.log('Inside sign in with google')
@@ -57,6 +57,15 @@ export default {
                 this.toastMessage = "";
             }, 2000);
         },
+        parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
     },
     async created() {
         const urlSearchParams = new URLSearchParams(window.location.search);
@@ -73,6 +82,9 @@ export default {
         this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
         this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
         this.setPresentationRequest(params.pr || this.getPresentationRequest)
+
+        const parsedAccessToken = this.parseJwt(params.cavachAccessToken)
+        this.setTenantSubdomain(parsedAccessToken.subdomain)
 
         try {
             this.isLoading = true;

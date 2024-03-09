@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../config'
+import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET, HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../config'
 import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
 
 Vue.use(Vuex)
-const apiServerBaseUrl = 'http://ent-0b22db9.localhost:3001/api/v1';
 
 export default new Vuex.Store({
     state: {
@@ -186,6 +185,18 @@ export default new Vuex.Store({
             const prStr = atob(base64EncodedPr)
             return JSON.parse(prStr)
         },
+
+        getTenantSubdomain() {
+            return localStorage.getItem('subdomain');
+        },
+
+        getTenantKycServiceBaseUrl() {
+            const subdomain = localStorage.getItem('subdomain');
+            if (!subdomain) {
+                throw new Error('Invalid accessToken')
+            }
+            return HYPERSIGN_SERVICE_BASE_URL_FORMAT.replace('<subdomain>', subdomain)
+        }
     },
     mutations: {
 
@@ -326,6 +337,11 @@ export default new Vuex.Store({
 
         setIdToken(state, payload) {
             state.idToken = payload;
+        },
+
+        setTenantSubdomain(state, payload) {
+            console.log(state.hasKycDone)
+            localStorage.setItem('subdomain', payload);
         }
     },
     actions: {
@@ -505,7 +521,7 @@ export default new Vuex.Store({
         // -----------------------------------------------------------------e-kyc
         getNewSession: ({ commit, getters }, payload) => {
             return new Promise((resolve, reject) => {
-                const url = `${apiServerBaseUrl}/e-kyc/verification/session`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:4999/",
@@ -539,7 +555,7 @@ export default new Vuex.Store({
                 if (Object.keys(state.userPresentationConsent).length <= 0) {
                     return reject(new Error('No user consent found'))
                 }
-                const url = `${apiServerBaseUrl}/e-kyc/verification/consent`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/consent`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
@@ -578,7 +594,7 @@ export default new Vuex.Store({
                 if (state.livelinessCapturedData.tokenSelfiImage === "" || !state.hasLivelinessDone) {
                     return reject('User has not performed liveliness check')
                 }
-                const url = `${apiServerBaseUrl}/e-kyc/verification/passive-liveliness`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
@@ -619,7 +635,7 @@ export default new Vuex.Store({
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
-                const url = `${apiServerBaseUrl}/e-kyc/verification/ocr-id-doc`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/ocr-id-doc`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
