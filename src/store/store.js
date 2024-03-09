@@ -59,6 +59,7 @@ export default new Vuex.Store({
                 previous: 5
             },
         ],
+        // Trusted issuer and schemas
         schemaIds: {
             PersonhoodCredential: {
                 schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
@@ -180,6 +181,9 @@ export default new Vuex.Store({
         getPresentationRequest() {
             return localStorage.getItem("presentationRequest")
         },
+        getSSIAccessToken() {
+            return localStorage.getItem("ssiAccessToken")
+        },
         getPresentationRequestParsed() {
             const base64EncodedPr = localStorage.getItem("presentationRequest")
             const prStr = atob(base64EncodedPr)
@@ -196,7 +200,10 @@ export default new Vuex.Store({
                 throw new Error('Invalid accessToken')
             }
             return HYPERSIGN_SERVICE_BASE_URL_FORMAT.replace('<subdomain>', subdomain)
-        }
+        },
+
+
+
     },
     mutations: {
 
@@ -268,6 +275,12 @@ export default new Vuex.Store({
         setPresentationRequest(state, payload) {
             console.log(state.kycCapturedData)
             localStorage.setItem("presentationRequest", payload)
+        },
+
+        setSSIAccessToken(state, payload) {
+            console.log(state.kycCapturedData)
+
+            localStorage.setItem("ssiAccessToken", payload)
         },
 
         setResult(state, payload) {
@@ -550,6 +563,7 @@ export default new Vuex.Store({
             })
         },
 
+        //TODO: Change name of this method to somethin liek, submitUserConsent()
         verifyResult: ({ commit, getters, state }) => {
             return new Promise((resolve, reject) => {
                 if (Object.keys(state.userPresentationConsent).length <= 0) {
@@ -598,7 +612,10 @@ export default new Vuex.Store({
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
-                    "content-type": "application/json"
+                    "content-type": "application/json",
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                 };
                 return fetch(url, {
                     method: 'POST',
@@ -639,7 +656,10 @@ export default new Vuex.Store({
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
-                    "content-type": "application/json"
+                    "content-type": "application/json",
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                 };
                 return fetch(url, {
                     method: 'POST',
@@ -897,10 +917,12 @@ export default new Vuex.Store({
             const { schemaIds } = state
 
             Object.keys(schemaIds).forEach(schema => {
-                const { schemaId, issuer } = schemaIds[schema]
+                const { schemaId } = schemaIds[schema]
                 const credential = credentials.some(credential => {
                     if (credential) {
-                        if ((credential.credentialSchema.id === schemaId) && (credential.issuer === issuer)) {
+
+                        // TODO: We can also add filter for trusted issuer later in the presentation request
+                        if ((credential.credentialSchema.id === schemaId)) {
                             return credential
                         }
                     }

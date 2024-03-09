@@ -38,7 +38,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain']),
+        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", "registerUser"]),
         loginWithGoogle() {
             console.log('Inside sign in with google')
@@ -70,8 +70,8 @@ export default {
     async created() {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.cavachAccessToken || !params.redirectUrl || !params.pr) {
-            if (this.getCavachAccessToken != '' && this.getRedirectUrl != '' && this.getPresentationRequest != '') {
+        if (!params.cavachAccessToken || !params.redirectUrl || !params.pr || !params.ssiAccessToken) {
+            if (this.getCavachAccessToken != '' && this.getRedirectUrl != '' && this.getPresentationRequest != '' && this.getSSIAccessToken != '') {
                 console.log('Error: 401')
                 this.error = true
                 this.toast('Error initalization of widget!', "error");
@@ -82,6 +82,7 @@ export default {
         this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
         this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
         this.setPresentationRequest(params.pr || this.getPresentationRequest)
+        this.setSSIAccessToken(params.ssiAccessToken || this.ssiAccessToken)
 
         const parsedAccessToken = this.parseJwt(params.cavachAccessToken)
         this.setTenantSubdomain(parsedAccessToken.subdomain)
