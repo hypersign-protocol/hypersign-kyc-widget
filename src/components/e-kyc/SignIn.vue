@@ -41,7 +41,6 @@ export default {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", "registerUser"]),
         loginWithGoogle() {
-            console.log('Inside sign in with google')
             webAuth.authorize({
                 connection: 'google-oauth2',
                 redirectUri: `${window.location.origin}/auth/google?`,
@@ -68,8 +67,7 @@ export default {
         }
     },
     async created() {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
+        const params = this.$route.query;
         if (!params.cavachAccessToken || !params.redirectUrl || !params.pr || !params.ssiAccessToken) {
             if (this.getCavachAccessToken != '' && this.getRedirectUrl != '' && this.getPresentationRequest != '' && this.getSSIAccessToken != '') {
                 console.log('Error: 401')
