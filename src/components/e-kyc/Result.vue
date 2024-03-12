@@ -76,12 +76,13 @@ export default {
         stopTimer() {
             clearInterval(this.timer);
             // window.location.href = `${this.getRedirectUrl}?idToken=${this.idToken}`;
-            const data = {
+            const data = JSON.stringify({
                 status: 'success',
                 message: 'Successfully verified the user',
                 idToken: this.idToken
-            }
-            window.opener.parent.postMessage(JSON.stringify(data), this.getPresentationRequestParsed.domain);
+            })
+            console.log(data)
+            window.opener.parent.postMessage(data, this.getPresentationRequestParsed.domain);
             self.close();
         },
     }
