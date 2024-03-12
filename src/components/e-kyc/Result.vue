@@ -54,6 +54,7 @@ export default {
     },
     computed: {
         ...mapGetters(["getRedirectUrl", "getFinalResult",]),
+        ...mapGetters(['getPresentationRequestParsed']),
         ...mapState(["idToken"])
     },
     mounted() {
@@ -74,7 +75,14 @@ export default {
         },
         stopTimer() {
             clearInterval(this.timer);
-            window.location.href = `${this.getRedirectUrl}?idToken=${this.idToken}`;
+            // window.location.href = `${this.getRedirectUrl}?idToken=${this.idToken}`;
+            const data = {
+                status: 'success',
+                message: 'Successfully verified the user',
+                idToken: this.idToken
+            }
+            window.opener.parent.postMessage(JSON.stringify(data), this.getPresentationRequestParsed.domain);
+            self.close();
         },
     }
 }
