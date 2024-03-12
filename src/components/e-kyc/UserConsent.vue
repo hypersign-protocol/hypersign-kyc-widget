@@ -9,8 +9,8 @@
             <div class="container credential-row">
                 <div class="row">
                     <div class="col-md-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMsJ_pm-uPdm_MyNyRNpB9RXlnp3f9Fs1GPQ&usqp=CAU"
-                            style="height:80px" v-if="getPresentationRequestParsed.logoUrl">
+                        <img :src="getPresentationRequestParsed.logoUrl" style="height:80px"
+                            v-if="getPresentationRequestParsed.logoUrl">
                         <i class="bi bi-robot" style="font-size:xxx-large;" v-else></i>
                     </div>
                     <div class="col-md-10" style="text-align: left;">
