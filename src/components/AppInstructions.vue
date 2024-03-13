@@ -101,13 +101,13 @@ export default {
     await this.checkIfCredentialAlreadyExistsInVault()
     if (this.hasLivelinessDone) {
       const idDocVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
-      this.nextStepNumeber = idDocVerificationStep.id
+      this.nextStepNumeber = idDocVerificationStep?.id
     }
 
-    if (this.hasKycDone) {
-      const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-      this.nextStepNumeber = idDocVerificationStep.id
-    }
+    // if (this.hasKycDone) {
+    const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
+    this.nextStepNumeber = idDocVerificationStep?.id
+    // }    
   },
   data() {
     return {
