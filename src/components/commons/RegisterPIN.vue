@@ -1,5 +1,5 @@
 <template>
-    <div class="center">
+    <div class="center" style="width: 100%;">
         <div class="widget-card">
             <p style="text-align: left;">
                 Enter 5 digits PIN:
