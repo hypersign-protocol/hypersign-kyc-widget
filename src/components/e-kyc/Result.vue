@@ -82,7 +82,8 @@ export default {
                 idToken: this.idToken
             })
             console.log(data)
-            window.opener.parent.postMessage(data, this.getPresentationRequestParsed.domain);
+            console.log('BEfore calling widnow.opener.postMessage ...')
+            window.opener.postMessage(data, this.getPresentationRequestParsed.domain);
             self.close();
         },
     }
