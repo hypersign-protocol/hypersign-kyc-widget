@@ -104,10 +104,12 @@ export default {
       this.nextStepNumeber = idDocVerificationStep?.id
     }
 
-    // if (this.hasKycDone) {
-    const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-    this.nextStepNumeber = idDocVerificationStep?.id
-    // }    
+    // TODO/  this is only for face recog setting and not for fece recog + doc verification
+    // TODO: better we should work on having a configuration file to dynamically set the configuration
+    if (this.hasLivelinessDone && !this.hasKycDone) {
+      const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
+      this.nextStepNumeber = idDocVerificationStep.id
+    }
   },
   data() {
     return {
