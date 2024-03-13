@@ -2,8 +2,8 @@
     <div class="center">
         <div class="widget-card">
             <p style="text-align: left;">
-                Enter 5 digit PIN:
-                <PIN @pinTakenEvent="getPin" />
+                Enter 5 digits PIN:
+                <PIN @pinTakenEvent="getPin" inputType="password" />
             </p>
             <p>
                 <InfoMessage

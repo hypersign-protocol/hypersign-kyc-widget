@@ -2,7 +2,7 @@
     <div class="center">
         <div class="widget-card">
             <p style="text-align: left;">
-                Enter 5 digit PIN:
+                Enter 5 digits PIN:
                 <PIN @pinTakenEvent="getPin" />
             </p>
             <p style="text-align: left;">
