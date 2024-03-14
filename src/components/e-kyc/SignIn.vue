@@ -68,8 +68,8 @@ export default {
     },
     async created() {
         const params = this.$route.query;
-        if (!params.cavachAccessToken || !params.redirectUrl || !params.pr || !params.ssiAccessToken) {
-            if (this.getCavachAccessToken != '' && this.getRedirectUrl != '' && this.getPresentationRequest != '' && this.getSSIAccessToken != '') {
+        if (!params.kycAccessToken || !params.pr || !params.ssiAccessToken) {
+            if (this.getCavachAccessToken != '' && this.getPresentationRequest != '' && this.getSSIAccessToken != '') {
                 console.log('Error: 401')
                 this.error = true
                 this.toast('Error initalization of widget!', "error");
@@ -77,12 +77,12 @@ export default {
             }
         }
 
-        this.setCavachAccessToken(params.cavachAccessToken || this.getCavachAccessToken)
-        this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
+        this.setCavachAccessToken(params.kycAccessToken || this.getCavachAccessToken)
+        // this.setRedirectUrl(params.redirectUrl || this.getRedirectUrl)
         this.setPresentationRequest(params.pr || this.getPresentationRequest)
         this.setSSIAccessToken(params.ssiAccessToken || this.ssiAccessToken)
 
-        const parsedAccessToken = this.parseJwt(params.cavachAccessToken)
+        const parsedAccessToken = this.parseJwt(params.kycAccessToken)
         this.setTenantSubdomain(parsedAccessToken.subdomain)
 
         try {
