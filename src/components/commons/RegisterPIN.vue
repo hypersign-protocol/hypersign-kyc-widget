@@ -11,7 +11,7 @@
             </p>
             <p>
                 <InfoMessage
-                    message="This PIN is to secure your data vault. The ensures that you do not trust any one with your data, not event us. The PIN is used to access your encrypted data vault. Make sure you do not loose it." />
+                    message="This PIN safeguards your personal data vault. It's your exclusive key to access and control your vault's contents, ensuring only you have entry. Remember, losing this PIN means losing access to your data" />
             </p>
             <p>
                 <button class="btn btn-outline-dark" @click="submit()">
