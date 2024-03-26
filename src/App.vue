@@ -6,26 +6,122 @@
 
 <script>
 // import MainPage from "./components/MainPage.vue";
-import { encrypt, decrypt } from './components/utils/symmetricCrypto';
+// import { encrypt, decrypt } from './components/utils/symmetricCrypto';
+import WidgetConfig from './components/utils/widget.config'
+import { mapMutations } from 'vuex';
 export default {
   name: "App",
   components: {
     // MainPage,
   },
   methods: {
+    ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers"]),
   },
   async created() {
-    const message = JSON.stringify({
-      hello: "world",
-    })
 
-    const pin = "Vishwas1@gmail"
-    const encryptedMessage = await encrypt(message, pin)
-    const decryptMessage = await decrypt(encryptedMessage, pin)
-    console.log({
-      encryptedMessage,
-      decryptMessage
-    })
+    if (WidgetConfig) {
+      // Steps
+      if (Object.keys(WidgetConfig.steps).length > 0) {
+        let steps = [
+          {
+            id: 0,
+            isActive: true,
+            stepName: 'SignIn',
+            previous: 0
+          },
+          {
+            id: 1,
+            isActive: false,
+            stepName: 'VaultPIN',
+            previous: 0
+          },
+          {
+            id: 2,
+            isActive: false,
+            stepName: 'AppInstructions',
+            previous: 1
+          },
+        ]
+
+        if (WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
+          // if faceRecog and ocr enabled
+          // if only ocr enabled 
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'Liveliness',
+            name: 'Facial Recognition',
+            previous: steps.length - 1
+          })
+
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'IdDocs',
+            name: 'Government-issued ID',
+            previous: steps.length - 1
+          })
+        } else if (WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
+          // if only faceRecog enabled
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'Liveliness',
+            name: 'Facial Recognition',
+            previous: steps.length - 1
+          })
+        } else if (!WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
+          // if faceRecog and ocr enabled
+          // if only ocr enabled 
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'Liveliness',
+            name: 'Facial Recognition',
+            previous: steps.length - 1
+          })
+
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'IdDocs',
+            name: 'Government-issued ID',
+            previous: steps.length - 1
+          })
+        } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
+          throw new Error('Invalid widget configuration')
+        }
+
+        steps.push({
+          id: steps.length,
+          isActive: false,
+          stepName: 'UserConsent',
+          name: 'Provide User Consent',
+          previous: steps.length - 1
+        })
+
+        steps.push({
+          id: steps.length,
+          isActive: false,
+          stepName: 'FinalResult',
+          previous: steps.length - 1
+        })
+
+        this.setSteps(steps)
+      } else {
+        throw new Error('Invalid widget configuration, steps is required')
+      }
+
+      // trusted issuers and schemaIds
+      if (WidgetConfig.schemaIds) {
+        this.setTrustedSchemaIdsAndIssuers(WidgetConfig.schemaIds)
+      } else {
+        throw new Error('Invalid widget configuration, schemaIds is required')
+      }
+
+    } else {
+      throw new Error('Invalid widget configuration')
+    }
   },
 
 };

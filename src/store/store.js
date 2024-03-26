@@ -12,74 +12,9 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
-        steps: [
-            {
-                id: 0,
-                isActive: true,
-                stepName: 'SignIn',
-                previous: 0
-            },
-            {
-                id: 1,
-                isActive: false,
-                stepName: 'VaultPIN',
-                previous: 0
-            },
-            {
-                id: 2,
-                isActive: false,
-                stepName: 'AppInstructions',
-                previous: 1
-            },
-            {
-                id: 3,
-                isActive: false,
-                stepName: 'Liveliness',
-                name: 'Facial Recognition',
-                previous: 2
-            },
-            // {
-            //     id: 4,
-            //     isActive: false,
-            //     stepName: 'IdDocs',
-            //     name: 'Government-issued ID',
-            //     previous: 3
-            // },
-            {
-                id: 4,
-                isActive: false,
-                stepName: 'UserConsent',
-                name: 'Provide User Consent',
-                previous: 3
-            },
-            {
-                id: 5,
-                isActive: false,
-                stepName: 'FinalResult',
-                previous: 4
-            },
-        ],
+        steps: [],
         // Trusted issuer and schemas
-        schemaIds: {
-            PersonhoodCredential: {
-                schemaId: "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
-                issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
-            },
-            // CitizenshipCredential: {
-            //     schemaId: "sch:hid:testnet:z6Mkkm7paF78CWtrpviRkwb83t99u34Up7tjjnap8yw1pWfz:1.0",
-            //     issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
-            // },
-            // DateOfBirthCredential: {
-            //     schemaId: "sch:hid:testnet:z6MkfaUxChNFzjsUzxNSHkJ928WcXPFhbNb4cXp1U6yce7t3:1.0",
-            //     issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
-            // },
-            // PassportCredential: {
-            //     schemaId: "sch:hid:testnet:z6MkgMXXQL7YD7BufNLbjrwueoj4nmih9xujJ6aozJDmzFWx:1.0",
-            //     issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
-            // }
-        },
-
-
+        schemaIds: {},
         //-----------------------------------------------------------------e-kyc
         hasLivelinessDone: false,
         hasKycDone: false,
@@ -207,6 +142,14 @@ export default new Vuex.Store({
     },
     mutations: {
 
+        setSteps: (state, steps) => {
+            state.steps = steps
+        },
+
+        setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
+            state.schemaIds = schemaIds
+        },
+
         nextStep: (state, jumpToStepId = null) => {
             const activeStep = state.steps.find(x => x.isActive == true)
             const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
@@ -244,10 +187,6 @@ export default new Vuex.Store({
         setAadhaarData: (state, aadharData) => {
             state.aadharData = { ...aadharData };
         },
-
-
-
-
 
         //-----------------------------------------------------------------e-kyc
         setLivelinessDone(state, payload) {
@@ -569,7 +508,7 @@ export default new Vuex.Store({
                 if (Object.keys(state.userPresentationConsent).length <= 0) {
                     return reject(new Error('No user consent found'))
                 }
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/consent`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/user-consent`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",
@@ -652,7 +591,7 @@ export default new Vuex.Store({
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/ocr-id-doc`;
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:8080/",

@@ -99,6 +99,7 @@ export default {
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
+
     if (this.hasLivelinessDone) {
       const idDocVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
       this.nextStepNumeber = idDocVerificationStep?.id
@@ -106,10 +107,19 @@ export default {
 
     // TODO/  this is only for face recog setting and not for fece recog + doc verification
     // TODO: better we should work on having a configuration file to dynamically set the configuration
-    if (this.hasLivelinessDone && !this.hasKycDone) {
-      const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-      this.nextStepNumeber = idDocVerificationStep.id
+    const isOcrConfigured = this.steps.find(step => step.stepName == 'IdDocs')
+    if (isOcrConfigured) {
+      if (this.hasKycDone) {
+        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
+        this.nextStepNumeber = idDocVerificationStep.id
+      }
+    } else {
+      if (this.hasLivelinessDone && !this.hasKycDone) {
+        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
+        this.nextStepNumeber = idDocVerificationStep.id
+      }
     }
+
   },
   data() {
     return {
