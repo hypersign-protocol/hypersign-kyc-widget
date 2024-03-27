@@ -1,5 +1,5 @@
 <template>
-    <div class="card-body" style="max-height:750px;">
+    <div class="card-body">
         <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
         <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
         <div class="center">

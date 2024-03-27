@@ -9,14 +9,13 @@ body{
   }
   
 .maincontainer {
-    width: 750px;
-    min-height: 850px;
+    width: 80vw;
+    height: 87vw;
     background-color: #f5f5f5;
     border: 1px solid grey;
     border-radius: 20px;
     box-shadow: 2px 5px 5px #80808087;
     margin: 0 auto;
-    height: 100%;
   }
 .btn-dark{
     color: black
@@ -34,7 +33,7 @@ h1{
 }
 
 .widget-card {
-    width: 50%;
+    width: 42vw;
     border: 1px solid #8080801a;
     padding: 20px;
     border-radius: 20px;

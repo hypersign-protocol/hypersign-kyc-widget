@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="card-body" style="min-height:750px;">
+        <div class="card-body">
             <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
             <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
