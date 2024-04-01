@@ -476,14 +476,25 @@ export default new Vuex.Store({
 
 
         // -----------------------------------------------------------------e-kyc
-        getNewSession: ({ commit, getters }, payload) => {
-            return new Promise((resolve, reject) => {
+        getNewSession: ({ commit, dispatch, getters }, payload) => {
+            /* eslint-disable */
+            return new Promise(async (resolve, reject) => {
                 const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`;
+
+
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     'Origin': "http://localhost:4999/",
                     "content-type": "application/json"
                 };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
                 return fetch(url, {
                     method: 'POST',
                     headers,
@@ -888,6 +899,18 @@ export default new Vuex.Store({
                     }
                 }
             })
+        },
+
+
+        async getClientIp() {
+            try {
+                const resp = await fetch('https://api.ipify.org?format=json')
+                const json = await resp.json()
+                console.log(json)
+                return json.ip
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 })
