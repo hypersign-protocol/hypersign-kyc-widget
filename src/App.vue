@@ -15,7 +15,7 @@ export default {
     // MainPage,
   },
   methods: {
-    ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers"]),
+    ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers", "setIdDocumentLicenseKey"]),
   },
   async created() {
 
@@ -117,6 +117,17 @@ export default {
         this.setTrustedSchemaIdsAndIssuers(WidgetConfig.schemaIds)
       } else {
         throw new Error('Invalid widget configuration, schemaIds is required')
+      }
+
+      // set license key
+      if (WidgetConfig.licenseKey) {
+        if (WidgetConfig.env === 'dev') {
+          this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.dev)
+        } else if (WidgetConfig.env === 'stage') {
+          this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.stage)
+        } else {
+          this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.dev)
+        }
       }
 
     } else {

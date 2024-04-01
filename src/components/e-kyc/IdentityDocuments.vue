@@ -1,6 +1,6 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
-import { mapActions, mapMutations, } from "vuex";
+import { mapActions, mapMutations, mapGetters } from "vuex";
 import PreviewData from '../commons/Preview.vue'
 export default {
     name: 'IdDocs',
@@ -11,6 +11,7 @@ export default {
         ifExtractedData() {
             return Object.keys(this.$store.state.kycExtractedData).length > 0 ? true : false;
         },
+        ...mapGetters(['getIdDocumentLicenseKey']),
     },
     data: function () {
         return {
@@ -58,6 +59,8 @@ export default {
     },
 
     created() {
+        this.licenseKey = this.getIdDocumentLicenseKey
+        console.log(this.licenseKey)
         // if (!this.licenseKey) {
         //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
         //   this.licenseKey = license;

@@ -35,7 +35,8 @@ export default new Vuex.Store({
         authenticationAccessToken: {},
         ifNewUser: false,
         userPresentationConsent: {},
-        idToken: ""
+        idToken: "",
+        idDocumentLicenseKey: "",
     },
     getters: {
         getActiveStep: (state) => {
@@ -137,8 +138,9 @@ export default new Vuex.Store({
             return HYPERSIGN_SERVICE_BASE_URL_FORMAT.replace('<subdomain>', subdomain)
         },
 
-
-
+        getIdDocumentLicenseKey(state) {
+            return state.idDocumentLicenseKey
+        }
     },
     mutations: {
 
@@ -274,7 +276,6 @@ export default new Vuex.Store({
 
         setVaultLockStatus(state, payload) {
             console.log(state.hasKycDone)
-
             localStorage.setItem('vaultLockStatus', payload)
         },
 
@@ -294,6 +295,10 @@ export default new Vuex.Store({
         setTenantSubdomain(state, payload) {
             console.log(state.hasKycDone)
             localStorage.setItem('subdomain', payload);
+        },
+
+        setIdDocumentLicenseKey(state, payload) {
+            state.idDocumentLicenseKey = payload
         }
     },
     actions: {

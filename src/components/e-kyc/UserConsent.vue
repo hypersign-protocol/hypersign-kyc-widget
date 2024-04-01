@@ -13,13 +13,13 @@
                             v-if="getPresentationRequestParsed.logoUrl">
                         <i class="bi bi-robot" style="font-size:xxx-large;" v-else></i>
                     </div>
-                    <div class="col-md-10" style="text-align: left;">
+                    <div class="col-md-10" style="text-align: left; font-size: large;">
                         <div class="row" v-if="getPresentationRequestParsed.domain">
                             <div class="col-md-12">
                                 {{ getPresentationRequestParsed.domain }}
                             </div>
                         </div>
-                        <div class="row" style="color: grey; font-size: large;">
+                        <div class="row" style="color: grey; font-size: smaller;">
                             <div class="col-md-12">
                                 <span v-if="getPresentationRequestParsed.reason">
                                     {{ getPresentationRequestParsed.reason }}
