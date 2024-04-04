@@ -625,7 +625,8 @@ export default new Vuex.Store({
                         tokenFaceImage: state.kycCapturedData.tokenFaceImage,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
-                        userDID: getters.getUserDID
+                        userDID: getters.getUserDID,
+                        ocr: { ...state.kycExtractedData.extractionRaw.ocr }
                     })
                 })
                     .then(response => response.json())
