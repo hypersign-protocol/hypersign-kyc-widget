@@ -19,7 +19,6 @@
     "bip39": "^3.1.0",
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.11.3",
-    "bootstrap-vue": "^2.23.1",
     "buffer": "^6.0.3",
     "core-js": "^3.8.3",
     "crypto": "^1.0.1",
