@@ -4,11 +4,8 @@
         <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
         <div class="mt-4 p-4" style="width: 70%;margin:auto;">
             <div>
-                <ConnectWalletButton @authEvent="myEventListener" />
-                <button class="btn btn-outline-dark btn-lg" style="width: 100%;" @click="loginWithGoogle"
-                    data-cy="login-with-google" :disabled="error">
-                    <i class="bi bi-google"></i> Continue with Google
-                </button>
+                <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" />
+                <GoogleButton :is-disable="error" />
                 <ConsentBox />
             </div>
         </div>
@@ -20,12 +17,11 @@
 </template>
 
 <script>
-import webAuth from '../utils/auth0Connection';
+// import webAuth from '../utils/auth0Connection';
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-// import SupportedChains from '../utils/chains';
-import { AUTH_PROVIDERS } from '../../config'
-// import WidgetConfig from '../../components/utils/widget.config'
+// import { AUTH_PROVIDERS } from '../../config'
 import ConnectWalletButton from '../commons/ConnectWalletButton.vue';
+import GoogleButton from '../commons/GoogleButton.vue';
 export default {
     name: 'SignIn',
     computed: {
@@ -33,7 +29,8 @@ export default {
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     components: {
-        ConnectWalletButton
+        ConnectWalletButton,
+        GoogleButton
     },
     data() {
         return {
@@ -48,16 +45,11 @@ export default {
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
         ...mapActions(["getNewSession", "registerUser"]),
-        loginWithGoogle() {
-            webAuth.authorize({
-                connection: 'google-oauth2',
-                redirectUri: `${window.location.origin}/auth/${AUTH_PROVIDERS.GOOGLE}?`,
-            });
-        },
         myEventListener(data) {
             if (data.status == 'success') {
                 this.$router.push(`/auth/${data.provider}`)
             } else {
+                this.error = true
                 throw new Error('Could not authenticate with provider ')
             }
         },

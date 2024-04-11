@@ -1,6 +1,7 @@
 <template>
     <div>
-        <button type="button" class="btn btn-outline-dark btn-lg mb-2" style="width: 100%;" @click="connectWallet()">
+        <button type="button" class="btn btn-outline-dark btn-lg mb-2" style="width: 100%;" @click="connectWallet()"
+            :disabled="isDisable">
             <i class="bi bi-currency-bitcoin"></i> Connect Keplr</button>
     </div>
 </template>
@@ -12,7 +13,12 @@ import { getUserAddressFromOfflineSigner, createClient, createNonSigningClient }
 import { AUTH_PROVIDERS } from '@/config';
 
 export default {
-
+    props: {
+        isDisable: {
+            type: Boolean,
+            default: false
+        }
+    },
     computed: {
         ...mapGetters(['getOnChainIssuerConfig']),
     },
@@ -44,6 +50,7 @@ export default {
         async connectWallet() {
             const requestedChainId = this.getOnChainIssuerConfig.chainId
             if (!requestedChainId) {
+
                 throw new Error("ChainId not supported")
             }
 
