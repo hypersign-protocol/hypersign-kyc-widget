@@ -1,8 +1,9 @@
 export default {
-    env: 'stage', // dev, stage, prod
+    env: 'dev', // dev, stage, prod
     steps: {
         faceRecog: true,
         idOcr: true,
+        onChainId: true,
     },
     schemaIds: {
         PersonhoodCredential: {

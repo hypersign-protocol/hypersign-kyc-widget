@@ -1,7 +1,7 @@
 <template>
-  <div style="padding-top: 10px">
+  <div class="mt-2">
     <template>
-      <div class="card maincontainer" style="text-align: center;">
+      <div class="container maincontainer" style="text-align: center;min-height: 80vh;">
         <NavBar />
         <component :is="getActiveStep.stepName">
         </component>
@@ -28,6 +28,7 @@ import { mapGetters } from "vuex";
 import SignIn from "./e-kyc/SignIn.vue"
 import VaultPIN from './e-kyc/VaultPIN.vue'
 import UserConsent from './e-kyc/UserConsent.vue'
+import OnChainId from "./e-kyc/OnChainId.vue";
 
 export default {
   name: "HelloWorld",
@@ -43,12 +44,12 @@ export default {
     FinalResult,
     SignIn,
     VaultPIN,
-    UserConsent
+    UserConsent,
+    OnChainId
   },
   computed: {
     ...mapGetters(["getActiveStep"]),
   },
 
 };
-</script>./commons/PIN.vue
-./commons/Preview.vue
+</script>

@@ -88,8 +88,16 @@ export default {
             name: 'Government-issued ID',
             previous: steps.length - 1
           })
+        } else if (WidgetConfig.steps.onChainId) {
+          steps.push({
+            id: steps.length,
+            isActive: false,
+            stepName: 'OnChainId',
+            name: 'On Chain Identity',
+            previous: steps.length - 1
+          })
         } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
-          throw new Error('Invalid widget configuration')
+          console.log('Invalid widget configuration')
         }
 
         steps.push({

@@ -37,6 +37,9 @@ export default new Vuex.Store({
         userPresentationConsent: {},
         idToken: "",
         idDocumentLicenseKey: "",
+        cosmosConnection: {
+
+        },
     },
     getters: {
         getActiveStep: (state) => {
@@ -140,10 +143,24 @@ export default new Vuex.Store({
 
         getIdDocumentLicenseKey(state) {
             return state.idDocumentLicenseKey
-        }
+        },
+        getOnChainIssuerConfig: () => {
+            const t = localStorage.getItem("onChainIssuerConfig")
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
+        },
     },
     mutations: {
-
+        setOnChainIssuerConfig: (state, payload) => {
+            console.log(state.hasKycDone)
+            localStorage.setItem("onChainIssuerConfig", JSON.stringify(payload))
+        },
+        setCosmosConnection: (state, payload) => {
+            state.cosmosConnection = { ...payload };
+        },
         setSteps: (state, steps) => {
             state.steps = steps
         },

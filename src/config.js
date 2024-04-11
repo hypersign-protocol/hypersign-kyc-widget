@@ -8,3 +8,8 @@ export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = 'https://<subdomain>.api.cavach
 // export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = 'http://<subdomain>.localhost:3001/api/v1'
 
 
+export const AUTH_PROVIDERS = Object.freeze({
+    GOOGLE: 'google',
+    KEPLR: 'keplr',
+    METAMASK: 'metamask',
+})
