@@ -4,10 +4,7 @@
         <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
         <div class="mt-4 p-4" style="width: 70%;margin:auto;">
             <div>
-                <button type="button" class="btn btn-outline-dark btn-lg mb-2" style="width: 100%;"
-                    @click="connectWallet()">
-                    <i class="bi bi-currency-bitcoin"></i> Connect Keplr</button>
-
+                <ConnectWalletButton @authEvent="myEventListener" />
                 <button class="btn btn-outline-dark btn-lg" style="width: 100%;" @click="loginWithGoogle"
                     data-cy="login-with-google" :disabled="error">
                     <i class="bi bi-google"></i> Continue with Google
@@ -25,15 +22,18 @@
 <script>
 import webAuth from '../utils/auth0Connection';
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-import SupportedChains from '../utils/chains';
+// import SupportedChains from '../utils/chains';
 import { AUTH_PROVIDERS } from '../../config'
-import WidgetConfig from '../../components/utils/widget.config'
-
+// import WidgetConfig from '../../components/utils/widget.config'
+import ConnectWalletButton from '../commons/ConnectWalletButton.vue';
 export default {
     name: 'SignIn',
     computed: {
         ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig']),
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
+    },
+    components: {
+        ConnectWalletButton
     },
     data() {
         return {
@@ -43,12 +43,6 @@ export default {
             toastType: "success",
             isToast: false,
             error: false,
-
-
-            offlineSigner: null,
-            userAddress: "",
-            signingClient: null,
-            nonSigningClient: null
         };
     },
     methods: {
@@ -59,6 +53,13 @@ export default {
                 connection: 'google-oauth2',
                 redirectUri: `${window.location.origin}/auth/${AUTH_PROVIDERS.GOOGLE}?`,
             });
+        },
+        myEventListener(data) {
+            if (data.status == 'success') {
+                this.$router.push(`/auth/${data.provider}`)
+            } else {
+                throw new Error('Could not authenticate with provider ')
+            }
         },
         toast(msg, type = "success") {
             this.isToast = true;
@@ -79,59 +80,9 @@ export default {
 
             return JSON.parse(jsonPayload);
         },
-        async connectWallet() {
-            const requestedChainId = this.getOnChainIssuerConfig.chainId
-            if (!requestedChainId) {
-                throw new Error("ChainId not supported")
-            }
-
-            const chainConfig = SupportedChains.find(x => x.chainId == requestedChainId);
-            if (!chainConfig) {
-                throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
-            }
-
-            const chainId = chainConfig["chainId"];
-            // const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
-
-            if (!window.getOfflineSigner || !window.keplr) {
-                console.error("Please install keplr extension");
-            } else {
-                if (window.keplr.experimentalSuggestChain) {
-                    try {
-                        await window.keplr.experimentalSuggestChain(
-                            chainConfig
-                        );
-                    } catch {
-                        console.error("Failed to suggest the chain");
-                    }
-                } else {
-                    console.error("Please use the recent version of keplr extension");
-                }
-            }
-
-            await window.keplr.enable(chainId);
-            this.$router.push(`/auth/${AUTH_PROVIDERS.KEPLR}`)
-        }
     },
     async created() {
         const params = this.$route.query;
-        if (WidgetConfig.steps.onChainId) {
-            if (!params.chainId || !params.contractAddress) {
-                console.log(this.getOnChainIssuerConfig)
-                if (this.getOnChainIssuerConfig.chainId == '' || this.getOnChainIssuerConfig.contractAddress == '') {
-                    console.log('Error: 401')
-                    this.error = true
-                    this.toast('Incorrect configuration for onchainId', "error");
-                    return;
-                }
-            }
-
-            this.setOnChainIssuerConfig({
-                chainId: params.chainId || this.getOnChainIssuerConfig.chainId,
-                contractAddress: params.contractAddress || this.getOnChainIssuerConfig.contractAddress
-            })
-
-        }
 
         if (!params.kycAccessToken || !params.pr || !params.ssiAccessToken) {
             if (this.getCavachAccessToken != '' && this.getPresentationRequest != '' && this.getSSIAccessToken != '') {

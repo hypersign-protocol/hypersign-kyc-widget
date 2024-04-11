@@ -39,21 +39,21 @@
                     </div>
                 </div> -->
 
-                <div class="row" v-if="nft.metadata">
+                <div class="row">
                     <div class="col-md-3" style="text-align: left;">
                         <strong>Token Name</strong>
                     </div>
                     <div class="col-md-9" style="text-align: left;">
-                        <label class="form-label">{{ nft.metadata.name }}</label>
+                        <label class="form-label">{{ nft.metadata?.name ? nft.metadata.name : "-" }}</label>
                     </div>
                 </div>
 
-                <div class="row" v-if="nft.metadata">
+                <div class="row">
                     <div class="col-md-3" style="text-align: left;">
                         <strong>Token Symbol</strong>
                     </div>
                     <div class="col-md-9" style="text-align: left;">
-                        <label class="form-label">{{ nft.metadata.symbol }}</label>
+                        <label class="form-label">{{ nft.metadata?.symbol ? nft.metadata.symbol : '-' }}</label>
                     </div>
                 </div>
 
@@ -62,7 +62,8 @@
                         <strong>Author</strong>
                     </div>
                     <div class="col-md-9" style="text-align: left; word-break: break-all;">
-                        <label class="form-label">{{ cosmosConnection.userAddress }}</label>
+                        <label class="form-label">{{ cosmosConnection.userAddress ? cosmosConnection.userAddress : '-'
+                            }}</label>
                     </div>
                 </div>
 
@@ -71,10 +72,13 @@
         </div>
         <div class="container">
             <div class="row mt-2">
-                <div class="col-md-12">
-                    <button class="btn btn-outline-dark" @click="mint()">
-                        <i class="bi bi-hammer"></i> Mint
-                    </button>
+                <div class="col-md-12 center">
+                    <template v-if="!showConnectWallet">
+                        <button class="btn btn-outline-dark" @click="mint()">
+                            <i class="bi bi-hammer"></i> Mint
+                        </button>
+                    </template>
+                    <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" />
                 </div>
             </div>
         </div>
@@ -86,12 +90,15 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-
 import { constructSBTMintMsg, constructQuerySBTContractMetadata } from '../utils/cosmos-wallet-utils'
 import SupportedChains from '../utils/chains';
 import { smartContractExecuteRPC, smartContractQueryRPC } from '../utils/smartContract'
+import ConnectWalletButton from "../commons/ConnectWalletButton.vue";
 export default {
     name: 'OnChainId',
+    components: {
+        ConnectWalletButton
+    },
     computed: {
         ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig']),
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
@@ -106,6 +113,11 @@ export default {
                 throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
             }
             return chainConfig
+        },
+        showConnectWallet() {
+            if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0) {
+                return false
+            } else return true
         }
     },
     data() {
@@ -117,6 +129,7 @@ export default {
             isToast: false,
             error: false,
 
+
             nft: {
                 metadata: null,
             }
@@ -125,6 +138,11 @@ export default {
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", "registerUser"]),
+        async myEventListener(data) {
+            console.log('Inside myEventListener')
+            console.log(data)
+            this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.contractAddress)
+        },
         async getContractMetadata(activeSmartContractAddress) {
             const queryMetadataMsg = constructQuerySBTContractMetadata()
             const queryMetadataMsgResult = await smartContractQueryRPC(
