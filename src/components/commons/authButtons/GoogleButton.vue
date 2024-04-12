@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import webAuth from '../utils/auth0Connection';
+import webAuth from '../..//utils/auth0Connection';
 import { AUTH_PROVIDERS } from '@/config';
 
 export default {

@@ -90,10 +90,10 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-import { constructSBTMintMsg, constructQuerySBTContractMetadata } from '../utils/cosmos-wallet-utils'
-import SupportedChains from '../utils/chains';
-import { smartContractExecuteRPC, smartContractQueryRPC } from '../utils/smartContract'
-import ConnectWalletButton from "../commons/ConnectWalletButton.vue";
+import { constructSBTMintMsg, constructQuerySBTContractMetadata, smartContractExecuteRPC, smartContractQueryRPC } from '../../blockchains-metadata/cosmos/smartContract'
+import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
+import NibiruChainJson from '../../blockchains-metadata/cosmos/nibiru/chains'
+import ComdexChainJson from '../../blockchains-metadata/cosmos/comdex/chains'
 export default {
     name: 'OnChainId',
     components: {
@@ -103,12 +103,20 @@ export default {
         ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig']),
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
         getChainConfig() {
-            const requestedChainId = this.getOnChainIssuerConfig.chainId
-            if (!requestedChainId) {
-                throw new Error("ChainId not supported")
+            const { ecosystem, blockchain } = this.getOnChainIssuerConfig
+            let SupportedChains;
+            if (ecosystem === 'cosmos' && blockchain === 'comdex') {
+                SupportedChains = ComdexChainJson
+            } else if (ecosystem === 'cosmos' && blockchain === 'nibiru') {
+                SupportedChains = NibiruChainJson
             }
 
+            if (!SupportedChains) {
+                throw new Error('Ecosysem or blockchain is not supported')
+            }
+            const requestedChainId = this.getOnChainIssuerConfig.chainId
             const chainConfig = SupportedChains.find(x => x.chainId == requestedChainId);
+
             if (!chainConfig) {
                 throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
             }

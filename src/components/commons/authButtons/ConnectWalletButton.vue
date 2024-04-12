@@ -6,12 +6,9 @@
     </div>
 </template>
 <script>
-import WidgetConfig from '../utils/widget.config' // '../../utils/widget.config'
-import SupportedChains from '../utils/chains';
 import { mapGetters, mapMutations } from "vuex";
-import { getUserAddressFromOfflineSigner, createClient, createNonSigningClient } from '../utils/cosmos-wallet-utils'
+import { getUserAddressFromOfflineSigner, createClient, createNonSigningClient } from '../../../blockchains-metadata/cosmos/cosmos-wallet-utils'
 import { AUTH_PROVIDERS } from '@/config';
-
 export default {
     props: {
         isDisable: {
@@ -22,45 +19,24 @@ export default {
     computed: {
         ...mapGetters(['getOnChainIssuerConfig']),
     },
-    async created() {
-
-        const params = this.$route.query;
-        if (WidgetConfig.steps.onChainId) {
-            if (!params.chainId || !params.contractAddress) {
-                console.log(this.getOnChainIssuerConfig)
-                if (this.getOnChainIssuerConfig.chainId == '' || this.getOnChainIssuerConfig.contractAddress == '') {
-                    console.log('Error: 401')
-                    this.error = true
-                    this.toast('Incorrect configuration for onchainId', "error");
-                    return;
-                }
-            }
-
-            this.setOnChainIssuerConfig({
-                chainId: params.chainId || this.getOnChainIssuerConfig.chainId,
-                contractAddress: params.contractAddress || this.getOnChainIssuerConfig.contractAddress
-            })
-
-        }
-    },
-
 
     methods: {
         ...mapMutations(['setOnChainIssuerConfig', 'setCosmosConnection']),
         async connectWallet() {
-            const requestedChainId = this.getOnChainIssuerConfig.chainId
-            if (!requestedChainId) {
+            const { ecosystem, blockchain } = this.getOnChainIssuerConfig
+            const { default: SupportedChains } = await import(`../../../blockchains-metadata/${ecosystem}/${blockchain}/chains`)
 
-                throw new Error("ChainId not supported")
+            if (!SupportedChains) {
+                throw new Error('Ecosysem or blockchain is not supported')
             }
 
+            const requestedChainId = this.getOnChainIssuerConfig.chainId
             const chainConfig = SupportedChains.find(x => x.chainId == requestedChainId);
             if (!chainConfig) {
                 throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
             }
 
             const chainId = chainConfig["chainId"];
-            // const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
 
             if (!window.getOfflineSigner || !window.keplr) {
                 console.error("Please install keplr extension");
