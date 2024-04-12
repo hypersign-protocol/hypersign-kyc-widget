@@ -8,7 +8,7 @@
                 <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
 
-            <div class="center" v-else>
+            <div v-else>
                 <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
         </div>

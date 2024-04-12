@@ -1,23 +1,27 @@
 <template>
-    <div class="center" style="width: 100%;">
-        <div class="widget-card">
-            <p style="text-align: left;">
+    <div>
+        <div class="container widget-card">
+            <div class="row mb-2">
                 Enter 5 digits PIN:
-                <PIN @pinTakenEvent="getPin" />
-            </p>
-            <p style="text-align: left;">
+                <PIN @pinTakenEvent="getPin" inputType="password" />
+            </div>
+
+            <div class="row mb-2">
                 Confirm PIN:
                 <PIN @pinTakenEvent="getRenterPin" inputType="password" />
-            </p>
-            <p>
+            </div>
+
+            <div class="row mb-1">
                 <InfoMessage
-                    message="This PIN safeguards your personal data vault. It's your exclusive key to access and control your vault's contents, ensuring only you have entry. Remember, losing this PIN means losing access to your data" />
-            </p>
-            <p>
-                <button class="btn btn-outline-dark" @click="submit()">
-                    <i class="bi bi-safe"></i> Save
+                    message="This PIN is to secure your data vault. The ensures that you do not trust any one with your data, not event us. The PIN is used to access your encrypted data vault. Make sure you do not loose it." />
+            </div>
+        </div>
+        <div class="container">
+            <div class="row center mt-3">
+                <button class="btn btn-outline-dark" @click="submit()" style="width:50%">
+                    <i class="bi bi-safe"></i> Unlock Vault
                 </button>
-            </p>
+            </div>
         </div>
     </div>
 </template>

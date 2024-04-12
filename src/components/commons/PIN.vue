@@ -1,17 +1,17 @@
 <template>
-    <div>
-        <input :type="inputType" ref="input1" maxlength="1" v-model="pin1" @keyup.exact="gotoInput(2)"
+    <form class="row center">
+        <input class="col" :type="inputType" ref="input1" maxlength="1" v-model="pin1" @keyup.exact="gotoInput(2)"
             @keyup.exact.backspace="backToInput(1)" @focus="selectInput(1)">
-        <input :type="inputType" ref="input2" maxlength="1" v-model="pin2" @keyup.exact="gotoInput(3)"
+        <input class="col" :type="inputType" ref="input2" maxlength="1" v-model="pin2" @keyup.exact="gotoInput(3)"
             @keyup.exact.backspace="backToInput(1)" @focus="selectInput(2)">
-        <input :type="inputType" ref="input3" maxlength="1" v-model="pin3" @keyup.exact="gotoInput(4)"
+        <input class="col" :type="inputType" ref="input3" maxlength="1" v-model="pin3" @keyup.exact="gotoInput(4)"
             @keyup.exact.backspace="backToInput(2)" @focus="selectInput(3)">
-        <input :type="inputType" ref="input4" maxlength="1" v-model="pin4" @keyup.exact="gotoInput(5)"
+        <input class="col" :type="inputType" ref="input4" maxlength="1" v-model="pin4" @keyup.exact="gotoInput(5)"
             @keyup.exact.backspace="backToInput(3)" @focus="selectInput(4)">
-        <input :type="inputType" ref="input5" maxlength="1" v-model="pin5" @keyup.exact="done"
+        <input class="col" :type="inputType" ref="input5" maxlength="1" v-model="pin5" @keyup.exact="done"
             @keyup.exact.backspace="backToInput(4)" @focus="selectInput(5)">
         <!-- <div>{{ pins }}</div> -->
-    </div>
+    </form>
 </template>
 
 <script>

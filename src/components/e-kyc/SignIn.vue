@@ -4,7 +4,7 @@
         <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
         <div class="mt-4 p-4" style="width: 70%;margin:auto;">
             <div>
-                <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
+                <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" />
                 <GoogleButton :is-disable="error" />
                 <ConsentBox />
             </div>
@@ -17,7 +17,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-// import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
+import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
 import GoogleButton from '../commons/authButtons/GoogleButton.vue';
 import WidgetConfig from '../utils/widget.config'
 export default {
@@ -27,7 +27,7 @@ export default {
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     components: {
-        // ConnectWalletButton,
+        ConnectWalletButton,
         GoogleButton
     },
     data() {

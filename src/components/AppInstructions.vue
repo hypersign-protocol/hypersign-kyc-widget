@@ -114,9 +114,25 @@ export default {
           this.nextStepNumeber = userConsentStep.id
         }
       } else {
-        // next step: go to Id verifcaiton
-        const isVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
-        this.nextStepNumeber = isVerificationStep?.id
+
+        const isKYCConfigured = this.steps.find(step => step.stepName == 'IdDocs')
+        if (isKYCConfigured) {
+          // next step: go to Id verifcaiton
+          const isVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
+          this.nextStepNumeber = isVerificationStep?.id
+        } else {
+          // next step: check if on chain id is configured or not
+          const isOnChainIdConfigured = this.steps.find(step => step.stepName == 'OnChainId')
+          if (isOnChainIdConfigured) {
+            // if yes, then go to onchainId page
+            this.nextStepNumeber = isOnChainIdConfigured.id
+          } else {
+            // go to user consent page
+            const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+            this.nextStepNumeber = userConsentStep.id
+          }
+        }
+
       }
     } else {
       // next step: go to liveliness
