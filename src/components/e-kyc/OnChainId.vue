@@ -199,6 +199,10 @@ export default {
                     console.log(result)
                     this.toast('Successfully minted your identity')
                     this.isLoading = false
+
+                    // TODO: call server to udpate status
+                    this.nextStep();
+
                 }
 
             } catch (e) {

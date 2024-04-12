@@ -70,17 +70,15 @@ export default {
 
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
-            console.log(this.userVaultDataRaw.mnemonic)
         },
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
-            console.log(seed)
             const hypersignDID = new HypersignDID({ namespace: 'testnet' });
             const kp = await hypersignDID.generateKeys({ seed });
-            console.log({ ...kp })
+
 
             const didDocument = await hypersignDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
-            console.log({ ...didDocument })
+
 
             this.userVaultDataRaw.hypersign.did = didDocument.id;
             this.userVaultDataRaw.hypersign.didDoc = { ...didDocument }

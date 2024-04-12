@@ -88,7 +88,11 @@ export default {
             name: 'Government-issued ID',
             previous: steps.length - 1
           })
-        } else if (WidgetConfig.steps.onChainId) {
+        } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
+          console.log('Invalid widget configuration')
+        }
+
+        if (WidgetConfig.steps.onChainId) {
           steps.push({
             id: steps.length,
             isActive: false,
@@ -96,8 +100,6 @@ export default {
             name: 'On Chain Identity',
             previous: steps.length - 1
           })
-        } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
-          console.log('Invalid widget configuration')
         }
 
         steps.push({
@@ -114,7 +116,7 @@ export default {
           stepName: 'FinalResult',
           previous: steps.length - 1
         })
-
+        console.log(steps)
         this.setSteps(steps)
       } else {
         throw new Error('Invalid widget configuration, steps is required')

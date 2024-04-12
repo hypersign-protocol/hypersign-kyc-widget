@@ -101,23 +101,27 @@ export default {
     await this.checkIfCredentialAlreadyExistsInVault()
 
     if (this.hasLivelinessDone) {
-      const idDocVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
-      this.nextStepNumeber = idDocVerificationStep?.id
-    }
-
-    // TODO/  this is only for face recog setting and not for fece recog + doc verification
-    // TODO: better we should work on having a configuration file to dynamically set the configuration
-    const isOcrConfigured = this.steps.find(step => step.stepName == 'IdDocs')
-    if (isOcrConfigured) {
+      // next step: id verfcaiton
       if (this.hasKycDone) {
-        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-        this.nextStepNumeber = idDocVerificationStep.id
+        // next step: check if on chain id is configured or not
+        const isOnChainIdConfigured = this.steps.find(step => step.stepName == 'OnChainId')
+        if (isOnChainIdConfigured) {
+          // if yes, then go to onchainId page
+          this.nextStepNumeber = isOnChainIdConfigured.id
+        } else {
+          // go to user consent page
+          const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+          this.nextStepNumeber = userConsentStep.id
+        }
+      } else {
+        // next step: go to Id verifcaiton
+        const isVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
+        this.nextStepNumeber = isVerificationStep?.id
       }
     } else {
-      if (this.hasLivelinessDone && !this.hasKycDone) {
-        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-        this.nextStepNumeber = idDocVerificationStep.id
-      }
+      // next step: go to liveliness
+      const livelinessVerifcationStep = this.steps.find(step => step.stepName == 'Liveliness')
+      this.nextStepNumeber = livelinessVerifcationStep?.id
     }
 
   },
