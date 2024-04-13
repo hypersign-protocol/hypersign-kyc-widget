@@ -1,36 +1,37 @@
 <template>
-    <div class="card-body">
-        <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-        <PageHeading :header="'On-Chain ID'" :subHeader="'Mint your onchain identity'" />
+    <div>
+        <div class="card-body min-h-36">
+            <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+            <PageHeading :header="'On-Chain ID'" :subHeader="'Mint your onchain identity'" />
 
-        <div class="widget-card mt-4" style="width: 90%;margin:auto;">
-            <div class=" credential-row">
-                <div class="row mb-3 py-2">
-                    <div class="col-md-12">
-                        <div class="btn-group border border-dark rounded-pill" style="float: left;" role="group"
-                            id="userProfile">
-                            <button type="button" id="walletAddressDisconnect"
-                                class="btn btn-light border border-dark rounded-circle" title="Disconnect"
-                                :style="`background-color: ${getChainConfig.txExplorer.themeColor}`">
-                                <img :src="getChainConfig.currencies[0].coinImageUrl" height="30"></button>
-                            <button type="button" class="btn btn-light " style="width:200px; text-align: left;"
-                                id="userWalletAddressIp" disabled>
-                                <h5>{{ getChainConfig.chainName }}</h5>
-                            </button>
+            <div class="widget-card mt-4" style="width: 90%;margin:auto;">
+                <div class=" credential-row">
+                    <div class="row mb-3 py-2">
+                        <div class="col-md-12">
+                            <div class="btn-group border border-dark rounded-pill" style="float: left;" role="group"
+                                id="userProfile">
+                                <button type="button" id="walletAddressDisconnect"
+                                    class="btn btn-light border border-dark rounded-circle" title="Disconnect"
+                                    :style="`background-color: ${getChainConfig.txExplorer.themeColor}`">
+                                    <img :src="getChainConfig.currencies[0].coinImageUrl" height="30"></button>
+                                <button type="button" class="btn btn-light " style="width:200px; text-align: left;"
+                                    id="userWalletAddressIp" disabled>
+                                    <h5>{{ getChainConfig.chainName }}</h5>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-3" style="text-align: left;">
-                        <strong>Network Id</strong>
+                    <div class="row">
+                        <div class="col-md-3" style="text-align: left;">
+                            <strong>Network Id</strong>
+                        </div>
+                        <div class="col-md-9" style="text-align: left;">
+                            <label class="form-label"> {{ getChainConfig.chainId }}</label>
+                        </div>
                     </div>
-                    <div class="col-md-9" style="text-align: left;">
-                        <label class="form-label"> {{ getChainConfig.chainId }}</label>
-                    </div>
-                </div>
 
-                <!-- <div class="row">
+                    <!-- <div class="row">
                     <div class="col-md-3" style="text-align: left;">
                         <strong>Token Id</strong>
                     </div>
@@ -39,52 +40,52 @@
                     </div>
                 </div> -->
 
-                <div class="row">
-                    <div class="col-md-3" style="text-align: left;">
-                        <strong>Token Name</strong>
+                    <div class="row">
+                        <div class="col-md-3" style="text-align: left;">
+                            <strong>Token Name</strong>
+                        </div>
+                        <div class="col-md-9" style="text-align: left;">
+                            <label class="form-label">{{ nft.metadata?.name ? nft.metadata.name : "-" }}</label>
+                        </div>
                     </div>
-                    <div class="col-md-9" style="text-align: left;">
-                        <label class="form-label">{{ nft.metadata?.name ? nft.metadata.name : "-" }}</label>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-3" style="text-align: left;">
-                        <strong>Token Symbol</strong>
+                    <div class="row">
+                        <div class="col-md-3" style="text-align: left;">
+                            <strong>Token Symbol</strong>
+                        </div>
+                        <div class="col-md-9" style="text-align: left;">
+                            <label class="form-label">{{ nft.metadata?.symbol ? nft.metadata.symbol : '-' }}</label>
+                        </div>
                     </div>
-                    <div class="col-md-9" style="text-align: left;">
-                        <label class="form-label">{{ nft.metadata?.symbol ? nft.metadata.symbol : '-' }}</label>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-3" style="text-align: left;">
-                        <strong>Author</strong>
+                    <div class="row">
+                        <div class="col-md-3" style="text-align: left;">
+                            <strong>Author</strong>
+                        </div>
+                        <div class="col-md-9" style="text-align: left; word-break: break-all;">
+                            <label class="form-label">{{ cosmosConnection.userAddress ? cosmosConnection.userAddress :
+                                '-'
+                                }}</label>
+                        </div>
                     </div>
-                    <div class="col-md-9" style="text-align: left; word-break: break-all;">
-                        <label class="form-label">{{ cosmosConnection.userAddress ? cosmosConnection.userAddress : '-'
-                            }}</label>
-                    </div>
-                </div>
 
 
-            </div>
-        </div>
-        <div class="container">
-            <div class="row mt-2">
-                <div class="col-md-12 center">
-                    <template v-if="!showConnectWallet">
-                        <button class="btn btn-outline-dark" @click="mint()">
-                            <i class="bi bi-hammer"></i> Mint
-                        </button>
-                    </template>
-                    <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" />
                 </div>
             </div>
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-md-12 center">
+                        <template v-if="!showConnectWallet">
+                            <button class="btn btn-outline-dark" @click="mint()">
+                                <i class="bi bi-hammer"></i> Mint
+                            </button>
+                        </template>
+                        <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" />
+                    </div>
+                </div>
+            </div>
         </div>
-
-
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" class="bottom" />
+        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     </div>
 </template>
 

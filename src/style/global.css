@@ -41,3 +41,7 @@ h1{
     padding-left: 30px;
     margin-top: 5%;
 }
+
+.min-h-36{
+    min-height: 36rem;
+}

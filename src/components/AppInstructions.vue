@@ -38,7 +38,7 @@
 
 <template>
   <div>
-    <div class="card-body" style="min-height:700px;">
+    <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Hypersign KYC'"
         :subHeader="'Follow these simple instructions to complete your KYC request'" />
