@@ -43,37 +43,45 @@
       <PageHeading :header="'Hypersign KYC'"
         :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
-      <div class="container">
-        <div class="box">
-          <img class="opacity-80" src="../assets/page0.png" style="width: 100%" width="100%" />
-        </div>
-        <div class="box">
-          <div class="checkbox-container">
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasLivelinessDone"> -->
+      <div class="card widget-card" style="width: 70%; margin:auto;">
 
-              <i class="bi bi-check2-circle" v-if="hasLivelinessDone" style="font-size:xxx-large"></i>
-            </div>
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasKycDone"> -->
-
-              <i class="bi bi-check2-circle" v-if="hasKycDone" style="font-size:xxx-large"></i>
-            </div>
-
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled> -->
-            </div>
+        <div class="row mb-4">
+          <div class="col">
+            <AppInstructionStep stepNumber="1" stepTitle="Conduct liveliness check to prove you are a human"
+              :isDone="hasLivelinessDone" />
           </div>
         </div>
+
+        <div class="row mb-4">
+          <div class="col">
+            <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credentials"
+              :isDone="hasKycDone" />
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col">
+            <AppInstructionStep stepNumber="3" stepTitle="Mnit your on-chain Identity in your favorite blockchain"
+              :isDone="false" />
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col">
+            <AppInstructionStep stepNumber="4"
+              stepTitle="Generate proofs and provide consent of your data to be shared with the verifier app"
+              :isDone="false" />
+          </div>
+        </div>
+
+        <!-- <div class="d-flex" style="">
+          <div class="vr" style="height: 300px;"></div>
+        </div> -->
+
       </div>
 
 
-
-
-      <div class="">
+      <div class="mt-3">
         <!-- <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
           width="100%" /> -->
         <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
@@ -89,9 +97,11 @@
 
 <script type="text/javascript">
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
+import AppInstructionStep from "./commons/AppInstructionStep.vue";
 export default {
   name: "AppInstructions",
   components: {
+    AppInstructionStep
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
