@@ -5,7 +5,7 @@
             <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
             <div class="mt-4 p-4" style="width: 70%;margin:auto;">
                 <div>
-                    <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" />
+                    <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
                     <GoogleButton :is-disable="error" />
                     <ConsentBox />
                 </div>
@@ -17,7 +17,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
+// import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
 import GoogleButton from '../commons/authButtons/GoogleButton.vue';
 import WidgetConfig from '../utils/widget.config'
 export default {
@@ -27,7 +27,7 @@ export default {
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     components: {
-        ConnectWalletButton,
+        // ConnectWalletButton,
         GoogleButton
     },
     data() {
@@ -42,7 +42,7 @@ export default {
     },
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
-        ...mapActions(["getNewSession", "registerUser"]),
+        ...mapActions(["getNewSession", "registerUser", "getOnChainConfigByIdAction"]),
         myEventListener(data) {
             if (data.status == 'success') {
                 this.$router.push(`/auth/${data.provider}`)
@@ -70,45 +70,38 @@ export default {
 
             return JSON.parse(jsonPayload);
         },
-        validationForOnChainIdConfig() {
+        async validationForOnChainIdConfig() {
             const params = this.$route.query;
             if (WidgetConfig.steps.onChainId) {
 
-                if (!params.chainId || !params.contractAddress) {
+                if (!params.onChainConfigId) {
                     console.log(this.getOnChainIssuerConfig)
                     if (this.getOnChainIssuerConfig.chainId == '' || this.getOnChainIssuerConfig.ecosystem == '' || this.getOnChainIssuerConfig.blockchain == '' || this.getOnChainIssuerConfig.contractAddress == '') {
                         this.error = true
                         throw new Error('Incorrect configuration for onchainId')
                     }
+
+                    throw new Error('Incorrect configuration: OnChainConfig Id must be passed for onchainId step')
                 }
+
+                const onchainconfig = await this.getOnChainConfigByIdAction(params.onChainConfigId)
+                const { blockchainLabel, kycContractAddress, sbtContractAddress } = onchainconfig;
 
                 //chainID format: <ecosystem>:<blockchain>:<chainId>
                 //  e.g: cosmos:comdex:localnet-1
                 //  e.g: evm:polygon:134
                 //  e.g: cosmos:nibiru:nibi-localnet-1
-                const chainIdRequested = params.chainId;
-                const chainIdComponents = chainIdRequested.split(':')
+                const chainIdComponents = blockchainLabel.split(':')
                 // at 0: ecosystem
                 // at 1: blockchain
                 // at 2: chainId
-                if (chainIdComponents.length != 3) {
-                    const m = 'Invalid chainId, must be in format <ecosystem>:<blockchain>:<chainId>'
-                    throw new Error(m)
-                }
-
-                // TODO: more checks, 
-                // like ecosystem not supported
-                // like chain not supported 
-                if (chainIdComponents[2].indexOf(' ') > -1) {
-                    // space not supported in chainId / networkid
-                    throw new Error('Invalid chainId')
-                }
 
                 this.setOnChainIssuerConfig({
-                    ecosystem: chainIdComponents[0] || this.getOnChainIssuerConfig.ecosystem,
-                    blockchain: chainIdComponents[1] || this.getOnChainIssuerConfig.blockchain,
-                    chainId: chainIdComponents[2] || this.getOnChainIssuerConfig.chainId,
-                    contractAddress: params.contractAddress || this.getOnChainIssuerConfig.contractAddress
+                    ecosystem: chainIdComponents[0],
+                    blockchain: chainIdComponents[1],
+                    chainId: chainIdComponents[2],
+                    contractAddress: kycContractAddress,
+                    sbtContractAddress
                 })
 
             }

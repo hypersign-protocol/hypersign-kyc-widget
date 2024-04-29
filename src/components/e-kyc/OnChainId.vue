@@ -63,7 +63,7 @@
                             <strong>Author</strong>
                         </div>
                         <div class="col-md-9" style="text-align: left; word-break: break-all;">
-                            <label class="form-label">{{ cosmosConnection.userAddress ? cosmosConnection.userAddress :
+                            <label class="form-label">{{ connectedWalletAddress ? connectedWalletAddress :
                                 '-'
                                 }}</label>
                         </div>
@@ -80,7 +80,13 @@
                                 <i class="bi bi-hammer"></i> Mint
                             </button>
                         </template>
-                        <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" />
+                        <!-- <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" /> -->
+
+
+                        <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem"
+                            :blockchain="this.getOnChainIssuerConfig.blockchain"
+                            :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener"
+                            style="width:50%" v-if="showConnectWallet" />
                     </div>
                 </div>
             </div>
@@ -91,10 +97,13 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-import { constructSBTMintMsg, constructQuerySBTContractMetadata, smartContractExecuteRPC, smartContractQueryRPC } from '../../blockchains-metadata/cosmos/smartContract'
+import { smartContractExecuteRPC } from '../../blockchains-metadata/cosmos/contract/execute'
+import { smartContractQueryRPC } from '../../blockchains-metadata/cosmos/contract/query'
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
-import NibiruChainJson from '../../blockchains-metadata/cosmos/nibiru/chains'
-import ComdexChainJson from '../../blockchains-metadata/cosmos/comdex/chains'
+import NibiruChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/chains'
+import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
+import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
+import { createNonSigningClient, getCosmosChainConfig } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
 export default {
     name: 'OnChainId',
     components: {
@@ -108,7 +117,7 @@ export default {
             let SupportedChains;
             if (ecosystem === 'cosmos' && blockchain === 'comdex') {
                 SupportedChains = ComdexChainJson
-            } else if (ecosystem === 'cosmos' && blockchain === 'nibiru') {
+            } else if (ecosystem === 'cosmos' && blockchain === 'nibi') {
                 SupportedChains = NibiruChainJson
             }
 
@@ -124,7 +133,7 @@ export default {
             return chainConfig
         },
         showConnectWallet() {
-            if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0) {
+            if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0 && this.connectedWalletAddress != '') {
                 return false
             } else return true
         }
@@ -137,8 +146,7 @@ export default {
             toastType: "success",
             isToast: false,
             error: false,
-
-
+            connectedWalletAddress: "",
             nft: {
                 metadata: null,
             }
@@ -148,16 +156,24 @@ export default {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", "registerUser"]),
         async myEventListener(data) {
-            console.log('Inside myEventListener')
-            console.log(data)
-            this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.contractAddress)
+            this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
+            this.connectedWalletAddress = data.user.walletAddress
         },
         async getContractMetadata(activeSmartContractAddress) {
-            const queryMetadataMsg = constructQuerySBTContractMetadata()
-            const queryMetadataMsgResult = await smartContractQueryRPC(
-                this.cosmosConnection.signingClient,
-                activeSmartContractAddress, queryMetadataMsg);
+            let client = null;
+            if (this.cosmosConnection.nonSigningClient) {
+                client = this.cosmosConnection.nonSigningClient
+            } else {
+                if (!this.getOnChainIssuerConfig) {
+                    throw new Error('Invalid configuration, please reload the widget and try again')
+                }
+                const bclabel = `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
+                const chainConfig = getCosmosChainConfig(bclabel)
+                client = await createNonSigningClient(chainConfig['rpc']);
+            }
 
+            const queryMetadataMsg = constructQuerySBTContractMetadata()
+            const queryMetadataMsgResult = await smartContractQueryRPC(client, activeSmartContractAddress, queryMetadataMsg);
             return queryMetadataMsgResult
         },
         toast(msg, type = "success") {
@@ -177,11 +193,11 @@ export default {
                 const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
                 const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                console.log(this.cosmosConnection.userAddress,
+                console.log(this.connectedWalletAddress,
                     sbtTokenId,
                     sbtTokenUri)
-                const smartContractMsg = constructSBTMintMsg(
-                    this.cosmosConnection.userAddress,
+                const smartContractMsg = constructKYCSBTMintMsg(
+                    this.connectedWalletAddress,
                     sbtTokenId,
                     sbtTokenUri);
 
@@ -192,7 +208,7 @@ export default {
                 const result = await smartContractExecuteRPC(
                     this.cosmosConnection.signingClient,
                     chainCoinDenom,
-                    this.cosmosConnection.userAddress,
+                    this.connectedWalletAddress,
                     this.getOnChainIssuerConfig.contractAddress,
                     smartContractMsg);
 
@@ -202,6 +218,7 @@ export default {
                     this.isLoading = false
 
                     // TODO: call server to udpate status
+                    // Implement feature in caach server to capture user's miniing step
                     this.nextStep();
 
                 }
@@ -216,7 +233,7 @@ export default {
 
     },
     async mounted() {
-        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.contractAddress)
+        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
     }
 
 

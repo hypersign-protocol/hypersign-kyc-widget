@@ -2,13 +2,19 @@
     <div>
         <button type="button" class="btn btn-outline-dark btn-lg mb-2" style="width: 100%;" @click="connectWallet()"
             :disabled="isDisable">
-            <i class="bi bi-currency-bitcoin"></i> Connect Keplr</button>
+            <img :src="selectedBlockchainLogo" width="20" height="20"> Connect Keplr</button>
     </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from "vuex";
-import { getUserAddressFromOfflineSigner, createClient, createNonSigningClient } from '../../../blockchains-metadata/cosmos/cosmos-wallet-utils'
-import { AUTH_PROVIDERS } from '@/config';
+import { mapMutations, mapGetters } from "vuex";
+import { getUserAddressFromOfflineSigner, createClient, createNonSigningClient } from '../../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { getCosmosCoinLogo } from '../../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+export const AUTH_PROVIDERS = Object.freeze({
+    GOOGLE: 'google',
+    KEPLR: 'keplr',
+    METAMASK: 'metamask',
+})
+
 export default {
     props: {
         isDisable: {
@@ -18,13 +24,17 @@ export default {
     },
     computed: {
         ...mapGetters(['getOnChainIssuerConfig']),
-    },
 
+        selectedBlockchainLogo() {
+            return getCosmosCoinLogo(`${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`)
+        }
+    },
     methods: {
         ...mapMutations(['setOnChainIssuerConfig', 'setCosmosConnection']),
+
         async connectWallet() {
             const { ecosystem, blockchain } = this.getOnChainIssuerConfig
-            const { default: SupportedChains } = await import(`../../../blockchains-metadata/${ecosystem}/${blockchain}/chains`)
+            const { default: SupportedChains } = await import(`../../../blockchains-metadata/${ecosystem}/wallet/${blockchain}/chains`)
 
             if (!SupportedChains) {
                 throw new Error('Ecosysem or blockchain is not supported')
@@ -69,9 +79,13 @@ export default {
                     signingClient,
                     nonSigningClient,
                     offlineSigner,
-                    userAddress,
-                    chainId,
                 })
+                // this.setBlockchainUser({
+                //     walletAddress: userAddress,
+                //     chainId,
+                //     ecosystem: this.ecosystem,
+                //     blockchain: this.blockchain
+                // })
 
                 this.$emit('authEvent', {
                     provider: AUTH_PROVIDERS.KEPLR,

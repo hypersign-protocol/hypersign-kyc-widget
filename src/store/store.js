@@ -152,6 +152,9 @@ export default new Vuex.Store({
                 return null
             }
         },
+        // getOnChainConfigById: () => {
+
+        // },
     },
     mutations: {
         setOnChainIssuerConfig: (state, payload) => {
@@ -490,8 +493,6 @@ export default new Vuex.Store({
         },
 
 
-
-
         // -----------------------------------------------------------------e-kyc
         getNewSession: ({ commit, dispatch, getters }, payload) => {
             /* eslint-disable */
@@ -527,6 +528,47 @@ export default new Vuex.Store({
                             if (json) {
                                 commit('setSession', json.sessionId);
                             }
+                            resolve(json)
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Error while fetching session  ${e}`))
+                    })
+            })
+        },
+
+        getOnChainConfigByIdAction: ({ commit, dispatch, getters }, payload) => {
+            /* eslint-disable */
+            return new Promise(async (resolve, reject) => {
+                if (!payload) {
+                    throw new Error('OnChainConfig id must be provided')
+                }
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/onchainkyc-config/${payload}`;
+
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        console.log(json)
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            reject(json.message)
+                        } else if (json.error) {
+                            reject(json)
+                        } else {
                             resolve(json)
                         }
                     }).catch((e) => {
@@ -675,7 +717,7 @@ export default new Vuex.Store({
         },
 
 
-        // ----------------------------------------------------------------
+        // ---------------------------------------------------------------- EDV (auth server)
         registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
                 const url = 'https://authserver.hypersign.id/hs/api/v2/register'
@@ -919,7 +961,7 @@ export default new Vuex.Store({
             })
         },
 
-
+        // ------------- Other utilities --------------------------------
         async getClientIp() {
             try {
                 const resp = await fetch('https://api.ipify.org?format=json')
