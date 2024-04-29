@@ -12,7 +12,6 @@ import { mapMutations } from 'vuex';
 export default {
   name: "App",
   components: {
-    // MainPage,
   },
   methods: {
     ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers", "setIdDocumentLicenseKey"]),
@@ -23,6 +22,15 @@ export default {
       // Steps
       if (Object.keys(WidgetConfig.steps).length > 0) {
         let steps = [
+
+
+          // {
+          //   id: 0,
+          //   isActive: true,
+          //   stepName: 'AppInstructions',
+          //   previous: 1
+          // },
+
           {
             id: 0,
             isActive: true,
@@ -42,6 +50,17 @@ export default {
             previous: 1
           },
         ]
+
+        // if (WidgetConfig.steps.onChainId) {
+        //   steps.push({
+        //     id: steps.length,
+        //     isActive: false,
+        //     stepName: 'OnChainId',
+        //     name: 'On Chain Identity',
+        //     previous: steps.length - 1
+        //   })
+        // }
+
 
         if (WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
           // if faceRecog and ocr enabled

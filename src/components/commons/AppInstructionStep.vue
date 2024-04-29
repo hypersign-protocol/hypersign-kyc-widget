@@ -24,8 +24,8 @@
 export default {
     props: {
         stepNumber: {
-            type: Number,
-            default: 0
+            type: String,
+            default: "0"
         },
         stepTitle: {
             type: String,
