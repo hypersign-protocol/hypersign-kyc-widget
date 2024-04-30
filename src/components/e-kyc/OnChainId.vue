@@ -214,16 +214,17 @@ export default {
                 if (result) {
                     console.log(result)
                     this.toast('Successfully minted your identity')
-                    this.isLoading = false
+
 
                     // TODO: call server to udpate status
-                    this.verifySbtMint({
+                    await this.verifySbtMint({
                         blockchainLabel: this.blockchainLabel,
                         sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
                         ownerWalletAddress: this.connectedWalletAddress,
                         tokenId: sbtTokenId,
                         transactionHash: result.transactionHash
                     });
+                    this.isLoading = false
                     // Implement feature in caach server to capture user's miniing step
                     this.nextStep();
 

@@ -722,7 +722,7 @@ export default new Vuex.Store({
         },
 
 
-        verifySbtMint: ({ getters, dispatch }, payload) => {
+        verifySbtMint: ({ commit, getters, dispatch }, payload) => {
             return new Promise((resolve, reject) => {
 
                 const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
@@ -753,7 +753,7 @@ export default new Vuex.Store({
                             return reject(json)
                         } else {
                             if (json.credentials && json.credentials.length > 0) {
-
+                                commit('setSbtMintDone', true);
                                 json.credentials.forEach(credential => {
                                     console.log('Updating each credentila in vault credential id ' + credential.id)
                                     dispatch('updateVaultCredentials', credential);
