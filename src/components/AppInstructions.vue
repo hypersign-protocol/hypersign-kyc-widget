@@ -62,7 +62,7 @@
         <div class="row mb-4">
           <div class="col">
             <AppInstructionStep stepNumber="3" stepTitle="Mnit your on-chain Identity in your favorite blockchain"
-              :isDone="false" />
+              :isDone="hasSbtMintDone" />
           </div>
         </div>
 
@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'steps'])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'steps', 'hasSbtMintDone'])
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
@@ -117,7 +117,14 @@ export default {
         const isOnChainIdConfigured = this.steps.find(step => step.stepName == 'OnChainId')
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
-          this.nextStepNumeber = isOnChainIdConfigured.id
+          if (!this.hasSbtMintDone) {
+            // if minting already done..
+            this.nextStepNumeber = isOnChainIdConfigured.id
+          } else {
+            // go to user consent page
+            const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+            this.nextStepNumeber = userConsentStep.id
+          }
         } else {
           // go to user consent page
           const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')

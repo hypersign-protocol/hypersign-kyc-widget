@@ -46,6 +46,7 @@
                                 v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                             <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+                            <i class="bi bi-person-badge" v-if="eachCredential.type[1] == 'SBTCredential'"></i>
                         </div>
                         <div class="col-10 credential-row-type">
                             {{ eachCredential.type[1] }}
@@ -58,10 +59,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <p>
-                    <InfoMessage
-                        message="Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups. Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups." />
-                </p> -->
+
                 </div>
             </div>
             <p style="margin-top: 1%">

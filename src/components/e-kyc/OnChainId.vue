@@ -136,6 +136,9 @@ export default {
             if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0 && this.connectedWalletAddress != '') {
                 return false
             } else return true
+        },
+        blockchainLabel() {
+            return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
         }
     },
     data() {
@@ -154,7 +157,7 @@ export default {
     },
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
-        ...mapActions(["getNewSession", "registerUser"]),
+        ...mapActions(["getNewSession", "registerUser", 'verifySbtMint']),
         async myEventListener(data) {
             this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
             this.connectedWalletAddress = data.user.walletAddress
@@ -167,8 +170,7 @@ export default {
                 if (!this.getOnChainIssuerConfig) {
                     throw new Error('Invalid configuration, please reload the widget and try again')
                 }
-                const bclabel = `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
-                const chainConfig = getCosmosChainConfig(bclabel)
+                const chainConfig = getCosmosChainConfig(this.blockchainLabel)
                 client = await createNonSigningClient(chainConfig['rpc']);
             }
 
@@ -193,9 +195,6 @@ export default {
                 const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
                 const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                console.log(this.connectedWalletAddress,
-                    sbtTokenId,
-                    sbtTokenUri)
                 const smartContractMsg = constructKYCSBTMintMsg(
                     this.connectedWalletAddress,
                     sbtTokenId,
@@ -218,6 +217,13 @@ export default {
                     this.isLoading = false
 
                     // TODO: call server to udpate status
+                    this.verifySbtMint({
+                        blockchainLabel: this.blockchainLabel,
+                        sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
+                        ownerWalletAddress: this.connectedWalletAddress,
+                        tokenId: sbtTokenId,
+                        transactionHash: result.transactionHash
+                    });
                     // Implement feature in caach server to capture user's miniing step
                     this.nextStep();
 

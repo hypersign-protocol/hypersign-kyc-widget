@@ -18,6 +18,7 @@ export default new Vuex.Store({
         //-----------------------------------------------------------------e-kyc
         hasLivelinessDone: false,
         hasKycDone: false,
+        hasSbtMintDone: false,
         kycExtractedData: {},
         finalResults: false,
         livelinessResult: {},
@@ -40,6 +41,7 @@ export default new Vuex.Store({
         cosmosConnection: {
 
         },
+
     },
     getters: {
         getActiveStep: (state) => {
@@ -213,6 +215,9 @@ export default new Vuex.Store({
         //-----------------------------------------------------------------e-kyc
         setLivelinessDone(state, payload) {
             state.hasLivelinessDone = payload;
+        },
+        setSbtMintDone(state, payload) {
+            state.hasSbtMintDone = payload;
         },
         setKycDone(state, payload) {
             state.hasKycDone = payload;
@@ -717,6 +722,54 @@ export default new Vuex.Store({
         },
 
 
+        verifySbtMint: ({ getters, dispatch }, payload) => {
+            return new Promise((resolve, reject) => {
+
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:8080/",
+                    "content-type": "application/json",
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                return fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        sessionId: getters.getSession,
+                        userDID: getters.getUserDID,
+                        sbtData: {
+                            ...payload
+                        }
+                    })
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            return reject(json.message)
+                        } else if (json.error) {
+                            return reject(json)
+                        } else {
+                            if (json.credentials && json.credentials.length > 0) {
+
+                                json.credentials.forEach(credential => {
+                                    console.log('Updating each credentila in vault credential id ' + credential.id)
+                                    dispatch('updateVaultCredentials', credential);
+                                })
+
+                                return resolve(json)
+                            }
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Verifying the sbt mint result  ${e}`))
+                    })
+            })
+        },
+
+
+
         // ---------------------------------------------------------------- EDV (auth server)
         registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
@@ -957,6 +1010,12 @@ export default new Vuex.Store({
                     if (schema === 'PassportCredential') {
                         commit('setKycDone', true)
                     }
+
+                    if (schema === 'SBTCredential') {
+                        commit('setSbtMintDone', true)
+                    }
+                } else {
+                    console.log('Credential not found for schema ' + schemaId)
                 }
             })
         },
