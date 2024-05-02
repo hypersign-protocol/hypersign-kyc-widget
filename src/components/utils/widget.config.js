@@ -4,6 +4,7 @@ export default {
         faceRecog: true,
         idOcr: true,
         onChainId: true,
+        sbtMint: true,
     },
     schemaIds: {
         PersonhoodCredential: {
