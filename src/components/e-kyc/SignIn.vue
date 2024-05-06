@@ -194,10 +194,9 @@ export default {
         validationForAccessTokens() {
             const params = this.$route.query;
 
-
             if (!params.kycAccessToken || !params.ssiAccessToken) {
                 if (this.getCavachAccessToken != '' && this.getSSIAccessToken != '') {
-                    throw new Error('Error initalization of widget!')
+                    throw new Error('Error initalization of widget, invalid token!')
                 }
             }
 

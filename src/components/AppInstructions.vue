@@ -106,7 +106,7 @@ export default {
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone'])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"])
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()

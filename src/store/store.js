@@ -13,66 +13,7 @@ export default new Vuex.Store({
         aadharData: {},
         authorization: null,
         steps: [
-            {
-                id: 0,
-                isActive: true,
-                stepName: 'SignIn',
-                previous: 0,
-                isEnabled: true
-            },
-            {
-                id: 1,
-                isActive: false,
-                stepName: 'VaultPIN',
-                previous: 0,
-                isEnabled: true
-            },
-            {
-                id: 2,
-                isActive: false,
-                stepName: 'AppInstructions',
-                previous: 1,
-                isEnabled: true
-            },
-            {
-                id: 3,
-                isActive: false,
-                stepName: 'LiveLiness2',
-                name: 'Facial Recognition',
-                previous: 2,
-                isEnabled: true
-            },
-            {
-                id: 4,
-                isActive: false,
-                stepName: 'IdDocs2',
-                name: 'Government-issued ID',
-                previous: 3,
-                isEnabled: false,
-            },
-            {
-                id: 5,
-                isActive: false,
-                stepName: 'OnChainId',
-                name: 'On Chain Identity',
-                previous: 4,
-                isEnabled: false,
-            },
-            {
-                id: 6,
-                isActive: false,
-                stepName: 'UserConsent',
-                name: 'Provide User Consent',
-                previous: 5,
-                isEnabled: true,
-            },
-            {
-                id: 7,
-                isActive: false,
-                stepName: 'FinalResult',
-                previous: 6,
-                isEnabled: true,
-            }
+
         ],
         // Trusted issuer and schemas
         schemaIds: {},
