@@ -100,9 +100,9 @@ export default {
 
                 try {
                     this.isLoading = true;
-                    this.toast('Verifying your selfie... nextStep 4', "warning");
+                    this.toast('Verifying your selfie...', "warning");
                     await this.verifyLiveliness()
-                    await this.$store.commit('nextStep')
+                    this.nextStep()
                     this.isLoading = false;
                 } catch (e) {
                     this.toast(e.message, "error");

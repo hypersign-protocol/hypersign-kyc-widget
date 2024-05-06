@@ -180,8 +180,14 @@ export default new Vuex.Store({
             state.steps = payload
         },
         setAStep: (state, payload) => {
-            const stepIndex = state.steps.findIndex(step => step.id === payload.id)
-            state.steps[stepIndex] = { ...payload };
+            let items = [...state.steps]; // create a new copy
+            const stepIndex = items.findIndex(step => step.id === payload.id)
+
+            // mutate it 
+            items[stepIndex] = { ...payload }
+
+            // return the new copy
+            state.steps = items;
         },
         setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
             state.schemaIds = schemaIds
