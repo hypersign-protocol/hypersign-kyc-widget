@@ -45,28 +45,28 @@
 
       <div class="card widget-card" style="width: 70%; margin:auto;">
 
-        <div class="row mb-4">
+        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="1" stepTitle="Conduct liveliness check to prove you are a human"
               :isDone="hasLivelinessDone" />
           </div>
         </div>
 
-        <div class="row mb-4">
+        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credentials"
               :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div class="row mb-4">
+        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="3" stepTitle="Mnit your on-chain Identity in your favorite blockchain"
               :isDone="hasSbtMintDone" />
           </div>
         </div>
 
-        <div class="row mb-4">
+        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="4"
               stepTitle="Generate proofs and provide consent of your data to be shared with the verifier app"
@@ -106,7 +106,19 @@ export default {
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"]),
+    checkIfOncainIdIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+    },
+    checkIfIdDocumentIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+    },
+    checkIfUserConsentIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent).isEnabled
+    },
+    checkIfLivelinessIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+    }
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
@@ -161,6 +173,7 @@ export default {
   },
   data() {
     return {
+      stepNumber: 0,
       isLoading: false,
       fullPage: true,
       toastMessage: "",
@@ -172,6 +185,10 @@ export default {
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
     ...mapActions(["getNewSession", "registerUser", "checkIfCredentialAlreadyExistsInVault"]),
+    incrementStep() {
+      this.stepNumber = this.stepNumber + 1;
+      return this.stepNumber
+    },
     toast(msg, type = "success") {
       this.isToast = true;
       this.toastMessage = msg;

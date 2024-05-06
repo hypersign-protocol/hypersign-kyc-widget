@@ -59,7 +59,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <p style="margin-top: 1%">
@@ -74,7 +73,7 @@
 
 
 <script type="text/javascript">
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapActions, mapState } from 'vuex';
 import { HypersignVerifiablePresentation } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '@/config'
 export default {
@@ -93,6 +92,7 @@ export default {
         this.hypersignVP = new HypersignVerifiablePresentation();
     },
     computed: {
+        ...mapState(['steps']),
         ...mapGetters(['getVaultDataCredentials', 'getUserDID', 'getPresentationRequestParsed']),
         credentailsTypesInWallet() {
             const types = this.getVaultDataCredentials.map(x => x.type)
@@ -101,6 +101,18 @@ export default {
             const uniqueTypesWithoutDefaultTypes = uniqueTypes.filter(x => x != 'VerifiableCredential')
             return uniqueTypesWithoutDefaultTypes
         },
+        checkIfOncainIdIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+        },
+        checkIfIdDocumentIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+        },
+        checkIfUserConsentIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent).isEnabled
+        },
+        checkIfLivelinessIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+        }
     },
     methods: {
         ...mapActions(['verifyResult']),
