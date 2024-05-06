@@ -76,8 +76,9 @@
 <script type="text/javascript">
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { HypersignVerifiablePresentation } from 'hs-ssi-sdk';
+import { STEP_NAMES } from '@/config'
 export default {
-    name: 'UserConsent',
+    name: STEP_NAMES.UserConsent,
     data() {
         return {
             isLoading: false,

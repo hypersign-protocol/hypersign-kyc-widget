@@ -4,9 +4,9 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphi-widget-web";
 import { mapActions, mapMutations, } from "vuex";
-
+import { STEP_NAMES } from "@/config";
 export default {
-    name: 'LiveLiness2',
+    name: STEP_NAMES.LiveLiness,
     components: {
     },
     data: function () {

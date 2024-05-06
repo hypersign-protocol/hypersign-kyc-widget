@@ -13,3 +13,15 @@ export const AUTH_PROVIDERS = Object.freeze({
     KEPLR: 'keplr',
     METAMASK: 'metamask',
 })
+
+
+export const STEP_NAMES = Object.freeze({
+    SignIn: "SignIn",
+    VaultPIN: "VaultPIN",
+    AppInstructions: "AppInstructions",
+    LiveLiness: "LiveLiness3",
+    IdDocs: "IdDocs4",
+    OnChainId: "OnChainId4",
+    UserConsent: "UserConsent",
+    FinalResult: "FinalResult"
+})

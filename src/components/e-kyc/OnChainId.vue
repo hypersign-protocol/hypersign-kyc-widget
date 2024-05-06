@@ -104,8 +104,9 @@ import NibiruChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/chain
 import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
 import { createNonSigningClient, getCosmosChainConfig } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { STEP_NAMES } from "@/config";
 export default {
-    name: 'OnChainId',
+    name: STEP_NAMES.OnChainId,
     components: {
         ConnectWalletButton
     },

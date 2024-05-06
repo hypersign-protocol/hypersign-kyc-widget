@@ -2,8 +2,9 @@
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import PreviewData from '../commons/Preview.vue'
+import { STEP_NAMES } from '@/config'
 export default {
-    name: 'IdDocs2',
+    name: STEP_NAMES.IdDocs,
     components: {
         PreviewData
     },

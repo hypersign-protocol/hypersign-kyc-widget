@@ -20,8 +20,9 @@ import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 // import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
 import GoogleButton from '../commons/authButtons/GoogleButton.vue';
 // import WidgetConfig from '../utils/widget.config'
+import { STEP_NAMES } from '@/config'
 export default {
-    name: 'SignIn',
+    name: STEP_NAMES.SignIn,
     computed: {
         ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
         ...mapState(['hasLivelinessDone', 'hasKycDone'])

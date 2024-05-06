@@ -17,15 +17,15 @@ import AppClickPic from "./AppClickPic.vue";
 import AppFinalSuccess from "./AppFinalSuccess.vue";
 import AppFinalFail from "./AppFinalFail.vue";
 import AppOtp from "./AppOtp.vue";
-import LiveLiness2 from './e-kyc/Liveliness.vue';
-import IdDocs2 from './e-kyc/IdentityDocuments.vue'
+import LiveLiness3 from './e-kyc/Liveliness.vue';
+import IdDocs4 from './e-kyc/IdentityDocuments.vue'
 
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
 import SignIn from "./e-kyc/SignIn.vue"
 import VaultPIN from './e-kyc/VaultPIN.vue'
 import UserConsent from './e-kyc/UserConsent.vue'
-import OnChainId from "./e-kyc/OnChainId.vue";
+import OnChainId4 from "./e-kyc/OnChainId.vue";
 
 export default {
   name: "HelloWorld",
@@ -36,13 +36,13 @@ export default {
     AppFinalSuccess,
     AppFinalFail,
     AppOtp,
-    LiveLiness2,
-    IdDocs2,
+    LiveLiness3,
+    IdDocs4,
     FinalResult,
     SignIn,
     VaultPIN,
     UserConsent,
-    OnChainId
+    OnChainId4
   },
   computed: {
     ...mapGetters(["getActiveStep"]),

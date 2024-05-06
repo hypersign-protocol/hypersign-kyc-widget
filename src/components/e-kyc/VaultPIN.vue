@@ -23,11 +23,12 @@ import RegisterPIN from '../commons/RegisterPIN.vue';
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
+import { STEP_NAMES } from '../../config';
 export default {
-    name: "VaultPin",
+    name: STEP_NAMES.VaultPIN,
     computed: {
         ...mapState(['ifNewUser', 'steps']),
-        ...mapGetters(['getWidgetConfigFromDb'])
+        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps"])
     },
     components: {
         AskPIN,
@@ -35,15 +36,15 @@ export default {
     },
     async created() {
         if (this.getWidgetConfigFromDb.faceRecog) {
-            this.enableAstep('Liveliness')
+            this.enableAstep(STEP_NAMES.LiveLiness)
         }
 
         if (this.getWidgetConfigFromDb.idOcr.enabled) {
-            this.enableAstep('IdDocs')
+            this.enableAstep(STEP_NAMES.IdDocs)
         }
 
         if (this.getWidgetConfigFromDb.onChainId.enabled) {
-            this.enableAstep('OnChainId')
+            this.enableAstep(STEP_NAMES.OnChainId)
         }
     },
     methods: {

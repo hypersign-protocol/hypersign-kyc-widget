@@ -98,6 +98,7 @@
 <script type="text/javascript">
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 import AppInstructionStep from "./commons/AppInstructionStep.vue";
+import { STEP_NAMES } from "@/config";
 export default {
   name: "AppInstructions",
   components: {
@@ -105,7 +106,7 @@ export default {
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'steps', 'hasSbtMintDone'])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone'])
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
@@ -114,7 +115,7 @@ export default {
       // next step: id verfcaiton
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
-        const isOnChainIdConfigured = this.steps.find(step => step.stepName == 'OnChainId')
+        const isOnChainIdConfigured = this.steps.find(step => step.stepName == STEP_NAMES.OnChainId)
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
           if (!this.hasSbtMintDone) {
@@ -122,30 +123,30 @@ export default {
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+            const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
             this.nextStepNumeber = userConsentStep.id
           }
         } else {
           // go to user consent page
-          const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+          const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
           this.nextStepNumeber = userConsentStep.id
         }
       } else {
 
-        const isKYCConfigured = this.steps.find(step => step.stepName == 'IdDocs')
+        const isKYCConfigured = this.steps.find(step => step.stepName == STEP_NAMES.IdDocs)
         if (isKYCConfigured) {
           // next step: go to Id verifcaiton
-          const isVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
+          const isVerificationStep = this.steps.find(step => step.stepName == STEP_NAMES.IdDocs)
           this.nextStepNumeber = isVerificationStep?.id
         } else {
           // next step: check if on chain id is configured or not
-          const isOnChainIdConfigured = this.steps.find(step => step.stepName == 'OnChainId')
+          const isOnChainIdConfigured = this.steps.find(step => step.stepName == STEP_NAMES.OnChainId)
           if (isOnChainIdConfigured) {
             // if yes, then go to onchainId page
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(step => step.stepName == 'UserConsent')
+            const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
             this.nextStepNumeber = userConsentStep.id
           }
         }
@@ -153,7 +154,7 @@ export default {
       }
     } else {
       // next step: go to liveliness
-      const livelinessVerifcationStep = this.steps.find(step => step.stepName == 'Liveliness')
+      const livelinessVerifcationStep = this.steps.find(step => step.stepName == STEP_NAMES.LiveLiness)
       this.nextStepNumeber = livelinessVerifcationStep?.id
     }
 
