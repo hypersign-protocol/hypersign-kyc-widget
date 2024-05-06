@@ -12,7 +12,68 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
-        steps: [],
+        steps: [
+            {
+                id: 0,
+                isActive: true,
+                stepName: 'SignIn',
+                previous: 0,
+                isEnabled: true
+            },
+            {
+                id: 1,
+                isActive: false,
+                stepName: 'VaultPIN',
+                previous: 0,
+                isEnabled: true
+            },
+            {
+                id: 2,
+                isActive: false,
+                stepName: 'AppInstructions',
+                previous: 1,
+                isEnabled: true
+            },
+            {
+                id: 3,
+                isActive: false,
+                stepName: 'Liveliness',
+                name: 'Facial Recognition',
+                previous: 2,
+                isEnabled: true
+            },
+            {
+                id: 4,
+                isActive: false,
+                stepName: 'IdDocs',
+                name: 'Government-issued ID',
+                previous: 3,
+                isEnabled: false,
+            },
+            {
+                id: 5,
+                isActive: false,
+                stepName: 'OnChainId',
+                name: 'On Chain Identity',
+                previous: 4,
+                isEnabled: false,
+            },
+            {
+                id: 6,
+                isActive: false,
+                stepName: 'UserConsent',
+                name: 'Provide User Consent',
+                previous: 5,
+                isEnabled: true,
+            },
+            {
+                id: 7,
+                isActive: false,
+                stepName: 'FinalResult',
+                previous: 6,
+                isEnabled: true,
+            }
+        ],
         // Trusted issuer and schemas
         schemaIds: {},
         //-----------------------------------------------------------------e-kyc
@@ -38,22 +99,35 @@ export default new Vuex.Store({
         userPresentationConsent: {},
         idToken: "",
         idDocumentLicenseKey: "",
-        cosmosConnection: {
-
-        },
-
+        cosmosConnection: {},
+        widgetConfig: {
+            steps: {
+                faceRecog: true,
+                idOcr: true,
+                onChainId: true,
+                sbtMint: true,
+            },
+        }
     },
     getters: {
+        // getActiveStep: (state) => {
+        //     const step = state.steps.find(x => (x.isActive == true && x.isEnabled == true))
+        //     console.log('active step ', step)
+        //     if (!step) {
+        //         const step = state.steps.find(x => (x.isActive == true && x.isEnabled == true))
+        //         return step
+        //     }
+        //     return step
+        // },
         getActiveStep: (state) => {
-            const step = state.steps.find(x => x.isActive == true)
-            if (!step) {
-                const step = state.steps.find(x => x.isActive == true)
-                return step
-            }
-            return step
+            const step = state.steps.find(x => {
+                if ((x.isActive === true) && (x.isEnabled === true)) {
+                    return x
+                }
+            })
+            console.log({ step })
+            return step;
         },
-
-
 
         //-----------------------------------------------------------------e-kyc
         getSession() {
@@ -154,9 +228,15 @@ export default new Vuex.Store({
                 return null
             }
         },
-        // getOnChainConfigById: () => {
-
-        // },
+        getWidgetConfigFromDb: (state) => {
+            console.log(state.hasKycDone)
+            const t = localStorage.getItem('widgetConfigFromDb');
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
+        }
     },
     mutations: {
         setOnChainIssuerConfig: (state, payload) => {
@@ -166,23 +246,34 @@ export default new Vuex.Store({
         setCosmosConnection: (state, payload) => {
             state.cosmosConnection = { ...payload };
         },
-        setSteps: (state, steps) => {
-            state.steps = steps
+        setSteps: (state, payload) => {
+            state.steps = payload
         },
-
+        setAStep: (state, payload) => {
+            const stepIndex = state.steps.findIndex(step => step.id === payload.id)
+            state.steps[stepIndex] = { ...payload };
+        },
         setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
             state.schemaIds = schemaIds
         },
 
         nextStep: (state, jumpToStepId = null) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
+
+            const activeStep = state.steps.find(x => (x.isActive == true))
+            console.log({ activeStep })
             const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
+            console.log('next step called ... nextStepid ' + nextStepId)
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
+            state.steps[nextStepId].isEnabled = true;
+
+            const activeStep2 = state.steps.find(x => (x.isActive == true))
+            console.log({ activeStep2 })
+
         },
 
         previousStep: (state) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
+            const activeStep = state.steps.find(x => (x.isActive == true))
             const previousStepId = activeStep.previous
             state.steps[activeStep.id].isActive = false;
             state.steps[previousStepId].isActive = true;
@@ -324,7 +415,12 @@ export default new Vuex.Store({
 
         setIdDocumentLicenseKey(state, payload) {
             state.idDocumentLicenseKey = payload
-        }
+        },
+
+        setWidgetConfigFromDb: (state, payload) => {
+            // state.widgetConfigFromDb = { ...payload }
+            localStorage.setItem('widgetConfigFromDb', JSON.stringify(payload));
+        },
     },
     actions: {
         addharQRVerify: ({ state }) => {
@@ -538,6 +634,37 @@ export default new Vuex.Store({
                     }).catch((e) => {
                         reject(new Error(`Error while fetching session  ${e}`))
                     })
+            })
+        },
+
+        fetchAppsWidgetConfig: ({ dispatch, commit, getters }) => {
+            return new Promise(async (resolve, reject) => {
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/widget-config/`
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers
+                }).then(response => response.json()).then(json => {
+                    if (json.error) {
+                        return reject(json)
+                    }
+                    commit('setWidgetConfigFromDb', json);
+                    resolve(json)
+                }).catch((e) => {
+                    return reject(`Error while fetching widget configuration ` + e.message);
+                })
             })
         },
 
@@ -1031,5 +1158,5 @@ export default new Vuex.Store({
                 console.error(e)
             }
         }
-    }
+    },
 })

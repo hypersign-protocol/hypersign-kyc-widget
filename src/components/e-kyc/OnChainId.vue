@@ -110,7 +110,7 @@ export default {
         ConnectWalletButton
     },
     computed: {
-        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig']),
+        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", 'getOnChainIssuerConfig']),
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
         getChainConfig() {
             const { ecosystem, blockchain } = this.getOnChainIssuerConfig

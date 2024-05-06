@@ -53,14 +53,15 @@ export default {
         ...mapActions(["verifyLiveliness"]),
         // Demo methods
         enableWidget: async function () {
-            console.warn("[Demo] Start Capture");
-            this.widgetResult = '';
-            const capabilities = await this.checkCapabilities();
-            if (capabilities.camera && capabilities.wasm && capabilities.browser) {
-                this.isWidgetStarted = true;
-            } else {
-                // ...
-            }
+            this.nextStep(4);
+            // console.warn("[Demo] Start Capture");
+            // this.widgetResult = '';
+            // const capabilities = await this.checkCapabilities();
+            // if (capabilities.camera && capabilities.wasm && capabilities.browser) {
+            //     this.isWidgetStarted = true;
+            // } else {
+            //     // ...
+            // }
         },
 
         disableWidget: function () {
@@ -83,8 +84,6 @@ export default {
 
         onExtractionFinish: async function (extractionResult) {
 
-
-
             console.log(extractionResult)
 
             if (extractionResult.detail.bestImageCropped) {
@@ -102,9 +101,9 @@ export default {
 
                 try {
                     this.isLoading = true;
-                    this.toast('Verifying your selfie...', "warning");
-                    await this.verifyLiveliness()
-                    this.nextStep();
+                    this.toast('Verifying your selfie... nextStep 4', "warning");
+                    // await this.verifyLiveliness()
+                    await this.$store.commit('nextStep')
                     this.isLoading = false;
                 } catch (e) {
                     this.toast(e.message, "error");

@@ -20,126 +20,87 @@ export default {
 
     if (WidgetConfig) {
       // Steps
-      if (Object.keys(WidgetConfig.steps).length > 0) {
-        let steps = [
+      // if (Object.keys(WidgetConfig.steps).length > 0) {
+      //   // let steps = []
 
+      //   // if (WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
+      //   //   // if faceRecog and ocr enabled
+      //   //   // if only ocr enabled 
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'Liveliness',
+      //   //     name: 'Facial Recognition',
+      //   //     previous: steps.length - 1
+      //   //   })
 
-          // {
-          //   id: 0,
-          //   isActive: true,
-          //   stepName: 'AppInstructions',
-          //   previous: 1
-          // },
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'IdDocs',
+      //   //     name: 'Government-issued ID',
+      //   //     previous: steps.length - 1
+      //   //   })
+      //   // } else if (WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
+      //   //   // if only faceRecog enabled
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'Liveliness',
+      //   //     name: 'Facial Recognition',
+      //   //     previous: steps.length - 1
+      //   //   })
+      //   // } else if (!WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
+      //   //   // if faceRecog and ocr enabled
+      //   //   // if only ocr enabled 
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'Liveliness',
+      //   //     name: 'Facial Recognition',
+      //   //     previous: steps.length - 1
+      //   //   })
 
-          {
-            id: 0,
-            isActive: true,
-            stepName: 'SignIn',
-            previous: 0
-          },
-          {
-            id: 1,
-            isActive: false,
-            stepName: 'VaultPIN',
-            previous: 0
-          },
-          {
-            id: 2,
-            isActive: false,
-            stepName: 'AppInstructions',
-            previous: 1
-          },
-        ]
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'IdDocs',
+      //   //     name: 'Government-issued ID',
+      //   //     previous: steps.length - 1
+      //   //   })
+      //   // } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
+      //   //   console.log('Invalid widget configuration')
+      //   // }
 
-        // if (WidgetConfig.steps.onChainId) {
-        //   steps.push({
-        //     id: steps.length,
-        //     isActive: false,
-        //     stepName: 'OnChainId',
-        //     name: 'On Chain Identity',
-        //     previous: steps.length - 1
-        //   })
-        // }
+      //   // if (WidgetConfig.steps.onChainId) {
+      //   //   steps.push({
+      //   //     id: steps.length,
+      //   //     isActive: false,
+      //   //     stepName: 'OnChainId',
+      //   //     name: 'On Chain Identity',
+      //   //     previous: steps.length - 1
+      //   //   })
+      //   // }
 
+      //   steps.push({
+      //     id: steps.length,
+      //     isActive: false,
+      //     stepName: 'UserConsent',
+      //     name: 'Provide User Consent',
+      //     previous: steps.length - 1
+      //   })
 
-        if (WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
-          // if faceRecog and ocr enabled
-          // if only ocr enabled 
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'Liveliness',
-            name: 'Facial Recognition',
-            previous: steps.length - 1
-          })
-
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'IdDocs',
-            name: 'Government-issued ID',
-            previous: steps.length - 1
-          })
-        } else if (WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
-          // if only faceRecog enabled
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'Liveliness',
-            name: 'Facial Recognition',
-            previous: steps.length - 1
-          })
-        } else if (!WidgetConfig.steps.faceRecog && WidgetConfig.steps.idOcr) {
-          // if faceRecog and ocr enabled
-          // if only ocr enabled 
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'Liveliness',
-            name: 'Facial Recognition',
-            previous: steps.length - 1
-          })
-
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'IdDocs',
-            name: 'Government-issued ID',
-            previous: steps.length - 1
-          })
-        } else if (!WidgetConfig.steps.faceRecog && !WidgetConfig.steps.idOcr) {
-          console.log('Invalid widget configuration')
-        }
-
-        if (WidgetConfig.steps.onChainId) {
-          steps.push({
-            id: steps.length,
-            isActive: false,
-            stepName: 'OnChainId',
-            name: 'On Chain Identity',
-            previous: steps.length - 1
-          })
-        }
-
-        steps.push({
-          id: steps.length,
-          isActive: false,
-          stepName: 'UserConsent',
-          name: 'Provide User Consent',
-          previous: steps.length - 1
-        })
-
-        steps.push({
-          id: steps.length,
-          isActive: false,
-          stepName: 'FinalResult',
-          previous: steps.length - 1
-        })
-        console.log(steps)
-        this.setSteps(steps)
-      } else {
-        throw new Error('Invalid widget configuration, steps is required')
-      }
+      //   steps.push({
+      //     id: steps.length,
+      //     isActive: false,
+      //     stepName: 'FinalResult',
+      //     previous: steps.length - 1
+      //   })
+      //   console.log(steps)
+      //   this.setSteps(steps)
+      // } else {
+      //   //throw new Error('Invalid widget configuration, steps is required')
+      // }
 
       // trusted issuers and schemaIds
       if (WidgetConfig.schemaIds) {

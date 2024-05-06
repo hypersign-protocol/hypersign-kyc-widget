@@ -20,26 +20,40 @@
 <script type="text/javascript">
 import AskPIN from '../commons/AskPIN.vue';
 import RegisterPIN from '../commons/RegisterPIN.vue';
-import { mapState, mapActions, mapMutations } from 'vuex';
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
 export default {
     name: "VaultPin",
     computed: {
-        ...mapState(['ifNewUser']),
+        ...mapState(['ifNewUser', 'steps']),
+        ...mapGetters(['getWidgetConfigFromDb'])
     },
     components: {
         AskPIN,
         RegisterPIN,
     },
     async created() {
-        // this.generateMnemonic1()
-        // await this.generateDID()
+        if (this.getWidgetConfigFromDb.faceRecog) {
+            this.enableAstep('Liveliness')
+        }
 
+        if (this.getWidgetConfigFromDb.idOcr.enabled) {
+            this.enableAstep('IdDocs')
+        }
+
+        if (this.getWidgetConfigFromDb.onChainId.enabled) {
+            this.enableAstep('OnChainId')
+        }
     },
     methods: {
-        ...mapMutations(['nextStep', 'setVaultRaw']),
+        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
         ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById"]),
+        enableAstep(stepName) {
+            const stepToUpdate = this.steps.find(x => x.stepName === stepName)
+            stepToUpdate.isEnabled = true;
+            this.setAStep(stepToUpdate);
+        },
         async unlockVaultAndSyncData(data) {
             try {
                 if (data) {
@@ -67,7 +81,6 @@ export default {
                 this.isLoadingPage = false
             }
         },
-
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
         },
