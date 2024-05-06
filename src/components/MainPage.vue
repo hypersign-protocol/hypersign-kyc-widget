@@ -17,8 +17,8 @@ import AppClickPic from "./AppClickPic.vue";
 import AppFinalSuccess from "./AppFinalSuccess.vue";
 import AppFinalFail from "./AppFinalFail.vue";
 import AppOtp from "./AppOtp.vue";
-import Liveliness from './e-kyc/Liveliness.vue';
-import IdDocs from './e-kyc/IdentityDocuments.vue'
+import LiveLiness2 from './e-kyc/Liveliness.vue';
+import IdDocs2 from './e-kyc/IdentityDocuments.vue'
 
 import FinalResult from './e-kyc/Result.vue'
 import { mapGetters } from "vuex";
@@ -36,8 +36,8 @@ export default {
     AppFinalSuccess,
     AppFinalFail,
     AppOtp,
-    Liveliness,
-    IdDocs,
+    LiveLiness2,
+    IdDocs2,
     FinalResult,
     SignIn,
     VaultPIN,

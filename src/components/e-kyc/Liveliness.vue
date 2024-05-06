@@ -6,7 +6,7 @@ import { FPhi } from "@facephi/selphi-widget-web";
 import { mapActions, mapMutations, } from "vuex";
 
 export default {
-    name: 'LiveLiness',
+    name: 'LiveLiness2',
     components: {
     },
     data: function () {
@@ -49,19 +49,18 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(["nextStep",]),
+        ...mapMutations(["nextStep", "previousStep"]),
         ...mapActions(["verifyLiveliness"]),
         // Demo methods
         enableWidget: async function () {
-            this.nextStep(4);
-            // console.warn("[Demo] Start Capture");
-            // this.widgetResult = '';
-            // const capabilities = await this.checkCapabilities();
-            // if (capabilities.camera && capabilities.wasm && capabilities.browser) {
-            //     this.isWidgetStarted = true;
-            // } else {
-            //     // ...
-            // }
+            console.warn("[Demo] Start Capture");
+            this.widgetResult = '';
+            const capabilities = await this.checkCapabilities();
+            if (capabilities.camera && capabilities.wasm && capabilities.browser) {
+                this.isWidgetStarted = true;
+            } else {
+                // ...
+            }
         },
 
         disableWidget: function () {
@@ -102,7 +101,7 @@ export default {
                 try {
                     this.isLoading = true;
                     this.toast('Verifying your selfie... nextStep 4', "warning");
-                    // await this.verifyLiveliness()
+                    await this.verifyLiveliness()
                     await this.$store.commit('nextStep')
                     this.isLoading = false;
                 } catch (e) {

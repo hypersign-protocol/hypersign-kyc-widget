@@ -3,7 +3,7 @@ import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import PreviewData from '../commons/Preview.vue'
 export default {
-    name: 'IdDocs',
+    name: 'IdDocs2',
     components: {
         PreviewData
     },

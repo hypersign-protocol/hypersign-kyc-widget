@@ -37,7 +37,7 @@ export default new Vuex.Store({
             {
                 id: 3,
                 isActive: false,
-                stepName: 'Liveliness',
+                stepName: 'LiveLiness2',
                 name: 'Facial Recognition',
                 previous: 2,
                 isEnabled: true
@@ -45,7 +45,7 @@ export default new Vuex.Store({
             {
                 id: 4,
                 isActive: false,
-                stepName: 'IdDocs',
+                stepName: 'IdDocs2',
                 name: 'Government-issued ID',
                 previous: 3,
                 isEnabled: false,
@@ -110,25 +110,14 @@ export default new Vuex.Store({
         }
     },
     getters: {
-        // getActiveStep: (state) => {
-        //     const step = state.steps.find(x => (x.isActive == true && x.isEnabled == true))
-        //     console.log('active step ', step)
-        //     if (!step) {
-        //         const step = state.steps.find(x => (x.isActive == true && x.isEnabled == true))
-        //         return step
-        //     }
-        //     return step
-        // },
         getActiveStep: (state) => {
             const step = state.steps.find(x => {
                 if ((x.isActive === true) && (x.isEnabled === true)) {
                     return x
                 }
             })
-            console.log({ step })
-            return step;
+            return step
         },
-
         //-----------------------------------------------------------------e-kyc
         getSession() {
             return localStorage.getItem("session")
@@ -257,21 +246,27 @@ export default new Vuex.Store({
             state.schemaIds = schemaIds
         },
 
+        /* eslint-disable */
         nextStep: (state, jumpToStepId = null) => {
+            // debugger;
+            const activeStep = state.steps.find(x => ((x.isActive == true) && (x.isEnabled == true)))
+            let nextStepId = 0
+            if (jumpToStepId) {
+                nextStepId = jumpToStepId
+            } else if (activeStep) {
+                nextStepId = activeStep.id + 1
+            }
 
-            const activeStep = state.steps.find(x => (x.isActive == true))
-            console.log({ activeStep })
-            const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
-            console.log('next step called ... nextStepid ' + nextStepId)
+            console.log({
+                activeStep
+            })
+
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
-            state.steps[nextStepId].isEnabled = true;
-
-            const activeStep2 = state.steps.find(x => (x.isActive == true))
-            console.log({ activeStep2 })
-
+            console.log({
+                nextStep: state.steps[nextStepId]
+            })
         },
-
         previousStep: (state) => {
             const activeStep = state.steps.find(x => (x.isActive == true))
             const previousStepId = activeStep.previous
