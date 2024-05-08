@@ -61,7 +61,7 @@
 
         <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="3" stepTitle="Mnit your on-chain Identity in your favorite blockchain"
+            <AppInstructionStep stepNumber="3" stepTitle="Mint your on-chain Identity in your favorite blockchain"
               :isDone="hasSbtMintDone" />
           </div>
         </div>
@@ -127,7 +127,8 @@ export default {
       // next step: id verfcaiton
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
-        const isOnChainIdConfigured = this.steps.find(step => step.stepName == STEP_NAMES.OnChainId)
+        const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
+        console.log({ isOnChainIdConfigured })
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
           if (!this.hasSbtMintDone) {
@@ -135,30 +136,30 @@ export default {
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
             this.nextStepNumeber = userConsentStep.id
           }
         } else {
           // go to user consent page
-          const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
+          const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
           this.nextStepNumeber = userConsentStep.id
         }
       } else {
 
-        const isKYCConfigured = this.steps.find(step => step.stepName == STEP_NAMES.IdDocs)
+        const isKYCConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.IdDocs && step.isEnabled == true))
         if (isKYCConfigured) {
           // next step: go to Id verifcaiton
-          const isVerificationStep = this.steps.find(step => step.stepName == STEP_NAMES.IdDocs)
+          const isVerificationStep = this.steps.find(step => (step.stepName == STEP_NAMES.IdDocs && step.isEnabled == true))
           this.nextStepNumeber = isVerificationStep?.id
         } else {
           // next step: check if on chain id is configured or not
-          const isOnChainIdConfigured = this.steps.find(step => step.stepName == STEP_NAMES.OnChainId)
+          const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
           if (isOnChainIdConfigured) {
             // if yes, then go to onchainId page
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(step => step.stepName == STEP_NAMES.UserConsent)
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
             this.nextStepNumeber = userConsentStep.id
           }
         }
@@ -166,7 +167,7 @@ export default {
       }
     } else {
       // next step: go to liveliness
-      const livelinessVerifcationStep = this.steps.find(step => step.stepName == STEP_NAMES.LiveLiness)
+      const livelinessVerifcationStep = this.steps.find(step => (step.stepName == STEP_NAMES.LiveLiness && step.isEnabled == true))
       this.nextStepNumeber = livelinessVerifcationStep?.id
     }
 

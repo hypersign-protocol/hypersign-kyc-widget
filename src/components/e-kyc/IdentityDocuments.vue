@@ -1,6 +1,6 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
-import { mapActions, mapMutations, mapGetters } from "vuex";
+import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import PreviewData from '../commons/Preview.vue'
 import { STEP_NAMES } from '@/config'
 export default {
@@ -13,6 +13,10 @@ export default {
             return Object.keys(this.$store.state.kycExtractedData).length > 0 ? true : false;
         },
         ...mapGetters(['getIdDocumentLicenseKey']),
+        ...mapState(["steps"]),
+        checkIfOncainIdIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+        },
     },
     data: function () {
         return {
@@ -197,7 +201,12 @@ export default {
                 this.isLoading = true;
                 this.toast('Uploading and verifying your document...', "warning");
                 await this.verifyOcrIDDoc()
-                this.nextStep();
+                if (this.checkIfOncainIdIsEnabled) {
+                    this.nextStep(5);
+                } else {
+                    this.nextStep(6);
+                }
+
                 this.isLoading = false;
             } catch (e) {
                 this.toast(e.message, "error");

@@ -103,6 +103,8 @@ export default {
                     sbtContractAddress
                 })
 
+            } else {
+                console.log("No Onchain id configuration is activated for the widget")
             }
         },
         preparePresentationRequest() {
