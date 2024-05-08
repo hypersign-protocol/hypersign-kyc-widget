@@ -94,7 +94,7 @@ export default {
         this.toast(e, "error");
       }
     },
-    async handleOnComplete(value) {
+    async handleOnComplete() {
       try {
         this.isLoadingPage = true;
         // TODO: go for verification

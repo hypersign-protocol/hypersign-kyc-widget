@@ -309,8 +309,6 @@ export default {
     proceedNext() {
       this.nextStep();
     },
-    onReady(capabilities) {
-    },
     onError(e) {
       if (e.name === "NotAllowedError") {
         this.error = "User denied camera access permission";

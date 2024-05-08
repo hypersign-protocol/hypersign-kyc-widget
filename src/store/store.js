@@ -101,7 +101,7 @@ export default new Vuex.Store({
             return JSON.parse(vaultDataRawStr)
         },
 
-        getVaultDataCredentials(filterCondition = {}) {
+        getVaultDataCredentials() {
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
             const vaultDataRaw = JSON.parse(vaultDataRawStr)
             const { hypersign } = vaultDataRaw

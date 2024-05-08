@@ -75,7 +75,7 @@ export default {
         },
 
         // Widget event handlers        
-        onModuleLoaded: function (eventData) {
+        onModuleLoaded: function () {
             console.warn("[Selphi] onModuleLoaded");
         },
 
@@ -143,7 +143,7 @@ export default {
             this.widgetResult = 'Error! The extraction has been cancelled';
         },
 
-        onExtractionTimeout: function (extractionTimeoutResult) {
+        onExtractionTimeout: function () {
             console.warn("[Selphi] onExtractionTimeout");
 
             this.widgetResult = 'Error! Time limit exceeded';
@@ -155,7 +155,7 @@ export default {
             this.isWidgetStarted = false;
         },
 
-        onStabilizing: function (stabilizingResult) {
+        onStabilizing: function () {
             console.warn("[Selphi] onStabilizing");
         },
 

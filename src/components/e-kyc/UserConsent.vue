@@ -145,7 +145,7 @@ export default {
                 this.$emit('verifyIdDocEvent', true)
 
                 // TODO: send this presentation in the verifyResult API // TODO: change the name of this API as well as functioin
-                const result = await this.verifyResult()
+                await this.verifyResult()
                 this.isLoading = false;
                 this.nextStep();
             } catch (e) {

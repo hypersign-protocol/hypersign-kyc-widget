@@ -106,7 +106,7 @@ export default {
         },
 
         // Widget event handlers
-        onModuleLoaded: function (eventData) {
+        onModuleLoaded: function () {
             console.warn("[SelphID] onModuleLoaded");
         },
 
@@ -165,7 +165,7 @@ export default {
             this.widgetResult = 'Error! The extraction has been cancelled';
         },
 
-        onExtractionTimeout: function (eventData) {
+        onExtractionTimeout: function () {
             console.warn("[SelphID] onExtractionTimeout");
 
             this.isWidgetStarted = false;
