@@ -102,7 +102,6 @@ export default new Vuex.Store({
         },
 
         getVaultDataCredentials(filterCondition = {}) {
-            console.log('filterCondition =' + filterCondition)
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
             const vaultDataRaw = JSON.parse(vaultDataRawStr)
             const { hypersign } = vaultDataRaw
@@ -428,7 +427,6 @@ export default new Vuex.Store({
 
         }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/session'
                 fetch(url, {
                     method: 'POST',
@@ -456,7 +454,6 @@ export default new Vuex.Store({
 
         verifyPhoneNumber: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/ph/verify'
                 fetch(url, {
                     method: 'POST',
@@ -484,7 +481,6 @@ export default new Vuex.Store({
 
         verifyImage: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside verifyImage')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
                 fetch(url, {
                     method: 'POST',
@@ -512,7 +508,6 @@ export default new Vuex.Store({
 
         getFinalResult: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',

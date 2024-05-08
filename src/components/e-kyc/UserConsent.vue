@@ -134,7 +134,6 @@ export default {
                 this.toast('Submitting your data...', "success");
                 const presentation = await this.generatePresentation()
                 this.setUserPresentationConsent(presentation)
-                console.log(presentation)
                 // TODO:  sign this presentation 
 
                 // const signedPresentation  = await this.signPresentation(presentation)
@@ -147,7 +146,6 @@ export default {
 
                 // TODO: send this presentation in the verifyResult API // TODO: change the name of this API as well as functioin
                 const result = await this.verifyResult()
-                console.log(result)
                 this.isLoading = false;
                 this.nextStep();
             } catch (e) {

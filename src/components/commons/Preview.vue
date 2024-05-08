@@ -103,12 +103,11 @@ export default {
 
         async submit() {
             try {
-                console.log("before emitting verifyIdDocEvent inside preivew ")
                 // this.isLoading = true;
                 // this.toast('Submitting your data...', "warning");
                 this.$emit('verifyIdDocEvent', true)
                 // const result = await this.verifyResult()
-                // console.log(result)
+
                 // this.isLoading = false;
                 // this.nextStep();
             } catch (e) {
@@ -119,7 +118,6 @@ export default {
         },
 
         async rescan() {
-            console.log("Start rescanning...")
             await this.$store.commit('setKycExtractedData', { data: {}, status: false })
             await this.$store.commit('setKycCapturedData', {
                 tokenFrontDocumentImage: "",

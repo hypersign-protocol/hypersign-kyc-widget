@@ -62,7 +62,6 @@ const presentationRequest = {
 const presentationRequestStr = JSON.stringify(presentationRequest)
 const prBase64 = btoa(presentationRequestStr)
 const finalUrl = `${widgetBaseUrl}?cavachAccessToken=${cavachAccessToken}&ssiAccessToken=${ssiAccessToken}&pr=${prBase64}&redirectUrl=${redirectUrl}`
-console.log(finalUrl)
 
 
 

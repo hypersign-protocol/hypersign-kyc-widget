@@ -70,7 +70,6 @@ export default {
         },
 
         onCameraResolutionChange: function (event) {
-            console.log(event);
             this.cameraWidth = this.FPhiCameraResolutions[event.target.value].width;
             this.cameraHeight = this.FPhiCameraResolutions[event.target.value].height;
         },
@@ -78,18 +77,15 @@ export default {
         // Widget event handlers        
         onModuleLoaded: function (eventData) {
             console.warn("[Selphi] onModuleLoaded");
-            console.log(eventData.detail);
         },
 
         onExtractionFinish: async function (extractionResult) {
 
-            console.log(extractionResult)
 
             if (extractionResult.detail.bestImageCropped) {
                 // Continue process.
 
                 // store data in store
-                console.log('Beofre setting liveliness data to store ')
                 await this.$store.commit('setLivelinessDone', true)
                 await this.$store.commit('setLivelinessCapturedData', {
                     tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc
@@ -118,7 +114,6 @@ export default {
 
         onExceptionCaptured: function (exceptionResult) {
             console.warn("[Selphi] onExceptionCaptured");
-            console.log(exceptionResult.detail);
 
             switch (exceptionResult.detail.exceptionType) {
                 case (FPhi.Selphi.ExceptionType.CameraError):
@@ -150,7 +145,6 @@ export default {
 
         onExtractionTimeout: function (extractionTimeoutResult) {
             console.warn("[Selphi] onExtractionTimeout");
-            console.log(extractionTimeoutResult.detail);
 
             this.widgetResult = 'Error! Time limit exceeded';
         },
@@ -163,20 +157,17 @@ export default {
 
         onStabilizing: function (stabilizingResult) {
             console.warn("[Selphi] onStabilizing");
-            console.log(stabilizingResult.detail);
         },
 
         onTrackStatus: function (eventData) {
             let trackStatusCode = Object.entries(FPhi.Selphi.TrackStatus).find(e => e[1] === eventData.detail.code);
             console.warn(`[Selphi] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`);
-            console.log(eventData.detail);
         },
 
         // Widget methods
         checkCapabilities: async function () {
             // Check device capabilities (browser, memory, webassembly...) with checkCapabilities method
             const capabilities = await FPhi.Selphi.CheckCapabilities();
-            console.log("Selphi: Widget Check Capabilities Check:\n", capabilities);
             return capabilities;
         },
 

@@ -52,14 +52,10 @@ export default {
             }
         },
         getPin(data) {
-            console.log('Pin ' + data)
             this.pin = data;
         },
         getRenterPin(data) {
-            console.log('Re enter Pin ' + data)
             this.reEnterPin = data;
-
-
         }
     }
 }

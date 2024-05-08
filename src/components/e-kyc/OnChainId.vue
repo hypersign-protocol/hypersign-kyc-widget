@@ -213,7 +213,6 @@ export default {
                     smartContractMsg);
 
                 if (result) {
-                    console.log(result)
                     this.toast('Successfully minted your identity')
 
 

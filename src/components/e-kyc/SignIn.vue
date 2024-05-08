@@ -76,7 +76,6 @@ export default {
             if (this.getWidgetConfigFromDb.onChainId.enabled) {
                 const onchainIdConfiguration = this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration;
                 if (!onchainIdConfiguration) {
-                    console.log(this.getOnChainIssuerConfig)
                     if (this.getOnChainIssuerConfig.chainId == '' || this.getOnChainIssuerConfig.ecosystem == '' || this.getOnChainIssuerConfig.blockchain == '' || this.getOnChainIssuerConfig.contractAddress == '') {
                         this.error = true
                         throw new Error('Incorrect configuration for onchainId')

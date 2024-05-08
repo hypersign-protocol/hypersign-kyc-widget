@@ -42,7 +42,6 @@ export default {
             this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
         },
         getPin(data) {
-            console.log('Pin ' + data)
             this.pin = data;
         },
     }

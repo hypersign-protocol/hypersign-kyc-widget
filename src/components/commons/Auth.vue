@@ -54,16 +54,12 @@ export default {
 
 
         ///
-        console.log('Before calling getUserInfo')
         this.getUserInfo(accessToken)
         this.isLoadingPage = true;
 
         setTimeout(async () => {
-          console.log('Before calling registerUser')
           await this.registerUser()
-          console.log('After calling registerUser')
           ///
-          console.log('Inside mounted Auth')
           this.nextStep(1)
           this.isLoadingPage = false
           this.$router.push({ path: "/" })
@@ -74,7 +70,6 @@ export default {
       }
 
     } catch (e) {
-      console.log('error =' + e)
       this.isLoadingPage = false
       this.nextStep(1)
       this.$router.push({ path: "/" })

@@ -50,7 +50,6 @@ export default {
             input.focus();
         },
         done() {
-            console.log("Your PIN is: " + this.pins);
             this.$emit('pinTakenEvent', this.pins)
         },
         selectInput(num) {

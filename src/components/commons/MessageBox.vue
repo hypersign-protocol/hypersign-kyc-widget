@@ -80,15 +80,8 @@ export default {
   },
   computed: {
     shortenMesssage() {
-      console.log(this.msg);
       return this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
     },
-  },
-  created() {
-    console.log("Toast created");
-  },
-  mounted() {
-    console.log(this.type);
   },
   data() {
     return {};
