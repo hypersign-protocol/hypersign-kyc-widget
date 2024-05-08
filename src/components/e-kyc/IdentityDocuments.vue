@@ -61,7 +61,6 @@ export default {
 
     created() {
         this.licenseKey = this.getIdDocumentLicenseKey
-        console.log(this.licenseKey)
         // if (!this.licenseKey) {
         //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
         //   this.licenseKey = license;
@@ -109,7 +108,6 @@ export default {
         // Widget event handlers
         onModuleLoaded: function (eventData) {
             console.warn("[SelphID] onModuleLoaded");
-            console.log(eventData.detail);
         },
 
         onExtractionFinished: async function (extractionResult) {
@@ -136,7 +134,6 @@ export default {
 
         onExceptionCaptured: function (exceptionResult) {
             console.warn("[SelphID] onExceptionCaptured");
-            console.log(exceptionResult.detail);
 
             switch (exceptionResult.detail.exceptionType) {
                 case (FPhi.SelphID.ExceptionType.CameraError):
@@ -164,16 +161,12 @@ export default {
         },
 
         onUserCancelled: function () {
-            console.warn("[SelphID] onUserCancel");
-            console.log("The widget has been closed");
-
             this.isWidgetStarted = false;
             this.widgetResult = 'Error! The extraction has been cancelled';
         },
 
         onExtractionTimeout: function (eventData) {
             console.warn("[SelphID] onExtractionTimeout");
-            console.log(eventData.detail);
 
             this.isWidgetStarted = false;
             this.widgetResult = 'Error! Time limit exceeded';
@@ -182,14 +175,12 @@ export default {
         onTrackStatus: function (eventData) {
             let trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code);
             console.warn(`[SelphID] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`);
-            console.log(eventData.detail);
         },
 
         // Widget methods
         checkCapabilities: async function () {
             // Check device capabilities (browser, memory, webassembly...) with checkCapabilities method
             const capabilities = await FPhi.SelphID.CheckCapabilities();
-            console.log("SelphID: Widget Check Capabilities Check:\n", capabilities);
             return capabilities;
         },
 
@@ -199,8 +190,6 @@ export default {
         },
 
         async verifyIdDocEventHandler(data) {
-            console.log("verifyIdDocEventHandler inside ")
-
             try {
                 if (!data) {
                     throw new Error('Invalid event data')
