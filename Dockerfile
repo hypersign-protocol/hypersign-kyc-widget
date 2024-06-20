@@ -10,6 +10,7 @@ RUN npm i
 
 COPY . .
 
+RUN npm run build
 FROM nginx:latest as prod-serve
 
 COPY --from=prod-build /app/dist /usr/share/nginx/html
