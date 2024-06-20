@@ -1,14 +1,10 @@
 <template>
   <div>
-    <a href="https://hypersign.id" target="_blank"
-      >Powered By
-      <img
-        src="../../assets/hypersign_black_transparent_rect.png"
-        width="70px"
-        height="20px"
-    /></a>
+    <!-- <a href="https://hypersign.id" target="_blank">Powered By
+      <img src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="70px" height="20px" /></a> -->
   </div>
 </template>
+
 <style scoped>
 div {
   color: black;

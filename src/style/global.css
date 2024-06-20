@@ -2,9 +2,15 @@ body{
     background-color: #191127;
 }
 
+
+.bottom {
+    position: absolute;
+    bottom: 0; /* set the bottom to 0*/
+  }
+  
 .maincontainer {
-    width: 350px;
-    height: 650px;
+    width: 80vw;
+    height: 87vw;
     background-color: #f5f5f5;
     border: 1px solid grey;
     border-radius: 20px;
@@ -17,4 +23,21 @@ body{
 
 h1{
     font-size: revert;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.widget-card {
+    width: 42vw;
+    border: 1px solid #8080801a;
+    padding: 20px;
+    border-radius: 20px;
+    background: white;
+    padding-left: 30px;
+    margin-top: 5%;
 }

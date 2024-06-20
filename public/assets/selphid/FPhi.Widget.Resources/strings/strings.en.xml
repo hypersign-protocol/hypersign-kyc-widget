@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <token id="searching1_text">Capturing</token>
+    <token id="searching2_text">Reading edges</token>
+    <token id="capture_front_text">Please capture document's&#10;FRONT inside</token>
+    <token id="capture_back_text">Please capture document's&#10;BACK inside</token>
+    <token id="capture_detail_text">Make sure the text is readable&#10;and the image is clear</token>
+    <token id="capture_tip_text">Before you start:&#10;Automatic capture</token>
+    <token id="preview_front_text">Document's FRONT</token>
+    <token id="preview_back_text">Document's BACK</token>
+    <token id="flip_document">Flip document</token>
+    <token id="button_ok">OK</token>
+    <token id="button_repeat">TRY AGAIN</token>
+    <token id="capture_status_front_ok">The scanning &#10;has been successful!</token>
+    <token id="capture_status_front_fail">The document does&#10;not read well</token>
+    <token id="capture_status_back_ok">The scanning &#10;has been successful!</token>
+    <token id="capture_status_back_fail">The document does&#10;not read well</token>
+    <token id="tutorial1_tip">TIP 1: CENTER DOCUMENT</token>
+    <token id="tutorial1_tip_detail">Center the document&#10;inside the rectangle&#10;that appears on the screen </token>
+    <token id="tutorial2_tip">TIP 2: KEEP DOCUMENT STILL</token>
+    <token id="tutorial2_tip_detail">Trying to keep it&#10;still facilitates&#10;a correct reading</token>
+    <token id="tutorial3_tip">TIP 3: AVOID GLARE</token>
+    <token id="tutorial3_tip_detail">Avoid any glare on&#10;the document&#10;to better capture the information</token>
+    <token id="button_skip">SKIP</token>
+    <token id="button_finish">DONE</token>
+    <token id="button_next">NEXT</token>
+    <token id="button_back">&lt; BACK</token>
+    <token id="button_initial_tip">OK, UNDERSTOOD</token>
+    <token id="waitRecording">Processing data,&#10;please wait...</token>
+    
+    <token id="infoFront">Upload or capture the FRONT&#10;of the document</token>
+    <token id="infoBack">Upload or capture the BACK&#10;of the document</token>
+    <token id="infoQuality">Is the image clear?</token>
+    <token id="infoTimeoutTitle">Diagnostic</token>
+    <token id="infoTimeout">Problems capturing the document?.&#10;Retry or use manual mode.</token>
+    <token id="infoTimeout2">Time exceeded</token>
+    <token id="button_start">START</token>
+    <token id="button_manual">MANUAL MODE</token>
+    <token id="button_manual_close">RETRY</token>
+
+    <token id="documentDiagnostic_2">Bad angle</token>
+    <token id="documentDiagnostic_3">Too far</token>
+    <token id="documentDiagnostic_4">Very close</token>
+    <token id="documentDiagnostic_5">Very close</token>
+    <token id="documentDiagnostic_6">Bad angle</token>
+    <token id="documentDiagnostic_11">Low light</token>
+    <token id="documentDiagnostic_12">Too much light</token>
+    <token id="documentDiagnostic_13">Unfocused</token>
+    <token id="documentDiagnostic_17">Too much movement</token>
+    <token id="documentDiagnostic_18">Frozen image</token>
+    <token id="documentDiagnostic_20">Bad tilt</token>
+</translations>

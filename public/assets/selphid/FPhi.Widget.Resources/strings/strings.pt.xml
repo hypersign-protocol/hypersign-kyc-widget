@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+    <token id="searching1_text">Capturando</token>
+    <token id="searching2_text">Lendo margens</token>
+    <token id="capture_front_text">Insira a FRENTE &#10;do documento dentro</token>
+    <token id="capture_back_text">Insira a FRENTE &#10;do documento dentro</token>
+    <token id="capture_detail_text">Certifique-se de que o texto seja legível&#10;e que a imagem esteja clara</token>
+    <token id="capture_tip_text">Antes de começar:&#10;Captura automática</token>
+    <token id="preview_front_text">FRENTE de documento</token>
+    <token id="preview_back_text">REVERSO de documento</token>
+    <token id="flip_document">Virar o documento</token>
+    <token id="button_ok">ACEITAR</token>
+    <token id="button_repeat">TENTAR NOVAMENTE</token>
+    <token id="capture_status_front_ok">O scan foi&#10;bem sucedido!</token>
+    <token id="capture_status_front_fail">O documento&#10;não lê bem</token>
+    <token id="capture_status_back_ok">O scan foi&#10;bem sucedido!</token>
+    <token id="capture_status_back_fail">O documento&#10;não lê bem</token>
+    <token id="tutorial1_tip">TIP 1: CENTRE DOCUMENTO</token>
+    <token id="tutorial1_tip_detail">Centre o documento&#10;dentro do retângulo&#10;que aparece na tela</token>                                  
+    <token id="tutorial2_tip">TIP 2: MANTENHA DOCUMENTO QUIETO</token>
+    <token id="tutorial2_tip_detail">Tente manter o documento&#10;quieto para facilitar&#10;a sua leitura correta</token>                                  
+    <token id="tutorial3_tip">TIP 3: EVITE ILUMINAÇÃO DE FUNDO</token>
+    <token id="tutorial3_tip_detail">Evite a iluminação traseira&#10;do documento para melhor&#10;capturar as informações</token>                                    
+    <token id="button_skip">OMITIR</token>
+    <token id="button_finish">PRONTO</token>
+    <token id="button_next">SEGUINTE</token>
+    <token id="button_back">&lt; VOLTAR</token>
+    <token id="button_initial_tip">OK, ENTENDIDO</token>
+    <token id="waitRecording">Processando informação,&#10;por favor espera...</token>
+    
+    <token id="infoFront">Carregar ou capturar o FRONT&#10;do documento</token>
+    <token id="infoBack">Carregar ou capturar o BACK&#10;do documento</token>
+    <token id="infoQuality">A imagem é nítida?</token>
+    <token id="infoTimeoutTitle">Diagnóstico</token>
+    <token id="infoTimeout">Problemas de captura do documento?.&#10;Tentativa de nova tentativa ou modo manual de utilização.</token>
+    <token id="infoTimeout2">Tempo excedido</token>
+    <token id="button_start">COMEÇAR</token>
+    <token id="button_manual">MODO MANUAL</token>
+    <token id="button_manual_close">TENTAR DE NOVO</token>
+
+    <token id="documentDiagnostic_2">Mal ângulo</token>
+    <token id="documentDiagnostic_3">Muito longe</token>
+    <token id="documentDiagnostic_4">Muito perto</token>
+    <token id="documentDiagnostic_5">Muito perto</token>
+    <token id="documentDiagnostic_6">Mal ângulo</token>
+    <token id="documentDiagnostic_11">Pouca luz</token>
+    <token id="documentDiagnostic_12">Muita luz</token>
+    <token id="documentDiagnostic_13">Desfocado</token>
+    <token id="documentDiagnostic_17">Muito movimento</token>
+    <token id="documentDiagnostic_18">Imagem congelada</token>
+    <token id="documentDiagnostic_20">Má inclinação</token>
+</translations>
