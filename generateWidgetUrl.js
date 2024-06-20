@@ -11,7 +11,7 @@ const redirectUrl = "https://google.com"
 //// ----------------------------------------------------------------
 
 // const widgetBaseUrl = "https://hypersign-kyc-widget.netlify.app"
-const widgetBaseUrl = "http://localhost:4999"
+const widgetBaseUrl = "http://localhost:4888"
 const presentationRequest = {
     "query": [
         {
