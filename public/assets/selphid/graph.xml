@@ -1,0 +1,108 @@
+<FPhiGraph name="OnBoarding WidgetSelphID Graph" version="1.0">
+    <States>
+        <State name="UCNothing">
+            <Transition message="SetMode//0,0,0,0" to="UCCapture"/>
+            <Transition message="SetMode//0,0,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//0,1,0,0" to="UCCapture"/>
+            <Transition message="SetMode//0,1,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//0,2,0,0" to="UCCapture"/>
+            <Transition message="SetMode//0,2,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//1,0,0,0" to="UCCapture"/>
+            <Transition message="SetMode//1,0,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//1,1,0,0" to="UCCapture"/>
+            <Transition message="SetMode//1,1,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//1,2,0,0" to="UCCapture"/>
+            <Transition message="SetMode//1,2,0,1" to="UCCaptureTip"/>
+            <Transition message="SetMode//0,0,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//0,0,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode//0,1,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//0,1,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode//0,2,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//0,2,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode//1,0,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//1,0,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode//1,1,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//1,1,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode//1,2,1,0" to="UCTutorial1"/>
+            <Transition message="SetMode//1,2,1,1" to="UCTutorial1"/>
+            <Transition message="SetMode" to="UCError"/>
+            <Transition message="Error" to="UCError"/>
+        </State>
+        <State name="UCCaptureTip">
+            <Transition message="Click//button_initial_tip" to="UCCapture"/>
+        </State>
+        <State name="UCCapture">
+            <Transition message="CaptureFinish" to="UCCaptureStatus"/>
+            <Transition message="Click//button_info" to="UCTutorial1"/>
+            <Transition message="Click//button_exit" to="UCCancelByUserPrev"/>
+            <Transition message="Click//button_camera" to="UCCaptureCameraSwitch"/>
+        </State>
+        <State name="UCCaptureCameraSwitch">
+            <Transition message="cameraSwitched" to="UCCapture"/>
+            <Transition message="retry" to="UCCaptureCameraSwitch"/>
+        </State>
+        <State name="UCCaptureStatus">
+            <Transition message="Preview" to="UCPreview"/>
+            <Transition message="Finish" to="UCWaitRecording"/>
+            <Transition message="Next" to="UCFlip"/>
+            <Transition message="Fail" to="UCCapture"/>
+            <Transition message="Timeout" to="UCTimeout"/>
+            <Transition message="TimeoutPreview" to="UCTimeoutPreview"/>
+        </State>
+        <State name="UCPreview">
+            <Transition message="Click//button_repeat" to="UCRepeat"/>
+            <Transition message="Click//button_ok" to="UCPreviewDecision"/>
+            <Transition message="Timeout" to="UCTimeout"/>
+            <Transition message="TimeoutPreview" to="UCTimeoutPreview"/>
+        </State>
+        <State name="UCPreviewDecision">
+            <Transition message="Finish" to="UCWaitRecording"/>
+            <Transition message="Next" to="UCFlip"/>
+        </State>
+        <State name="UCRepeat">
+            <Transition message="repeat" to="UCCapture"/>
+        </State>
+        <State name="UCFlip">
+            <Transition message="Timer" to="UCCapture"/>
+        </State>
+        <State name="UCTimeoutPreview">
+            <Transition message="Click//button_repeat" to="UCRepeat"/>
+            <Transition message="Click//button_ok" to="UCJumpSimpleMode"/>
+            <Transition message="Click//button_exit" to="UCTimeout"/>
+        </State>
+        <State name="UCJumpSimpleMode">
+        </State>
+
+        
+        <!-- Tutorial -->
+        <State name="UCTutorial1">
+            <Transition message="Swipe//Left" to="UCTutorial2"/>
+            <Transition message="Click//button_next" to="UCTutorial2"/>
+            <Transition message="Click//button_skip" to="UCCapture"/>
+            <Transition message="Click//button_back" to="UCCapture"/>
+        </State>
+        <State name="UCTutorial2">
+            <Transition message="Swipe//Right" to="UCTutorial1"/>
+            <Transition message="Swipe//Left" to="UCTutorial3"/>
+            <Transition message="Click//button_back" to="UCTutorial1"/>
+            <Transition message="Click//button_next" to="UCTutorial3"/>
+            <Transition message="Click//button_skip" to="UCCapture"/>
+        </State>
+        <State name="UCTutorial3">
+            <Transition message="Swipe//Right" to="UCTutorial2"/>
+            <Transition message="Click//button_back" to="UCTutorial2"/>
+            <Transition message="Click//button_finish" to="UCCapture"/>
+        </State>
+        <!-- Estados finales -->
+        <State name="UCCancelByUserPrev">
+            <Transition message="SetStatusFinished" to="UCCancelByUser"/>
+        </State>
+        <State name="UCCancelByUser"/>
+        <State name="UCTimeout"/>
+        <State name="UCWaitRecording">
+            <Transition message="Finish" to="UCFinish"/>
+        </State>
+        <State name="UCFinish"/>
+        <State name="UCError"/>
+    </States>
+</FPhiGraph>

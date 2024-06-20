@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facephi-widget-conf version="1.2"
+    color_warning_message="#DD3631"
+    font_warning_message="Poppins-SemiBold.ttf"
+    color_shutter="#00819880"
+    color_shutter_text="#FFFFFF"
+    font_shutter_text="Poppins-SemiBold.ttf"
+    color_quality_low="#DD3631"
+    color_quality_good="#ffab41"
+    color_quality_excellent="#40b305"
+    color_progress_bar="#494EED"
+    width_progress_bar="8.0">
+    
+    <view id="StartExtractor">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        mirror_mist_color="#FFFFFF80"
+        clipped="true"
+        />
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        line_height="20.0"
+        valign="CENTER"
+        />
+        
+        <camera id="camera" 
+        />
+
+        <!--<camera id="camera" 
+        type="bars"
+        elements="100"
+        area="0.7"
+        offset="2"
+        background_color = "#2B303C"
+        />-->
+
+        <button id="button_start"
+        background="#3167FC"
+        decorator="#3167FC"
+        foreground="#ffffff"
+        content="button_start"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        align="CENTER"
+        radius="8"
+        />
+        
+        <buttonImage id="button_info" value="info-dark.png"/>
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        <buttonImage id="button_camera" value="camera-icon.png"/>
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="WaitRecording">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="false"
+        />
+        
+        <progressRecord 
+        id="progressRecord"
+        background_color="#e9ecef"
+        progress_color="#86449a"
+        />
+
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-Regular.ttf"
+        font_size="15.0"
+        mode="Normal"
+        valign="CENTER"
+        />
+
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="Extractor">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="true"
+        />
+
+        <camera id="camera" 
+        />
+
+        <!--<camera id="camera" 
+        type="bars"
+        elements="100"
+        area="0.7"
+        offset="2"
+        background_color = "#2B303C"
+        />-->
+                
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        line_height="20.0"
+        valign="CENTER"
+        mode="Normal"
+        />
+        
+        <text id="warning"
+        color="#DD3631"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        line_height="20.0"
+        valign="CENTER"
+        mode="Warning"
+        />
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="LivenessMove">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="true"
+        />
+        
+        <camera id="camera" />
+        
+        <animation id="liveness_move" name="ArrowProgressExpulsion_" ext="png" start="01" end="36"/>
+        <waiting id="waiting" color="#2B303C"/>
+        
+        <text id="liveness_move_text"
+        color="#2B303C"
+        font="Poppins-SemiBold.ttf"
+        font_size="17.0"
+        line_height="20.0"
+        valign="CENTER"
+        mode="Normal"
+        />
+        
+        <text id="warning"
+        color="#DD3631"
+        font="Poppins-Regular.ttf"
+        font_size="17.0"
+        line_height="20.0"
+        valign="CENTER"
+        mode="Warning"
+        />
+        
+        <progress id="progress"
+        background_color="#e9ecef"
+        progress_color="#86449a"
+        />
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="ScanQR">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        />
+        
+        <camera id="camera" />
+        
+        <text id="text"
+        color="#2B303C"
+        font="Poppins-SemiBold.ttf"
+        font_size="17.0"
+        mode="Normal"
+        />
+        
+        <text id="warning"
+        color="#DD3631"
+        font="Poppins-SemiBold.ttf"
+        font_size="17.0"
+        mode="Warning"
+        />
+        
+        <fade id="qr_fade" target_color="#FFFFFF"/>
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="Results">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="false"
+        />
+        
+        <text id="tip"
+        color="#2B303C"
+        font="Poppins-SemiBold.ttf"
+        font_size="17.0"
+        line_height="20.0"
+        />
+        
+        <results id="results"
+        background_color="#f9f9f9"
+        fontResult="Poppins-Regular.ttf"
+        fontResult_size="30.0"
+        fontQuality="Poppins-SemiBold.ttf"
+        fontQuality_size="17.0"
+        />
+        
+        <button id="button_repeat"
+        background="#3167FC"
+        decorator="#3167FC"
+        foreground="#ffffff"
+        content="button_repeat"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        align="CENTER"
+        radius="8"
+        />
+        
+        <button id="button_finish"
+        background="#3167FC"
+        decorator="#3167FC"
+        foreground="#ffffff"
+        content="button_finish"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="18.0"
+        align="CENTER"
+        radius="8"
+        />
+        
+        <image id="logo_medium" value="logo-medium.png"/>
+    </view>
+    <view id="Error">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="false"
+        />
+        
+        <button id="button_error"
+        background="#3167FC"
+        decorator="#3167FC"
+        foreground="#ffffff"
+        content="button_finish"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="14.0"
+        align="CENTER"
+        radius="8"
+        />
+
+        <text id="text_error"
+        color="#a4adb8"
+        font="Poppins-SemiBold.ttf"
+        font_size="17.0"
+        />
+        <imageError id="imageError"/>
+        
+        <image id="logo_large" value="logo-medium.png"/>
+    </view>
+    <view id="Finish">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        clipped="false"
+        />
+    </view>
+    <view id="Tutorial1">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        pagination_separator="#d2d2d2"
+        mirror_border_color="#d2d2d2"
+        mirror_border_width="2.0"
+        clipped="false"
+        />
+        
+        
+        <text id="tip"
+        color="#7f7f7f"
+        font="Poppins-SemiBold.ttf"
+        font_size="27.0"
+        />
+        
+        <text id="tip_detail"
+        color="#7f7f7f"
+        font="Poppins-Regular.ttf"
+        font_size="17.0"
+        />
+        
+        <button id="button_skip"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="button_skip"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="14.0"
+        align="LEFT"
+        />
+        
+        <button id="button_next"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="arrow-next-dark.png"
+        content_type="RESOURCE_ID"
+        align="RIGHT"
+        />
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="pagination_on" value="paged-on-dark.png"/>
+        <image id="pagination_off" value="paged-off-dark.png"/>
+    </view>
+    <view id="Tutorial2">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        pagination_separator="#d2d2d2"
+        mirror_border_color="#d2d2d2"
+        mirror_border_width="2.0"
+        clipped="false"
+        />
+        
+        <text id="tip"
+        color="#7f7f7f"
+        font="Poppins-SemiBold.ttf"
+        font_size="27.0"
+        />
+        
+        <text id="tip_detail"
+        color="#7f7f7f"
+        font="Poppins-Regular.ttf"
+        font_size="17.0"
+        />
+        
+        <button id="button_back"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="arrow-back-dark.png"
+        content_type="RESOURCE_ID"
+        font=""
+        font_size=""
+        align="LEFT"
+        />
+        
+        <button id="button_next"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="arrow-next-dark.png"
+        content_type="RESOURCE_ID"
+        align="RIGHT"
+        />
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="pagination_on" value="paged-on-dark.png"/>
+        <image id="pagination_off" value="paged-off-dark.png"/>
+    </view>
+    <view id="Tutorial3">
+        <background id="background"
+        top="#FFFFFF"
+        middle_top="#FFFFFF"
+        middle_bottom="#FFFFFF"
+        bottom="#FFFFFF"
+        pagination_separator="#d2d2d2"
+        mirror_border_color="#d2d2d2"
+        mirror_border_width="2.0"
+        clipped="false"
+        />
+        
+        <text id="tip"
+        color="#7f7f7f"
+        font="Poppins-SemiBold.ttf"
+        font_size="27.0"
+        />
+        
+        <text id="tip_detail"
+        color="#7f7f7f"
+        font="Poppins-Regular.ttf"
+        font_size="17.0"
+        />
+        
+        <button id="button_back"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="arrow-back-dark.png"
+        content_type="RESOURCE_ID"
+        font=""
+        font_size=""
+        align="LEFT"
+        />
+        
+        <button id="button_done"
+        background="#FFFFFF"
+        decorator="#FFFFFF"
+        foreground="#7f7f7f"
+        content="button_ready"
+        content_type="TEXT_ID"
+        font="Poppins-SemiBold.ttf"
+        font_size="14.0"
+        align="RIGHT"
+        />
+        
+        <buttonImage id="button_exit" value="cross-dark.png"/>
+        
+        <image id="pagination_on" value="paged-on-dark.png"/>
+        <image id="pagination_off" value="paged-off-dark.png"/>
+    </view>
+</facephi-widget-conf>
+
