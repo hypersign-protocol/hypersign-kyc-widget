@@ -168,6 +168,30 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+        clearVaultPin() {
+            localStorage.setItem('vaultLockStatus', false)
+            localStorage.removeItem('vaultPin')
+        },
+
+        clearAllLocalStore() {
+            // localStorage.removeItem('cavachAccessToken');
+            // localStorage.removeItem('ssiAccessToken');
+            // localStorage.removeItem('presentationRequest');
+            // localStorage.removeItem('widgetConfigFromDb');
+            // localStorage.removeItem('session');
+            // localStorage.removeItem('subdomain');
+
+            localStorage.removeItem('vaultDataRaw');
+            localStorage.removeItem('mb-user-id');
+            localStorage.removeItem('profile');
+            localStorage.removeItem('vaultData');
+            localStorage.removeItem('authServerAuthToken');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultPin');
+            localStorage.removeItem('onChainIssuerConfig');
+        },
+
         setOnChainIssuerConfig: (state, payload) => {
             console.log(state.hasKycDone)
             localStorage.setItem("onChainIssuerConfig", JSON.stringify(payload))
@@ -988,6 +1012,7 @@ export default new Vuex.Store({
 
         async unlockVault({ commit, getters }) {
             try {
+                debugger
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
 
@@ -1010,7 +1035,9 @@ export default new Vuex.Store({
 
                 return true
             } catch (e) {
-                throw new Error(e.message)
+                debugger
+                commit('clearVaultPin')
+                throw new Error('Error: Could not unlock vault, please check your PIN')
             }
 
         },
