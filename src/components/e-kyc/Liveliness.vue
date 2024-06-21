@@ -84,17 +84,18 @@ export default {
         onExtractionFinish: async function (extractionResult) {
 
 
-
             console.log(extractionResult)
 
-            if (extractionResult.detail.bestImageCropped) {
+            if (extractionResult.detail.bestImageCropped &&extractionResult.detail.bestImageTokenized) {
                 // Continue process.
 
                 // store data in store
                 console.log('Beofre setting liveliness data to store ')
                 await this.$store.commit('setLivelinessDone', true)
                 await this.$store.commit('setLivelinessCapturedData', {
-                    tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc
+                    tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
+                    biometricTemplateRaw:extractionResult.detail.TemplateRaw,
+                    bestImageTokenized:extractionResult.detail.bestImageTokenized
                 })
 
                 this.isWidgetStarted = false;

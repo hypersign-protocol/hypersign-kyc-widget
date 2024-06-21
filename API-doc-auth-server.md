@@ -39,7 +39,7 @@ Response Body:
             "id": "did:hid:testnet:z6MkpmVuREXbmV16ihExTpXSSrs4R6JDZTcfR9dGH6A9E7i9"
         },
         "credentialSchema": {
-            "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+            "id": "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0",
             "type": "JsonSchemaValidator2018"
         },
         "credentialStatus": {
@@ -188,7 +188,7 @@ const presentationRequest = {
           "example": {
             "type": "PersonhoodCredential",
             "credentialSchema": {
-              "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0"
+              "id": "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0"
             }
           },
           "trustedIssuer": [

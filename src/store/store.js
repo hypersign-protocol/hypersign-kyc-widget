@@ -23,7 +23,9 @@ export default new Vuex.Store({
         livelinessResult: {},
         ocrIDDocResult: {},
         livelinessCapturedData: {
-            tokenSelfiImage: ""
+            tokenSelfiImage: "",
+            biometricTemplateRaw: "",
+            bestImageTokenized: ""
         },
         kycCapturedData: {
             tokenFrontDocumentImage: "",
@@ -578,6 +580,8 @@ export default new Vuex.Store({
                     body: JSON.stringify({
                         sessionId: getters.getSession,
                         tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
+                        biometricTemplateRaw: state.livelinessCapturedData.biometricTemplateRaw,
+                        bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                         userDID: getters.getUserDID
                     })
                 })
@@ -622,6 +626,7 @@ export default new Vuex.Store({
                     body: JSON.stringify({
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
+                        bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                         tokenFaceImage: state.kycCapturedData.tokenFaceImage,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
