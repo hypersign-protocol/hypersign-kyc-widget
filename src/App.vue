@@ -52,6 +52,8 @@ export default {
           this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.dev)
         } else if (WidgetConfig.env === 'stage') {
           this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.stage)
+        } else if (WidgetConfig.env === 'prod') {
+          this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.prod)
         } else {
           this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.dev)
         }

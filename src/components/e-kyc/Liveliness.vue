@@ -80,15 +80,15 @@ export default {
         },
 
         onExtractionFinish: async function (extractionResult) {
-            if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.TemplateRaw) {
+            if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
                 // Continue process.
 
                 // store data in store
                 await this.$store.commit('setLivelinessDone', true)
                 await this.$store.commit('setLivelinessCapturedData', {
                     tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
-                    biometricTemplateRaw:extractionResult.detail.TemplateRaw,
-                    bestImageTokenized:extractionResult.detail.bestImageTokenized
+                    biometricTemplateRaw: extractionResult.detail.templateRaw,
+                    bestImageTokenized: extractionResult.detail.bestImageTokenized
                 })
 
                 this.isWidgetStarted = false;
