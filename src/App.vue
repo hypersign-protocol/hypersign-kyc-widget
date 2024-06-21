@@ -14,8 +14,15 @@ export default {
   components: {
   },
   methods: {
-    ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers", "setIdDocumentLicenseKey"]),
+    ...mapMutations(["setSteps", "setTrustedSchemaIdsAndIssuers", "setIdDocumentLicenseKey", "clearAllLocalStore"]),
+    handleBeforeUnload() {
+      this.clearAllLocalStore()
+    }
   },
+  mounted() {
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  },
+
   async created() {
 
     if (WidgetConfig) {
