@@ -19,7 +19,7 @@
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 // import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue';
 import GoogleButton from '../commons/authButtons/GoogleButton.vue';
-// import WidgetConfig from '../utils/widget.config'
+import WidgetConfig from '../utils/widget.config'
 import { STEP_NAMES } from '@/config'
 export default {
     name: STEP_NAMES.SignIn,
@@ -120,13 +120,13 @@ export default {
                                 "example": {
                                     "type": "PersonhoodCredential",
                                     "credentialSchema": {
-                                        "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0"
+                                        "id": WidgetConfig.schemaIds.PersonhoodCredential.schemaId
                                     }
                                 },
                                 "trustedIssuer": [
                                     {
                                         "required": true,
-                                        "issuer": "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
+                                        "issuer": WidgetConfig.schemaIds.PassportCredential.issuer
                                     }
                                 ]
                             }
@@ -139,13 +139,13 @@ export default {
                                 "example": {
                                     "type": "PassportCredential",
                                     "credentialSchema": {
-                                        "id": "sch:hid:testnet:z6MkgMXXQL7YD7BufNLbjrwueoj4nmih9xujJ6aozJDmzFWx:1.0"
+                                        "id": WidgetConfig.schemaIds.PassportCredential.schemaId
                                     }
                                 },
                                 "trustedIssuer": [
                                     {
                                         "required": true,
-                                        "issuer": "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
+                                        "issuer": WidgetConfig.schemaIds.PassportCredential.issuer
                                     }
                                 ]
                             }
@@ -158,13 +158,13 @@ export default {
                                 "example": {
                                     "type": "SBTCredential",
                                     "credentialSchema": {
-                                        "id": "sch:hid:testnet:z6MkgHqTUpPtkXJ9dAMt25WQB5MHmC1qqc74z7q2fZk2kPQP:1.0"
+                                        "id": WidgetConfig.schemaIds.SBTCredential.schemaId
                                     }
                                 },
                                 "trustedIssuer": [
                                     {
                                         "required": true,
-                                        "issuer": "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
+                                        "issuer": WidgetConfig.schemaIds.SBTCredential.issuer
                                     }
                                 ]
                             }
