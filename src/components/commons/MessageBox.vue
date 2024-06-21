@@ -12,7 +12,7 @@
 .toast {
   background-color: green;
   bottom: 16px;
-  width: 96%;
+  width: 100%;
   height: 30px;
   border-radius: 2px;
   z-index: 99999;
@@ -39,7 +39,7 @@
   <div style="
       background-color: rgba(253, 170, 170, 0.972);
       bottom: 16px;
-  width: 96%;
+      width: 100%;
       height: 20px;
       border-radius: 2px;
       z-index: 99999;
@@ -55,7 +55,7 @@
   <div style="
       background-color: rgb(184, 230, 184);
       bottom: 16px;
-  width: 96%;
+      width: 100%;
       height: 20px;
       border-radius: 2px;
       z-index: 99999;
@@ -80,15 +80,8 @@ export default {
   },
   computed: {
     shortenMesssage() {
-      console.log(this.msg);
       return this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
     },
-  },
-  created() {
-    console.log("Toast created");
-  },
-  mounted() {
-    console.log(this.type);
   },
   data() {
     return {};

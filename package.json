@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/plugin-transform-private-methods": "^7.23.3",
     "@bachdgvn/vue-otp-input": "^1.0.8",
+    "@cosmjs/cosmwasm-stargate": "^0.32.3",
     "@cosmjs/crypto": "^0.32.2",
     "@facephi/selphi-widget-web": "./lib/facephi-selphi-widget-web-5.35.0.tgz",
     "@facephi/selphid-widget-web": "./lib/facephi-selphid-widget-web-4.21.0.tgz",

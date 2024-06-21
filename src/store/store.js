@@ -12,12 +12,15 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
-        steps: [],
+        steps: [
+
+        ],
         // Trusted issuer and schemas
         schemaIds: {},
         //-----------------------------------------------------------------e-kyc
         hasLivelinessDone: false,
         hasKycDone: false,
+        hasSbtMintDone: false,
         kycExtractedData: {},
         finalResults: false,
         livelinessResult: {},
@@ -39,19 +42,25 @@ export default new Vuex.Store({
         userPresentationConsent: {},
         idToken: "",
         idDocumentLicenseKey: "",
+        cosmosConnection: {},
+        widgetConfig: {
+            steps: {
+                faceRecog: true,
+                idOcr: true,
+                onChainId: true,
+                sbtMint: true,
+            },
+        }
     },
     getters: {
         getActiveStep: (state) => {
-            const step = state.steps.find(x => x.isActive == true)
-            if (!step) {
-                const step = state.steps.find(x => x.isActive == true)
-                return step
-            }
+            const step = state.steps.find(x => {
+                if ((x.isActive === true) && (x.isEnabled === true)) {
+                    return x
+                }
+            })
             return step
         },
-
-
-
         //-----------------------------------------------------------------e-kyc
         getSession() {
             return localStorage.getItem("session")
@@ -94,8 +103,7 @@ export default new Vuex.Store({
             return JSON.parse(vaultDataRawStr)
         },
 
-        getVaultDataCredentials(filterCondition = {}) {
-            console.log('filterCondition =' + filterCondition)
+        getVaultDataCredentials() {
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
             const vaultDataRaw = JSON.parse(vaultDataRawStr)
             const { hypersign } = vaultDataRaw
@@ -142,27 +150,97 @@ export default new Vuex.Store({
 
         getIdDocumentLicenseKey(state) {
             return state.idDocumentLicenseKey
+        },
+        getOnChainIssuerConfig: () => {
+            const t = localStorage.getItem("onChainIssuerConfig")
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
+        },
+        getWidgetConfigFromDb: (state) => {
+            console.log(state.hasKycDone)
+            const t = localStorage.getItem('widgetConfigFromDb');
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
         }
     },
     mutations: {
-
-        setSteps: (state, steps) => {
-            state.steps = steps
+        clearVaultPin() {
+            localStorage.setItem('vaultLockStatus', false)
+            localStorage.removeItem('vaultPin')
         },
 
+        clearAllLocalStore() {
+            // localStorage.removeItem('cavachAccessToken');
+            // localStorage.removeItem('ssiAccessToken');
+            // localStorage.removeItem('presentationRequest');
+            // localStorage.removeItem('widgetConfigFromDb');
+            // localStorage.removeItem('session');
+            // localStorage.removeItem('subdomain');
+
+            localStorage.removeItem('vaultDataRaw');
+            localStorage.removeItem('mb-user-id');
+            localStorage.removeItem('profile');
+            localStorage.removeItem('vaultData');
+            localStorage.removeItem('authServerAuthToken');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultPin');
+            localStorage.removeItem('onChainIssuerConfig');
+        },
+
+        setOnChainIssuerConfig: (state, payload) => {
+            console.log(state.hasKycDone)
+            localStorage.setItem("onChainIssuerConfig", JSON.stringify(payload))
+        },
+        setCosmosConnection: (state, payload) => {
+            state.cosmosConnection = { ...payload };
+        },
+        setSteps: (state, payload) => {
+            state.steps = payload
+        },
+        setAStep: (state, payload) => {
+            let items = [...state.steps]; // create a new copy
+            const stepIndex = items.findIndex(step => step.id === payload.id)
+
+            // mutate it 
+            items[stepIndex] = { ...payload }
+
+            // return the new copy
+            state.steps = items;
+        },
         setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
             state.schemaIds = schemaIds
         },
 
+        /* eslint-disable */
         nextStep: (state, jumpToStepId = null) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
-            const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
+            // debugger;
+            const activeStep = state.steps.find(x => ((x.isActive == true) && (x.isEnabled == true)))
+            let nextStepId = 0
+            if (jumpToStepId) {
+                nextStepId = jumpToStepId
+            } else if (activeStep) {
+                nextStepId = activeStep.id + 1
+            }
+
+            console.log({
+                activeStep
+            })
+
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
+            console.log({
+                nextStep: state.steps[nextStepId]
+            })
         },
-
         previousStep: (state) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
+            const activeStep = state.steps.find(x => (x.isActive == true))
             const previousStepId = activeStep.previous
             state.steps[activeStep.id].isActive = false;
             state.steps[previousStepId].isActive = true;
@@ -195,6 +273,9 @@ export default new Vuex.Store({
         //-----------------------------------------------------------------e-kyc
         setLivelinessDone(state, payload) {
             state.hasLivelinessDone = payload;
+        },
+        setSbtMintDone(state, payload) {
+            state.hasSbtMintDone = payload;
         },
         setKycDone(state, payload) {
             state.hasKycDone = payload;
@@ -301,7 +382,12 @@ export default new Vuex.Store({
 
         setIdDocumentLicenseKey(state, payload) {
             state.idDocumentLicenseKey = payload
-        }
+        },
+
+        setWidgetConfigFromDb: (state, payload) => {
+            // state.widgetConfigFromDb = { ...payload }
+            localStorage.setItem('widgetConfigFromDb', JSON.stringify(payload));
+        },
     },
     actions: {
         addharQRVerify: ({ state }) => {
@@ -367,7 +453,6 @@ export default new Vuex.Store({
 
         }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/session'
                 fetch(url, {
                     method: 'POST',
@@ -395,7 +480,6 @@ export default new Vuex.Store({
 
         verifyPhoneNumber: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/ph/verify'
                 fetch(url, {
                     method: 'POST',
@@ -423,7 +507,6 @@ export default new Vuex.Store({
 
         verifyImage: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside verifyImage')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
                 fetch(url, {
                     method: 'POST',
@@ -451,7 +534,6 @@ export default new Vuex.Store({
 
         getFinalResult: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',
@@ -473,8 +555,6 @@ export default new Vuex.Store({
                 })
             })
         },
-
-
 
 
         // -----------------------------------------------------------------e-kyc
@@ -512,6 +592,78 @@ export default new Vuex.Store({
                             if (json) {
                                 commit('setSession', json.sessionId);
                             }
+                            resolve(json)
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Error while fetching session  ${e}`))
+                    })
+            })
+        },
+
+        fetchAppsWidgetConfig: ({ dispatch, commit, getters }) => {
+            return new Promise(async (resolve, reject) => {
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/widget-config/`
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers
+                }).then(response => response.json()).then(json => {
+                    if (json.error) {
+                        return reject(json)
+                    }
+                    commit('setWidgetConfigFromDb', json);
+                    resolve(json)
+                }).catch((e) => {
+                    return reject(`Error while fetching widget configuration ` + e.message);
+                })
+            })
+        },
+
+        getOnChainConfigByIdAction: ({ commit, dispatch, getters }, payload) => {
+            /* eslint-disable */
+            return new Promise(async (resolve, reject) => {
+                if (!payload) {
+                    throw new Error('OnChainConfig id must be provided')
+                }
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/onchainkyc-config/${payload}`;
+
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        console.log(json)
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            reject(json.message)
+                        } else if (json.error) {
+                            reject(json)
+                        } else {
                             resolve(json)
                         }
                     }).catch((e) => {
@@ -663,7 +815,55 @@ export default new Vuex.Store({
         },
 
 
-        // ----------------------------------------------------------------
+        verifySbtMint: ({ commit, getters, dispatch }, payload) => {
+            return new Promise((resolve, reject) => {
+
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:8080/",
+                    "content-type": "application/json",
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                return fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        sessionId: getters.getSession,
+                        userDID: getters.getUserDID,
+                        sbtData: {
+                            ...payload
+                        }
+                    })
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            return reject(json.message)
+                        } else if (json.error) {
+                            return reject(json)
+                        } else {
+                            if (json.credentials && json.credentials.length > 0) {
+                                commit('setSbtMintDone', true);
+                                json.credentials.forEach(credential => {
+                                    console.log('Updating each credentila in vault credential id ' + credential.id)
+                                    dispatch('updateVaultCredentials', credential);
+                                })
+
+                                return resolve(json)
+                            }
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Verifying the sbt mint result  ${e}`))
+                    })
+            })
+        },
+
+
+
+        // ---------------------------------------------------------------- EDV (auth server)
         registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
                 const url = 'https://authserver.hypersign.id/hs/api/v2/register'
@@ -817,6 +1017,7 @@ export default new Vuex.Store({
 
         async unlockVault({ commit, getters }) {
             try {
+                debugger
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
 
@@ -839,7 +1040,9 @@ export default new Vuex.Store({
 
                 return true
             } catch (e) {
-                throw new Error(e.message)
+                debugger
+                commit('clearVaultPin')
+                throw new Error('Error: Could not unlock vault, please check your PIN')
             }
 
         },
@@ -903,11 +1106,17 @@ export default new Vuex.Store({
                     if (schema === 'PassportCredential') {
                         commit('setKycDone', true)
                     }
+
+                    if (schema === 'SBTCredential') {
+                        commit('setSbtMintDone', true)
+                    }
+                } else {
+                    console.log('Credential not found for schema ' + schemaId)
                 }
             })
         },
 
-
+        // ------------- Other utilities --------------------------------
         async getClientIp() {
             try {
                 const resp = await fetch('https://api.ipify.org?format=json')
@@ -918,5 +1127,5 @@ export default new Vuex.Store({
                 console.error(e)
             }
         }
-    }
+    },
 })

@@ -9,8 +9,8 @@ body{
   }
   
 .maincontainer {
-    width: 80vw;
-    height: 87vw;
+    /* width: 80vw;
+    height: 87vw; */
     background-color: #f5f5f5;
     border: 1px solid grey;
     border-radius: 20px;
@@ -40,4 +40,8 @@ h1{
     background: white;
     padding-left: 30px;
     margin-top: 5%;
+}
+
+.min-h-36{
+    min-height: 36rem;
 }

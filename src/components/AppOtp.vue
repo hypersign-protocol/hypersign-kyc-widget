@@ -91,14 +91,11 @@ export default {
         this.isLoadingPage = false;
       } catch (e) {
         this.isLoadingPage = false;
-        console.log(e);
         this.toast(e, "error");
-        console.log(e);
       }
     },
-    async handleOnComplete(value) {
+    async handleOnComplete() {
       try {
-        console.log("OTP completed: ", value);
         this.isLoadingPage = true;
         // TODO: go for verification
         const result = await this.getFinalResult();
@@ -114,13 +111,11 @@ export default {
         }
       } catch (e) {
         this.toast(e.message, "error");
-        console.log(e);
         this.isLoadingPage = true;
       }
     },
-    handleOnChange(value) {
-      console.log("OTP changed: ", value);
-    },
+    // handleOnChange(value) {
+    // },
     handleClearInput() {
       this.$refs.otpInput.clearInput();
       this.setPhoneNumber("");
