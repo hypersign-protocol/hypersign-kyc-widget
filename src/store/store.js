@@ -802,7 +802,7 @@ export default new Vuex.Store({
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                         bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
-                        tokenFaceImage: state.kycCapturedData.tokenFaceImage,
+                        tokenFaceImage: state.livelinessCapturedData.biometricTemplateRaw,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
