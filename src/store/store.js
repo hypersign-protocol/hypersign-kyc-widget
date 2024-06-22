@@ -222,7 +222,6 @@ export default new Vuex.Store({
 
         /* eslint-disable */
         nextStep: (state, jumpToStepId = null) => {
-            // debugger;
             const activeStep = state.steps.find(x => ((x.isActive == true) && (x.isEnabled == true)))
             let nextStepId = 0
             if (jumpToStepId) {
@@ -1052,7 +1051,6 @@ export default new Vuex.Store({
 
         async unlockVault({ commit, getters }) {
             try {
-                debugger
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
                 if (!vaultData) {
