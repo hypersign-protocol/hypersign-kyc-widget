@@ -38,42 +38,50 @@
 
 <template>
   <div>
-    <div class="card-body" style="min-height:700px;">
+    <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Hypersign KYC'"
         :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
-      <div class="container">
-        <div class="box">
-          <img class="opacity-80" src="../assets/page0.png" style="width: 100%" width="100%" />
-        </div>
-        <div class="box">
-          <div class="checkbox-container">
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasLivelinessDone"> -->
+      <div class="card widget-card" style="width: 70%; margin:auto;">
 
-              <i class="bi bi-check2-circle" v-if="hasLivelinessDone" style="font-size:xxx-large"></i>
-            </div>
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled :checked="hasKycDone"> -->
-
-              <i class="bi bi-check2-circle" v-if="hasKycDone" style="font-size:xxx-large"></i>
-            </div>
-
-            <div class="checkbox-item form-check">
-              <!-- <input class="form-check-input checkbox-item-input" type="checkbox" id="checkbox1" name="checkbox1"
-                disabled> -->
-            </div>
+        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled == true">
+          <div class="col">
+            <AppInstructionStep stepNumber="1" stepTitle="Conduct liveliness check to prove you are a human"
+              :isDone="hasLivelinessDone" />
           </div>
         </div>
+
+        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled == true">
+          <div class="col">
+            <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credentials"
+              :isDone="hasKycDone" />
+          </div>
+        </div>
+
+        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
+          <div class="col">
+            <AppInstructionStep stepNumber="3" stepTitle="Mint your on-chain Identity in your favorite blockchain"
+              :isDone="hasSbtMintDone" />
+          </div>
+        </div>
+
+        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled == true">
+          <div class="col">
+            <AppInstructionStep :stepNumber="checkIfOncainIdIsEnabled ? '4' : '3'"
+              stepTitle="Generate proofs and provide consent of your data to be shared with the verifier app"
+              :isDone="false" />
+          </div>
+        </div>
+
+        <!-- <div class="d-flex" style="">
+          <div class="vr" style="height: 300px;"></div>
+        </div> -->
+
       </div>
 
 
-
-
-      <div class="">
+      <div class="mt-3">
         <!-- <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
           width="100%" /> -->
         <div class="d-grid gap-1 " style="width: 50%;margin: auto;">
@@ -89,40 +97,84 @@
 
 <script type="text/javascript">
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
+import AppInstructionStep from "./commons/AppInstructionStep.vue";
+import { STEP_NAMES } from "@/config";
 export default {
   name: "AppInstructions",
   components: {
+    AppInstructionStep
   },
   computed: {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'steps'])
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"]),
+    checkIfOncainIdIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+    },
+    checkIfIdDocumentIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+    },
+    checkIfUserConsentIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent).isEnabled
+    },
+    checkIfLivelinessIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+    }
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
 
     if (this.hasLivelinessDone) {
-      const idDocVerificationStep = this.steps.find(step => step.stepName == 'IdDocs')
-      this.nextStepNumeber = idDocVerificationStep?.id
-    }
-
-    // TODO/  this is only for face recog setting and not for fece recog + doc verification
-    // TODO: better we should work on having a configuration file to dynamically set the configuration
-    const isOcrConfigured = this.steps.find(step => step.stepName == 'IdDocs')
-    if (isOcrConfigured) {
+      // next step: id verfcaiton
       if (this.hasKycDone) {
-        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-        this.nextStepNumeber = idDocVerificationStep.id
+        // next step: check if on chain id is configured or not
+        const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
+        console.log({ isOnChainIdConfigured })
+        if (isOnChainIdConfigured) {
+          // if yes, then go to onchainId page
+          if (!this.hasSbtMintDone) {
+            // if minting already done..
+            this.nextStepNumeber = isOnChainIdConfigured.id
+          } else {
+            // go to user consent page
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+            this.nextStepNumeber = userConsentStep.id
+          }
+        } else {
+          // go to user consent page
+          const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+          this.nextStepNumeber = userConsentStep.id
+        }
+      } else {
+
+        const isKYCConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.IdDocs && step.isEnabled == true))
+        if (isKYCConfigured) {
+          // next step: go to Id verifcaiton
+          const isVerificationStep = this.steps.find(step => (step.stepName == STEP_NAMES.IdDocs && step.isEnabled == true))
+          this.nextStepNumeber = isVerificationStep?.id
+        } else {
+          // next step: check if on chain id is configured or not
+          const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
+          if (isOnChainIdConfigured) {
+            // if yes, then go to onchainId page
+            this.nextStepNumeber = isOnChainIdConfigured.id
+          } else {
+            // go to user consent page
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+            this.nextStepNumeber = userConsentStep.id
+          }
+        }
+
       }
     } else {
-      if (this.hasLivelinessDone && !this.hasKycDone) {
-        const idDocVerificationStep = this.steps.find(step => step.stepName == 'UserConsent')
-        this.nextStepNumeber = idDocVerificationStep.id
-      }
+      // next step: go to liveliness
+      const livelinessVerifcationStep = this.steps.find(step => (step.stepName == STEP_NAMES.LiveLiness && step.isEnabled == true))
+      this.nextStepNumeber = livelinessVerifcationStep?.id
     }
 
   },
   data() {
     return {
+      stepNumber: 0,
       isLoading: false,
       fullPage: true,
       toastMessage: "",
@@ -134,6 +186,10 @@ export default {
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
     ...mapActions(["getNewSession", "registerUser", "checkIfCredentialAlreadyExistsInVault"]),
+    incrementStep() {
+      this.stepNumber = this.stepNumber + 1;
+      return this.stepNumber
+    },
     toast(msg, type = "success") {
       this.isToast = true;
       this.toastMessage = msg;

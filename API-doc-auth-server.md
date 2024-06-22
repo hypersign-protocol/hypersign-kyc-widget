@@ -39,7 +39,7 @@ Response Body:
             "id": "did:hid:testnet:z6MkpmVuREXbmV16ihExTpXSSrs4R6JDZTcfR9dGH6A9E7i9"
         },
         "credentialSchema": {
-            "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0",
+            "id": "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0",
             "type": "JsonSchemaValidator2018"
         },
         "credentialStatus": {
@@ -168,7 +168,7 @@ https://authserver.hypersign.id/hs/api/v2/sync
 https://icons.getbootstrap.com/?q=vault
 
 
-http://localhost:4999?cavachAccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjA3ZjE4Zjg2MTk0MmRmNzM2NDQzZmM0MDg1MDUwMTliMDYwMSIsInVzZXJJZCI6ImI2ZDQyMWNkLThkNGQtNDhmZC05ZTQ4LTA0NjQ0MWM0M2RhNCIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImttc0lkIjoiaHM6ZG9jOmpuZm05ZzV6bzNmLXhqN3hiN3c4cGNybHFrN2lhZWpxem52N2NkbnpiZm8iLCJ3aGl0ZWxpc3RlZENvcnMiOlsiKiJdLCJzdWJkb21haW4iOiJlbnQtMGIyMmRiOSIsImVkdklkIjoiaHM6ZGV2ZWxvcGVyLWRhc2hib2FyZDphcHA6MDdmMThmODYxOTQyZGY3MzY0NDNmYzQwODUwNTAxOWIwNjAxIiwiaWF0IjoxNzA2ODQ5ODUyLCJleHAiOjE3NjY4NjQyNzJ9.4hhaA9UP3nZ2bI4TiRXrjLqXYZVeqKvJG9BUHWH515g&
+http://localhost:4888?cavachAccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjA3ZjE4Zjg2MTk0MmRmNzM2NDQzZmM0MDg1MDUwMTliMDYwMSIsInVzZXJJZCI6ImI2ZDQyMWNkLThkNGQtNDhmZC05ZTQ4LTA0NjQ0MWM0M2RhNCIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImttc0lkIjoiaHM6ZG9jOmpuZm05ZzV6bzNmLXhqN3hiN3c4cGNybHFrN2lhZWpxem52N2NkbnpiZm8iLCJ3aGl0ZWxpc3RlZENvcnMiOlsiKiJdLCJzdWJkb21haW4iOiJlbnQtMGIyMmRiOSIsImVkdklkIjoiaHM6ZGV2ZWxvcGVyLWRhc2hib2FyZDphcHA6MDdmMThmODYxOTQyZGY3MzY0NDNmYzQwODUwNTAxOWIwNjAxIiwiaWF0IjoxNzA2ODQ5ODUyLCJleHAiOjE3NjY4NjQyNzJ9.4hhaA9UP3nZ2bI4TiRXrjLqXYZVeqKvJG9BUHWH515g&
 ssiAccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6ImFmM2Q1OGFkZDczNjVhYzdhOGUyMTg2NjY2YTc5ZTU2OWUzNiIsInVzZXJJZCI6IjMyYzkxODYwLWFjNzgtNDIwMC1iYjA1LTlkMzkzN2Y5YzNlMyIsImdyYW50VHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsImttc0lkIjoiaHM6ZG9jOmxkdmthY21qcHJ3eWhpLWlvaWZvZno4bXd0enM4M2hlcHJrOWdzZW53cmciLCJ3aGl0ZWxpc3RlZENvcnMiOlsiKiJdLCJzdWJkb21haW4iOiJlbnQtZTRjNjkxYyIsImVkdklkIjoiaHM6ZGV2ZWxvcGVyLWRhc2hib2FyZDphcHA6YWYzZDU4YWRkNzM2NWFjN2E4ZTIxODY2NjZhNzllNTY5ZTM2IiwiaWF0IjoxNzEwMDE0OTI5LCJleHAiOjE3MTAwMjkzMjl9.ldjfCFI9s9ANm_DUOVWjioqFuKTsdG8NoZuGmC7TrxU&pr=eyJxdWVyeSI6W3sidHlwZSI6IlF1ZXJ5QnlFeGFtcGxlIiwiY3JlZGVudGlhbFF1ZXJ5IjpbeyJleGFtcGxlIjp7InR5cGUiOiJQZXJzb25ob29kQ3JlZGVudGlhbCIsImNyZWRlbnRpYWxTY2hlbWEiOnsiaWQiOiJzY2g6aGlkOnRlc3RuZXQ6ejZNa3Z0ZDczZERnZzdIVTh3TENtWGJlMlJBSFBBVTFFeDFWVVhDRnRQVjd1MzZpOjEuMCJ9fSwidHJ1c3RlZElzc3VlciI6W3sicmVxdWlyZWQiOnRydWUsImlzc3VlciI6ImRpZDpoaWQ6dGVzdG5ldDp6Q3lBejJ3ZktqQWFXRTRGVzc1S3hwWmgyd3VvOWtSQVVaeVYyeEVlOTNjS3IifV19XX0seyJ0eXBlIjoiUXVlcnlCeUV4YW1wbGUiLCJjcmVkZW50aWFsUXVlcnkiOlt7ImV4YW1wbGUiOnsidHlwZSI6IlBhc3Nwb3J0Q3JlZGVudGlhbCIsImNyZWRlbnRpYWxTY2hlbWEiOnsiaWQiOiJzY2g6aGlkOnRlc3RuZXQ6ejZNa2dNWFhRTDdZRDdCdWZOTGJqcnd1ZW9qNG5taWg5eHVqSjZhb3pKRG16Rld4OjEuMCJ9fSwidHJ1c3RlZElzc3VlciI6W3sicmVxdWlyZWQiOnRydWUsImlzc3VlciI6ImRpZDpoaWQ6dGVzdG5ldDp6Q3lBejJ3ZktqQWFXRTRGVzc1S3hwWmgyd3VvOWtSQVVaeVYyeEVlOTNjS3IifV19XX1dLCJyZWFzb24iOiJBcHAgbmVlZHMgdGhpcyBkYXRhIHRvIGFsbG93IHlvdSBhY2Nlc3MgdGhpcyBEYXBwIiwiaXNzdWVyRElEIjoiZGlkOmhpZDp0ZXN0bmV0Ono2TWtmcDNRSmVabmZOaGdxQ0tmMjFDUldCUTVWV3JZcXJ5TWlRN1dNYVNlQlB0TSIsImlzc3VlckRJRFZlcmlmaWNhdGlvbk1ldGhvZCI6ImRpZDpoaWQ6dGVzdG5ldDp6Nk1rZnAzUUplWm5mTmhncUNLZjIxQ1JXQlE1VldyWXFyeU1pUTdXTWFTZUJQdE0ja2V5LTEiLCJkb21haW4iOiJodHRwczovL2NvbWRleC5vbmUvIiwibG9nb1VybCI6Imh0dHBzOi8vZW5jcnlwdGVkLXRibjAuZ3N0YXRpYy5jb20vaW1hZ2VzP3E9dGJuOkFOZDlHY1FNc0pfcG0tdVBkbV9NeU55Uk5wQjlSWGxucDNmOUZzMUdQUSZ1c3FwPUNBVSJ9&redirectUrl=https://google.com
 
 
@@ -188,7 +188,7 @@ const presentationRequest = {
           "example": {
             "type": "PersonhoodCredential",
             "credentialSchema": {
-              "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0"
+              "id": "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0"
             }
           },
           "trustedIssuer": [

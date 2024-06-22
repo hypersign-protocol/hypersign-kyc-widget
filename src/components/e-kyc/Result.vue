@@ -81,8 +81,6 @@ export default {
                 message: 'Successfully verified the user',
                 idToken: this.idToken
             })
-            console.log(data)
-            console.log('BEfore calling widnow.opener.postMessage ...')
             window.opener.postMessage(data, this.getPresentationRequestParsed.domain);
             self.close();
         },

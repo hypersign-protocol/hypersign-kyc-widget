@@ -6,20 +6,21 @@
 
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import webAuth from '../utils/auth0Connection';
+import { AUTH_PROVIDERS } from '../../config'
 export default {
   name: 'AuthTication',
   components: {},
   computed: {
-    ...mapGetters(["getActiveStep"])
+    ...mapGetters(["getActiveStep", 'getOnChainIssuerConfig'])
   },
   data() {
     return {
       isLoadingPage: false,
-      fullPage: true
+      fullPage: true,
     }
   },
   methods: {
-    ...mapMutations(["nextStep", "setProfile"]),
+    ...mapMutations(["nextStep", "setProfile", "setCosmosConnection"]),
     ...mapActions(["registerUser"]),
     async getUserInfo(accessToken) {
       if (accessToken) {
@@ -31,42 +32,44 @@ export default {
           that.$store.commit('setProfile', { ...user, accessToken });
         })
       }
-    }
+    },
   },
   async mounted() {
     try {
-
-      console.log('Inside mounted Auth')
-      const routeHash = this.$route.hash;
-      const accessToken = routeHash.split("&")[0].split("=")[1];
-      const authToken = routeHash.split("&")[5].split("=")[1];
-      const payload = {
-        provider: 'Google',
-        accessToken,
-        authToken
+      const provider = this.$route.params['provider']
+      if (!provider) {
+        throw new Error('No provider specified')
       }
-      this.$store.commit('setThridPartyAuth', payload);
+
+      if (provider === AUTH_PROVIDERS.GOOGLE) {
+        const routeHash = this.$route.hash;
+        const accessToken = routeHash.split("&")[0].split("=")[1];
+        const authToken = routeHash.split("&")[5].split("=")[1];
+        const payload = {
+          provider: AUTH_PROVIDERS.GOOGLE,
+          accessToken,
+          authToken
+        }
+        this.$store.commit('setThridPartyAuth', payload);
 
 
-      ///
-      console.log('Before calling getUserInfo')
-      this.getUserInfo(accessToken)
-      this.isLoadingPage = true;
-
-      setTimeout(async () => {
-
-        console.log('Before calling registerUser')
-        await this.registerUser()
-        console.log('After calling registerUser')
         ///
-        console.log('Inside mounted Auth')
+        this.getUserInfo(accessToken)
+        this.isLoadingPage = true;
+
+        setTimeout(async () => {
+          await this.registerUser()
+          ///
+          this.nextStep(1)
+          this.isLoadingPage = false
+          this.$router.push({ path: "/" })
+        }, 1500)
+      } else if (provider === AUTH_PROVIDERS.KEPLR) {
         this.nextStep(1)
-        this.isLoadingPage = false
         this.$router.push({ path: "/" })
-      }, 1500)
+      }
 
     } catch (e) {
-      console.log('error =' + e)
       this.isLoadingPage = false
       this.nextStep(1)
       this.$router.push({ path: "/" })

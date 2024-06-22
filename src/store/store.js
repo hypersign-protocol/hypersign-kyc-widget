@@ -12,18 +12,23 @@ export default new Vuex.Store({
         finalResult: {},
         aadharData: {},
         authorization: null,
-        steps: [],
+        steps: [
+
+        ],
         // Trusted issuer and schemas
         schemaIds: {},
         //-----------------------------------------------------------------e-kyc
         hasLivelinessDone: false,
         hasKycDone: false,
+        hasSbtMintDone: false,
         kycExtractedData: {},
         finalResults: false,
         livelinessResult: {},
         ocrIDDocResult: {},
         livelinessCapturedData: {
-            tokenSelfiImage: ""
+            tokenSelfiImage: "",
+            biometricTemplateRaw: "",
+            bestImageTokenized: ""
         },
         kycCapturedData: {
             tokenFrontDocumentImage: "",
@@ -37,19 +42,26 @@ export default new Vuex.Store({
         userPresentationConsent: {},
         idToken: "",
         idDocumentLicenseKey: "",
+        cosmosConnection: {},
+        widgetConfig: {
+            steps: {
+                faceRecog: true,
+                idOcr: true,
+                onChainId: true,
+                sbtMint: true,
+            },
+        },
+        vaultPin: "",
     },
     getters: {
         getActiveStep: (state) => {
-            const step = state.steps.find(x => x.isActive == true)
-            if (!step) {
-                const step = state.steps.find(x => x.isActive == true)
-                return step
-            }
+            const step = state.steps.find(x => {
+                if ((x.isActive === true) && (x.isEnabled === true)) {
+                    return x
+                }
+            })
             return step
         },
-
-
-
         //-----------------------------------------------------------------e-kyc
         getSession() {
             return localStorage.getItem("session")
@@ -78,8 +90,9 @@ export default new Vuex.Store({
 
 
         // ---------------------------------------------------------------- User vault
-        getVaultPin() {
-            return localStorage.getItem('vaultPin')
+        getVaultPin(state) {
+            return state.vaultPin;
+            // return localStorage.getItem('vaultPin')
         },
         getVaultLockStatus() {
             return localStorage.getItem('vaultLockStatus')
@@ -92,8 +105,7 @@ export default new Vuex.Store({
             return JSON.parse(vaultDataRawStr)
         },
 
-        getVaultDataCredentials(filterCondition = {}) {
-            console.log('filterCondition =' + filterCondition)
+        getVaultDataCredentials() {
             const vaultDataRawStr = localStorage.getItem('vaultDataRaw')
             const vaultDataRaw = JSON.parse(vaultDataRawStr)
             const { hypersign } = vaultDataRaw
@@ -140,27 +152,96 @@ export default new Vuex.Store({
 
         getIdDocumentLicenseKey(state) {
             return state.idDocumentLicenseKey
+        },
+        getOnChainIssuerConfig: () => {
+            const t = localStorage.getItem("onChainIssuerConfig")
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
+        },
+        getWidgetConfigFromDb: (state) => {
+            console.log(state.hasKycDone)
+            const t = localStorage.getItem('widgetConfigFromDb');
+            if (t) {
+                return JSON.parse(t)
+            } else {
+                return null
+            }
         }
     },
     mutations: {
-
-        setSteps: (state, steps) => {
-            state.steps = steps
+        clearVaultPin() {
+            localStorage.setItem('vaultLockStatus', false)
+            localStorage.removeItem('vaultPin')
         },
 
+        clearAllLocalStore() {
+            // localStorage.removeItem('cavachAccessToken');
+            // localStorage.removeItem('ssiAccessToken');
+            // localStorage.removeItem('presentationRequest');
+            // localStorage.removeItem('widgetConfigFromDb');
+            // localStorage.removeItem('session');
+            // localStorage.removeItem('subdomain');
+
+            localStorage.removeItem('vaultDataRaw');
+            localStorage.removeItem('mb-user-id');
+            localStorage.removeItem('profile');
+            localStorage.removeItem('vaultData');
+            localStorage.removeItem('authServerAuthToken');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultLockStatus');
+            localStorage.removeItem('vaultPin');
+            localStorage.removeItem('onChainIssuerConfig');
+        },
+
+        setOnChainIssuerConfig: (state, payload) => {
+            console.log(state.hasKycDone)
+            localStorage.setItem("onChainIssuerConfig", JSON.stringify(payload))
+        },
+        setCosmosConnection: (state, payload) => {
+            state.cosmosConnection = { ...payload };
+        },
+        setSteps: (state, payload) => {
+            state.steps = payload
+        },
+        setAStep: (state, payload) => {
+            let items = [...state.steps]; // create a new copy
+            const stepIndex = items.findIndex(step => step.id === payload.id)
+
+            // mutate it 
+            items[stepIndex] = { ...payload }
+
+            // return the new copy
+            state.steps = items;
+        },
         setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
             state.schemaIds = schemaIds
         },
 
+        /* eslint-disable */
         nextStep: (state, jumpToStepId = null) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
-            const nextStepId = jumpToStepId ? jumpToStepId : activeStep.id + 1;
+            const activeStep = state.steps.find(x => ((x.isActive == true) && (x.isEnabled == true)))
+            let nextStepId = 0
+            if (jumpToStepId) {
+                nextStepId = jumpToStepId
+            } else if (activeStep) {
+                nextStepId = activeStep.id + 1
+            }
+
+            console.log({
+                activeStep
+            })
+
             state.steps[activeStep.id].isActive = false;
             state.steps[nextStepId].isActive = true;
+            console.log({
+                nextStep: state.steps[nextStepId]
+            })
         },
-
         previousStep: (state) => {
-            const activeStep = state.steps.find(x => x.isActive == true)
+            const activeStep = state.steps.find(x => (x.isActive == true))
             const previousStepId = activeStep.previous
             state.steps[activeStep.id].isActive = false;
             state.steps[previousStepId].isActive = true;
@@ -193,6 +274,9 @@ export default new Vuex.Store({
         //-----------------------------------------------------------------e-kyc
         setLivelinessDone(state, payload) {
             state.hasLivelinessDone = payload;
+        },
+        setSbtMintDone(state, payload) {
+            state.hasSbtMintDone = payload;
         },
         setKycDone(state, payload) {
             state.hasKycDone = payload;
@@ -260,8 +344,9 @@ export default new Vuex.Store({
 
         // --- vault
         setVaultPin(state, payload) {
-            console.log(state.hasKycDone)
-            localStorage.setItem('vaultPin', payload)
+            // console.log(state.hasKycDone)
+            // localStorage.setItem('vaultPin', payload)
+            state.vaultPin = payload;
         },
 
         setVaultData(state, payload) {
@@ -299,7 +384,12 @@ export default new Vuex.Store({
 
         setIdDocumentLicenseKey(state, payload) {
             state.idDocumentLicenseKey = payload
-        }
+        },
+
+        setWidgetConfigFromDb: (state, payload) => {
+            // state.widgetConfigFromDb = { ...payload }
+            localStorage.setItem('widgetConfigFromDb', JSON.stringify(payload));
+        },
     },
     actions: {
         addharQRVerify: ({ state }) => {
@@ -365,7 +455,6 @@ export default new Vuex.Store({
 
         }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/session'
                 fetch(url, {
                     method: 'POST',
@@ -393,7 +482,6 @@ export default new Vuex.Store({
 
         verifyPhoneNumber: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/ph/verify'
                 fetch(url, {
                     method: 'POST',
@@ -421,7 +509,6 @@ export default new Vuex.Store({
 
         verifyImage: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside verifyImage')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/img/verify'
                 fetch(url, {
                     method: 'POST',
@@ -449,7 +536,6 @@ export default new Vuex.Store({
 
         getFinalResult: ({ state }) => {
             return new Promise((resolve, reject) => {
-                console.log('Inside addharQRVerify')
                 const url = KAVACH_SERVER_BASE_URL + '/api/v1/aadhaar/result'
                 fetch(url, {
                     method: 'GET',
@@ -473,8 +559,6 @@ export default new Vuex.Store({
         },
 
 
-
-
         // -----------------------------------------------------------------e-kyc
         getNewSession: ({ commit, dispatch, getters }, payload) => {
             /* eslint-disable */
@@ -484,7 +568,7 @@ export default new Vuex.Store({
 
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:4999/",
+                    'Origin': "http://localhost:4888/",
                     "content-type": "application/json"
                 };
 
@@ -510,6 +594,78 @@ export default new Vuex.Store({
                             if (json) {
                                 commit('setSession', json.sessionId);
                             }
+                            resolve(json)
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Error while fetching session  ${e}`))
+                    })
+            })
+        },
+
+        fetchAppsWidgetConfig: ({ dispatch, commit, getters }) => {
+            return new Promise(async (resolve, reject) => {
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/widget-config/`
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers
+                }).then(response => response.json()).then(json => {
+                    if (json.error) {
+                        return reject(json)
+                    }
+                    commit('setWidgetConfigFromDb', json);
+                    resolve(json)
+                }).catch((e) => {
+                    return reject(`Error while fetching widget configuration ` + e.message);
+                })
+            })
+        },
+
+        getOnChainConfigByIdAction: ({ commit, dispatch, getters }, payload) => {
+            /* eslint-disable */
+            return new Promise(async (resolve, reject) => {
+                if (!payload) {
+                    throw new Error('OnChainConfig id must be provided')
+                }
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/onchainkyc-config/${payload}`;
+
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:4999/",
+                    "content-type": "application/json"
+                };
+
+                try {
+                    const ip = await dispatch('getClientIp');
+                    headers['X-Forwarded-For'] = ip;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return fetch(url, {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        console.log(json)
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            reject(json.message)
+                        } else if (json.error) {
+                            reject(json)
+                        } else {
                             resolve(json)
                         }
                     }).catch((e) => {
@@ -578,13 +734,30 @@ export default new Vuex.Store({
                     body: JSON.stringify({
                         sessionId: getters.getSession,
                         tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
+                        biometricTemplateRaw: state.livelinessCapturedData.biometricTemplateRaw,
+                        bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                         userDID: getters.getUserDID
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response.ok)
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                return response.json().then(json => {
+                                    console.log(json)
+                                    let m = json ? json.message : "Can not verify passive liveliness check"
+                                    if (m.isArray()) {
+                                        m = json.message.join(' ')
+                                    }
+                                    return reject(m)
+                                })
+                            }
+                        }
+                        return response.json()
+                    })
                     .then(async json => {
                         if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message)
+                            return reject("Faicial recognition failed")
                         } else if (json.error) {
                             return reject(json)
                         } else {
@@ -607,10 +780,15 @@ export default new Vuex.Store({
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
+
+                if (!state.livelinessCapturedData.bestImageTokenized) {
+                    return reject('User has not performed Facial recognition')
+                }
+
                 const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",
+                    'Origin': "http://localhost:8080/",  // TODO remove this hardcoding
                     "content-type": "application/json",
                     'x-ssi-access-token': getters.getSSIAccessToken,
                     'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
@@ -622,21 +800,33 @@ export default new Vuex.Store({
                     body: JSON.stringify({
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
-                        tokenFaceImage: state.kycCapturedData.tokenFaceImage,
+                        bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
+                        tokenFaceImage: state.livelinessCapturedData.biometricTemplateRaw,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
                         ocr: { ...state.kycExtractedData.extractionRaw.ocr }
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response.ok)
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                return response.json().then(json => {
+                                    console.log(json)
+                                    reject(json.message[0]['message'])
+                                })
+                            }
+                        }
+                        return response.json()
+                    })
                     .then(json => {
                         if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message)
+                            return reject(json.message[0]['message'])
                         } else if (json.error) {
                             return reject(json)
                         } else {
-                            if (json && json.serviceFacialAuthenticationResult === 0) {
+                            if (json && json.serviceFacialAuthenticationResult === 3) {
                                 commit('setOcrIdDocResult', json);
                                 if (json.credentials && json.credentials.length > 0) {
 
@@ -652,13 +842,62 @@ export default new Vuex.Store({
                             }
                         }
                     }).catch((e) => {
+                        //
                         reject(new Error(`Verifying the result  ${e}`))
                     })
             })
         },
 
 
-        // ----------------------------------------------------------------
+        verifySbtMint: ({ commit, getters, dispatch }, payload) => {
+            return new Promise((resolve, reject) => {
+
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'Origin': "http://localhost:8080/",
+                    "content-type": "application/json",
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                return fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        sessionId: getters.getSession,
+                        userDID: getters.getUserDID,
+                        sbtData: {
+                            ...payload
+                        }
+                    })
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json.statusCode && (json.statusCode != (200 || 201))) {
+                            return reject(json.message)
+                        } else if (json.error) {
+                            return reject(json)
+                        } else {
+                            if (json.credentials && json.credentials.length > 0) {
+                                commit('setSbtMintDone', true);
+                                json.credentials.forEach(credential => {
+                                    console.log('Updating each credentila in vault credential id ' + credential.id)
+                                    dispatch('updateVaultCredentials', credential);
+                                })
+
+                                return resolve(json)
+                            }
+                        }
+                    }).catch((e) => {
+                        reject(new Error(`Verifying the sbt mint result  ${e}`))
+                    })
+            })
+        },
+
+
+
+        // ---------------------------------------------------------------- EDV (auth server)
         registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
                 const url = 'https://authserver.hypersign.id/hs/api/v2/register'
@@ -814,6 +1053,9 @@ export default new Vuex.Store({
             try {
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
+                if (!vaultData) {
+                    return false
+                }
 
                 if (getters.getVaultLockStatus === false) {
                     throw new Error('Vault is already unlocked')
@@ -821,6 +1063,10 @@ export default new Vuex.Store({
                 if (!vaultData || vaultData === 'undefined') {
                     return false
                 }
+                console.log('Before calling decryt ')
+                console.log({
+                    vaultData, vaultPin
+                })
                 const decryptedData = await decrypt(vaultData, vaultPin)
 
                 if (decryptedData === "") {
@@ -834,7 +1080,9 @@ export default new Vuex.Store({
 
                 return true
             } catch (e) {
-                throw new Error(e.message)
+                commit('clearVaultPin')
+                console.error(e)
+                throw new Error('Error: Could not unlock vault, please check your PIN')
             }
 
         },
@@ -874,7 +1122,7 @@ export default new Vuex.Store({
 
             Object.keys(schemaIds).forEach(schema => {
                 const { schemaId } = schemaIds[schema]
-                const credential = credentials.some(credential => {
+                const credential = credentials.find(credential => {
                     if (credential) {
 
                         // TODO: We can also add filter for trusted issuer later in the presentation request
@@ -887,6 +1135,8 @@ export default new Vuex.Store({
                 if (credential) {
                     if (schema === 'PersonhoodCredential') {
                         console.log("commiting setLivelinessDone")
+                        console.log(credential)
+                        commit('setLivelinessCapturedData', credential.credentialSubject)
                         commit('setLivelinessDone', true)
                     }
 
@@ -898,11 +1148,17 @@ export default new Vuex.Store({
                     if (schema === 'PassportCredential') {
                         commit('setKycDone', true)
                     }
+
+                    if (schema === 'SBTCredential') {
+                        commit('setSbtMintDone', true)
+                    }
+                } else {
+                    console.log('Credential not found for schema ' + schemaId)
                 }
             })
         },
 
-
+        // ------------- Other utilities --------------------------------
         async getClientIp() {
             try {
                 const resp = await fetch('https://api.ipify.org?format=json')
@@ -913,5 +1169,5 @@ export default new Vuex.Store({
                 console.error(e)
             }
         }
-    }
+    },
 })

@@ -1,10 +1,6 @@
 <template>
   <div class="card maincontainer">
-    <load-ing
-      :active.sync="isLoading"
-      :can-cancel="true"
-      :is-full-page="fullPage"
-    ></load-ing>
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <NavBar />
 
     <div class="card-body">
@@ -28,20 +24,10 @@
           </qrcode-stream> -->
 
           <div id="qr-camera">
-            <video
-              id="camera-preview"
-              refs="scanner"
-              autoplay
-              playsinline
-              v-if="isScan"
-            >
+            <video id="camera-preview" refs="scanner" autoplay playsinline v-if="isScan">
               <span v-if="loading"> waiting for camera</span>
             </video>
-            <i
-              v-else
-              class="bi bi-qr-code-scan"
-              style="font-size: 200px; color: rgb(59, 58, 58)"
-            ></i>
+            <i v-else class="bi bi-qr-code-scan" style="font-size: 200px; color: rgb(59, 58, 58)"></i>
 
             <div id="qr-overlay" v-if="isScan">
               <div id="qr-scan-box"></div>
@@ -56,11 +42,7 @@
           </select>
           <br />
 
-          <button
-            class="btn btn-outline-dark"
-            @click="openScanner"
-            v-if="!isScan"
-          >
+          <button class="btn btn-outline-dark" @click="openScanner" v-if="!isScan">
             <i class="bi bi-camera"></i> Scan
           </button>
           <button class="btn btn-link btn-dark" @click="cancelScanner" v-else>
@@ -69,16 +51,9 @@
         </div>
       </div>
       <div v-else class="table-responsive-sm" id="aadharDataDisplay">
-        <img
-          src="../assets/aadhaar-logo.png"
-          height="40"
-          style="opacity: 15%"
-        />
+        <img src="../assets/aadhaar-logo.png" height="40" style="opacity: 15%" />
 
-        <table
-          class="table"
-          style="text-align: left; font-size: x-small; padding-top: 10px"
-        >
+        <table class="table" style="text-align: left; font-size: x-small; padding-top: 10px">
           <tbody>
             <!-- <tr>
               <th rowspan="5">
@@ -229,7 +204,7 @@ export default {
 
       this.openScanner();
     },
-   
+
     processQrMoz(imgData) {
       const code = jsQR(imgData.data, imgData.width, imgData.height, {
         inversionAttempts: "attemptBoth",
@@ -295,10 +270,8 @@ export default {
           const result = await this.addharQRVerify();
           await this.wait(1000);
           if (result && result.verified === true) {
-            console.log("QR verified successfully");
             this.isQRVerfied = true;
             if (result.aadharData) {
-              console.log("Setting aadhaar data in localstorage...");
               this.setAadhaarData(result.aadharData);
               // generateImageFromJ2k(result.j2kImage); // TODO: need to figure out how to show image
             }
@@ -321,11 +294,11 @@ export default {
       }
     },
     // async onInit(promise) {
-    //   console.log("On init");
+
     //   this.loading = true;
     //   try {
     //     const { capabilities } = await promise;
-    //     console.log(capabilities);
+
     //     this.loading = false;
     //   } catch (e) {
     //     console.error(e);
@@ -335,10 +308,6 @@ export default {
 
     proceedNext() {
       this.nextStep();
-    },
-    onReady(capabilities) {
-      console.log("Camera is ready");
-      console.log(capabilities);
     },
     onError(e) {
       if (e.name === "NotAllowedError") {
@@ -430,21 +399,21 @@ export default {
 
             if (capabilits.torch) {
               document.getElementsByClassName('switch')[0].style.display = 'inline-block'
-              this.$refs.torch.addEventListener('change', (e)=>{
+              this.$refs.torch.addEventListener('change', (e) => {
                 track.applyConstraints({
-                advanced: [{
-                  torch: e.target.checked
+                  advanced: [{
+                    torch: e.target.checked
 
-                }]
-              })
-                .catch(e => {
-                  console.error(e);
+                  }]
                 })
+                  .catch(e => {
+                    console.error(e);
+                  })
               })
-              
 
 
-             
+
+
 
 
 
@@ -465,7 +434,6 @@ export default {
 
           }
           if ("ImageCapture" in window) {
-            console.log("ImageCapture is supported");
             const imageCapture = new ImageCapture(track);
 
             const width = track.getSettings().width;

@@ -15,8 +15,8 @@
       border-radius: 33px;
       padding-bottom: 4px;
       background: #80808024;
-      " v-if="getActiveStep.name">
-        {{ getActiveStep.name }} ({{ getActiveStep.id - 2 }}/{{ kycStepsLength }})
+      " v-if="getActiveStep.name && (getActiveStep.isEnabled == true)">
+        {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }})
       </span>
     </div>
   </div>
@@ -26,12 +26,30 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import { STEP_NAMES } from "@/config";
+
 export default {
   computed: {
     ...mapState(["steps",]),
     ...mapGetters(["getActiveStep"]),
+    length() {
+      if (this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled == false) {
+        if (this.getActiveStep.stepName === STEP_NAMES.UserConsent) {
+          return 2
+        } else {
+          return 1
+        }
+      } else {
+        return 1
+      }
+    },
+    lengthToMinus() {
+      const allRelevantSteps = this.steps.filter(step => step.name != null)
+      const notActiveSteps = allRelevantSteps.filter(step => step.isActive == true)
+      return notActiveSteps ? notActiveSteps.length : 0
+    },
     kycStepsLength() {
-      return this.steps.filter(step => step.name != null).length
+      return this.steps.filter(step => (step.name != null && step.isEnabled == true)).length
     }
 
 

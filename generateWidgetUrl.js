@@ -11,7 +11,7 @@ const redirectUrl = "https://google.com"
 //// ----------------------------------------------------------------
 
 // const widgetBaseUrl = "https://hypersign-kyc-widget.netlify.app"
-const widgetBaseUrl = "http://localhost:4999"
+const widgetBaseUrl = "http://localhost:4888"
 const presentationRequest = {
     "query": [
         {
@@ -21,7 +21,7 @@ const presentationRequest = {
                     "example": {
                         "type": "PersonhoodCredential",
                         "credentialSchema": {
-                            "id": "sch:hid:testnet:z6Mkvtd73dDgg7HU8wLCmXbe2RAHPAU1Ex1VUXCFtPV7u36i:1.0"
+                            "id": "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0"
                         }
                     },
                     "trustedIssuer": [
@@ -62,7 +62,6 @@ const presentationRequest = {
 const presentationRequestStr = JSON.stringify(presentationRequest)
 const prBase64 = btoa(presentationRequestStr)
 const finalUrl = `${widgetBaseUrl}?cavachAccessToken=${cavachAccessToken}&ssiAccessToken=${ssiAccessToken}&pr=${prBase64}&redirectUrl=${redirectUrl}`
-console.log(finalUrl)
 
 
 

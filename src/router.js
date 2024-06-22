@@ -22,7 +22,7 @@ const router = new Router({
         },
 
         {
-            path: '/auth/google',
+            path: '/auth/:provider',
             name: 'AuthTication',
             component: Auth,
             meta: () => (

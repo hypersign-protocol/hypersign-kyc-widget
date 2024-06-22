@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="card-body">
+        <div class="card-body min-h-36">
             <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
             <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
@@ -8,7 +8,7 @@
                 <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
 
-            <div class="center" v-else>
+            <div v-else>
                 <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
         </div>
@@ -20,26 +20,41 @@
 <script type="text/javascript">
 import AskPIN from '../commons/AskPIN.vue';
 import RegisterPIN from '../commons/RegisterPIN.vue';
-import { mapState, mapActions, mapMutations } from 'vuex';
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
+import { STEP_NAMES } from '../../config';
 export default {
-    name: "VaultPin",
+    name: STEP_NAMES.VaultPIN,
     computed: {
-        ...mapState(['ifNewUser']),
+        ...mapState(['ifNewUser', 'steps']),
+        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps"])
     },
     components: {
         AskPIN,
         RegisterPIN,
     },
     async created() {
-        // this.generateMnemonic1()
-        // await this.generateDID()
+        if (this.getWidgetConfigFromDb.faceRecog) {
+            this.enableAstep(STEP_NAMES.LiveLiness)
+        }
 
+        if (this.getWidgetConfigFromDb.idOcr.enabled) {
+            this.enableAstep(STEP_NAMES.IdDocs)
+        }
+
+        if (this.getWidgetConfigFromDb.onChainId.enabled) {
+            this.enableAstep(STEP_NAMES.OnChainId)
+        }
     },
     methods: {
-        ...mapMutations(['nextStep', 'setVaultRaw']),
+        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
         ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById"]),
+        enableAstep(stepName) {
+            const stepToUpdate = this.steps.find(x => x.stepName === stepName)
+            stepToUpdate.isEnabled = true;
+            this.setAStep(stepToUpdate);
+        },
         async unlockVaultAndSyncData(data) {
             try {
                 if (data) {
@@ -67,20 +82,17 @@ export default {
                 this.isLoadingPage = false
             }
         },
-
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
-            console.log(this.userVaultDataRaw.mnemonic)
         },
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
-            console.log(seed)
             const hypersignDID = new HypersignDID({ namespace: 'testnet' });
             const kp = await hypersignDID.generateKeys({ seed });
-            console.log({ ...kp })
+
 
             const didDocument = await hypersignDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
-            console.log({ ...didDocument })
+
 
             this.userVaultDataRaw.hypersign.did = didDocument.id;
             this.userVaultDataRaw.hypersign.didDoc = { ...didDocument }

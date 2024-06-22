@@ -1,9 +1,10 @@
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphid-widget-web";
-import { mapActions, mapMutations, mapGetters } from "vuex";
+import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import PreviewData from '../commons/Preview.vue'
+import { STEP_NAMES } from '@/config'
 export default {
-    name: 'IdDocs',
+    name: STEP_NAMES.IdDocs,
     components: {
         PreviewData
     },
@@ -12,6 +13,10 @@ export default {
             return Object.keys(this.$store.state.kycExtractedData).length > 0 ? true : false;
         },
         ...mapGetters(['getIdDocumentLicenseKey']),
+        ...mapState(["steps"]),
+        checkIfOncainIdIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+        },
     },
     data: function () {
         return {
@@ -43,7 +48,7 @@ export default {
             debugMode: false,
             showLog: false,
             documentMode: FPhi.SelphID.DocumentMode.SingleSide,
-            documentType: FPhi.SelphID.DocumentType.IDCard,
+            documentType: FPhi.SelphID.DocumentType.Passport,
             scanMode: FPhi.SelphID.ScanMode.Specific,
             blurredThreshold: 0.1,
             widgetVersion: FPhi.SelphID.Version,
@@ -60,7 +65,6 @@ export default {
 
     created() {
         this.licenseKey = this.getIdDocumentLicenseKey
-        console.log(this.licenseKey)
         // if (!this.licenseKey) {
         //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
         //   this.licenseKey = license;
@@ -106,9 +110,8 @@ export default {
         },
 
         // Widget event handlers
-        onModuleLoaded: function (eventData) {
+        onModuleLoaded: function () {
             console.warn("[SelphID] onModuleLoaded");
-            console.log(eventData.detail);
         },
 
         onExtractionFinished: async function (extractionResult) {
@@ -135,7 +138,6 @@ export default {
 
         onExceptionCaptured: function (exceptionResult) {
             console.warn("[SelphID] onExceptionCaptured");
-            console.log(exceptionResult.detail);
 
             switch (exceptionResult.detail.exceptionType) {
                 case (FPhi.SelphID.ExceptionType.CameraError):
@@ -163,32 +165,26 @@ export default {
         },
 
         onUserCancelled: function () {
-            console.warn("[SelphID] onUserCancel");
-            console.log("The widget has been closed");
-
             this.isWidgetStarted = false;
             this.widgetResult = 'Error! The extraction has been cancelled';
         },
 
-        onExtractionTimeout: function (eventData) {
+        onExtractionTimeout: function () {
             console.warn("[SelphID] onExtractionTimeout");
-            console.log(eventData.detail);
 
             this.isWidgetStarted = false;
-            this.widgetResult = 'Error! Time limit exceeded';
+            // this.widgetResult = 'Error! Time limit exceeded';
         },
 
         onTrackStatus: function (eventData) {
             let trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code);
             console.warn(`[SelphID] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`);
-            console.log(eventData.detail);
         },
 
         // Widget methods
         checkCapabilities: async function () {
             // Check device capabilities (browser, memory, webassembly...) with checkCapabilities method
             const capabilities = await FPhi.SelphID.CheckCapabilities();
-            console.log("SelphID: Widget Check Capabilities Check:\n", capabilities);
             return capabilities;
         },
 
@@ -198,8 +194,6 @@ export default {
         },
 
         async verifyIdDocEventHandler(data) {
-            console.log("verifyIdDocEventHandler inside ")
-
             try {
                 if (!data) {
                     throw new Error('Invalid event data')
@@ -207,8 +201,16 @@ export default {
                 this.isLoading = true;
                 this.toast('Uploading and verifying your document...', "warning");
                 await this.verifyOcrIDDoc()
-                this.nextStep();
-                this.isLoading = false;
+
+                setTimeout(() => {
+                    if (this.checkIfOncainIdIsEnabled) {
+                        this.nextStep(5);
+                    } else {
+                        this.nextStep(6);
+                    }
+                    this.isLoading = false;
+                }, 2000)
+
             } catch (e) {
                 this.toast(e.message, "error");
                 this.isLoading = false;
@@ -222,53 +224,55 @@ export default {
 
 
 <template>
-    <div class="card-body">
-        <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
-            style="text-align: center;" />
-        <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-        <div class="row" style="text-align: left;" v-if="!ifExtractedData">
-            <!-- SelphID Web Widget Container: Properties and events setup -->
-            <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
-                <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
-                    :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
-                    :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
-                    :previewCapture="previewCapture" :forceLandscape="forceLandscape" :captureTimeout="captureTimeout"
-                    :captureRetries="captureRetries" :imageFormat="imageFormat" :imageQuality="imageQuality"
-                    :documentType="documentType" :scanMode="scanMode" :blurredThreshold="blurredThreshold"
-                    :showLog="showLog" :debugMode="debugMode" :documentMode="documentMode"
-                    @onmoduleloaded="onModuleLoaded" @onextractionfinished="onExtractionFinished"
-                    @onusercancelled="onUserCancelled" @onexceptioncaptured="onExceptionCaptured"
-                    @onextractiontimeout="onExtractionTimeout" @ontrackstatus="onTrackStatus"></facephi-selphid>
-                <div class="center" v-else>
-                    <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" />
+    <div>
+        <div class="card-body min-h-36">
+            <PageHeading :header="'ID Verification'" :subHeader="'Upload front side of your passport'"
+                style="text-align: center;" />
+            <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+            <div class="row" style="text-align: left;" v-if="!ifExtractedData">
+                <!-- SelphID Web Widget Container: Properties and events setup -->
+                <div class="col-12 col-md-9" style="position: relative; min-height: 550px;  max-height: 90%;">
+                    <facephi-selphid v-if="isWidgetStarted" :licenseKey="licenseKey" :bundlePath="bundlePath"
+                        :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
+                        :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
+                        :previewCapture="previewCapture" :forceLandscape="forceLandscape"
+                        :captureTimeout="captureTimeout" :captureRetries="captureRetries" :imageFormat="imageFormat"
+                        :imageQuality="imageQuality" :documentType="documentType" :scanMode="scanMode"
+                        :blurredThreshold="blurredThreshold" :showLog="showLog" :debugMode="debugMode"
+                        :documentMode="documentMode" @onmoduleloaded="onModuleLoaded"
+                        @onextractionfinished="onExtractionFinished" @onusercancelled="onUserCancelled"
+                        @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
+                        @ontrackstatus="onTrackStatus"></facephi-selphid>
+                    <div class="center" v-else>
+                        <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" />
+                    </div>
+                    <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
                 </div>
-                <div id="widgetEventResult" style="position: absolute; top: 0;">{{ widgetResult }}</div>
-            </div>
-            <!-- Widget demo configuration elements -->
-            <div class="col-12 col-md-3 mt-3 mt-md-0">
-                <!-- <div>SelphID Web Widget Demo</div> -->
+                <!-- Widget demo configuration elements -->
+                <div class="col-12 col-md-3 mt-3 mt-md-0">
+                    <!-- <div>SelphID Web Widget Demo</div> -->
 
-                <div class="d-flex flex-column my-3">
-                    <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
-                        :disabled="isWidgetStarted" v-on:click.self="enableWidget">
-                        Start capture
-                    </button>
-                    <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
-                        :disabled="!isWidgetStarted" v-on:click.self="disableWidget">
-                        Stop capture
-                    </button>
-                </div>
+                    <div class="d-flex flex-column my-3">
+                        <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
+                            :disabled="isWidgetStarted" v-on:click.self="enableWidget">
+                            Start capture
+                        </button>
+                        <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
+                            :disabled="!isWidgetStarted" v-on:click.self="disableWidget">
+                            Stop capture
+                        </button>
+                    </div>
 
-                <div class="form-group">
-                    <label for="cameraResolution">Camera Resolution</label>
-                    <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
-                        :value=cameraResolution @change="onCameraResolutionChange($event)">
-                        <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
-                            {{ FPhiCameraResolutions[key].title }}
-                        </option>
-                    </select>
-                </div>
-                <!-- 
+                    <div class="form-group">
+                        <label for="cameraResolution">Camera Resolution</label>
+                        <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
+                            :value=cameraResolution @change="onCameraResolutionChange($event)">
+                            <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
+                                {{ FPhiCameraResolutions[key].title }}
+                            </option>
+                        </select>
+                    </div>
+                    <!-- 
       <div class="form-group form-check m-0">
         <input type="checkbox" id="previewCapture" class="form-check-input" v-model="previewCapture"
           :disabled="isWidgetStarted" />
@@ -292,10 +296,13 @@ export default {
       <div class="form-group mt-2">
         <div>Widget Version: <span id="widgetVersion">{{ widgetVersion }}</span></div>
       </div> -->
+                </div>
+            </div>
+            <div class="row" v-else>
+                <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" />
             </div>
         </div>
-        <div class="row" v-else>
-            <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" />
-        </div>
+        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+
     </div>
-</template>../commons/Preview.vue
+</template>

@@ -1,19 +1,21 @@
 <template>
-    <div class="center" style="width: 100%;">
-        <div class="widget-card">
-            <p style="text-align: left;">
+    <div>
+        <div class="container widget-card">
+            <div class="row">
                 Enter 5 digits PIN:
                 <PIN @pinTakenEvent="getPin" inputType="password" />
-            </p>
-            <p>
+            </div>
+            <div class="row">
                 <InfoMessage
                     message="This PIN is to secure your data vault. The ensures that you do not trust any one with your data, not event us. The PIN is used to access your encrypted data vault. Make sure you do not loose it." />
-            </p>
-            <p>
-                <button class="btn btn-outline-dark" @click="submit()">
+            </div>
+        </div>
+        <div class="container">
+            <div class="row center mt-3">
+                <button class="btn btn-outline-dark" @click="submit()" style="width:50%">
                     <i class="bi bi-unlock"></i> Unlock Vault
                 </button>
-            </p>
+            </div>
         </div>
     </div>
 </template>
@@ -36,12 +38,16 @@ export default {
     methods: {
         ...mapMutations(['nextStep', "setVaultPin"]),
         async submit() {
+            if (!this.pin) {
+                console.error("Please enter your PIN")
+                return;
+            }
             this.setVaultPin(this.pin)
             this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
         },
         getPin(data) {
-            console.log('Pin ' + data)
             this.pin = data;
+            this.setVaultPin(this.pin)
         },
     }
 }
