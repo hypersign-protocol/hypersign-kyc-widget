@@ -68,7 +68,7 @@
 
         <div class="row mb-4" v-if="checkIfUserConsentIsEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="4"
+            <AppInstructionStep :stepNumber="checkIfOncainIdIsEnabled ? '4' : '3'"
               stepTitle="Generate proofs and provide consent of your data to be shared with the verifier app"
               :isDone="false" />
           </div>
