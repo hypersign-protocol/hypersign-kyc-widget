@@ -48,7 +48,7 @@ export default {
             debugMode: false,
             showLog: false,
             documentMode: FPhi.SelphID.DocumentMode.SingleSide,
-            documentType: FPhi.SelphID.DocumentType.IDCard,
+            documentType: FPhi.SelphID.DocumentType.Passport,
             scanMode: FPhi.SelphID.ScanMode.Specific,
             blurredThreshold: 0.1,
             widgetVersion: FPhi.SelphID.Version,
@@ -173,7 +173,7 @@ export default {
             console.warn("[SelphID] onExtractionTimeout");
 
             this.isWidgetStarted = false;
-            this.widgetResult = 'Error! Time limit exceeded';
+            // this.widgetResult = 'Error! Time limit exceeded';
         },
 
         onTrackStatus: function (eventData) {
@@ -201,13 +201,16 @@ export default {
                 this.isLoading = true;
                 this.toast('Uploading and verifying your document...', "warning");
                 await this.verifyOcrIDDoc()
-                if (this.checkIfOncainIdIsEnabled) {
-                    this.nextStep(5);
-                } else {
-                    this.nextStep(6);
-                }
 
-                this.isLoading = false;
+                setTimeout(() => {
+                    if (this.checkIfOncainIdIsEnabled) {
+                        this.nextStep(5);
+                    } else {
+                        this.nextStep(6);
+                    }
+                    this.isLoading = false;
+                }, 2000)
+
             } catch (e) {
                 this.toast(e.message, "error");
                 this.isLoading = false;

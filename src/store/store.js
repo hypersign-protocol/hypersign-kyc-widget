@@ -50,7 +50,8 @@ export default new Vuex.Store({
                 onChainId: true,
                 sbtMint: true,
             },
-        }
+        },
+        vaultPin: "",
     },
     getters: {
         getActiveStep: (state) => {
@@ -89,8 +90,9 @@ export default new Vuex.Store({
 
 
         // ---------------------------------------------------------------- User vault
-        getVaultPin() {
-            return localStorage.getItem('vaultPin')
+        getVaultPin(state) {
+            return state.vaultPin;
+            // return localStorage.getItem('vaultPin')
         },
         getVaultLockStatus() {
             return localStorage.getItem('vaultLockStatus')
@@ -343,8 +345,9 @@ export default new Vuex.Store({
 
         // --- vault
         setVaultPin(state, payload) {
-            console.log(state.hasKycDone)
-            localStorage.setItem('vaultPin', payload)
+            // console.log(state.hasKycDone)
+            // localStorage.setItem('vaultPin', payload)
+            state.vaultPin = payload;
         },
 
         setVaultData(state, payload) {
@@ -737,10 +740,25 @@ export default new Vuex.Store({
                         userDID: getters.getUserDID
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response.ok)
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                return response.json().then(json => {
+                                    console.log(json)
+                                    let m = json ? json.message : "Can not verify passive liveliness check"
+                                    if (m.isArray()) {
+                                        m = json.message.join(' ')
+                                    }
+                                    return reject(m)
+                                })
+                            }
+                        }
+                        return response.json()
+                    })
                     .then(async json => {
                         if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message)
+                            return reject("Faicial recognition failed")
                         } else if (json.error) {
                             return reject(json)
                         } else {
@@ -763,10 +781,15 @@ export default new Vuex.Store({
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
+
+                if (!state.livelinessCapturedData.bestImageTokenized) {
+                    return reject('User has not performed Facial recognition')
+                }
+
                 const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr`;
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",
+                    'Origin': "http://localhost:8080/",  // TODO remove this hardcoding
                     "content-type": "application/json",
                     'x-ssi-access-token': getters.getSSIAccessToken,
                     'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
@@ -786,14 +809,25 @@ export default new Vuex.Store({
                         ocr: { ...state.kycExtractedData.extractionRaw.ocr }
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response.ok)
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                return response.json().then(json => {
+                                    console.log(json)
+                                    reject(json.message[0]['message'])
+                                })
+                            }
+                        }
+                        return response.json()
+                    })
                     .then(json => {
                         if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message)
+                            return reject(json.message[0]['message'])
                         } else if (json.error) {
                             return reject(json)
                         } else {
-                            if (json && json.serviceFacialAuthenticationResult === 0) {
+                            if (json && json.serviceFacialAuthenticationResult === 3) {
                                 commit('setOcrIdDocResult', json);
                                 if (json.credentials && json.credentials.length > 0) {
 
@@ -809,6 +843,7 @@ export default new Vuex.Store({
                             }
                         }
                     }).catch((e) => {
+                        //
                         reject(new Error(`Verifying the result  ${e}`))
                     })
             })
@@ -1020,6 +1055,9 @@ export default new Vuex.Store({
                 debugger
                 const vaultPin = getters.getVaultPin
                 const vaultData = getters.getVaultData
+                if (!vaultData) {
+                    return false
+                }
 
                 if (getters.getVaultLockStatus === false) {
                     throw new Error('Vault is already unlocked')
@@ -1027,6 +1065,10 @@ export default new Vuex.Store({
                 if (!vaultData || vaultData === 'undefined') {
                     return false
                 }
+                console.log('Before calling decryt ')
+                console.log({
+                    vaultData, vaultPin
+                })
                 const decryptedData = await decrypt(vaultData, vaultPin)
 
                 if (decryptedData === "") {
@@ -1040,8 +1082,8 @@ export default new Vuex.Store({
 
                 return true
             } catch (e) {
-                debugger
                 commit('clearVaultPin')
+                console.error(e)
                 throw new Error('Error: Could not unlock vault, please check your PIN')
             }
 
@@ -1082,7 +1124,7 @@ export default new Vuex.Store({
 
             Object.keys(schemaIds).forEach(schema => {
                 const { schemaId } = schemaIds[schema]
-                const credential = credentials.some(credential => {
+                const credential = credentials.find(credential => {
                     if (credential) {
 
                         // TODO: We can also add filter for trusted issuer later in the presentation request
@@ -1095,6 +1137,8 @@ export default new Vuex.Store({
                 if (credential) {
                     if (schema === 'PersonhoodCredential') {
                         console.log("commiting setLivelinessDone")
+                        console.log(credential)
+                        commit('setLivelinessCapturedData', credential.credentialSubject)
                         commit('setLivelinessDone', true)
                     }
 

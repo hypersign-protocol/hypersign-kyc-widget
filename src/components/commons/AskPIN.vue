@@ -38,11 +38,16 @@ export default {
     methods: {
         ...mapMutations(['nextStep', "setVaultPin"]),
         async submit() {
+            if (!this.pin) {
+                console.error("Please enter your PIN")
+                return;
+            }
             this.setVaultPin(this.pin)
             this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
         },
         getPin(data) {
             this.pin = data;
+            this.setVaultPin(this.pin)
         },
     }
 }

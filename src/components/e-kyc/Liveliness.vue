@@ -146,7 +146,7 @@ export default {
         onExtractionTimeout: function () {
             console.warn("[Selphi] onExtractionTimeout");
 
-            this.widgetResult = 'Error! Time limit exceeded';
+            // this.widgetResult = 'Error! Time limit exceeded';
         },
 
         onTimeoutErrorButtonClick: function () {
