@@ -801,7 +801,7 @@ export default new Vuex.Store({
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                         bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
-                        tokenFaceImage: state.livelinessCapturedData.biometricTemplateRaw,
+                        tokenFaceImage: state.livelinessCapturedData.base64Image,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
