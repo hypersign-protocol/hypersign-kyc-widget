@@ -95,7 +95,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 2000);
+            }, 5000);
         },
 
         disableWidget: function () {
@@ -212,7 +212,7 @@ export default {
                 }, 2000)
 
             } catch (e) {
-                this.toast(e.message, "error");
+                this.toast(e, "error");
                 this.isLoading = false;
             }
         },

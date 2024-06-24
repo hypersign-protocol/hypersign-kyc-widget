@@ -61,7 +61,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 2000);
+            }, 5000);
         },
         parseJwt(token) {
             var base64Url = token.split('.')[1];
@@ -197,7 +197,7 @@ export default {
 
             if (!params.kycAccessToken || !params.ssiAccessToken) {
                 if (this.getCavachAccessToken != '' && this.getSSIAccessToken != '') {
-                    throw new Error('Error initalization of widget, invalid token!')
+                    throw new Error('Error initalization of widget, invalid token')
                 }
             }
 

@@ -101,7 +101,7 @@ export default {
                     this.nextStep()
                     this.isLoading = false;
                 } catch (e) {
-                    this.toast(e.message, "error");
+                    this.toast(e, "error");
                     this.isLoading = false;
                 }
 
@@ -179,7 +179,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 2000);
+            }, 5000);
         },
     }
 }

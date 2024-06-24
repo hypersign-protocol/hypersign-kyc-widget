@@ -745,9 +745,10 @@ export default new Vuex.Store({
                             if (response.status === 400) {
                                 return response.json().then(json => {
                                     console.log(json)
-                                    let m = json ? json.message : "Can not verify passive liveliness check"
-                                    if (m.isArray()) {
-                                        m = json.message.join(' ')
+                                    let m = json ? json.message : "Could not verify passive liveliness check"
+                                    if (Array.isArray(m)) {
+                                        m = json.message[0] ? 'Code' + json.message[0].code + ': ' + json.message[0].message : "Could not verify passive liveliness check"
+                                        console.log(JSON.stringify(m))
                                     }
                                     return reject(m)
                                 })
@@ -814,7 +815,12 @@ export default new Vuex.Store({
                             if (response.status === 400) {
                                 return response.json().then(json => {
                                     console.log(json)
-                                    reject(json.message[0]['message'])
+                                    let m = json ? json.message : "Could not verify ID document"
+                                    if (Array.isArray(m)) {
+                                        m = json.message[0] ? 'Code' + json.message[0].code + ': ' + json.message[0].message : "Could not verify ID document"
+                                        console.log(JSON.stringify(m))
+                                    }
+                                    return reject(m)
                                 })
                             }
                         }
