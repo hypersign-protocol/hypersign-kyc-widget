@@ -101,7 +101,7 @@ export default {
                     this.nextStep()
                     this.isLoading = false;
                 } catch (e) {
-                    this.toast(e, "error");
+                    this.toast(e.message, "error");
                     this.isLoading = false;
                 }
 

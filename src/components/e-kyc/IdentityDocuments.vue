@@ -212,7 +212,7 @@ export default {
                 }, 2000)
 
             } catch (e) {
-                this.toast(e, "error");
+                this.toast(e.message, "error");
                 this.isLoading = false;
             }
         },
