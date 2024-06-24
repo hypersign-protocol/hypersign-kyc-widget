@@ -105,6 +105,7 @@ import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/cha
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
 import { createNonSigningClient, getCosmosChainConfig } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { STEP_NAMES } from "@/config";
+import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.OnChainId,
     components: {
@@ -123,13 +124,13 @@ export default {
             }
 
             if (!SupportedChains) {
-                throw new Error('Ecosysem or blockchain is not supported')
+                throw new Error(MESSAGE.WALLET.ECO_SYSTEM_NOT_SUPPORTED)
             }
             const requestedChainId = this.getOnChainIssuerConfig.chainId
             const chainConfig = SupportedChains.find(x => x.chainId == requestedChainId);
 
             if (!chainConfig) {
-                throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
+                throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
             }
             return chainConfig
         },
@@ -169,7 +170,7 @@ export default {
                 client = this.cosmosConnection.nonSigningClient
             } else {
                 if (!this.getOnChainIssuerConfig) {
-                    throw new Error('Invalid configuration, please reload the widget and try again')
+                    throw new Error(MESSAGE.ON_CHAIN.INVALID_CONFIG_ERR)
                 }
                 const chainConfig = getCosmosChainConfig(this.blockchainLabel)
                 client = await createNonSigningClient(chainConfig['rpc']);
@@ -213,7 +214,7 @@ export default {
                     smartContractMsg);
 
                 if (result) {
-                    this.toast('Successfully minted your identity')
+                    this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
 
 
                     // TODO: call server to udpate status
@@ -231,7 +232,6 @@ export default {
                 }
 
             } catch (e) {
-                console.error(e.message)
                 this.toast(e.message, 'error')
                 this.isLoading = false
             }

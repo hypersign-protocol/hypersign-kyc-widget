@@ -76,6 +76,7 @@
 import { mapGetters, mapMutations, mapActions, mapState } from 'vuex';
 import { HypersignVerifiablePresentation } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '@/config'
+import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.UserConsent,
     data() {
@@ -131,7 +132,7 @@ export default {
             try {
 
                 // TODO: Generating the presention with all the VCs
-                this.toast('Submitting your data...', "success");
+                this.toast(MESSAGE.USER_CONSENT.DATA_SUBMIT, "success");
                 const presentation = await this.generatePresentation()
                 this.setUserPresentationConsent(presentation)
                 // TODO:  sign this presentation 
@@ -141,7 +142,7 @@ export default {
                 // Submitting the presentation
 
                 this.isLoading = true;
-                this.toast('Submitting your data...', "warning");
+                this.toast(MESSAGE.USER_CONSENT.DATA_SUBMIT, "warning");
                 this.$emit('verifyIdDocEvent', true)
 
                 // TODO: send this presentation in the verifyResult API // TODO: change the name of this API as well as functioin

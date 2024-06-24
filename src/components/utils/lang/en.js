@@ -10,5 +10,19 @@ export default {
     },
     LIVELINESS: {
         VERIFYING_SELFI: 'Verifying your selfie...'
+    },
+    IDDOCUMENT: {
+        VERIFYING_ID: 'Uploading and verifying your document...'
+    },
+    USER_CONSENT: {
+        DATA_SUBMIT: 'Submitting your data...'
+    },
+    WALLET: {
+        ECO_SYSTEM_NOT_SUPPORTED: 'Ecosysem or blockchain is not supported',
+        CHAIN_NOT_SUPPORTED: 'Chain not supported for chainId requestedChainId '
+    },
+    ON_CHAIN: {
+        INVALID_CONFIG_ERR: 'Invalid configuration, please reload the widget and try again',
+        IDENTITY_SUCCESS: 'Successfully minted your identity'
     }
 }

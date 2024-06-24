@@ -3,6 +3,7 @@ import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import PreviewData from '../commons/Preview.vue'
 import { STEP_NAMES } from '@/config'
+import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.IdDocs,
     components: {
@@ -77,7 +78,7 @@ export default {
         ...mapActions(["verifyOcrIDDoc"]),
         // Demo methods
         enableWidget: async function () {
-            console.warn("[Demo] Start Capture");
+            // console.warn("[Demo] Start Capture");
             document.getElementById("widgetEventResult").innerText = '';
             const capabilities = await this.checkCapabilities();
             if (capabilities.camera && capabilities.wasm && capabilities.browser) {
@@ -99,7 +100,7 @@ export default {
         },
 
         disableWidget: function () {
-            console.warn("[Demo] Stop Capture");
+            // console.warn("[Demo] Stop Capture");
             document.getElementById("widgetEventResult").innerText = '';
             this.isWidgetStarted = false;
         },
@@ -111,7 +112,7 @@ export default {
 
         // Widget event handlers
         onModuleLoaded: function () {
-            console.warn("[SelphID] onModuleLoaded");
+            // console.warn("[SelphID] onModuleLoaded");
         },
 
         onExtractionFinished: async function (extractionResult) {
@@ -137,7 +138,7 @@ export default {
         },
 
         onExceptionCaptured: function (exceptionResult) {
-            console.warn("[SelphID] onExceptionCaptured");
+            // console.warn("[SelphID] onExceptionCaptured");
 
             switch (exceptionResult.detail.exceptionType) {
                 case (FPhi.SelphID.ExceptionType.CameraError):
@@ -199,7 +200,7 @@ export default {
                     throw new Error('Invalid event data')
                 }
                 this.isLoading = true;
-                this.toast('Uploading and verifying your document...', "warning");
+                this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
                 await this.verifyOcrIDDoc()
 
                 setTimeout(() => {
