@@ -57,8 +57,8 @@
         />
 
         <button id="button_initial_tip"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_initial_tip"
         content_type="TEXT_ID"
@@ -131,8 +131,8 @@
         />
 
         <button id="button_initial_tip"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_initial_tip"
         content_type="TEXT_ID"
@@ -242,8 +242,8 @@
         />
 
         <button id="button_ok"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_ok"
         content_type="TEXT_ID"
@@ -256,8 +256,8 @@
 
         <button id="button_repeat"
         background="ffffff"
-        decorator="#7636FC"
-        foreground="#7636FC"
+        decorator="#212529"
+        foreground="#212529"
         content="button_repeat"
         content_type="TEXT_ID"
         font="Poppins-Regular.ttf"
@@ -685,8 +685,8 @@
         />
 
         <button id="button_ok"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_manual"
         content_type="TEXT_ID"
@@ -699,8 +699,8 @@
 
         <button id="button_repeat"
         background="#ffffff"
-        decorator="#7636FC"
-        foreground="#7636FC"
+        decorator="#212529"
+        foreground="#212529"
         content="button_manual_close"
         content_type="TEXT_ID"
         font="Poppins-SemiBold.ttf"
@@ -733,8 +733,8 @@
         />
 
         <button id="button_start"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_start"
         content_type="TEXT_ID"
@@ -767,8 +767,8 @@
         />
 
         <button id="button_start"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_start"
         content_type="TEXT_ID"
@@ -793,8 +793,8 @@
         backgroundColor="#ffffff"
         documentBorder="2.8"
         documentBorderRadius="8"
-        documentBorderColor="#7636FC"
-        documentBorderDetectedColor="#7636FC"/>
+        documentBorderColor="#212529"
+        documentBorderDetectedColor="#212529"/>
 
         <text id="text"
         color="#2B303C"
@@ -805,8 +805,8 @@
         />
 
         <button id="button_ok"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_ok"
         content_type="TEXT_ID"
@@ -819,8 +819,8 @@
 
         <button id="button_repeat"
         background="#ffffff"
-        decorator="#7636FC"
-        foreground="#7636FC"
+        decorator="#212529"
+        foreground="#212529"
         content="button_repeat"
         content_type="TEXT_ID"
         font="Poppins-SemiBold.ttf"
@@ -846,8 +846,8 @@
         backgroundColor="#ffffff"
         documentBorder="2.8"
         documentBorderRadius="8"
-        documentBorderColor="#7636FC"
-        documentBorderDetectedColor="#7636FC"/>
+        documentBorderColor="#212529"
+        documentBorderDetectedColor="#212529"/>
 
         <text id="text"
         color="#2B303C"
@@ -858,8 +858,8 @@
         />
 
         <button id="button_ok"
-        background="#7636FC"
-        decorator="#7636FC"
+        background="#212529"
+        decorator="#212529"
         foreground="#FFFFFF"
         content="button_ok"
         content_type="TEXT_ID"
@@ -872,8 +872,8 @@
 
         <button id="button_repeat"
         background="#ffffff"
-        decorator="#7636FC"
-        foreground="#7636FC"
+        decorator="#212529"
+        foreground="#212529"
         content="button_repeat"
         content_type="TEXT_ID"
         font="Poppins-SemiBold.ttf"

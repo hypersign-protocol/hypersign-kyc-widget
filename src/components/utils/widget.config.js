@@ -8,7 +8,7 @@ export default {
     },
     schemaIds: {
         PersonhoodCredential: {
-            schemaId: "sch:hid:testnet:z6MkmvHj8Je62Wer4qt4k7z7aZHnLbrufYZBEo469psoNqLT:1.0",
+            schemaId: "sch:hid:testnet:z6MkmS1CuEGST6FjcR1ojtM1rcmVcNXG31bFXGCcehx2WXMh:1.0",
             issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
         },
         PassportCredential: {

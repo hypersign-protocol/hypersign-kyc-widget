@@ -1,71 +1,22 @@
 <style type="text/css" scoped>
-/* .error {
-  background-color: rgba(255, 0, 0, 0.275);
-  color: white;
-}
-
-.success {
-  background-color: green;
-  color: white;
-} */
-
-.toast {
-  background-color: green;
+.toast1 {
   bottom: 16px;
   width: 100%;
-  height: 30px;
-  border-radius: 2px;
+  height: 100%;
+  border-radius: 5px;
   z-index: 99999;
   text-align: left;
   padding-left: 5px;
   padding-right: 5px;
   font-size: small;
+  color: black;
+  word-wrap: break-word;
 }
 </style>
 
 <template>
-  <!-- <div
-    class="toast"
-    :class="{
-      error: type === 'error',
-      success: type === 'success',
-    }"
-    v-show="isShow"
-  >
-    Mesage: {{ msg }}
-  </div> -->
-
-  <!-- doing in a bad way for the time being -->
-  <div style="
-      background-color: rgba(253, 170, 170, 0.972);
-      bottom: 16px;
-      width: 100%;
-      height: 20px;
-      border-radius: 2px;
-      z-index: 99999;
-      text-align: left;
-      padding-left: 5px;
-      padding-right: 5px;
-      font-size: small;
-      color: darkslategrey;
-    " v-if="type === 'error'">
+  <div class="toast1" :style="{ 'background-color': toastColor }">
     {{ shortenMesssage }}
-  </div>
-
-  <div style="
-      background-color: rgb(184, 230, 184);
-      bottom: 16px;
-      width: 100%;
-      height: 20px;
-      border-radius: 2px;
-      z-index: 99999;
-      text-align: left;
-      padding-left: 5px;
-      padding-right: 5px;
-      font-size: small;
-      color: darkslategrey;
-    " v-else>
-    {{ msg }}
   </div>
 </template>
 
@@ -80,8 +31,17 @@ export default {
   },
   computed: {
     shortenMesssage() {
-      return this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
+      return this.msg; //this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
     },
+    toastColor() {
+      if (this.type == 'error') {
+        return 'rgba(253, 170, 170, 0.972)'
+      } if (this.type == 'warning') {
+        return '#ffcc00'
+      } else {
+        return 'rgb(184, 230, 184)'
+      }
+    }
   },
   data() {
     return {};

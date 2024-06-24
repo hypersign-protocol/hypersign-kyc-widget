@@ -5,6 +5,8 @@
 import { FPhi } from "@facephi/selphi-widget-web";
 import { mapActions, mapMutations, } from "vuex";
 import { STEP_NAMES } from "@/config";
+import MESSAGE from '../utils/lang/en'
+
 export default {
     name: STEP_NAMES.LiveLiness,
     components: {
@@ -96,11 +98,18 @@ export default {
 
                 try {
                     this.isLoading = true;
-                    this.toast('Verifying your selfie...', "warning");
+                    this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
                     await this.verifyLiveliness()
                     this.nextStep()
                     this.isLoading = false;
                 } catch (e) {
+                    if (e.message) {
+                        if (e.message.includes('Session with given ID')) {
+                            this.isLoading = false;
+                            this.nextStep(8)
+                            return
+                        }
+                    }
                     this.toast(e.message, "error");
                     this.isLoading = false;
                 }
@@ -113,7 +122,7 @@ export default {
         },
 
         onExceptionCaptured: function (exceptionResult) {
-            console.warn("[Selphi] onExceptionCaptured");
+            // console.warn("[Selphi] onExceptionCaptured");
 
             switch (exceptionResult.detail.exceptionType) {
                 case (FPhi.Selphi.ExceptionType.CameraError):
@@ -137,26 +146,26 @@ export default {
         },
 
         onUserCancel: function () {
-            console.warn("[Selphi] onUserCancel");
+            // console.warn("[Selphi] onUserCancel");
 
             this.isWidgetStarted = false;
             this.widgetResult = 'Error! The extraction has been cancelled';
         },
 
         onExtractionTimeout: function () {
-            console.warn("[Selphi] onExtractionTimeout");
+            // console.warn("[Selphi] onExtractionTimeout");
 
             // this.widgetResult = 'Error! Time limit exceeded';
         },
 
         onTimeoutErrorButtonClick: function () {
-            console.warn("[Selphi] onTimeoutErrorButtonClick");
+            // console.warn("[Selphi] onTimeoutErrorButtonClick");
 
             this.isWidgetStarted = false;
         },
 
         onStabilizing: function () {
-            console.warn("[Selphi] onStabilizing");
+            // console.warn("[Selphi] onStabilizing");
         },
 
         onTrackStatus: function (eventData) {
@@ -179,7 +188,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 2000);
+            }, 6000);
         },
     }
 }

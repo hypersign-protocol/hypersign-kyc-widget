@@ -198,7 +198,7 @@ export default {
       setTimeout(() => {
         this.isToast = false;
         this.toastMessage = "";
-      }, 2000);
+      }, 5000);
     },
   },
 };

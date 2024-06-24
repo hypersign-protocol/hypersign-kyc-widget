@@ -35,7 +35,8 @@ export default {
         { "id": 4, "isActive": false, "stepName": "IdDocs4", "name": "Government-issued ID", "previous": 3, "isEnabled": false },
         { "id": 5, "isActive": false, "stepName": "OnChainId4", "name": "On Chain Identity", "previous": 4, "isEnabled": false },
         { "id": 6, "isActive": false, "stepName": "UserConsent", "name": "Provide User Consent", "previous": 5, "isEnabled": true },
-        { "id": 7, "isActive": false, "stepName": "FinalResult", "previous": 6, "isEnabled": true }
+        { "id": 7, "isActive": false, "stepName": "FinalResult", "previous": 6, "isEnabled": true },
+        { "id": 8, "isActive": false, "stepName": "SessionExpired", "previous": 7, "isEnabled": true },
       ]
       this.setSteps(steps)
 

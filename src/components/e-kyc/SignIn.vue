@@ -21,6 +21,7 @@ import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 import GoogleButton from '../commons/authButtons/GoogleButton.vue';
 import WidgetConfig from '../utils/widget.config'
 import { STEP_NAMES } from '@/config'
+import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.SignIn,
     computed: {
@@ -50,7 +51,7 @@ export default {
                 this.$router.push(`/auth/${data.provider}`)
             } else {
                 this.error = true
-                throw new Error('Could not authenticate with provider ')
+                throw new Error(MESSAGE.SIGN.AUTH_PROVIDER_ERR + data.provider)
             }
         },
         toast(msg, type = "success") {
@@ -61,7 +62,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 2000);
+            }, 5000);
         },
         parseJwt(token) {
             var base64Url = token.split('.')[1];
@@ -104,12 +105,12 @@ export default {
                 })
 
             } else {
-                console.log("No Onchain id configuration is activated for the widget")
+                this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
             }
         },
         preparePresentationRequest() {
             if (!this.getWidgetConfigFromDb) {
-                throw new Error('Widget configuration is not available')
+                throw new Error(MESSAGE.SIGN.WIDGET_CONFIG_ERR)
             }
             const presentationRequest = {
                 "query": [
@@ -185,7 +186,7 @@ export default {
             this.preparePresentationRequest();
             if (!this.pr) {
                 if (this.getPresentationRequest != '') {
-                    throw new Error('Error initalization of widget!')
+                    throw new Error(MESSAGE.SIGN.WIDGET_INIT_ERR)
                 }
             }
 
@@ -197,7 +198,7 @@ export default {
 
             if (!params.kycAccessToken || !params.ssiAccessToken) {
                 if (this.getCavachAccessToken != '' && this.getSSIAccessToken != '') {
-                    throw new Error('Error initalization of widget, invalid token!')
+                    throw new Error(MESSAGE.SIGN.INVALID_ACCESS_TOKEN)
                 }
             }
 
