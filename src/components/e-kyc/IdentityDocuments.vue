@@ -213,6 +213,12 @@ export default {
                 }, 2000)
 
             } catch (e) {
+                if (e.message) {
+                    if (e.message.includes('Session with given ID')) {
+                        this.isLoading = false;
+                        return this.nextStep(8)
+                    }
+                }
                 this.toast(e.message, "error");
                 this.isLoading = false;
             }

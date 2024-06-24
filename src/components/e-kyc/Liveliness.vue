@@ -103,6 +103,13 @@ export default {
                     this.nextStep()
                     this.isLoading = false;
                 } catch (e) {
+                    if (e.message) {
+                        if (e.message.includes('Session with given ID')) {
+                            this.isLoading = false;
+                            this.nextStep(8)
+                            return
+                        }
+                    }
                     this.toast(e.message, "error");
                     this.isLoading = false;
                 }
@@ -181,7 +188,7 @@ export default {
             setTimeout(() => {
                 this.isToast = false;
                 this.toastMessage = "";
-            }, 5000);
+            }, 6000);
         },
     }
 }

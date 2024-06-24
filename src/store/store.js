@@ -754,11 +754,11 @@ export default new Vuex.Store({
                 })
                     .then(response => {
                         if (!response.ok) {
-                            if (response.status === 400) {
+                            if (response.status != 200) {
                                 return response.json().then(json => {
                                     let m = json ? json.message : "Could not verify passive liveliness check"
                                     if (Array.isArray(m)) {
-                                        m = json.message[0] ? 'Code' + json.message[0].code + ': ' + json.message[0].message : "Could not verify passive liveliness check"
+                                        m = m[0] && m[0].message && m[0].code ? 'Code' + m[0].code + ': ' + m[0].message : (m[0] && m[0].message ? m[0].message : m.join(' '))
                                     }
                                     return reject(new Error(m))
                                 })
@@ -812,7 +812,7 @@ export default new Vuex.Store({
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                         bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
-                        tokenFaceImage: state.livelinessCapturedData.biometricTemplateRaw,
+                        tokenFaceImage: state.livelinessCapturedData.tokenSelfiImage || state.livelinessCapturedData.base64Image,
                         countryCode: state.kycCapturedData.countryCode,
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
@@ -820,12 +820,13 @@ export default new Vuex.Store({
                     })
                 })
                     .then(response => {
+
                         if (!response.ok) {
-                            if (response.status === 400) {
+                            if (response.status != 200) {
                                 return response.json().then(json => {
                                     let m = json ? json.message : "Could not verify ID document"
                                     if (Array.isArray(m)) {
-                                        m = json.message[0] ? 'Code' + json.message[0].code + ': ' + json.message[0].message : "Could not verify ID document"
+                                        m = m[0] && m[0].message && m[0].code ? 'Code' + m[0].code + ': ' + m[0].message : (m[0] && m[0].message ? m[0].message : m.join(' '))
                                     }
                                     return reject(new Error(m))
                                 })

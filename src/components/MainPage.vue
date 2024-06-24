@@ -27,6 +27,8 @@ import VaultPIN from './e-kyc/VaultPIN.vue'
 import UserConsent from './e-kyc/UserConsent.vue'
 import OnChainId4 from "./e-kyc/OnChainId.vue";
 
+import SessionExpired from './SessionExpired.vue';
+
 export default {
   name: "HelloWorld",
   components: {
@@ -42,7 +44,8 @@ export default {
     SignIn,
     VaultPIN,
     UserConsent,
-    OnChainId4
+    OnChainId4,
+    SessionExpired
   },
   computed: {
     ...mapGetters(["getActiveStep"]),
