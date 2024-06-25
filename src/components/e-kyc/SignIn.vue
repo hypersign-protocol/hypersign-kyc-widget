@@ -25,7 +25,7 @@ import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.SignIn,
     computed: {
-        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
+        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig', 'getWidgetConfigFromDb', 'getSession']),
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     components: {
@@ -44,7 +44,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
+        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSession', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
         ...mapActions(["getNewSession", "registerUser", "getOnChainConfigByIdAction", "fetchAppsWidgetConfig"]),
         myEventListener(data) {
             if (data.status == 'success') {
@@ -207,12 +207,28 @@ export default {
 
             const parsedAccessToken = this.parseJwt(params.kycAccessToken)
             this.setTenantSubdomain(parsedAccessToken.subdomain)
+        },
+
+        async validationSessionId() {
+            const params = this.$route.query;
+            if (!params.sessionId) {
+                if (this.getSession != '') {
+                    console.log(MESSAGE.SIGN.SESSION_NOT_FOUND_ERR)
+                    this.isLoading = true;
+                    await this.getNewSession()
+                    this.isLoading = false;
+                    return;
+                }
+            }
+            this.setSession(params.sessionId)
         }
     },
     async created() {
         try {
 
             ////  Mandatory validations of params dapps passed in the widget url
+            await this.validationSessionId()
+
             // validation of access tokens
             this.validationForAccessTokens()
 
@@ -223,9 +239,10 @@ export default {
             // validation of onchainId params, if enabled
             this.validationForOnChainIdConfig()
 
-            this.isLoading = true;
-            await this.getNewSession()
-            this.isLoading = false;
+            ///// service provider has to set the session...
+            // this.isLoading = true;
+            // await this.getNewSession()
+            // this.isLoading = false;
 
         } catch (e) {
             this.error = true
