@@ -25,3 +25,6 @@ export const STEP_NAMES = Object.freeze({
     UserConsent: "UserConsent",
     FinalResult: "FinalResult"
 })
+
+export const NAMESPACE='HYPERSIGN_KYC'
+export const AUTHSERVER_BASE_URL='https://authserver-v2.hypersign.id'

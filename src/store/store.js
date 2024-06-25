@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET, HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../config'
+import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET, HYPERSIGN_SERVICE_BASE_URL_FORMAT, NAMESPACE, AUTHSERVER_BASE_URL } from '../config'
 import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
 
 Vue.use(Vuex)
@@ -353,7 +353,9 @@ export default new Vuex.Store({
             console.log(state.hasKycDone)
             localStorage.setItem('vaultData', payload)
         },
-
+        setVaultDocumentId(state, payload) {
+            localStorage.setItem('vaultDocumentId', payload)
+        },
         setVaultRaw(state, payload) {
             console.log(state.hasKycDone)
             localStorage.setItem('vaultDataRaw', payload)
@@ -568,7 +570,7 @@ export default new Vuex.Store({
 
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:4888/",
+                    'Origin': "http://localhost:4999/",
                     "content-type": "application/json"
                 };
 
@@ -927,7 +929,7 @@ export default new Vuex.Store({
         // ---------------------------------------------------------------- EDV (auth server)
         registerUser: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
-                const url = 'https://authserver.hypersign.id/hs/api/v2/register'
+                const url = AUTHSERVER_BASE_URL + '/api/v1/auth'
                 const headers = {
                     "content-type": "application/json"
                 };
@@ -940,11 +942,12 @@ export default new Vuex.Store({
                             "name": name,
                             "email": email,
                             "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED", // TODO
-                            // "nameSpace": "hypersign-kyc"
                         },
+                        "namespace": NAMESPACE,
+                        "forgetPassword": false,
                         "isThridPartyAuth": true,
                         "expirationDate": "2030-12-31T00:00:00.000Z",
-                        "thridPartyAuthProvider": "Google",
+                        "authProvider": "Google",
                         "accessToken": accessToken
                     })
                 })
@@ -971,7 +974,7 @@ export default new Vuex.Store({
             })
         },
 
-        syncUserData: ({ getters }) => {
+        syncUserData: ({ commit, getters }) => {
             return new Promise((resolve, reject) => {
                 const { email } = getters.getProfile
                 if (!email) {
@@ -981,9 +984,8 @@ export default new Vuex.Store({
                 if (!localStorage.getItem('vaultData')) {
                     return reject(new Error('Invalid vault data'))
                 }
-                // const url = 'https://authserver.hypersign.id/hs/api/v2/sync/' + email
 
-                const url = 'https://authserver.hypersign.id/hs/api/v2/sync'
+                const url = AUTHSERVER_BASE_URL + '/api/v1/document'
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
@@ -993,14 +995,14 @@ export default new Vuex.Store({
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
-                        "user": {
-                            "userId": email,
-                            "sequenceNo": 0,
-                            "docId": "randomId",
-                            // "nameSpace": "hypersign-kyc"
-                        },
+
                         "document": {
-                            "encryptedMessage": localStorage.getItem('vaultData')
+                            "data": localStorage.getItem('vaultData')
+                        },
+                        "namespace": NAMESPACE,
+                        "documentId": localStorage.getItem('vaultDocumentId') != null ? localStorage.getItem('vaultDocumentId') : undefined,
+                        "metadata": {
+                            "description": "vault data"
                         }
                     })
                 })
@@ -1010,6 +1012,7 @@ export default new Vuex.Store({
                             if (json.error) {
                                 return reject(json.error)
                             }
+                            commit('setVaultDocumentId', json.docId)
                             // commit('setVaultData', json.encryptedMessage)
                             resolve()
                         }
@@ -1019,14 +1022,14 @@ export default new Vuex.Store({
             })
         },
 
-        syncUserDataById: ({ getters, commit }) => {
+        syncUserDataById: ({ getters, commit, dispatch }) => {
             return new Promise((resolve, reject) => {
                 const { email } = JSON.parse(localStorage.getItem('profile'))
                 if (!email) {
                     return reject(new Error('Invalid email, or user is not logged in'))
                 }
 
-                const url = 'https://authserver.hypersign.id/hs/api/v2/sync/' + email
+                const url = AUTHSERVER_BASE_URL + '/api/v1/document?namespace=' + NAMESPACE + '&page=1&perpage=1'
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
@@ -1037,12 +1040,15 @@ export default new Vuex.Store({
                     headers,
                 })
                     .then(response => response.json())
-                    .then(json => {
+                    .then(async json => {
                         if (json) {
+
                             if (json.error) {
                                 return reject(json.error)
                             }
-                            commit('setVaultData', json.encryptedMessage)
+
+                            await dispatch('getDocumentById', json[0])
+                            // Todo 2: iterate on all the ids and the call getDocumentById (use dispatch)
                             resolve()
                         }
                     }).catch((e) => {
@@ -1050,6 +1056,38 @@ export default new Vuex.Store({
                     })
             })
         },
+
+        // TODO 1: Implement action getDocumentById to fetch document by documentId
+        async getDocumentById({ commit, getters }, payload) {
+            return new Promise((resolve, reject) => {
+                const documentId = payload.edvDocId
+                const url = AUTHSERVER_BASE_URL + '/api/v1/document/' + documentId + '?namespace=' + NAMESPACE
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+                return fetch(url, {
+                    method: 'GET',
+                    headers,
+                })
+                    .then(response => response.json())
+
+                    .then(async json => {
+                        if (json) {
+
+                            if (json.error) {
+                                return reject(json.error)
+                            }
+                            await commit('setVaultData', json.data)
+                            resolve(json)
+                        }
+                    }).catch((e) => {
+                        reject(e)
+                    })
+            })
+        },
+        // TODO 3: commit('setVaultData', json.encryptedMessage)
+
 
 
         // ------------------------------------------------------------------ vault
