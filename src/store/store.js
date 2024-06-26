@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET, HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../config'
 import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
-
+import { RequestHandler } from '../components/utils/utils';
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -560,17 +560,12 @@ export default new Vuex.Store({
 
 
         // -----------------------------------------------------------------e-kyc
-        getNewSession: ({ commit, dispatch, getters }, payload) => {
-            /* eslint-disable */
-            return new Promise(async (resolve, reject) => {
+        getNewSession: async ({ commit, dispatch, getters }, payload) => {
+            try {
                 const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`;
-
-
                 const headers = {
                     'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:4888/",
-                    "content-type": "application/json"
-                };
+                }
 
                 try {
                     const ip = await dispatch('getClientIp');
@@ -579,215 +574,149 @@ export default new Vuex.Store({
                     console.error(e);
                 }
 
-                return fetch(url, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify(payload)
-                })
-                    .then(response => response.json())
-                    .then(json => {
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            reject(json.message)
-                        } else if (json.error) {
-                            reject(json)
-                        } else {
-                            if (json) {
-                                commit('setSession', json.sessionId);
-                            }
-                            resolve(json)
-                        }
-                    }).catch((e) => {
-                        reject(new Error(`Error while fetching session  ${e}`))
-                    })
-            })
+                const data = await RequestHandler(url, 'POST', payload, headers)
+                if (data.sessionId) {
+                    commit('setSession', data.sessionId);
+                    return data
+                } else {
+                    throw new Error(data)
+                }
+            } catch (e) {
+                throw new Error(`Error getting new session  ${e}`)
+            }
         },
 
         fetchAppsWidgetConfig: ({ dispatch, commit, getters }) => {
             return new Promise(async (resolve, reject) => {
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/widget-config/`
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:4999/",
-                    "content-type": "application/json"
-                };
-
                 try {
-                    const ip = await dispatch('getClientIp');
-                    headers['X-Forwarded-For'] = ip;
-                } catch (e) {
-                    console.error(e);
-                }
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/widget-config/`
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    };
 
-                return fetch(url, {
-                    method: 'GET',
-                    headers
-                }).then(response => response.json()).then(json => {
-                    if (json.error) {
-                        return reject(json)
+                    try {
+                        const ip = await dispatch('getClientIp');
+                        headers['X-Forwarded-For'] = ip;
+                    } catch (e) {
+                        console.error(e);
                     }
-                    commit('setWidgetConfigFromDb', json);
-                    resolve(json)
-                }).catch((e) => {
-                    return reject(`Error while fetching widget configuration ` + e.message);
-                })
+
+                    const data = await RequestHandler(url, 'GET', {}, headers)
+                    if (data && Object.keys(data) && Object.keys(data).length) {
+                        commit('setWidgetConfigFromDb', data);
+                        resolve(data)
+                    } else {
+                        throw new Error(data)
+                    }
+                } catch (e) {
+                    reject(new Error(`Error getting widget config  ${e}`))
+                }
             })
         },
 
         getOnChainConfigByIdAction: ({ commit, dispatch, getters }, payload) => {
             /* eslint-disable */
             return new Promise(async (resolve, reject) => {
-                if (!payload) {
-                    throw new Error('OnChainConfig id must be provided')
-                }
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/onchainkyc-config/${payload}`;
-
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:4999/",
-                    "content-type": "application/json"
-                };
-
                 try {
-                    const ip = await dispatch('getClientIp');
-                    headers['X-Forwarded-For'] = ip;
-                } catch (e) {
-                    console.error(e);
-                }
+                    if (!payload) {
+                        throw new Error('OnChainConfig id must be provided')
+                    }
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/onchainkyc-config/${payload}`;
 
-                return fetch(url, {
-                    method: 'GET',
-                    headers,
-                })
-                    .then(response => response.json())
-                    .then(json => {
-                        console.log(json)
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            reject(json.message)
-                        } else if (json.error) {
-                            reject(json)
-                        } else {
-                            resolve(json)
-                        }
-                    }).catch((e) => {
-                        reject(new Error(`Error while fetching session  ${e}`))
-                    })
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    };
+
+                    try {
+                        const ip = await dispatch('getClientIp');
+                        headers['X-Forwarded-For'] = ip;
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+                    const data = await RequestHandler(url, 'GET', {}, headers)
+                    if (data && Object.keys(data) && Object.keys(data).length) {
+                        resolve(data)
+                    } else {
+                        throw new Error(data)
+                    }
+                } catch (e) {
+                    reject(new Error(`Error getting onchain config  ${e}`))
+                }
             })
         },
 
         //TODO: Change name of this method to somethin liek, submitUserConsent()
         verifyResult: ({ commit, getters, state }) => {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 if (Object.keys(state.userPresentationConsent).length <= 0) {
                     return reject(new Error('No user consent found'))
                 }
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/user-consent`;
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",
-                    "content-type": "application/json"
-                }
-                return fetch(url, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
+
+                try {
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/user-consent`;
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    }
+
+                    const body = {
                         sessionId: getters.getSession,
                         presentation: state.userPresentationConsent
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 400) {
-                                return response.json().then(json => {
-                                    let m = json ? json.message : "Could not verify result"
-                                    if (Array.isArray(m)) {
-                                        m = m.join(' ')
-                                    }
-                                    return reject(new Error(m))
-                                })
-                            }
-                        }
-                        return response.json()
-                    })
-                    .then(json => {
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            reject(json.message)
-                        } else if (json.error) {
-                            reject(json)
-                        } else {
-                            if (json && json.success === true) {
-                                commit('setResult', json.success);
-                                commit('setIdToken', json.idToken);
-                            }
+                    }
+                    const json = await RequestHandler(url, 'POST', body, headers)
+                    if (json && json.success == true) {
+                        commit('setResult', json.success);
+                        commit('setIdToken', json.idToken);
+                        resolve(json)
+                    } else {
+                        return reject(new Error(json))
+                    }
 
-                            resolve(json)
-                        }
-                    }).catch((e) => {
-                        reject(new Error(`Verifying the result  ${e}`))
-                    })
+                } catch (e) {
+                    reject(new Error(`Error verifying the user consent  ${e}`))
+                }
             })
         },
 
         verifyLiveliness: ({ commit, state, getters, dispatch }) => {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 if (state.livelinessCapturedData.tokenSelfiImage === "" || !state.hasLivelinessDone) {
                     return reject('User has not performed liveliness check')
                 }
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness`;
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",
-                    "content-type": "application/json",
-                    'x-ssi-access-token': getters.getSSIAccessToken,
-                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
-                };
-                return fetch(url, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
+                try {
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness`;
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                        'x-ssi-access-token': getters.getSSIAccessToken,
+                        'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                        'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                    };
+
+                    const body = {
                         sessionId: getters.getSession,
                         tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
                         biometricTemplateRaw: state.livelinessCapturedData.biometricTemplateRaw,
                         bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                         userDID: getters.getUserDID
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status != 200) {
-                                return response.json().then(json => {
-                                    let m = json ? json.message : "Could not verify passive liveliness check"
-                                    if (Array.isArray(m)) {
-                                        m = m[0] && m[0].message && m[0].code ? 'Code' + m[0].code + ': ' + m[0].message : (m[0] && m[0].message ? m[0].message : m.join(' '))
-                                    }
-                                    return reject(new Error(m))
-                                })
-                            }
-                        }
-                        return response.json()
-                    })
-                    .then(async json => {
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject("Faicial recognition failed")
-                        } else if (json.error) {
-                            return reject(json)
-                        } else {
-                            if (json && json.serviceLivenessResult === 3) {
-                                commit('setLivelinessResult', json);
-                                await dispatch('updateVaultCredentials', json.credential);
-                                return resolve(json)
-                            } else {
-                                reject(new Error('Error verifying liveliness check, error code: ' + json.serviceLivenessResult))
-                            }
-                        }
-                    }).catch((e) => {
-                        return reject(new Error(`Verifying the result  ${e}`))
-                    })
+                    }
+                    const json = await RequestHandler(url, 'POST', body, headers)
+
+                    if (json && json.serviceLivenessResult === 3) {
+                        commit('setLivelinessResult', json);
+                        await dispatch('updateVaultCredentials', json.credential);
+                        return resolve(json)
+                    } else {
+                        return reject(new Error(json))
+                    }
+
+                } catch (e) {
+                    reject(new Error(`Error verifying liveliness check  ${e}`))
+                }
             })
         },
 
         verifyOcrIDDoc: ({ commit, state, getters, dispatch }) => {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
                     return reject('User has not performed ID capturing')
                 }
@@ -795,20 +724,16 @@ export default new Vuex.Store({
                 if (!state.livelinessCapturedData.bestImageTokenized) {
                     return reject('User has not performed Facial recognition')
                 }
+                try {
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr`;
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                        'x-ssi-access-token': getters.getSSIAccessToken,
+                        'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                        'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                    };
 
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr`;
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",  // TODO remove this hardcoding
-                    "content-type": "application/json",
-                    'x-ssi-access-token': getters.getSSIAccessToken,
-                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
-                };
-                return fetch(url, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
+                    const body = {
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                         bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
@@ -817,108 +742,61 @@ export default new Vuex.Store({
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
                         ocr: { ...state.kycExtractedData.extractionRaw.ocr }
-                    })
-                })
-                    .then(response => {
-
-                        if (!response.ok) {
-                            if (response.status != 200) {
-                                return response.json().then(json => {
-                                    let m = json ? json.message : "Could not verify ID document"
-                                    if (Array.isArray(m)) {
-                                        m = m[0] && m[0].message && m[0].code ? 'Code' + m[0].code + ': ' + m[0].message : (m[0] && m[0].message ? m[0].message : m.join(' '))
-                                    }
-                                    return reject(new Error(m))
-                                })
-                            }
+                    }
+                    const json = await RequestHandler(url, 'POST', body, headers)
+                    if (json && json.serviceFacialAuthenticationResult === 3) {
+                        commit('setOcrIdDocResult', json);
+                        if (json.credentials && json.credentials.length > 0) {
+                            json.credentials.forEach(credential => {
+                                console.log('Updating each credentila in vault credential id ' + credential.id)
+                                dispatch('updateVaultCredentials', credential);
+                            })
                         }
-                        return response.json()
-                    })
-                    .then(json => {
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message[0]['message'])
-                        } else if (json.error) {
-                            return reject(json)
-                        } else {
-                            if (json && json.serviceFacialAuthenticationResult === 3) {
-                                commit('setOcrIdDocResult', json);
-                                if (json.credentials && json.credentials.length > 0) {
+                        return resolve(json)
+                    } else {
+                        return reject(new Error(json))
+                    }
 
-                                    json.credentials.forEach(credential => {
-                                        console.log('Updating each credentila in vault credential id ' + credential.id)
-                                        dispatch('updateVaultCredentials', credential);
-                                    })
-                                }
-
-                                return resolve(json)
-                            } else {
-                                return reject(new Error('Error verifying ID document, error code: ' + json.serviceFacialAuthenticationResult))
-                            }
-                        }
-                    }).catch((e) => {
-                        //
-                        reject(new Error(`Verifying the result  ${e}`))
-                    })
+                } catch (e) {
+                    return reject(new Error('Error verifying ID document ' + e.message))
+                }
             })
         },
 
 
         verifySbtMint: ({ commit, getters, dispatch }, payload) => {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
+                    const headers = {
+                        'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                        'x-ssi-access-token': getters.getSSIAccessToken,
+                        'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                        'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                    };
 
-                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/sbt-mint`;
-                const headers = {
-                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                    'Origin': "http://localhost:8080/",
-                    "content-type": "application/json",
-                    'x-ssi-access-token': getters.getSSIAccessToken,
-                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
-                };
-                return fetch(url, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
+                    const body = {
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
                         sbtData: {
                             ...payload
                         }
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 400) {
-                                return response.json().then(json => {
-                                    let m = json ? json.message : "Could not mint ID"
-                                    if (Array.isArray(m)) {
-                                        m = m.join(' ')
-                                    }
-                                    return reject(new Error(m))
-                                })
-                            }
-                        }
-                        return response.json()
-                    })
-                    .then(json => {
-                        if (json.statusCode && (json.statusCode != (200 || 201))) {
-                            return reject(json.message)
-                        } else if (json.error) {
-                            return reject(json)
-                        } else {
-                            if (json.credentials && json.credentials.length > 0) {
-                                commit('setSbtMintDone', true);
-                                json.credentials.forEach(credential => {
-                                    console.log('Updating each credentila in vault credential id ' + credential.id)
-                                    dispatch('updateVaultCredentials', credential);
-                                })
+                    }
 
-                                return resolve(json)
-                            }
-                        }
-                    }).catch((e) => {
-                        reject(new Error(`Verifying the sbt mint result  ${e}`))
-                    })
+                    const json = await RequestHandler(url, 'POST', body, headers)
+                    if (json.credentials && json.credentials.length > 0) {
+                        commit('setSbtMintDone', true);
+                        json.credentials.forEach(credential => {
+                            console.log('Updating each credentila in vault credential id ' + credential.id)
+                            dispatch('updateVaultCredentials', credential);
+                        })
+                        return resolve(json)
+                    } else {
+                        return reject(new Error(json));
+                    }
+                } catch (e) {
+                    reject(new Error(`Verifying the sbt mint result  ${e}`))
+                }
             })
         },
 
