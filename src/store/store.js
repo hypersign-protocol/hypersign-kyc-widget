@@ -658,7 +658,7 @@ export default new Vuex.Store({
                     const headers = {
                         'Authorization': 'Bearer ' + getters.getCavachAccessToken,
                     }
-
+                    headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
                     const body = {
                         sessionId: getters.getSession,
                         presentation: state.userPresentationConsent
@@ -691,7 +691,7 @@ export default new Vuex.Store({
                         'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
                         'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                     };
-
+                    headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
                     const body = {
                         sessionId: getters.getSession,
                         tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
@@ -732,7 +732,7 @@ export default new Vuex.Store({
                         'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
                         'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                     };
-
+                    headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
                     const body = {
                         documentType: 0,
                         tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
@@ -774,7 +774,7 @@ export default new Vuex.Store({
                         'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
                         'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                     };
-
+                    headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
                     const body = {
                         sessionId: getters.getSession,
                         userDID: getters.getUserDID,
