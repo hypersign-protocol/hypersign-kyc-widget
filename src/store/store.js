@@ -609,6 +609,7 @@ export default new Vuex.Store({
                         throw new Error(data)
                     }
                 } catch (e) {
+                    console.log(e);
                     reject(new Error(`Error getting widget config  ${e}`))
                 }
             })
@@ -714,6 +715,63 @@ export default new Vuex.Store({
                 }
             })
         },
+        verifyLivelinessStatus(
+            { commit, state, getters, dispatch }
+        ) {
+            const sessionId = getters.getSession
+            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness/status/` + sessionId;
+
+
+            const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {
+
+
+            })
+            eventSource.onopen = function (event) {
+                console.log('Connection opened', event);
+            };
+            eventSource.onmessage = function (event) {
+                console.log('New message:', event.data);
+                if (event.data.includes("not generated") || event.data.includes("completed")) {
+                    eventSource.close()
+                }
+            };
+
+            eventSource.onerror = function (error) {
+                console.error('EventSource failed:', error);
+                eventSource.close()
+            };
+
+        },
+
+
+        verifyOCRDocStatus(
+            { commit, state, getters, dispatch }
+        ) {
+            const sessionId = getters.getSession
+            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/status/` + sessionId;
+
+
+            const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {
+
+
+            })
+            eventSource.onopen = function (event) {
+                console.log('Connection opened', event);
+            };
+            eventSource.onmessage = function (event) {
+                console.log('New message:', event.data);
+                if (event.data.includes("not generated") || event.data.includes("completed")) {
+                    eventSource.close()
+                }
+            };
+
+            eventSource.onerror = function (error) {
+                console.error('EventSource failed:', error);
+                eventSource.close()
+            };
+
+        }
+        ,
 
         verifyOcrIDDoc: ({ commit, state, getters, dispatch }) => {
             return new Promise(async (resolve, reject) => {
