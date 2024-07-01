@@ -116,7 +116,7 @@ export default {
             this.toast(e.message, "error");
             this.isLoading = false;
           });
-        this.verifyLivelinessStatus();
+        setTimeout(this.verifyLivelinessStatus, 50);
       } else {
         // ...
       }
