@@ -210,7 +210,7 @@ export default {
                         this.nextStep(6);
                     }
                     this.isLoading = false;
-                }, 2000)
+                }, 3000)
 
             } catch (e) {
                 if (e.message) {

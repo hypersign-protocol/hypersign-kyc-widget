@@ -3,7 +3,7 @@
         <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
         <div class="row" style="margin-top: 1%;">
             <div class="col-md-12" style="text-align: left">
-                <InfoMessage message="Please verify if your infromations are correct" />
+                <InfoMessage message="Please verify if your informations are correct" />
                 <div class="card widget-card" style="width: 90%;margin:auto;">
                     <table class="table" style="text-align: left">
                         <tr>

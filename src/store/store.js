@@ -703,7 +703,7 @@ export default new Vuex.Store({
 
                     if (json && json.serviceLivenessResult === 3) {
                         commit('setLivelinessResult', json);
-                        await dispatch('updateVaultCredentials', json.credential);
+                        if (json.credential) await dispatch('updateVaultCredentials', json.credential);
                         return resolve(json)
                     } else {
                         return reject(new Error(json))
