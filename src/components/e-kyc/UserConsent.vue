@@ -168,7 +168,7 @@ export default {
         async generatePresentation() {
 
             const params = {
-                "verifiableCredentials": [...this.getVaultDataCredentials],
+                "verifiableCredentials": [...this.getTrustedIssuersCredentials],
                 "holderDid": this.getUserDID
             }
             return await this.hypersignVP.generate(params);
