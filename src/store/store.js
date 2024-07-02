@@ -1023,24 +1023,28 @@ export default new Vuex.Store({
             const vaultDataRaw = getters.getVaultDataRaw
             const { hypersign } = vaultDataRaw
             const { credentials } = hypersign
-            const { schemaIds } = state
+            const { schemaIds } = state;
+            const issuerDID = getters.getWidgetConfigFromDb.issuerDID
+            let trustedIssuerList = []
+            if (issuerDID) {
+                trustedIssuerList = issuerDID.split(',')
+            }
+
 
             Object.keys(schemaIds).forEach(schema => {
                 const { schemaId } = schemaIds[schema]
                 const credential = credentials.find(credential => {
                     if (credential) {
-
                         // TODO: We can also add filter for trusted issuer later in the presentation request
-                        if ((credential.credentialSchema.id === schemaId)) {
+                        if ((credential.credentialSchema.id === schemaId) && trustedIssuerList.includes(credential.issuer)) {
                             return credential
                         }
+
                     }
                 })
 
                 if (credential) {
                     if (schema === 'PersonhoodCredential') {
-                        console.log("commiting setLivelinessDone")
-                        console.log(credential)
                         commit('setLivelinessCapturedData', credential.credentialSubject)
                         commit('setLivelinessDone', true)
                     }

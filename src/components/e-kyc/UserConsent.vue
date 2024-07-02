@@ -34,9 +34,9 @@
                 </div>
             </div>
 
-            <div class="widget-card " style="width: 90%;margin:auto;     margin-top: 30px;">
+            <div class="widget-card" style="width: 90%;margin:auto;margin-top: 30px;">
                 <div class="container">
-                    <div class="row credential-row" v-for="eachCredential in getVaultDataCredentials"
+                    <div class="row credential-row p-1 mb-1" v-for="eachCredential in getTrustedIssuersCredentials"
                         v-bind:key="eachCredential.id">
                         <div class="col-1">
                             <i class="bi bi-person-bounding-box"
@@ -52,7 +52,7 @@
                             {{ eachCredential.type[1] }}
                             <InfoMessage :message="eachCredential.id"></InfoMessage>
                         </div>
-                        <div class="col-1 credential-row-switch">
+                        <div class="col-1">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch"
                                     id="flexSwitchCheckChecked" checked disabled>
@@ -94,13 +94,24 @@ export default {
     },
     computed: {
         ...mapState(['steps']),
-        ...mapGetters(['getVaultDataCredentials', 'getUserDID', 'getPresentationRequestParsed']),
+        ...mapGetters(['getVaultDataCredentials', 'getUserDID', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
         credentailsTypesInWallet() {
             const types = this.getVaultDataCredentials.map(x => x.type)
             const allTypes = [].concat(...types)
             const uniqueTypes = Array.from(new Set(allTypes))
             const uniqueTypesWithoutDefaultTypes = uniqueTypes.filter(x => x != 'VerifiableCredential')
             return uniqueTypesWithoutDefaultTypes
+        },
+        getTrustedIssuers() {
+            const issuerDID = this.getWidgetConfigFromDb.issuerDID
+            if (issuerDID) {
+                return issuerDID.split(',')
+            } else {
+                return []
+            }
+        },
+        getTrustedIssuersCredentials() {
+            return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
         checkIfOncainIdIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
