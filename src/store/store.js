@@ -715,6 +715,8 @@ export default new Vuex.Store({
                 }
             })
         },
+
+        // eventSource -----
         verifyLivelinessStatus(
             { commit, state, getters, dispatch }
         ) {
@@ -740,8 +742,8 @@ export default new Vuex.Store({
                 console.error('EventSource failed:', error);
                 eventSource.close()
             };
-
         },
+        // ---------------
 
 
         verifyOCRDocStatus(
