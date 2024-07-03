@@ -50,15 +50,15 @@ export default {
             isToast: false,
         }
     },
-  created() {
-    EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
-  },
-  beforeDestroy() {
-    EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
-  },
-  methods: {
+    created() {
+        EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+    },
+    beforeDestroy() {
+        EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+    },
+    methods: {
         ...mapMutations(["nextStep", "previousStep"]),
-        ...mapActions(["verifyLiveliness"]),
+        ...mapActions(["verifyLiveliness", "verifyLivelinessStatus"]),
         // Demo methods
         enableWidget: async function () {
             console.warn("[Demo] Start Capture");
