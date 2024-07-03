@@ -138,7 +138,7 @@ export default {
             this.toast(e.message, "error");
             this.isLoading = false;
                     });
-                setTimeout(this.verifyLivelinessStatus, 200);
+                setTimeout(this.verifyLivelinessStatus, 500);
             } else {
                 // ...
       }

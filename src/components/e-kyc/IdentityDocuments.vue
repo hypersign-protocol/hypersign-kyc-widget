@@ -252,7 +252,7 @@ export default {
                     this.isLoading = false;
                 });
 
-            setTimeout(this.verifyOCRDocStatus, 200);
+            setTimeout(this.verifyOCRDocStatus, 500);
 
         },
 
