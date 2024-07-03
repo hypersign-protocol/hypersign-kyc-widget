@@ -4,6 +4,7 @@ import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import PreviewData from '../commons/Preview.vue'
 import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
+import { EVENT, EVENTS } from '../utils/eventBus';
 export default {
     name: STEP_NAMES.IdDocs,
     components: {
@@ -71,11 +72,16 @@ export default {
         //   this.licenseKey = license;
         //   this.generateBrowserCache(license);
         // }
+        EVENT.subscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved);
+    },
+
+    beforeDestroy() {
+        EVENT.unSubscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved);
     },
 
     methods: {
         ...mapMutations(["nextStep"]),
-        ...mapActions(["verifyOcrIDDoc"]),
+        ...mapActions(["verifyOcrIDDoc", 'verifyOCRDocStatus']),
         // Demo methods
         enableWidget: async function () {
             // console.warn("[Demo] Start Capture");
@@ -124,11 +130,7 @@ export default {
                     tokenFaceImage: extractionResult.detail.images.faceImage,
                     countryCode: extractionResult.detail.extractionData.documentCountryIssuer
                 })
-
                 this.isWidgetStarted = false
-
-
-
             } else {
                 // ...
             }
@@ -195,34 +197,73 @@ export default {
         },
 
         async verifyIdDocEventHandler(data) {
-            try {
-                if (!data) {
-                    throw new Error('Invalid event data')
-                }
-                this.isLoading = true;
-                this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
-                await this.verifyOcrIDDoc()
+            // try {
+            //     if (!data) {
+            //         throw new Error('Invalid event data')
+            //     }
+            //     this.isLoading = true;
+            //     this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
+            //     await this.verifyOcrIDDoc()
+            //     setTimeout(() => {
+            //         if (this.checkIfOncainIdIsEnabled) {
+            //             this.nextStep(5);
+            //         } else {
+            //             this.nextStep(6);
+            //         }
+            //         this.isLoading = false;
+            //     }, 3000)
 
-                setTimeout(() => {
-                    if (this.checkIfOncainIdIsEnabled) {
-                        this.nextStep(5);
-                    } else {
-                        this.nextStep(6);
-                    }
-                    this.isLoading = false;
-                }, 3000)
+            // } catch (e) {
+            //     if (e.message) {
+            //         if (e.message.includes('Session with given ID')) {
+            //             this.isLoading = false;
+            //             return this.nextStep(8)
+            //         }
+            //     }
+            //     this.toast(e.message, "error");
+            //     this.isLoading = false;
+            // }
 
-            } catch (e) {
-                if (e.message) {
-                    if (e.message.includes('Session with given ID')) {
-                        this.isLoading = false;
-                        return this.nextStep(8)
-                    }
-                }
-                this.toast(e.message, "error");
-                this.isLoading = false;
+
+            if (!data) {
+                throw new Error('Invalid event data')
             }
+            this.isLoading = true;
+            this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
+            this.verifyOcrIDDoc()
+                .then(() => {
+                    setTimeout(() => {
+                        if (this.checkIfOncainIdIsEnabled) {
+                            this.nextStep(5);
+                        } else {
+                            this.nextStep(6);
+                        }
+                        this.isLoading = false;
+                    }, 3000)
+
+                }).catch((e) => {
+                    if (e.message) {
+                        if (e.message.includes('Session with given ID')) {
+                            this.isLoading = false;
+                            return this.nextStep(8)
+                        }
+                    }
+                    this.toast(e.message, "error");
+                    this.isLoading = false;
+                });
+
+            setTimeout(this.verifyOCRDocStatus, 50);
+
         },
+
+        onVerifyIdOcrStatusEventRecieved(event) {
+            const { success, message } = event;
+            if (success) {
+                this.toast(message);
+            } else {
+                this.toast(message, "error");
+            }
+        }
     },
 
 }

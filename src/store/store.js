@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET, HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../config'
 import { decrypt, encrypt } from '../../src/components/utils/symmetricCrypto'
 import { RequestHandler } from '../components/utils/utils';
+import { EVENT, EVENTS } from '../components/utils/eventBus';
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -715,6 +717,41 @@ export default new Vuex.Store({
             })
         },
 
+        // eventSource -----
+        verifyLivelinessStatus(
+            { commit, state, getters, dispatch }
+        ) {
+            const sessionId = getters.getSession
+            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness/status/` + sessionId;
+            const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
+            eventSource.onopen = function (event) {
+                console.log('Connection opened', event);
+            };
+            eventSource.onmessage = function (event) {
+                console.log('New message:', event.data);
+                let payload = {
+                    success: true,
+                    message: event.data
+                }
+                if (event.data.includes("not generated") || event.data.includes("completed")) {
+                    eventSource.close()
+                }
+
+                if (event.data.includes("error")) {
+                    payload.success = false;
+                    eventSource.close()
+                }
+                EVENT.emitEvent(EVENTS.LIVELINESS, payload);
+
+            };
+            eventSource.onerror = function (error) {
+                console.error('EventSource failed:', error);
+                eventSource.close()
+            };
+        },
+        // ---------------
+
+
         verifyOcrIDDoc: ({ commit, state, getters, dispatch }) => {
             return new Promise(async (resolve, reject) => {
                 if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
@@ -762,6 +799,40 @@ export default new Vuex.Store({
                 }
             })
         },
+
+        // eventSource -----
+        verifyOCRDocStatus(
+            { commit, state, getters, dispatch }
+        ) {
+            const sessionId = getters.getSession
+            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/status/` + sessionId;
+            const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
+            eventSource.onopen = function (event) {
+                console.log('Connection opened', event);
+            };
+            eventSource.onmessage = function (event) {
+                console.log('New message:', event.data);
+                let payload = {
+                    success: true,
+                    message: event.data
+                }
+                if (event.data.includes("not generated") || event.data.includes("completed")) {
+                    eventSource.close()
+                }
+
+                if (event.data.includes("error")) {
+                    payload.success = false;
+                    eventSource.close()
+                }
+                EVENT.emitEvent(EVENTS.IDDOCOCR, payload);
+
+            };
+            eventSource.onerror = function (error) {
+                console.error('EventSource failed:', error);
+                eventSource.close()
+            };
+        },
+        // ---------------
 
 
         verifySbtMint: ({ commit, getters, dispatch }, payload) => {

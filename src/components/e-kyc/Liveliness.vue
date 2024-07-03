@@ -6,7 +6,7 @@ import { FPhi } from "@facephi/selphi-widget-web";
 import { mapActions, mapMutations, } from "vuex";
 import { STEP_NAMES } from "@/config";
 import MESSAGE from '../utils/lang/en'
-
+import { EVENT, EVENTS } from '../utils/eventBus';
 export default {
     name: STEP_NAMES.LiveLiness,
     components: {
@@ -50,7 +50,13 @@ export default {
             isToast: false,
         }
     },
-    methods: {
+  created() {
+    EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+  },
+  beforeDestroy() {
+    EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+  },
+  methods: {
         ...mapMutations(["nextStep", "previousStep"]),
         ...mapActions(["verifyLiveliness"]),
         // Demo methods
@@ -96,30 +102,49 @@ export default {
                 this.isWidgetStarted = false;
 
 
-                try {
-                    this.isLoading = true;
-                    this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
-                    await this.verifyLiveliness()
-                    this.nextStep()
-                    this.isLoading = false;
-                } catch (e) {
-                    if (e.message) {
-                        if (e.message.includes('Session with given ID')) {
-                            this.isLoading = false;
-                            this.nextStep(8)
-                            return
-                        }
-                    }
-                    this.toast(e.message, "error");
-                    this.isLoading = false;
-                }
+        // try {
+        //     this.isLoading = true;
+        //     this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
+        //     await this.verifyLiveliness()
+        //     this.nextStep()
+        //     this.isLoading = false;
+        // } catch (e) {
+        //     if (e.message) {
+        //         if (e.message.includes('Session with given ID')) {
+        //             this.isLoading = false;
+        //             this.nextStep(8)
+        //             return
+        //         }
+        //     }
+        //     this.toast(e.message, "error");
+        //     this.isLoading = false;
+        // }
 
-            } else {
-                // ...
+        this.isLoading = true;
+        this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
+        this.verifyLiveliness()
+          .then(() => {
+            this.nextStep();
+            this.isLoading = false;
+          })
+          .catch((e) => {
+            if (e.message) {
+              if (e.message.includes("Session with given ID")) {
+                this.isLoading = false;
+                this.nextStep(8);
+                return;
+              }
             }
+            this.toast(e.message, "error");
+            this.isLoading = false;
+          });
+        setTimeout(this.verifyLivelinessStatus, 50);
+      } else {
+        // ...
+      }
 
 
-        },
+    },
 
         onExceptionCaptured: function (exceptionResult) {
             // console.warn("[Selphi] onExceptionCaptured");
@@ -190,7 +215,16 @@ export default {
                 this.toastMessage = "";
             }, 6000);
         },
+
+    onVerifyLivelinessStatusEventRecieved(event) {
+      const { success, message } = event;
+      if (success) {
+        this.toast(message);
+      } else {
+        this.toast(message, "error");
+      }
     }
+  }
 }
 
 </script>
