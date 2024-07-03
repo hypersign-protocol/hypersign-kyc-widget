@@ -137,10 +137,10 @@ export default {
             }
             this.toast(e.message, "error");
             this.isLoading = false;
-          });
-        setTimeout(this.verifyLivelinessStatus, 50);
-      } else {
-        // ...
+                    });
+                setTimeout(this.verifyLivelinessStatus, 200);
+            } else {
+                // ...
       }
 
 
