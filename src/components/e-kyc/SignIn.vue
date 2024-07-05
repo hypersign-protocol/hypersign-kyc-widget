@@ -226,11 +226,12 @@ export default {
     async created() {
         try {
 
-            ////  Mandatory validations of params dapps passed in the widget url
-            await this.validationSessionId()
 
             // validation of access tokens
             this.validationForAccessTokens()
+
+            ////  Mandatory validations of params dapps passed in the widget url
+            await this.validationSessionId()
 
             await this.fetchAppsWidgetConfig()
 
