@@ -30,20 +30,20 @@ export default new Vuex.Store({
         ...vaultState
     },
     getters: {
-        ...ekycGetters,
         ...signinGetters,
         ...vaultGetters,
+        ...ekycGetters,
     },
     mutations: {
-        ...oldEkycMutations,
-        ...vaultMutations,
         ...signinMutations,
+        ...oldEkycMutations,
         ...ekycMutations,
+        ...vaultMutations,
     },
     actions: {
         ...oldEkycActions,
-        ...vaultActions,
         ...signinActions,
         ...ekycActions,
+        ...vaultActions,
     },
 })

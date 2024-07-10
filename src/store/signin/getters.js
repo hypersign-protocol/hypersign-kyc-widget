@@ -1,4 +1,5 @@
 import { HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../../config'
+import SignStoreConfig from './config'
 export default {
     getActiveStep: (state) => {
         const step = state.steps.find(x => {
@@ -10,20 +11,16 @@ export default {
     },
     //-----------------------------------------------------------------e-kyc
     getSession() {
-        return localStorage.getItem("session")
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.SESSIONS)
     },
     getCavachAccessToken() {
-        return localStorage.getItem("cavachAccessToken")
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.KYC_ACCESS_TOKEN)
     },
     getRedirectUrl() {
-        return localStorage.getItem("redirectUrl")
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.REDIRECT_URL)
     },
-    getAuthServerAuthToken() {
-        return localStorage.getItem("authServerAuthToken")
-    },
-
     getProfile() {
-        const profileStr = localStorage.getItem('profile')
+        const profileStr = localStorage.getItem(SignStoreConfig.LOCAL_STATES.PROFILE)
         if (profileStr) {
             return JSON.parse(profileStr)
         } else {
@@ -31,15 +28,15 @@ export default {
         }
     },
     getSSIAccessToken() {
-        return localStorage.getItem("ssiAccessToken")
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.SSI_ACCESS_TOKEN)
     },
 
     getTenantSubdomain() {
-        return localStorage.getItem('subdomain');
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.SUBDOMAIN);
     },
 
     getTenantKycServiceBaseUrl() {
-        const subdomain = localStorage.getItem('subdomain');
+        const subdomain = localStorage.getItem(SignStoreConfig.LOCAL_STATES.SUBDOMAIN);
         if (!subdomain) {
             throw new Error('Invalid accessToken')
         }
@@ -47,11 +44,11 @@ export default {
     },
 
     getPresentationRequest() {
-        return localStorage.getItem("presentationRequest")
+        return localStorage.getItem(SignStoreConfig.LOCAL_STATES.PR)
     },
 
     getPresentationRequestParsed() {
-        const base64EncodedPr = localStorage.getItem("presentationRequest")
+        const base64EncodedPr = localStorage.getItem(SignStoreConfig.LOCAL_STATES.PR)
         const prStr = atob(base64EncodedPr)
         return JSON.parse(prStr)
     },
@@ -61,7 +58,7 @@ export default {
     },
 
     getOnChainIssuerConfig: () => {
-        const t = localStorage.getItem("onChainIssuerConfig")
+        const t = localStorage.getItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG)
         if (t) {
             return JSON.parse(t)
         } else {
@@ -70,7 +67,7 @@ export default {
     },
     getWidgetConfigFromDb: (state) => {
         console.log(state.hasKycDone)
-        const t = localStorage.getItem('widgetConfigFromDb');
+        const t = localStorage.getItem(SignStoreConfig.LOCAL_STATES.WIDGET_CONFIG);
         if (t) {
             return JSON.parse(t)
         } else {

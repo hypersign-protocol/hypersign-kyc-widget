@@ -1,6 +1,11 @@
 import { decrypt, encrypt } from '../../components/utils/symmetricCrypto'
 // import { RequestHandler } from '../../components/utils/utils';
+import SignInStoreConfig from '../signin/config'
 const VAULT_SERVER_BASE_URL = 'https://authserver.hypersign.id/hs/api/v2'
+
+
+import VaultConfig from './config'
+
 export default {
     // ---------------------------------------------------------------- EDV (auth server)
     registerUser: ({ commit, getters }) => {
@@ -37,7 +42,6 @@ export default {
                             commit('setAsNewUser', false)
                         } else {
                             commit('setAsNewUser', true)
-
                         }
 
                         commit('setAuthServerAuthToken', json.authToken)
@@ -56,7 +60,7 @@ export default {
                 return reject(new Error('Invalid email, or user is not logged in'))
             }
 
-            if (!localStorage.getItem('vaultData')) {
+            if (!localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA)) {
                 return reject(new Error('Invalid vault data'))
             }
             // const url = `${VAULT_SERVER_BASE_URL}/sync/` + email
@@ -78,7 +82,7 @@ export default {
                         // "nameSpace": "hypersign-kyc"
                     },
                     "document": {
-                        "encryptedMessage": localStorage.getItem('vaultData')
+                        "encryptedMessage": localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA)
                     }
                 })
             })
@@ -99,7 +103,7 @@ export default {
 
     syncUserDataById: ({ getters, commit }) => {
         return new Promise((resolve, reject) => {
-            const { email } = JSON.parse(localStorage.getItem('profile'))
+            const { email } = JSON.parse(localStorage.getItem(SignInStoreConfig.LOCAL_STATES.PROFILE))
             if (!email) {
                 return reject(new Error('Invalid email, or user is not logged in'))
             }

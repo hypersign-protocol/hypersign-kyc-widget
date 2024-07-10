@@ -1,27 +1,31 @@
+import VaultConfig from './config'
 export default {
     clearVaultPin() {
-        localStorage.setItem('vaultLockStatus', false)
-        localStorage.removeItem('vaultPin')
+        localStorage.setItem(VaultConfig.LOCAL_STATES.VAULT_LOCK, false)
+
     },
     setVaultPin(state, payload) {
-        // console.log(state.hasKycDone)
-        // localStorage.setItem('vaultPin', payload)
         state.vaultPin = payload;
     },
 
     setVaultData(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem('vaultData', payload)
+        localStorage.setItem(VaultConfig.LOCAL_STATES.VAULT_DATA, payload)
+    },
+
+    setAuthServerAuthToken(state, payload) {
+        console.log(state.hasKycDone)
+        localStorage.setItem(VaultConfig.LOCAL_STATES.AUTH_SERVER_TOKEN, payload)
     },
 
     setVaultRaw(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem('vaultDataRaw', payload)
+        localStorage.setItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW, payload)
     },
 
     setVaultLockStatus(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem('vaultLockStatus', payload)
+        localStorage.setItem(VaultConfig.LOCAL_STATES.VAULT_LOCK, payload)
     },
 
 }

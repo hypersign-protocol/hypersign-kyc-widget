@@ -1,21 +1,28 @@
+
+import SignStoreConfig from './config'
+import VaultStoreConfig from '../vault/config'
+
 export default {
     clearAllLocalStore() {
-        localStorage.removeItem('vaultDataRaw');
         localStorage.removeItem('mb-user-id');
-        localStorage.removeItem('profile');
-        localStorage.removeItem('vaultData');
-        localStorage.removeItem('authServerAuthToken');
-        localStorage.removeItem('vaultLockStatus');
-        localStorage.removeItem('vaultLockStatus');
-        localStorage.removeItem('vaultPin');
-        localStorage.removeItem('onChainIssuerConfig');
+        localStorage.removeItem(SignStoreConfig.LOCAL_STATES.PROFILE);
+        localStorage.removeItem(SignStoreConfig.LOCAL_STATES.AUTH_SERVER_TOKEN);
+        localStorage.removeItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG);
+
+
+
+        // move these in store/vault module
+        localStorage.removeItem(VaultStoreConfig.LOCAL_STATES.VAULT_DATA_RAW);
+        localStorage.removeItem(VaultStoreConfig.LOCAL_STATES.VAULT_DATA);
+        localStorage.removeItem(VaultStoreConfig.LOCAL_STATES.VAULT_LOCK);
+        localStorage.removeItem('vault.vaultPin');
     },
 
 
 
     setOnChainIssuerConfig: (state, payload) => {
         console.log(state.hasKycDone)
-        localStorage.setItem("onChainIssuerConfig", JSON.stringify(payload))
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG, JSON.stringify(payload))
     },
     setCosmosConnection: (state, payload) => {
         state.cosmosConnection = { ...payload };
@@ -65,32 +72,32 @@ export default {
     },
     setAuthorization: (state, authorization) => {
         state.authorization = authorization
-        localStorage.setItem('authorization', authorization)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.AUTHORIZATION, authorization)
 
     },
 
     setSession(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem("session", payload)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.SESSIONS, payload)
     },
 
     setCavachAccessToken(state, payload) {
         console.log(state.kycCapturedData)
-        localStorage.setItem("cavachAccessToken", payload)
+        console.log(`Inside setCavachAccessToken  ${SignStoreConfig.LOCAL_STATES.KYC_ACCESS_TOKEN}  = ${payload}`)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.KYC_ACCESS_TOKEN, payload)
     },
     setRedirectUrl(state, payload) {
         console.log(state.kycCapturedData)
-        localStorage.setItem("redirectUrl", payload)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.REDIRECT_URL, payload)
     },
     setPresentationRequest(state, payload) {
         console.log(state.kycCapturedData)
-        localStorage.setItem("presentationRequest", payload)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.PR, payload)
     },
 
     setSSIAccessToken(state, payload) {
         console.log(state.kycCapturedData)
-
-        localStorage.setItem("ssiAccessToken", payload)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.SSI_ACCESS_TOKEN, payload)
     },
 
     setThridPartyAuth(state, payload) {
@@ -99,22 +106,17 @@ export default {
 
     setProfile(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem('profile', JSON.stringify(payload))
-    },
-
-    setAuthServerAuthToken(state, payload) {
-        console.log(state.hasKycDone)
-        localStorage.setItem("authServerAuthToken", payload)
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.PROFILE, JSON.stringify(payload))
     },
 
     setAsNewUser(state, payload) {
-        console.log(state.hasKycDone)
+        console.log(`Inside setAsNewUser ${state.hasKycDone}`)
         state.ifNewUser = payload;
     },
 
     setTenantSubdomain(state, payload) {
         console.log(state.hasKycDone)
-        localStorage.setItem('subdomain', payload);
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.SUBDOMAIN, payload);
     },
 
     setIdDocumentLicenseKey(state, payload) {
@@ -123,7 +125,7 @@ export default {
 
     setWidgetConfigFromDb: (state, payload) => {
         // state.widgetConfigFromDb = { ...payload }
-        localStorage.setItem('widgetConfigFromDb', JSON.stringify(payload));
+        localStorage.setItem(SignStoreConfig.LOCAL_STATES.WIDGET_CONFIG, JSON.stringify(payload));
     },
 
 
