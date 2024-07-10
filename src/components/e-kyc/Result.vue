@@ -85,8 +85,13 @@ export default {
             // this is security bug, we are sending idToken to any domain
             // if we dont do this, then we are getting CORS error
             // window.opener.postMessage(data, 'this.getPresentationRequestParsed.domain'); 
-            window.opener.postMessage(data, '*');
-            self.close();
+            if (window.opener) {
+                window.opener.postMessage(data, '*');
+                self.close();
+            } else {
+                close()
+            }
+
         },
     }
 }
