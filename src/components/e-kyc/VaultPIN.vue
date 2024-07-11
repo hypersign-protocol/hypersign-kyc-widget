@@ -24,11 +24,12 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '../../config';
+import VaultConfig from '../../store/vault/config'
 export default {
     name: STEP_NAMES.VaultPIN,
     computed: {
         ...mapState(['ifNewUser', 'steps']),
-        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps"])
+        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps", 'getVaultData'])
     },
     components: {
         AskPIN,
@@ -49,7 +50,7 @@ export default {
     },
     methods: {
         ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
-        ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById"]),
+        ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById", "retriveVaultKeys", "retriveVaultCredentials", 'addUpdateDocumentById']),
         enableAstep(stepName) {
             const stepToUpdate = this.steps.find(x => x.stepName === stepName)
             stepToUpdate.isEnabled = true;
@@ -65,10 +66,18 @@ export default {
                         await this.generateDID()
                         if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
                         await this.lockVault()
-                        await this.syncUserData()
+                        //// store keys in the vault
+                        const payload = {
+                            document: this.getVaultData,
+                            namespace: VaultConfig.VAULT_KEY_NAMESPACE,
+                            metadata: 'keys and dids for the vault'
+                        }
+                        await this.addUpdateDocumentById(payload)
                     } else {
-                        await this.syncUserDataById()
-                        await this.unlockVault()
+                        //// retrive keys from vault 
+                        await this.retriveVaultKeys()
+                        //// retrive all credentials
+                        await this.retriveVaultCredentials()
                     }
 
                     this.isLoadingPage = false
@@ -122,29 +131,8 @@ export default {
                 "hypersign": {
                     "did": "",
                     "keys": {
-                        "type": "Ed25519VerificationKey2020",
-                        "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                        "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
                     },
-                    "credentials": [],
-                    "credentialsTemp": [],
-                    "requestingAppInfo": "",
-                    "thridPartyAuths": [],
-                    "dids": {
-                        "did:hid:testnet:z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc": {
-                            "didDoc": {},
-                            "hdPathIndex": 0,
-                            "status": "private",
-                            "keys": {
-                                "type": "Ed25519VerificationKey2020",
-                                "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                                "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
-                            }
-                        }
-                    },
-                    "didDoc": {
-
-                    }
+                    "credentials": []
                 }
             }
         }

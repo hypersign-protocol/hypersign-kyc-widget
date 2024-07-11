@@ -1,13 +1,14 @@
 import { decrypt, encrypt } from '../../components/utils/symmetricCrypto'
 import SignInStoreConfig from '../signin/config'
 import VaultConfig from './config'
+import { RequestHandler } from '../../components/utils/utils'
 const { VAULT_SERVER_BASE_URL } = VaultConfig
 
 export default {
-    // ---------------------------------------------------------------- EDV (auth server)
-    registerUser: ({ commit, getters }) => {
+
+    registerUser: ({ commit, getters, dispatch }) => {
         return new Promise((resolve, reject) => {
-            const url = `${VAULT_SERVER_BASE_URL}/register`
+            const url = `${VAULT_SERVER_BASE_URL}/auth`
             const headers = {
                 "content-type": "application/json"
             };
@@ -24,30 +25,192 @@ export default {
                     },
                     "isThridPartyAuth": true,
                     "expirationDate": "2030-12-31T00:00:00.000Z",
-                    "thridPartyAuthProvider": "Google",
+                    "authProvider": "Google",
                     "accessToken": accessToken
                 })
             })
                 .then(response => response.json())
-                .then(json => {
+                .then(async json => {
                     if (json) {
                         if (json.error) {
                             return reject(json.error)
                         }
 
-                        if (json.status === 403) {
-                            commit('setAsNewUser', false)
-                        } else {
-                            commit('setAsNewUser', true)
+                        await commit('setAuthServerAuthToken', json.authToken)
+
+                        // check if this user has docs in key nameapces
+                        const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_KEY_NAMESPACE })
+                        if (response) {
+                            if (response.length > 0) {
+                                commit('setAsNewUser', false)
+                            } else {
+                                commit('setAsNewUser', true)
+                            }
                         }
 
-                        commit('setAuthServerAuthToken', json.authToken)
                         resolve(json)
                     }
                 }).catch((e) => {
                     reject(new Error(`Verifying the result  ${e}`))
                 })
         })
+    },
+
+    getDocumentIdsByNamespace: async ({ getters }, payload) => {
+        try {
+            const queryParams = {}
+            if (payload) {
+                const { namespace } = payload;
+                if (namespace) {
+                    queryParams['namespace'] = namespace
+                }
+
+                queryParams['page'] = 1
+                queryParams['perpage'] = 10
+            }
+
+            if (getters.getAuthServerAuthToken) {
+                const url = `${VAULT_SERVER_BASE_URL}/document`
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+                const resp = await RequestHandler(url, 'GET', {}, headers, queryParams)
+                console.log(resp)
+                return resp
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    getDocumentById: async ({ getters }, payload) => {
+        try {
+            const queryParams = {}
+            if (payload) {
+                const { namespace } = payload;
+                if (namespace) {
+                    queryParams['namespace'] = namespace
+                }
+            }
+
+            const { documentId } = payload;
+            if (!documentId) {
+                throw new Error('DocumentId must be specified')
+            }
+
+            if (getters.getAuthServerAuthToken) {
+                const url = `${VAULT_SERVER_BASE_URL}/document/${documentId}`
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+                const resp = await RequestHandler(url, 'GET', {}, headers, queryParams)
+                return resp
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    addUpdateDocumentById: async ({ getters }, payload) => {
+        try {
+            //debugger //eslint-disable-line 
+            if (!payload) {
+                throw new Error('Payload is required')
+            }
+
+            const { namespace, documentId, document, metadata } = payload;
+            if (!document) {
+                throw new Error('Kindly pass document to add or update in edv')
+            }
+
+            const body = {
+                "document": {
+                    "data": document
+                },
+            }
+
+            if (metadata) {
+                body['metadata'] = metadata
+            }
+
+            if (namespace) {
+                body['namespace'] = namespace
+            }
+
+            if (documentId) {
+                body['documentId'] = documentId
+            }
+
+            if (getters.getAuthServerAuthToken) {
+                const url = `${VAULT_SERVER_BASE_URL}/document`
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+                const resp = await RequestHandler(url, 'POST', body, headers)
+                console.log(resp)
+                return resp
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    retriveVaultKeys: async ({ dispatch, commit }) => {
+        try {
+            const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_KEY_NAMESPACE })
+            if (response && response.length > 0) {
+                const { edvDocId } = response[0]
+                if (edvDocId) {
+                    const response = await dispatch('getDocumentById', { namespace: VaultConfig.VAULT_KEY_NAMESPACE, documentId: edvDocId })
+                    if (response) {
+                        const { data } = response
+                        if (data) {
+                            await commit('setVaultData', data)
+                            await dispatch('unlockVault')
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    retriveVaultCredentials: async ({ dispatch, getters, commit }) => {
+        try {
+            const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_NAMESPACE })
+            if (response && response.length > 0) {
+                for (let i = 0; i < response.length; i++) {
+                    const { edvDocId } = response[i]
+                    if (edvDocId) {
+                        const response = await dispatch('getDocumentById', { namespace: VaultConfig.VAULT_NAMESPACE, documentId: edvDocId })
+                        if (response) {
+                            const { data } = response
+                            if (data) {
+                                const vaultPin = getters.getVaultPin
+                                decrypt(data, vaultPin)
+                                    .then(decryptedData => {
+                                        if (decryptedData) {
+                                            commit('updateVaultRawCredentials', [JSON.parse(decryptedData)])
+                                        }
+                                    }).catch(error => {
+                                        throw new Error(error);
+                                    })
+                            } else {
+                                console.error('No data found')
+                            }
+                        } else {
+                            console.error('No response found')
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
     },
 
     syncUserData: ({ getters }) => {
@@ -129,11 +292,16 @@ export default {
                 })
         })
     },
-    // ------------------------------------------------------------------ vault
-    async lockVault({ commit, getters }) {
+
+    async lockVault({ commit, getters }, payload = {}) {
         try {
             const vaultPin = getters.getVaultPin
+
             let vaultRaw = getters.getVaultDataRaw
+            if (payload && Object.keys(payload).length > 0) {
+                vaultRaw = payload
+            }
+
             if (!vaultRaw) {
                 return false
             }
@@ -194,32 +362,33 @@ export default {
     async updateVaultCredentials({ commit, getters, dispatch }, payload) {
         try {
             // check if vault is unlocked
-            if (getters.getVaultLockStatus === true) {
-                throw new Error('Vault is locked, please unlock first')
+            if (payload) await commit('updateVaultRawCredentials', [payload])
+
+            // await dispatch('lockVault', payload)
+
+            if (getters.getVaultPin) {
+                const encryptedData = await encrypt(JSON.stringify(payload), getters.getVaultPin)
+                const payload1 = {
+                    document: encryptedData,
+                    namespace: VaultConfig.VAULT_NAMESPACE,
+                    metadata: 'credentials'
+                }
+                await dispatch('addUpdateDocumentById', payload1)
+            } else {
+                throw new Error('Vault PIN not set')
             }
-
-            const vaultDataRaw = getters.getVaultDataRaw
-            vaultDataRaw.hypersign.credentials.push(payload)
-            if (vaultDataRaw) commit('setVaultRaw', JSON.stringify(vaultDataRaw))
-
-            await dispatch('lockVault')
-
-            setTimeout(async () => {
-                dispatch('syncUserData')
-                console.log('After calling syncUserData ... ')
-            }, 2000)
         } catch (e) {
             throw new Error(e.message)
         }
     },
 
     async checkIfCredentialAlreadyExistsInVault({ commit, getters, state }) {
-        // check if vault is unlocked, else throw error
-        if (getters.getVaultLockStatus === true) {
-            throw new Error('Vault is locked, please unlock first')
+        const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
+        const vaultDataRaw = JSON.parse(raw)
+        if (!vaultDataRaw) {
+            return;
         }
-        // get the raw data from vault
-        const vaultDataRaw = getters.getVaultDataRaw
+
         const { hypersign } = vaultDataRaw
         const { credentials } = hypersign
         const { schemaIds } = state;

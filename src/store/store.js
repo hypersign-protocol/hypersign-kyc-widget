@@ -31,8 +31,8 @@ export default new Vuex.Store({
     },
     getters: {
         ...signinGetters,
-        ...vaultGetters,
         ...ekycGetters,
+        ...vaultGetters,
     },
     mutations: {
         ...signinMutations,
