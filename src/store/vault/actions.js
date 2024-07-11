@@ -76,7 +76,6 @@ export default {
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
                 };
                 const resp = await RequestHandler(url, 'GET', {}, headers, queryParams)
-                console.log(resp)
                 return resp
             }
         } catch (e) {
@@ -150,7 +149,6 @@ export default {
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
                 };
                 const resp = await RequestHandler(url, 'POST', body, headers)
-                console.log(resp)
                 return resp
             }
         } catch (e) {
@@ -335,10 +333,7 @@ export default {
             if (!vaultData || vaultData === 'undefined') {
                 return false
             }
-            console.log('Before calling decryt ')
-            console.log({
-                vaultData, vaultPin
-            })
+
             const decryptedData = await decrypt(vaultData, vaultPin)
 
             if (decryptedData === "") {
@@ -362,9 +357,7 @@ export default {
     async updateVaultCredentials({ commit, getters, dispatch }, payload) {
         try {
             // check if vault is unlocked
-            if (payload) await commit('updateVaultRawCredentials', [payload])
-
-            // await dispatch('lockVault', payload)
+            if (payload) commit('updateVaultRawCredentials', [payload])
 
             if (getters.getVaultPin) {
                 const encryptedData = await encrypt(JSON.stringify(payload), getters.getVaultPin)
@@ -373,7 +366,7 @@ export default {
                     namespace: VaultConfig.VAULT_NAMESPACE,
                     metadata: 'credentials'
                 }
-                await dispatch('addUpdateDocumentById', payload1)
+                dispatch('addUpdateDocumentById', payload1)
             } else {
                 throw new Error('Vault PIN not set')
             }
