@@ -185,7 +185,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
-    ...mapActions(["getNewSession", "registerUser", "checkIfCredentialAlreadyExistsInVault"]),
+    ...mapActions(["getNewSession", "checkIfCredentialAlreadyExistsInVault"]),
     incrementStep() {
       this.stepNumber = this.stepNumber + 1;
       return this.stepNumber

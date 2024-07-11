@@ -1,10 +1,7 @@
 import { decrypt, encrypt } from '../../components/utils/symmetricCrypto'
-// import { RequestHandler } from '../../components/utils/utils';
 import SignInStoreConfig from '../signin/config'
-const VAULT_SERVER_BASE_URL = 'https://authserver.hypersign.id/hs/api/v2'
-
-
 import VaultConfig from './config'
+const { VAULT_SERVER_BASE_URL } = VaultConfig
 
 export default {
     // ---------------------------------------------------------------- EDV (auth server)

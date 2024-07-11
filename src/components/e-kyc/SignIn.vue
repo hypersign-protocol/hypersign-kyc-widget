@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSession', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
-        ...mapActions(["getNewSession", "registerUser", "getOnChainConfigByIdAction", "fetchAppsWidgetConfig"]),
+        ...mapActions(["getNewSession", "getOnChainConfigByIdAction", "fetchAppsWidgetConfig"]),
         myEventListener(data) {
             if (data.status == 'success') {
                 this.$router.push(`/auth/${data.provider}`)

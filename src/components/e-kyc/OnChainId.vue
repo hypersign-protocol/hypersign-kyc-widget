@@ -159,7 +159,7 @@ export default {
     },
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
-        ...mapActions(["getNewSession", "registerUser", 'verifySbtMint']),
+        ...mapActions(["getNewSession", 'verifySbtMint']),
         async myEventListener(data) {
             this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
             this.connectedWalletAddress = data.user.walletAddress
