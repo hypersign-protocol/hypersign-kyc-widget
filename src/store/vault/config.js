@@ -13,4 +13,5 @@ export default {
     VAULT_SERVER_BASE_URL: 'http://localhost:3002/api/v1',
     VAULT_NAMESPACE: 'hypersign-kyc',
     VAULT_KEY_NAMESPACE: 'vault-key',
+    VAULT_INDEX: 'content.metaData.namespace'
 }

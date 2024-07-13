@@ -1,18 +1,51 @@
 import { decrypt, encrypt } from '../../components/utils/symmetricCrypto'
-import SignInStoreConfig from '../signin/config'
 import VaultConfig from './config'
 import { RequestHandler } from '../../components/utils/utils'
+import { VaultClient } from '../../vault-client/client'
+import { VaultWalletManager } from '../../vault-client/wallet';
+const bip39 = require("bip39")
 const { VAULT_SERVER_BASE_URL } = VaultConfig
 
 export default {
 
+    async initializeVault({ commit, getters }, payload) {
+        let { vaultId } = payload ? payload : {};
+        if (!vaultId) {
+            vaultId = getters.getVaultId;
+        }
+        const vaultWallet = getters.getVaultWallet
+        if (!vaultWallet) throw new Error("VaultWallet not provided")
+        const vault = new VaultClient(vaultWallet, {
+            edvId: vaultId
+        })
+        await vault.Init()
+        commit('setVault', vault)
+    },
+
+    async intitalizeVaultWallet({ commit }, payload) {
+        const { mnemonic } = payload
+        const vaultWallet = await VaultWalletManager.getWallet(mnemonic);
+        commit('setVaultWallet', vaultWallet)
+    },
+
     registerUser: ({ commit, getters, dispatch }) => {
-        return new Promise((resolve, reject) => {
+        //eslint-disable-next-line
+        return new Promise(async (resolve, reject) => {
+            console.log('Inside registerUser() ...')
             const url = `${VAULT_SERVER_BASE_URL}/auth`
             const headers = {
                 "content-type": "application/json"
             };
             const { email, name, accessToken } = getters.getProfile
+
+            // generate new mnemonic 
+            const mnemonic = bip39.generateMnemonic(256)
+            commit('setVaultMnemonic', mnemonic)
+
+            await dispatch('intitalizeVaultWallet', { mnemonic })
+
+            const did = getters.getVaultWallet.didDocument.id
+            // store at authserver
             return fetch(url, {
                 method: 'POST',
                 headers,
@@ -20,13 +53,13 @@ export default {
                     "user": {
                         "name": name,
                         "email": email,
-                        "did": "did:hid:testnet:z6MkwF5rDNi3oKiUaqA5aN9yLDW5zTUA4ghshW8Soq4M92ED", // TODO
-                        // "nameSpace": "hypersign-kyc"
+                        "did": did
                     },
                     "isThridPartyAuth": true,
                     "expirationDate": "2030-12-31T00:00:00.000Z",
                     "authProvider": "Google",
-                    "accessToken": accessToken
+                    "accessToken": accessToken,
+                    "secret": mnemonic
                 })
             })
                 .then(response => response.json())
@@ -36,12 +69,18 @@ export default {
                             return reject(json.error)
                         }
 
-                        await commit('setAuthServerAuthToken', json.authToken)
+                        if (json) {
+                            await commit('setAuthServerAuthToken', json.message.authToken)
+                            const { kmsIds, vaultId } = json.message
+                            if (kmsIds && kmsIds.length > 0) {
+                                await dispatch('getKMSById', { kmsId: kmsIds[0] })
+                            }
 
-                        // check if this user has docs in key nameapces
-                        const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_KEY_NAMESPACE })
-                        if (response) {
-                            if (response.length > 0) {
+                            if (vaultId) {
+                                await commit('setVaultId', vaultId)
+                            }
+
+                            if (json.status === 403) {
                                 commit('setAsNewUser', false)
                             } else {
                                 commit('setAsNewUser', true)
@@ -56,26 +95,74 @@ export default {
         })
     },
 
-    getDocumentIdsByNamespace: async ({ getters }, payload) => {
+    createKMS: async ({ getters, dispatch }) => {
         try {
-            const queryParams = {}
-            if (payload) {
-                const { namespace } = payload;
-                if (namespace) {
-                    queryParams['namespace'] = namespace
-                }
-
-                queryParams['page'] = 1
-                queryParams['perpage'] = 10
+            console.log('Inside createKMS() ....')
+            const mnemonic_raw = getters.getVaultMnemonic
+            if (!mnemonic_raw) {
+                throw new Error('No key found to be stored on kms')
             }
 
+            const vaultPin = getters.getVaultPin
+            if (!vaultPin) {
+                throw new Error('No PIN is set fo the vault')
+            }
+
+            const encryptedData = await encrypt(mnemonic_raw, vaultPin)
+
             if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/document`
+                const url = `${VAULT_SERVER_BASE_URL}/kms`
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
                 };
-                const resp = await RequestHandler(url, 'GET', {}, headers, queryParams)
+                const body = {
+                    "secret": encryptedData,
+                    "did": getters.getVaultWallet.didDocument.id,
+                }
+                const resp = await RequestHandler(url, 'POST', body, headers, {})
+                if (resp && resp.kmsId) {
+                    const { kmsId } = resp
+                    dispatch('getKMSById', { kmsId: kmsId })
+                }
+                return resp
+            } else {
+                throw new Error('User is not authenticated with authserver')
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    getKMSById: async ({ getters, commit }, payload) => {
+        try {
+            console.log('Inside getKMSById() ....')
+            const { kmsId } = payload;
+            if (!kmsId) {
+                throw new Error('kmsId must be specified')
+            }
+            if (getters.getAuthServerAuthToken) {
+                const url = `${VAULT_SERVER_BASE_URL}/kms/${kmsId}`
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+                const resp = await RequestHandler(url, 'GET', {}, headers, {})
+                // eslint-disable-next-line
+                // debugger;
+                if (resp && resp.secret && resp.secret.mnemonic) {
+
+                    // decrypt if required
+                    console.log({
+                        resp
+                    })
+                    // this is supposed to be encrypted data...only later to be decrypted..
+                    commit('setVaultData', resp.secret.mnemonic)
+                    // await commit('setVaultMnemonic', resp.vaultData.mnemonic)
+                    // await dispatch('intitalizeVaultWallet', { mnemonic: resp.vaultData.mnemonic })
+                    // await dispatch('initializeVault')
+                    // setLockedVaultData
+                }
                 return resp
             }
         } catch (e) {
@@ -83,30 +170,41 @@ export default {
         }
     },
 
-    getDocumentById: async ({ getters }, payload) => {
+    getUserAccessMnemomic: async ({ getters, commit }) => {
         try {
-            const queryParams = {}
-            if (payload) {
-                const { namespace } = payload;
-                if (namespace) {
-                    queryParams['namespace'] = namespace
+            console.log('Inside getUserAccessMnemomic() ....')
+            const vaultPin = getters.getVaultPin
+            if (!vaultPin) {
+                throw new Error('No vault pin specified')
+            }
+            const getEncrytedVaultMnemonic = getters.getVaultData;
+            const mnemonic = await decrypt(getEncrytedVaultMnemonic, vaultPin)
+            await commit('setVaultMnemonic', mnemonic)
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
+    getDocumentIdsByNamespace: async ({ getters, commit }, payload) => {
+        try {
+            console.log('Inside getDocumentIdsByNamespace() ....')
+            const vault = getters.getVault;
+            if (vault) {
+                const queryResult = await vault.Query({
+                    equals: [
+                        {
+                            'content.metaData.namespace': payload.namespace
+                        }]
+                })
+                console.log(queryResult)
+                for (let i = 0; i < queryResult.length; i++) {
+                    const actualDoc = await vault.GetDecryptedDocument(queryResult[i].id)
+                    commit('updateVaultRawCredentials', [actualDoc.document])
                 }
+            } else {
+                throw new Error('Vault has not been initialized')
             }
 
-            const { documentId } = payload;
-            if (!documentId) {
-                throw new Error('DocumentId must be specified')
-            }
-
-            if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/document/${documentId}`
-                const headers = {
-                    "content-type": "application/json",
-                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
-                };
-                const resp = await RequestHandler(url, 'GET', {}, headers, queryParams)
-                return resp
-            }
         } catch (e) {
             throw new Error(e.message)
         }
@@ -114,181 +212,44 @@ export default {
 
     addUpdateDocumentById: async ({ getters }, payload) => {
         try {
-            //debugger //eslint-disable-line 
             if (!payload) {
                 throw new Error('Payload is required')
             }
 
-            const { namespace, documentId, document, metadata } = payload;
+            const { namespace, document } = payload;
             if (!document) {
                 throw new Error('Kindly pass document to add or update in edv')
             }
 
-            const body = {
-                "document": {
-                    "data": document
-                },
-            }
-
-            if (metadata) {
-                body['metadata'] = metadata
-            }
-
-            if (namespace) {
-                body['namespace'] = namespace
-            }
-
-            if (documentId) {
-                body['documentId'] = documentId
-            }
-
-            if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/document`
-                const headers = {
-                    "content-type": "application/json",
-                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
-                };
-                const resp = await RequestHandler(url, 'POST', body, headers)
-                return resp
-            }
-        } catch (e) {
-            throw new Error(e.message)
-        }
-    },
-
-    retriveVaultKeys: async ({ dispatch, commit }) => {
-        try {
-            const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_KEY_NAMESPACE })
-            if (response && response.length > 0) {
-                const { edvDocId } = response[0]
-                if (edvDocId) {
-                    const response = await dispatch('getDocumentById', { namespace: VaultConfig.VAULT_KEY_NAMESPACE, documentId: edvDocId })
-                    if (response) {
-                        const { data } = response
-                        if (data) {
-                            await commit('setVaultData', data)
-                            await dispatch('unlockVault')
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            throw new Error(e.message)
-        }
-    },
-
-    retriveVaultCredentials: async ({ dispatch, getters, commit }) => {
-        try {
-            const response = await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_NAMESPACE })
-            if (response && response.length > 0) {
-                for (let i = 0; i < response.length; i++) {
-                    const { edvDocId } = response[i]
-                    if (edvDocId) {
-                        const response = await dispatch('getDocumentById', { namespace: VaultConfig.VAULT_NAMESPACE, documentId: edvDocId })
-                        if (response) {
-                            const { data } = response
-                            if (data) {
-                                const vaultPin = getters.getVaultPin
-                                decrypt(data, vaultPin)
-                                    .then(decryptedData => {
-                                        if (decryptedData) {
-                                            commit('updateVaultRawCredentials', [JSON.parse(decryptedData)])
-                                        }
-                                    }).catch(error => {
-                                        throw new Error(error);
-                                    })
-                            } else {
-                                console.error('No data found')
-                            }
-                        } else {
-                            console.error('No response found')
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            throw new Error(e.message)
-        }
-    },
-
-    syncUserData: ({ getters }) => {
-        return new Promise((resolve, reject) => {
-            const { email } = getters.getProfile
-            if (!email) {
-                return reject(new Error('Invalid email, or user is not logged in'))
-            }
-
-            if (!localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA)) {
-                return reject(new Error('Invalid vault data'))
-            }
-            // const url = `${VAULT_SERVER_BASE_URL}/sync/` + email
-
-            const url = `${VAULT_SERVER_BASE_URL}/sync`
-            const headers = {
-                "content-type": "application/json",
-                "Authorization": "Bearer " + getters.getAuthServerAuthToken
-            };
-
-            return fetch(url, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({
-                    "user": {
-                        "userId": email,
-                        "sequenceNo": 0,
-                        "docId": "randomId",
-                        // "nameSpace": "hypersign-kyc"
+            const vault = getters.getVault;
+            if (vault) {
+                const indexes = [
+                    {
+                        index: VaultConfig.VAULT_INDEX,
+                        unique: false
+                    }]
+                const content = {
+                    document: document, // credential..
+                    metaData: {
+                        namespace: namespace,
                     },
-                    "document": {
-                        "encryptedMessage": localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA)
-                    }
-                })
-            })
-                .then(response => response.json())
-                .then(json => {
-                    if (json) {
-                        if (json.error) {
-                            return reject(json.error)
-                        }
-                        // commit('setVaultData', json.encryptedMessage)
-                        resolve()
-                    }
-                }).catch((e) => {
-                    reject(e)
-                })
-        })
+                }
+                const preparedDoc = vault.PrepareEdvDocument(content, indexes)
+                vault.CreateDocument({ preparedDoc: preparedDoc })
+            } else {
+                throw new Error('Vault is not initialized')
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
     },
 
-    syncUserDataById: ({ getters, commit }) => {
-        return new Promise((resolve, reject) => {
-            const { email } = JSON.parse(localStorage.getItem(SignInStoreConfig.LOCAL_STATES.PROFILE))
-            if (!email) {
-                return reject(new Error('Invalid email, or user is not logged in'))
-            }
-
-            const url = `${VAULT_SERVER_BASE_URL}/sync/` + email
-            const headers = {
-                "content-type": "application/json",
-                "Authorization": "Bearer " + getters.getAuthServerAuthToken
-            };
-
-            return fetch(url, {
-                method: 'GET',
-                headers,
-            })
-                .then(response => response.json())
-                .then(json => {
-                    if (json) {
-                        if (json.error) {
-                            return reject(json.error)
-                        }
-                        commit('setVaultData', json.encryptedMessage)
-                        resolve()
-                    }
-                }).catch((e) => {
-                    reject(e)
-                })
-        })
+    retriveVaultCredentials: async ({ dispatch }) => {
+        try {
+            await dispatch('getDocumentIdsByNamespace', { namespace: VaultConfig.VAULT_NAMESPACE })
+        } catch (e) {
+            throw new Error(e.message)
+        }
     },
 
     async lockVault({ commit, getters }, payload = {}) {
@@ -360,9 +321,8 @@ export default {
             if (payload) commit('updateVaultRawCredentials', [payload])
 
             if (getters.getVaultPin) {
-                const encryptedData = await encrypt(JSON.stringify(payload), getters.getVaultPin)
                 const payload1 = {
-                    document: encryptedData,
+                    document: payload,
                     namespace: VaultConfig.VAULT_NAMESPACE,
                     metadata: 'credentials'
                 }
@@ -390,7 +350,6 @@ export default {
         if (issuerDID) {
             trustedIssuerList = issuerDID.split(',')
         }
-
 
         Object.keys(schemaIds).forEach(schema => {
             const { schemaId } = schemaIds[schema]

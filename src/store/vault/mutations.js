@@ -1,5 +1,21 @@
 import VaultConfig from './config'
 export default {
+    setVaultMnemonic(state, payload) {
+        state.vaultMnemonic = payload
+    },
+
+    setVaultWallet(state, payload) {
+        state.vaultWallet = payload
+    },
+
+    setVault(state, payload) {
+        state.vault = payload
+    },
+
+    setVaultId(state, payload) {
+        state.vaultId = payload
+    },
+
     clearVaultPin() {
         localStorage.setItem(VaultConfig.LOCAL_STATES.VAULT_LOCK, false)
 

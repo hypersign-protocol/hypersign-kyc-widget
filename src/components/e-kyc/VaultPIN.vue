@@ -24,12 +24,14 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '../../config';
-import VaultConfig from '../../store/vault/config'
+// import VaultConfig from '../../store/vault/config'
 export default {
     name: STEP_NAMES.VaultPIN,
     computed: {
         ...mapState(['ifNewUser', 'steps']),
-        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps", 'getVaultData'])
+        ...mapGetters(['getWidgetConfigFromDb',
+            'getActiveStep', "getSteps", 'getVaultData', 'getVaultId',
+            'getVaultWallet', 'getVaultMnemonic'])
     },
     components: {
         AskPIN,
@@ -50,7 +52,10 @@ export default {
     },
     methods: {
         ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
-        ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById", "retriveVaultKeys", "retriveVaultCredentials", 'addUpdateDocumentById']),
+        ...mapActions(["unlockVault",
+            'initializeVault',
+            'intitalizeVaultWallet', 'createKMS',
+            "lockVault", "syncUserData", "syncUserDataById", "retriveVaultKeys", "retriveVaultCredentials", 'addUpdateDocumentById', 'getUserAccessMnemomic']),
         enableAstep(stepName) {
             const stepToUpdate = this.steps.find(x => x.stepName === stepName)
             stepToUpdate.isEnabled = true;
@@ -60,25 +65,31 @@ export default {
             try {
                 if (data) {
                     this.isLoadingPage = true;
+                    /// unlock you mnemonic
+                    if (!this.ifNewUser) {
+                        await this.getUserAccessMnemomic()
+                    }
+                    this.userVaultDataRaw.mnemonic = this.getVaultMnemonic
+                    console.log('Memonic setup done ' + this.getVaultMnemonic)
+
+                    /// setup vault wallet
+                    await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })
+                    this.userVaultDataRaw.hypersign.did = this.getVaultWallet.didDocument.id;
+                    this.userVaultDataRaw.hypersign.didDoc = { ...this.getVaultWallet.didDocument }
+                    this.userVaultDataRaw.hypersign.keys = { ...this.getVaultWallet.keys }
+                    if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+                    console.log('Vault Wallet setup done ' + this.getVaultWallet.didDocument.id)
+
+                    /// setup vault
+                    await this.initializeVault()
+                    console.log('Vault setup done ' + this.getVaultId)
 
                     if (this.ifNewUser) {
-                        this.generateMnemonic1()
-                        await this.generateDID()
-                        if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
-                        await this.lockVault()
-                        //// store keys in the vault
-                        const payload = {
-                            document: this.getVaultData,
-                            namespace: VaultConfig.VAULT_KEY_NAMESPACE,
-                            metadata: 'keys and dids for the vault'
-                        }
-                        await this.addUpdateDocumentById(payload)
-                    } else {
-                        //// retrive keys from vault 
-                        await this.retriveVaultKeys()
-                        //// retrive all credentials
-                        await this.retriveVaultCredentials()
+                        this.createKMS()
                     }
+
+                    await this.retriveVaultCredentials()
+                    console.log('Finished retriving credentials ')
 
                     this.isLoadingPage = false
                     this.nextStep()

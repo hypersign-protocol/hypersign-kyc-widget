@@ -1,6 +1,22 @@
 import VaultConfig from './config'
 
 export default {
+
+    getVaultMnemonic(state) {
+        return state.vaultMnemonic
+    },
+    getVault(state) {
+        return state.vault
+    },
+
+    getVaultId(state) {
+        return state.vaultId
+    },
+
+    getVaultWallet(state) {
+        return state.vaultWallet
+    },
+
     getVaultPin(state) {
         return state.vaultPin;
         // return localStorage.getItem('vaultPin')

@@ -39,7 +39,6 @@ export async function RequestHandler(url, method = 'GET', body = {}, headers = {
 
     // error handling
     if (!response.ok) {
-        console.log({ ok: response.ok, status: response.status })
         if (response.status != 200) {
             if (json.error && json.success == false) {
                 const erro = json.error.details?.join(' ')

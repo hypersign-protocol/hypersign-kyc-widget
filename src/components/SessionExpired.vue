@@ -13,9 +13,9 @@
             </li>
             <li>
               <h7>This session is expired. You can close the window and restrart the KYC process from the
-                service provider's app</h7>
+                verifier app</h7>
             </li>
-            <li>
+            <li class="mt-1">
               <h6>You will be redirected back to verifier app in {{ maxTimeOut
                 }}</h6>
             </li>
