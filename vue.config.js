@@ -24,6 +24,15 @@ module.exports = defineConfig({
       new webpack.ProvidePlugin({
         process: 'process/browser',
       }),
+      new webpack.NormalModuleReplacementPlugin(
+        /node:crypto/,
+        (resource) => {
+          resource.request = resource.request.replace(/^node:/, '');
+        }
+      ),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
     ]
   }
 })
