@@ -12,8 +12,7 @@
             </div>
 
             <div class="row mb-1">
-                <InfoMessage
-                    message="This PIN is to secure your data vault. The ensures that you do not trust any one with your data, not event us. The PIN is used to access your encrypted data vault. Make sure you do not loose it." />
+                <InfoMessage :message="warningMessage" />
             </div>
         </div>
         <div class="container">
@@ -38,19 +37,24 @@ export default {
     data() {
         return {
             pin: "",
-            reEnterPin: ""
+            reEnterPin: "",
+            warningMessage: "The PIN secures your data vault, ensuring that no one else, including us, can access your data. You own your data! The PIN is needed to access your encrypted data vault, so don't lose it."
         }
     },
     methods: {
         ...mapMutations(['nextStep', "setVaultPin"]),
         async submit() {
             if (this.pin === this.reEnterPin) {
-                this.setVaultPin(this.reEnterPin)
-                this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
+                if (confirm(this.warningMessage)) {
+                    this.setVaultPin(this.reEnterPin)
+                    this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
+                }
             } else {
                 alert('Pins did not match')
             }
         },
+
+
         getPin(data) {
             this.pin = data;
         },
