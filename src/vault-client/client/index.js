@@ -19,7 +19,7 @@ export class VaultClient {
         if (edvUrl) {
             this.edvUrl = edvUrl;
         } else {
-            this.edvUrl = 'http://localhost:3005'
+            this.edvUrl = 'https://edv.hypersign.id'
         }
 
     }

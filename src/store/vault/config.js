@@ -10,8 +10,9 @@ export default {
 
         AUTH_SERVER_TOKEN: `${storePrefix}authServerAuthToken`,
     },
-    VAULT_SERVER_BASE_URL: 'http://localhost:3002/api/v1',
+    VAULT_KMS_SERVER_BASE_URL: 'http://localhost:3002/api/v1',
     VAULT_NAMESPACE: 'hypersign-kyc',
     VAULT_KEY_NAMESPACE: 'vault-key',
-    VAULT_INDEX: 'content.metaData.namespace'
+    VAULT_INDEX: 'content.metaData.namespace',
+    VAULT_EDV_SERVER_BASE_URL: 'http://localhost:3005',
 }

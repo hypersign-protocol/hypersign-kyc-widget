@@ -4,7 +4,7 @@ import { RequestHandler } from '../../components/utils/utils'
 import { VaultClient } from '../../vault-client/client'
 import { VaultWalletManager } from '../../vault-client/wallet';
 const bip39 = require("bip39")
-const { VAULT_SERVER_BASE_URL } = VaultConfig
+const { VAULT_KMS_SERVER_BASE_URL, VAULT_EDV_SERVER_BASE_URL } = VaultConfig
 
 export default {
 
@@ -16,7 +16,8 @@ export default {
         const vaultWallet = getters.getVaultWallet
         if (!vaultWallet) throw new Error("VaultWallet not provided")
         const vault = new VaultClient(vaultWallet, {
-            edvId: vaultId
+            edvId: vaultId,
+            edvUrl: VAULT_EDV_SERVER_BASE_URL
         })
         await vault.Init()
         commit('setVault', vault)
@@ -32,7 +33,7 @@ export default {
         //eslint-disable-next-line
         return new Promise(async (resolve, reject) => {
             console.log('Inside registerUser() ...')
-            const url = `${VAULT_SERVER_BASE_URL}/auth`
+            const url = `${VAULT_KMS_SERVER_BASE_URL}/auth`
             const headers = {
                 "content-type": "application/json"
             };
@@ -111,7 +112,7 @@ export default {
             const encryptedData = await encrypt(mnemonic_raw, vaultPin)
 
             if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/kms`
+                const url = `${VAULT_KMS_SERVER_BASE_URL}/kms`
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
@@ -137,7 +138,7 @@ export default {
     deleteAccount: async ({ getters }) => {
         try {
             if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/user`
+                const url = `${VAULT_KMS_SERVER_BASE_URL}/user`
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
@@ -161,7 +162,7 @@ export default {
                 throw new Error('kmsId must be specified')
             }
             if (getters.getAuthServerAuthToken) {
-                const url = `${VAULT_SERVER_BASE_URL}/kms/${kmsId}`
+                const url = `${VAULT_KMS_SERVER_BASE_URL}/kms/${kmsId}`
                 const headers = {
                     "content-type": "application/json",
                     "Authorization": "Bearer " + getters.getAuthServerAuthToken
@@ -170,17 +171,8 @@ export default {
                 // eslint-disable-next-line
                 // debugger;
                 if (resp && resp.secret && resp.secret.mnemonic) {
-
-                    // decrypt if required
-                    console.log({
-                        resp
-                    })
                     // this is supposed to be encrypted data...only later to be decrypted..
                     commit('setVaultData', resp.secret.mnemonic)
-                    // await commit('setVaultMnemonic', resp.vaultData.mnemonic)
-                    // await dispatch('intitalizeVaultWallet', { mnemonic: resp.vaultData.mnemonic })
-                    // await dispatch('initializeVault')
-                    // setLockedVaultData
                 }
                 return resp
             }
