@@ -11,7 +11,10 @@ module.exports = defineConfig({
   configureWebpack: {
     resolve: {
       fallback: {
-        crypto: false, // Avoid overriding the 'fs' module,
+        // crypto: false, // Avoid overriding the 'fs' module,
+        "crypto": require.resolve("crypto-browserify"),
+        stream: require.resolve('stream-browserify'),
+        "buffer": require.resolve("buffer"),
         path: false,
         fs: false,
         timers: false,
