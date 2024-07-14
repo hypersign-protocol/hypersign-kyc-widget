@@ -9,7 +9,8 @@
             </div>
 
             <div v-else>
-                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
+                    @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
             </div>
         </div>
         <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -51,8 +52,8 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
-        ...mapActions(["unlockVault",
+        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
+        ...mapActions(["unlockVault", 'deleteAccount',
             'initializeVault',
             'intitalizeVaultWallet', 'createKMS',
             "lockVault", "syncUserData", "syncUserDataById", "retriveVaultKeys", "retriveVaultCredentials", 'addUpdateDocumentById', 'getUserAccessMnemomic']),
@@ -104,6 +105,21 @@ export default {
         },
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
+        },
+
+        async proceedWithAccountDeletionFinalHandler() {
+            console.log('Inside proceedWithAccountDeletionFinalHandler ')
+            try {
+                this.isLoadingPage = true
+                this.toast('Account reset in progress', 'warning')
+                await this.deleteAccount()
+                this.isLoadingPage = false;
+                this.toast('Account successfully reset', 'success')
+                this.previousStep()
+            } catch (e) {
+                this.isLoadingPage = false
+                this.toast(e.message, 'error')
+            }
         },
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)

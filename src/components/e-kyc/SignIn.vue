@@ -25,7 +25,7 @@ import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.SignIn,
     computed: {
-        ...mapGetters(["getCavachAccessToken", "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig', 'getWidgetConfigFromDb', 'getSession']),
+        ...mapGetters(["getCavachAccessToken", 'getSSIAccessToken', "getRedirectUrl", "getPresentationRequest", 'getOnChainIssuerConfig', 'getWidgetConfigFromDb', 'getSession']),
         ...mapState(['hasLivelinessDone', 'hasKycDone'])
     },
     components: {
@@ -197,15 +197,17 @@ export default {
             const params = this.$route.query;
 
             if (!params.kycAccessToken || !params.ssiAccessToken) {
-                if (this.getCavachAccessToken != '' && this.getSSIAccessToken != '') {
+                if (this.getCavachAccessToken == '' && this.getSSIAccessToken == '') {
                     throw new Error(MESSAGE.SIGN.INVALID_ACCESS_TOKEN)
                 }
             }
 
-            this.setCavachAccessToken(params.kycAccessToken || this.getCavachAccessToken)
-            this.setSSIAccessToken(params.ssiAccessToken || this.ssiAccessToken)
+            const kycAccessToken = params.kycAccessToken || this.getCavachAccessToken
+            const ssiAccessToken = params.ssiAccessToken || this.getSSIAccessToken
+            this.setCavachAccessToken(kycAccessToken)
+            this.setSSIAccessToken(ssiAccessToken)
 
-            const parsedAccessToken = this.parseJwt(params.kycAccessToken)
+            const parsedAccessToken = this.parseJwt(kycAccessToken)
             this.setTenantSubdomain(parsedAccessToken.subdomain)
         },
 

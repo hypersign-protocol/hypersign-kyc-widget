@@ -134,6 +134,25 @@ export default {
         }
     },
 
+    deleteAccount: async ({ getters }) => {
+        try {
+            if (getters.getAuthServerAuthToken) {
+                const url = `${VAULT_SERVER_BASE_URL}/user`
+                const headers = {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + getters.getAuthServerAuthToken
+                };
+
+                const resp = await RequestHandler(url, 'DELETE', {}, headers, {})
+                return resp
+            } else {
+                throw new Error('User is not authenticated with authserver')
+            }
+        } catch (e) {
+            throw new Error(e.message)
+        }
+    },
+
     getKMSById: async ({ getters, commit }, payload) => {
         try {
             console.log('Inside getKMSById() ....')
