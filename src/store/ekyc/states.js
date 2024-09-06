@@ -6,6 +6,7 @@ export default {
     finalResults: false,
     livelinessResult: {},
     ocrIDDocResult: {},
+    extractionToken:{},
     finalResult: {},
     livelinessCapturedData: {
         tokenSelfiImage: "",
@@ -14,6 +15,7 @@ export default {
     },
     kycCapturedData: {
         tokenFrontDocumentImage: "",
+        tokenBackDocumentImage:"",
         tokenFaceImage: "",
         countryCode: "",
     },

@@ -2,6 +2,9 @@ import VaultConfig from './config'
 
 export default {
 
+    getExtractionToken(state) {
+        return state.extractionToken
+    },
     getVaultMnemonic(state) {
         return state.vaultMnemonic
     },

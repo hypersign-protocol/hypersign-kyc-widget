@@ -22,6 +22,11 @@ export default {
         state.ocrIDDocResult = { ...payload }
     },
 
+    setExtractionToken(state,payload){
+        state.extractionToken = payload
+
+    },
+
     setLivelinessCapturedData(state, payload) {
         state.livelinessCapturedData = { ...payload }
     },
