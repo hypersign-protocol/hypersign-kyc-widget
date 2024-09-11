@@ -14,7 +14,8 @@ export default {
         VERIFYING_SELFI: 'Verifying your selfie...'
     },
     IDDOCUMENT: {
-        VERIFYING_ID: 'Uploading and verifying your document...'
+        VERIFYING_ID: 'Uploading and extracting data from your document...',
+        DOC_EXTRACTION_FINISED: 'Document extraction finished'
     },
     USER_CONSENT: {
         DATA_SUBMIT: 'Submitting your data...'

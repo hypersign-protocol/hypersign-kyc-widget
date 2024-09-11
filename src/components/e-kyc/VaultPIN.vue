@@ -9,7 +9,8 @@
             </div>
 
             <div v-else>
-                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
+                    @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
             </div>
         </div>
         <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
@@ -24,11 +25,14 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex';
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '../../config';
+// import VaultConfig from '../../store/vault/config'
 export default {
     name: STEP_NAMES.VaultPIN,
     computed: {
         ...mapState(['ifNewUser', 'steps']),
-        ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', "getSteps"])
+        ...mapGetters(['getWidgetConfigFromDb',
+            'getActiveStep', "getSteps", 'getVaultData', 'getVaultId',
+            'getVaultWallet', 'getVaultMnemonic'])
     },
     components: {
         AskPIN,
@@ -48,8 +52,11 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep']),
-        ...mapActions(["unlockVault", "lockVault", "syncUserData", "syncUserDataById"]),
+        ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
+        ...mapActions(["unlockVault", 'deleteAccount',
+            'initializeVault',
+            'intitalizeVaultWallet', 'createKMS',
+            "lockVault", "syncUserData", "syncUserDataById", "retriveVaultKeys", "retriveVaultCredentials", 'addUpdateDocumentById', 'getUserAccessMnemomic']),
         enableAstep(stepName) {
             const stepToUpdate = this.steps.find(x => x.stepName === stepName)
             stepToUpdate.isEnabled = true;
@@ -59,17 +66,31 @@ export default {
             try {
                 if (data) {
                     this.isLoadingPage = true;
+                    /// unlock you mnemonic
+                    if (!this.ifNewUser) {
+                        await this.getUserAccessMnemomic()
+                    }
+                    this.userVaultDataRaw.mnemonic = this.getVaultMnemonic
+                    console.log('Memonic setup done ' + this.getVaultMnemonic)
+
+                    /// setup vault wallet
+                    await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })
+                    this.userVaultDataRaw.hypersign.did = this.getVaultWallet.didDocument.id;
+                    this.userVaultDataRaw.hypersign.didDoc = { ...this.getVaultWallet.didDocument }
+                    this.userVaultDataRaw.hypersign.keys = { ...this.getVaultWallet.keys }
+                    if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+                    console.log('Vault Wallet setup done ' + this.getVaultWallet.didDocument.id)
+
+                    /// setup vault
+                    await this.initializeVault()
+                    console.log('Vault setup done ' + this.getVaultId)
 
                     if (this.ifNewUser) {
-                        this.generateMnemonic1()
-                        await this.generateDID()
-                        if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
-                        await this.lockVault()
-                        await this.syncUserData()
-                    } else {
-                        await this.syncUserDataById()
-                        await this.unlockVault()
+                        this.createKMS()
                     }
+
+                    await this.retriveVaultCredentials()
+                    console.log('Finished retriving credentials ')
 
                     this.isLoadingPage = false
                     this.nextStep()
@@ -84,6 +105,21 @@ export default {
         },
         generateMnemonic1() {
             this.userVaultDataRaw.mnemonic = generateMnemonicForWallet()
+        },
+
+        async proceedWithAccountDeletionFinalHandler() {
+            console.log('Inside proceedWithAccountDeletionFinalHandler ')
+            try {
+                this.isLoadingPage = true
+                this.toast('Account reset in progress', 'warning')
+                await this.deleteAccount()
+                this.isLoadingPage = false;
+                this.toast('Account successfully reset', 'success')
+                this.previousStep()
+            } catch (e) {
+                this.isLoadingPage = false
+                this.toast(e.message, 'error')
+            }
         },
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
@@ -122,29 +158,8 @@ export default {
                 "hypersign": {
                     "did": "",
                     "keys": {
-                        "type": "Ed25519VerificationKey2020",
-                        "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                        "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
                     },
-                    "credentials": [],
-                    "credentialsTemp": [],
-                    "requestingAppInfo": "",
-                    "thridPartyAuths": [],
-                    "dids": {
-                        "did:hid:testnet:z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc": {
-                            "didDoc": {},
-                            "hdPathIndex": 0,
-                            "status": "private",
-                            "keys": {
-                                "type": "Ed25519VerificationKey2020",
-                                "publicKeyMultibase": "z6Mks8UYRXiEcAfcYKSgbQHQJHGGfTr9oqPh6BbT6murJpMc",
-                                "privateKeyMultibase": "zrv2WFSMYeiS6oAFrcx5VwxHQZJvb1XC2Pq4AHZVrJSiZT4KfTzGCmaSJcrFsJRXwEbDEBSL8NicrQVPpQGPeYBnamU"
-                            }
-                        }
-                    },
-                    "didDoc": {
-
-                    }
+                    "credentials": []
                 }
             }
         }

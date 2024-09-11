@@ -41,8 +41,8 @@
         />-->
 
         <button id="button_start"
-        background="#3167FC"
-        decorator="#3167FC"
+        background="#373c47"
+        decorator="#373c47"
         foreground="#ffffff"
         content="button_start"
         content_type="TEXT_ID"
@@ -223,8 +223,8 @@
         />
         
         <button id="button_repeat"
-        background="#3167FC"
-        decorator="#3167FC"
+        background="#373c47"
+        decorator="#373c47"
         foreground="#ffffff"
         content="button_repeat"
         content_type="TEXT_ID"
@@ -235,8 +235,8 @@
         />
         
         <button id="button_finish"
-        background="#3167FC"
-        decorator="#3167FC"
+        background="#373c47"
+        decorator="#373c47"
         foreground="#ffffff"
         content="button_finish"
         content_type="TEXT_ID"
@@ -258,8 +258,8 @@
         />
         
         <button id="button_error"
-        background="#3167FC"
-        decorator="#3167FC"
+        background="#373c47"
+        decorator="#373c47"
         foreground="#ffffff"
         content="button_finish"
         content_type="TEXT_ID"

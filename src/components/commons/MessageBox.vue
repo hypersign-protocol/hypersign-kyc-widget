@@ -3,7 +3,7 @@
   bottom: 16px;
   width: 100%;
   height: 100%;
-  border-radius: 5px;
+  border-radius: 2px;
   z-index: 99999;
   text-align: left;
   padding-left: 5px;

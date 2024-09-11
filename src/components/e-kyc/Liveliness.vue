@@ -50,15 +50,15 @@ export default {
             isToast: false,
         }
     },
-  created() {
-    EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
-  },
-  beforeDestroy() {
-    EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
-  },
-  methods: {
+    created() {
+        EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+    },
+    beforeDestroy() {
+        EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
+    },
+    methods: {
         ...mapMutations(["nextStep", "previousStep"]),
-        ...mapActions(["verifyLiveliness"]),
+        ...mapActions(["verifyLiveliness", "verifyLivelinessStatus"]),
         // Demo methods
         enableWidget: async function () {
             console.warn("[Demo] Start Capture");
@@ -102,49 +102,49 @@ export default {
                 this.isWidgetStarted = false;
 
 
-        // try {
-        //     this.isLoading = true;
-        //     this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
-        //     await this.verifyLiveliness()
-        //     this.nextStep()
-        //     this.isLoading = false;
-        // } catch (e) {
-        //     if (e.message) {
-        //         if (e.message.includes('Session with given ID')) {
-        //             this.isLoading = false;
-        //             this.nextStep(8)
-        //             return
-        //         }
-        //     }
-        //     this.toast(e.message, "error");
-        //     this.isLoading = false;
-        // }
+                // try {
+                //     this.isLoading = true;
+                //     this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
+                //     await this.verifyLiveliness()
+                //     this.nextStep()
+                //     this.isLoading = false;
+                // } catch (e) {
+                //     if (e.message) {
+                //         if (e.message.includes('Session with given ID')) {
+                //             this.isLoading = false;
+                //             this.nextStep(8)
+                //             return
+                //         }
+                //     }
+                //     this.toast(e.message, "error");
+                //     this.isLoading = false;
+                // }
 
-        this.isLoading = true;
-        this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
-        this.verifyLiveliness()
-          .then(() => {
-            this.nextStep();
-            this.isLoading = false;
-          })
-          .catch((e) => {
-            if (e.message) {
-              if (e.message.includes("Session with given ID")) {
-                this.isLoading = false;
-                this.nextStep(8);
-                return;
-              }
+                this.isLoading = true;
+                this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
+                this.verifyLiveliness()
+                    .then(() => {
+                        this.nextStep();
+                        this.isLoading = false;
+                    })
+                    .catch((e) => {
+                        if (e.message) {
+                            if (e.message.includes("Session with given ID")) {
+                                this.isLoading = false;
+                                this.nextStep(8);
+                                return;
+                            }
+                        }
+                        this.toast(e.message, "error");
+                        this.isLoading = false;
+                    });
+                setTimeout(this.verifyLivelinessStatus, 500);
+            } else {
+                // ...
             }
-            this.toast(e.message, "error");
-            this.isLoading = false;
-          });
-        setTimeout(this.verifyLivelinessStatus, 50);
-      } else {
-        // ...
-      }
 
 
-    },
+        },
 
         onExceptionCaptured: function (exceptionResult) {
             // console.warn("[Selphi] onExceptionCaptured");
@@ -216,15 +216,15 @@ export default {
             }, 6000);
         },
 
-    onVerifyLivelinessStatusEventRecieved(event) {
-      const { success, message } = event;
-      if (success) {
-        this.toast(message);
-      } else {
-        this.toast(message, "error");
-      }
+        onVerifyLivelinessStatusEventRecieved(event) {
+            const { success, message } = event;
+            if (success) {
+                this.toast(message);
+            } else {
+                this.toast(message, "error");
+            }
+        }
     }
-  }
 }
 
 </script>
@@ -259,11 +259,21 @@ export default {
                     <!-- <div>Selphi Web Widget Demo</div> -->
 
                     <div class="d-flex flex-column my-3">
-                        <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
+                        <!-- <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
                             :disabled="isWidgetStarted" v-on:click.self="enableWidget">Start capture
                         </button>
                         <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
                             :disabled="!isWidgetStarted" v-on:click.self="disableWidget">Stop capture
+                        </button> -->
+
+
+                        <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
+                            :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()">
+                            <i class="bi bi-play-circle"></i> Start Capture
+                        </button>
+                        <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2"
+                            :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture">
+                            <i class="bi bi-stop-circle"></i> Stop Capture
                         </button>
                     </div>
 

@@ -81,8 +81,17 @@ export default {
                 message: 'Successfully verified the user',
                 idToken: this.idToken
             })
-            window.opener.postMessage(data, this.getPresentationRequestParsed.domain);
-            self.close();
+            /// WARNING: ----------------------------------------------------------------
+            // this is security bug, we are sending idToken to any domain
+            // if we dont do this, then we are getting CORS error
+            // window.opener.postMessage(data, 'this.getPresentationRequestParsed.domain'); 
+            if (window.opener) {
+                window.opener.postMessage(data, '*');
+                self.close();
+            } else {
+                close()
+            }
+
         },
     }
 }
