@@ -83,7 +83,7 @@ export default {
             console.log('Connection opened', event);
         };
         eventSource.onmessage = function (event) {
-            console.log('New message:', event.data);
+            // console.log('New message:', event.data);
             let payload = {
                 success: true,
                 message: event.data
@@ -129,15 +129,15 @@ export default {
                 const body = {
                     documentType: 0,
                     documentIdType: state.kycCapturedData.documentIdType,
-                    tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
-                    tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
+                    // tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
+                    // tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
                     bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                     tokenFaceImage: state.livelinessCapturedData.tokenSelfiImage || state.livelinessCapturedData.base64Image,
                     countryCode: state.kycCapturedData.countryCode || 'XXX',
                     sessionId: getters.getSession,
                     userDID: getters.getUserDID,
-                    ocr: { ...state.kycExtractedData.extractionRaw.ocr },
-                    extractionToken:getters.getExtractionToken
+                    ocr: {},
+                    extractionToken: getters.getExtractionToken
                 }
                 const json = await RequestHandler(url, 'POST', body, headers)
                 if (json && json.serviceFacialAuthenticationResult === 3) {
@@ -160,7 +160,7 @@ export default {
     },
 
 
-    extractOcrIdDoc: ({ state, getters, commit }) => {
+    extractOcrIdDoc: ({ state, getters, commit }, payload) => {
         return new Promise(async (resolve, reject) => { // eslint-disable-line
             // if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
             //     return reject('User has not performed ID capturing')
@@ -181,10 +181,11 @@ export default {
                 const body = {
                     tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
                     tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
-
+                    sessionId: getters.getSession,
+                    documentType: payload.documentType
                 }
                 const json = await RequestHandler(url, 'POST', body, headers)
-                if (json) {
+                if (json && json.extractionToken) {
                     const data = parseJwt(json.extractionToken)
                     commit('setExtractionToken',
                         json.extractionToken
@@ -212,7 +213,7 @@ export default {
             console.log('Connection opened', event);
         };
         eventSource.onmessage = function (event) {
-            console.log('New message:', event.data);
+            // console.log('New message:', event.data);
             let payload = {
                 success: true,
                 message: event.data
