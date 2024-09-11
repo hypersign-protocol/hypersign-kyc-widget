@@ -1,4 +1,4 @@
-import { RequestHandler } from '../../components/utils/utils';
+import { parseJwt, RequestHandler } from '../../components/utils/utils';
 import { EVENT, EVENTS } from '../../components/utils/eventBus';
 
 export default {
@@ -83,7 +83,7 @@ export default {
             console.log('Connection opened', event);
         };
         eventSource.onmessage = function (event) {
-            console.log('New message:', event.data);
+            // console.log('New message:', event.data);
             let payload = {
                 success: true,
                 message: event.data
@@ -125,15 +125,19 @@ export default {
                     'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
                 };
                 headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
+
                 const body = {
                     documentType: 0,
-                    tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
+                    documentIdType: state.kycCapturedData.documentIdType,
+                    // tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
+                    // tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
                     bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
                     tokenFaceImage: state.livelinessCapturedData.tokenSelfiImage || state.livelinessCapturedData.base64Image,
-                    countryCode: state.kycCapturedData.countryCode,
+                    countryCode: state.kycCapturedData.countryCode || 'XXX',
                     sessionId: getters.getSession,
                     userDID: getters.getUserDID,
-                    ocr: { ...state.kycExtractedData.extractionRaw.ocr }
+                    ocr: {},
+                    extractionToken: getters.getExtractionToken
                 }
                 const json = await RequestHandler(url, 'POST', body, headers)
                 if (json && json.serviceFacialAuthenticationResult === 3) {
@@ -155,6 +159,49 @@ export default {
         })
     },
 
+
+    extractOcrIdDoc: ({ state, getters, commit }, payload) => {
+        return new Promise(async (resolve, reject) => { // eslint-disable-line
+            // if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
+            //     return reject('User has not performed ID capturing')
+            // }
+
+            // if (!state.livelinessCapturedData.bestImageTokenized) {
+            //     return reject('User has not performed Facial recognition')
+            // }
+            try {
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/extract`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
+                const body = {
+                    tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
+                    tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
+                    sessionId: getters.getSession,
+                    documentType: payload.documentType
+                }
+                const json = await RequestHandler(url, 'POST', body, headers)
+                if (json && json.extractionToken) {
+                    const data = parseJwt(json.extractionToken)
+                    commit('setExtractionToken',
+                        json.extractionToken
+                    )
+
+                    //  store the result to state
+                    return resolve(data)
+                } else {
+                    return reject(new Error(json))
+                }
+
+            } catch (e) {
+                return reject(new Error('Error verifying ID document ' + e.message))
+            }
+        })
+    },
     // eventSource -----
     verifyOCRDocStatus(
         { getters }
@@ -166,7 +213,7 @@ export default {
             console.log('Connection opened', event);
         };
         eventSource.onmessage = function (event) {
-            console.log('New message:', event.data);
+            // console.log('New message:', event.data);
             let payload = {
                 success: true,
                 message: event.data

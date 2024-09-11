@@ -123,6 +123,10 @@ export class VaultClient {
         return resp;
     }
 
+    async Delete() {
+        return await this.vault.deleteVaultData({ edvId: this.edvId })
+    }
+
 }
 
 
