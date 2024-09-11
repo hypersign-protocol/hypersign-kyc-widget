@@ -83,7 +83,6 @@ export default {
 
     setCavachAccessToken(state, payload) {
         console.log(state.kycCapturedData)
-        console.log(`Inside setCavachAccessToken  ${SignStoreConfig.LOCAL_STATES.KYC_ACCESS_TOKEN}  = ${payload}`)
         localStorage.setItem(SignStoreConfig.LOCAL_STATES.KYC_ACCESS_TOKEN, payload)
     },
     setRedirectUrl(state, payload) {

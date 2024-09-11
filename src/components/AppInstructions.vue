@@ -128,7 +128,7 @@ export default {
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
         const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
-        console.log({ isOnChainIdConfigured })
+
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
           if (!this.hasSbtMintDone) {
@@ -185,7 +185,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep"]),
-    ...mapActions(["getNewSession", "registerUser", "checkIfCredentialAlreadyExistsInVault"]),
+    ...mapActions(["getNewSession", "checkIfCredentialAlreadyExistsInVault"]),
     incrementStep() {
       this.stepNumber = this.stepNumber + 1;
       return this.stepNumber
