@@ -45,8 +45,9 @@
                             <i class="bi bi-calendar3-week"
                                 v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                             <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-                            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential' "></i>
-                            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovermentIdCredential' "></i>
+                            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+                            <i class="bi bi-person-vcard"
+                                v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
 
                             <i class="bi bi-person-badge" v-if="eachCredential.type[1] == 'SBTCredential'"></i>
                         </div>

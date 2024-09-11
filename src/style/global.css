@@ -33,7 +33,7 @@ h1{
 }
 
 .widget-card {
-    width: 42vw;
+    width: 45vw;
     border: 1px solid #8080801a;
     padding: 20px;
     border-radius: 20px;
@@ -43,5 +43,5 @@ h1{
 }
 
 .min-h-36{
-    min-height: 36rem;
+    min-height: 38rem;
 }

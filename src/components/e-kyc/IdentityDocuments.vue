@@ -2,6 +2,7 @@
 import { FPhi } from "@facephi/selphid-widget-web";
 import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import PreviewData from "../commons/Preview.vue";
+import ChooseDocumentType from '../commons/ChooseDocumentType.vue'
 import { STEP_NAMES } from "@/config";
 import MESSAGE from "../utils/lang/en";
 import { EVENT, EVENTS } from "../utils/eventBus";
@@ -9,6 +10,7 @@ export default {
   name: STEP_NAMES.IdDocs,
   components: {
     PreviewData,
+    ChooseDocumentType
   },
   computed: {
     ifExtractedData() {
@@ -25,7 +27,9 @@ export default {
   },
   data: function () {
     return {
-   
+      chooseDocumentType: false,
+      selectedDocumentType: "",
+      manualMode: false,
       // Demo configuration
       isWidgetStarted: false,
       FPhiCameraResolutions: {
@@ -47,8 +51,8 @@ export default {
       cameraSelection: true,
       previewCapture: false,
       forceLandscape: false,
-      captureTimeout: 5,
-      captureRetries: 1,
+      captureTimeout: 10,
+      captureRetries: 3,
       imageFormat: "image/jpeg",
       imageQuality: 1,
       debugMode: false,
@@ -96,7 +100,7 @@ export default {
     // Demo methods
     enableWidget: async function () {
       // console.warn("[Demo] Start Capture");
-      document.getElementById("widgetEventResult").innerText = "";
+      //document.getElementById("widgetEventResult").innerText = "";
       const capabilities = await this.checkCapabilities();
       if (capabilities.camera && capabilities.wasm && capabilities.browser) {
         this.isWidgetStarted = true;
@@ -118,8 +122,9 @@ export default {
 
     disableWidget: function () {
       // console.warn("[Demo] Stop Capture");
-      document.getElementById("widgetEventResult").innerText = "";
+      //document.getElementById("widgetEventResult").innerText = "";
       this.isWidgetStarted = false;
+      this.selectedDocumentType = '';
     },
 
     onCameraResolutionChange: function (event) {
@@ -133,7 +138,7 @@ export default {
     },
 
     onExtractionFinished: async function (extractionResult) {
-      console.log(extractionResult);
+
 
       // if (
       //   extractionResult.detail.images.frontDocument &&
@@ -152,30 +157,32 @@ export default {
       //   });
       //   this.isWidgetStarted = false;
       // } else {
-        this.isLoading = true;
+      this.isLoading = true;
 
-        //   call extractData
-        // const data = extractionResult.detail;
-        // await this.$store.commit("setKycExtractedData", { data, status: true });
-        await this.$store.commit("setKycCapturedData", {
+      //   call extractData
+      // const data = extractionResult.detail;
+      // await this.$store.commit("setKycExtractedData", { data, status: true });
+      await this.$store.commit("setKycCapturedData", {
 
-          tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
-          tokenBackDocumentImage: extractionResult.detail.images.backDocument,
+        tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
+        tokenBackDocumentImage: extractionResult.detail.images.backDocument,
 
-          //   tokenFaceImage: extractionResult.detail.images.faceImage,
-          //   countryCode:
-          //     extractionResult.detail.extractionData.documentCountryIssuer,
-        });
-        const res = await this.extractOcrIdDoc();
+        //   tokenFaceImage: extractionResult.detail.images.faceImage,
+        //   countryCode:
+        //     extractionResult.detail.extractionData.documentCountryIssuer,
+      });
 
+      this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
+
+      this.extractOcrIdDoc({ documentType: this.selectedDocumentType }).then(async res => {
         if (res?.serviceDocument) {
           let kycExtracted = {};
 
           kycExtracted = {
-            ...JSON.parse(res.serviceDocument).FRONTSIDE?.FIELD_DATA,
+            ...JSON.parse(res.serviceDocument),
           };
           kycExtracted = {
-            ...JSON.parse(res.serviceDocument).BACKSIDE?.FIELD_DATA,
+            // ...JSON.parse(res.serviceDocument),
             ...kycExtracted,
           };
 
@@ -188,13 +195,17 @@ export default {
           });
         }
 
+        this.isWidgetStarted = false;
         this.isLoading = false;
-
-        // ...
-      
-
-      this.isWidgetStarted = false;
-      // this.widgetResult = 'Success! Extraction complete';
+        this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, "success");
+      }).catch((e) => {
+        console.log(e)
+        this.toast(e.message, "error");
+        this.isLoading = false;
+        this.isWidgetStarted = false;
+        this.back()
+      })
+      setTimeout(this.verifyOCRDocStatus, 1000);
     },
 
     onExceptionCaptured: function (exceptionResult) {
@@ -223,11 +234,13 @@ export default {
 
       this.isWidgetStarted = false;
       this.widgetResult = "Error! Something went wrong";
+      this.back()
     },
 
     onUserCancelled: function () {
       this.isWidgetStarted = false;
       this.widgetResult = "Error! The extraction has been cancelled";
+      this.back()
     },
 
     onExtractionTimeout: function () {
@@ -235,6 +248,15 @@ export default {
 
       this.isWidgetStarted = false;
       // this.widgetResult = 'Error! Time limit exceeded';
+      this.back()
+    },
+
+    switchModes() {
+      // console.log(this.manualMode)
+      const docType = this.selectedDocumentType
+      this.disableWidget()
+      this.selectedDocumentType = docType;
+      this.enableWidget()
     },
 
     onTrackStatus: function (eventData) {
@@ -307,13 +329,17 @@ export default {
             if (e.message.includes("Session with given ID")) {
               this.isLoading = false;
               return this.nextStep(8);
+            } else {
+              this.toast(e.message, "error");
             }
           }
+          console.error(e)
           this.toast(e.message, "error");
           this.isLoading = false;
+          this.back()
         });
 
-      setTimeout(this.verifyOCRDocStatus, 500);
+      // setTimeout(this.verifyOCRDocStatus, 1000);
     },
 
     onVerifyIdOcrStatusEventRecieved(event) {
@@ -324,141 +350,123 @@ export default {
         this.toast(message, "error");
       }
     },
+
+    selectDocumentType() {
+      this.chooseDocumentType = true
+    },
+
+    EventChoosenDocumentTypeHandler(data) {
+      console.log('Inside EventChoosenDocumentTypeHandler data ' + JSON.stringify(data))
+      if (!data || !data.docType) {
+        return;
+      }
+      this.selectedDocumentType = data.docType;
+      this.enableWidget()
+      this.manualMode = false
+    },
+
+    back() {
+      this.disableWidget()
+      this.selectedDocumentType = '';
+    },
+
+    rescanHandler() {
+      this.back()
+    }
   },
+
+
 };
 </script>
 
 <template>
   <div>
     <div class="card-body min-h-36">
-      <PageHeading
-        :header="'ID Verification'"
-        :subHeader="'Upload front side of your passport'"
-        style="text-align: center"
-      />
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
+      <PageHeading :header="'ID Verification'"
+        :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`"
+        style="text-align: center" />
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-    
-      <div class="row" style="text-align: left" v-if="!ifExtractedData">
-        <!-- SelphID Web Widget Container: Properties and events setup -->
-        <div
-          class="col-12 col-md-9"
-          style="position: relative; min-height: 550px; max-height: 90%"
-        >
-          <facephi-selphid
-            v-if="isWidgetStarted"
-            :licenseKey="licenseKey"
-            :bundlePath="bundlePath"
-            :language="language"
-            :initialTip="initialTip"
-            :askSimpleMode="askSimpleMode"
-            :cameraWidth="cameraWidth"
-            :cameraHeight="cameraHeight"
-            :cameraSelection="cameraSelection"
-            :previewCapture="previewCapture"
-            :forceLandscape="forceLandscape"
-            :captureTimeout="captureTimeout"
-            :captureRetries="captureRetries"
-            :imageFormat="imageFormat"
-            :imageQuality="imageQuality"
-            :documentType="documentType"
-            :scanMode="scanMode"
-            :blurredThreshold="blurredThreshold"
-            :showLog="showLog"
-            :debugMode="debugMode"
-            :documentMode="documentMode"
-            @onmoduleloaded="onModuleLoaded"
-            @onextractionfinished="onExtractionFinished"
-            @onusercancelled="onUserCancelled"
-            @onexceptioncaptured="onExceptionCaptured"
-            @onextractiontimeout="onExtractionTimeout"
-            @ontrackstatus="onTrackStatus"
-          ></facephi-selphid>
-          <div class="center" v-else>
-            <img
-              src="../../assets/ocr-instruction.gif"
-              v-if="!isLoading && !ifExtractedData"
-            />
-          </div>
-          <div id="widgetEventResult" style="position: absolute; top: 0">
-            {{ widgetResult }}
+      <div class="row" v-if="!chooseDocumentType">
+        <div class="row">
+          <div class="center">
+            <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" />
           </div>
         </div>
-        <!-- Widget demo configuration elements -->
-        <div class="col-12 col-md-3 mt-3 mt-md-0">
-          <!-- <div>SelphID Web Widget Demo</div> -->
-
-          <div class="d-flex flex-column my-3">
-            <button
-              type="button"
-              id="btnStartCapture"
-              class="btn btn-primary btn-block"
-              :disabled="isWidgetStarted"
-              v-on:click.self="enableWidget"
-            >
-              Start capture
-            </button>
-            <button
-              type="button"
-              id="btnStopCapture"
-              class="btn btn-danger btn-block mt-3"
-              :disabled="!isWidgetStarted"
-              v-on:click.self="disableWidget"
-            >
-              Stop capture
-            </button>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button>
           </div>
-
-          <div class="form-group">
-            <label for="cameraResolution">Camera Resolution</label>
-            <select
-              id="cameraResolution"
-              :disabled="isWidgetStarted"
-              class="form-control mt-2"
-              :value="cameraResolution"
-              @change="onCameraResolutionChange($event)"
-            >
-              <option
-                v-for="key in Object.keys(FPhiCameraResolutions)"
-                :key="key"
-                :value="key"
-              >
-                {{ FPhiCameraResolutions[key].title }}
-              </option>
-            </select>
-          </div>
-          <!-- 
-      <div class="form-group form-check m-0">
-        <input type="checkbox" id="previewCapture" class="form-check-input" v-model="previewCapture"
-          :disabled="isWidgetStarted" />
-        <label for="previewCapture" class="form-check-label">Preview capture</label>
-      </div>
-      <div class="form-group form-check m-0">
-        <input type="checkbox" id="forceLandscape" class="form-check-input" v-model="forceLandscape"
-          :disabled="isWidgetStarted" />
-        <label for="forceLandscape" class="form-check-label">Force landscape</label>
-      </div>
-      <div class="form-group form-check m-0">
-        <input type="checkbox" id="initialTip" class="form-check-input" v-model="initialTip"
-          :disabled="isWidgetStarted" />
-        <label for="initialTip" class="form-check-label">Initial tip</label>
-      </div>
-      <div class="form-group form-check m-0">
-        <input type="checkbox" id="showLog" class="form-check-input" v-model="showLog" :disabled="isWidgetStarted" />
-        <label for="showLog" class="form-check-label">Show extended log</label>
-      </div>
-
-      <div class="form-group mt-2">
-        <div>Widget Version: <span id="widgetVersion">{{ widgetVersion }}</span></div>
-      </div> -->
         </div>
       </div>
-      <div class="row" v-else>
-        <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" />
+      <div v-else>
+        <div class="row p-2" style="text-align: left; min-height: 550px;" v-if="!ifExtractedData">
+          <!-- SelphID Web Widget Container: Properties and events setup -->
+          <div class="row col-12" v-if="selectedDocumentType != ''">
+            <div class="col-12 col-md-9" style="">
+              <facephi-selphid v-if="isWidgetStarted && selectedDocumentType != ''" :licenseKey="licenseKey"
+                :bundlePath="bundlePath" :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
+                :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
+                :previewCapture="previewCapture" :forceLandscape="forceLandscape" :captureTimeout="captureTimeout"
+                :captureRetries="captureRetries" :imageFormat="imageFormat" :imageQuality="imageQuality"
+                :documentType="documentType" :scanMode="scanMode" :blurredThreshold="blurredThreshold"
+                :showLog="showLog" :debugMode="debugMode" :documentMode="documentMode" @onmoduleloaded="onModuleLoaded"
+                @onextractionfinished="onExtractionFinished" @onusercancelled="onUserCancelled"
+                @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
+                @ontrackstatus="onTrackStatus" :startSimpleMode="manualMode"></facephi-selphid>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <!-- <div>SelphID Web Widget Demo</div> -->
+
+              <div class="d-flex flex-column my-3">
+                <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted"
+                  title="Start Capture" @click="enableWidget()">
+                  <i class="bi bi-play-circle"></i> Start Capture
+                </button>
+                <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2"
+                  :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture">
+                  <i class="bi bi-stop-circle"></i> Stop Capture
+                </button>
+                <button type="button" id="btnStopCapture" class="btn btn-secondary btn-block mt-2" @click="back()"
+                  title="Back">
+                  <i class="bi bi-backspace"></i> Back
+                </button>
+              </div>
+
+              <div class="form-group form-check form-switch  mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                  v-model="manualMode" @change="switchModes()" style="cursor:grab;">
+                <label class="form-check-label" for="flexSwitchCheckDefault"><strong>Manual Mode</strong></label>
+              </div>
+
+              <hr />
+              <div class="form-group mt-2">
+                <label for="cameraResolution">Camera Resolution</label>
+                <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
+                  :value="cameraResolution" @change="onCameraResolutionChange($event)">
+                  <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
+                    {{ FPhiCameraResolutions[key].title }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group  mt-2">
+                <label for="cameraResolution">Document Type</label>
+                <input type="text" disabled :value="selectedDocumentType" style="width: 150px;">
+              </div>
+
+
+            </div>
+          </div>
+          <div v-else class="row">
+            <div class=" center" style="align-items:normal;">
+              <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
+            </div>
+          </div>
+        </div>
+        <div class="row" v-else>
+          <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" @EventrescanIDDoc="rescanHandler" />
+        </div>
       </div>
     </div>
     <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />

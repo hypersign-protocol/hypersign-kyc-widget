@@ -1,55 +1,40 @@
 <template>
   <div>
     <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
-    <div class="row" style="margin-top: 1%">
+    <div class="row mt-2">
       <div class="col-md-12" style="text-align: left">
         <InfoMessage message="Please verify if your informations are correct" />
-        <div class="card widget-card" style="width: 90%; margin: auto">
-          <table class="table" style="text-align: left">
-            <tr
-              v-for="(data, idx) in Object.entries(extractedData)"
-              v-bind:key="idx"
-            >
-              <td>{{ snakeToPascal(data[0]) }}</td>
-              <td>{{ data[1] }}</td>
-            </tr>
-            <!-- 
-            <tr>
-              <td>Name</td>
-              <td>
-                {{ `${extractedData.firstName} ${extractedData.lastName}` }}
-              </td>
-            </tr>
+        <div class="card widget-card" style="width: 100%; margin: auto; max-height: 400px;overflow-y: scroll;">
 
-            <tr>
-              <td>Date Of Birth</td>
-              <td>{{ `${extractedData.dateOfBirth}` }}</td>
-            </tr>
+          <div class="row">
+            <div class="col-8">
+              <table class="table table-hover" style="text-align: left">
+                <tbody>
 
-            <tr>
-              <td>Sex</td>
-              <td>{{ `${extractedData.gender}` }}</td>
-            </tr>
 
-            <tr>
-              <td>Nationality</td>
-              <td>{{ `${extractedData.nationality}` }}</td>
-            </tr>
-
-            <tr>
-              <td>Issued Date</td>
-              <td>{{ `${extractedData.dateOfIssue}` }}</td>
-            </tr>
-            <tr>
-              <td>Expiration Date</td>
-              <td>{{ `${extractedData.dateOfExpiry}` }}</td>
-            </tr> -->
-          </table>
+                  <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
+                    <td><strong>{{ snakeToPascal(data[0]) }}</strong></td>
+                    <td style="">{{ data[1] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-4 ">
+              <div class="center" style="align-items: baseline;">
+                <img class="avatar"
+                  :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" height="100">
+              </div>
+              <div class="center mt-2">
+                <button class="btn btn-success-link" style="color:green"><i class="bi bi-check-all"></i> {{
+                  $store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING }}</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="row" style="margin-top: 1%">
+    <div class="row mt-2">
       <div class="col-md-12">
         <button class="btn btn-light" @click="rescan()">Rescan</button>
         <button class="btn btn-outline-dark" @click="submit()">Continue</button>
@@ -60,12 +45,14 @@
 
 <script>
 import { mapActions, mapMutations } from "vuex";
-
 export default {
   name: "PreviewData",
   computed: {
     extractedData() {
-      return this.$store.state.kycExtractedData.extractionRaw.ocr;
+      const d = { ...this.$store.state.kycExtractedData.extractionRaw.ocr }
+      delete d['FACE']
+      delete d['OVERALL_RATING']
+      return d
     },
   },
   components: {},
@@ -127,6 +114,7 @@ export default {
         tokenFaceImage: "",
         countryCode: "",
       });
+      this.$emit("EventrescanIDDoc", true);
       //this.nextStep(4)
     },
   },
@@ -138,5 +126,13 @@ export default {
   font-size: smaller;
   margin-left: 44px;
   color: grey;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid rgba(73, 133, 73, 0.47)
 }
 </style>
