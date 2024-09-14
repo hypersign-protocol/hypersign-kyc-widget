@@ -205,7 +205,7 @@ export default {
         this.isWidgetStarted = false;
         this.back()
       })
-      setTimeout(this.verifyOCRDocStatus, 1000);
+      setTimeout(this.verifyOCRDocStatus, 4000);
     },
 
     onExceptionCaptured: function (exceptionResult) {
