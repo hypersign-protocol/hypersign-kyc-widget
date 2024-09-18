@@ -37,8 +37,9 @@ export default {
             await window.keplr.disable()
         },
         async connectWallet() {
+
             const { ecosystem, blockchain } = this.getOnChainIssuerConfig
-            const { default: SupportedChains } = await import(`../../../blockchains-metadata/${ecosystem}/wallet/${blockchain}/chains`)
+            const { default: SupportedChains } = await import(`../../../blockchains-metadata/${ecosystem}/wallet/${blockchain}/${this.getOnChainIssuerConfig.chainId}/chains`)
 
             if (!SupportedChains) {
                 throw new Error('Ecosysem or blockchain is not supported')
@@ -49,8 +50,8 @@ export default {
             if (!chainConfig) {
                 throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
             }
-
             const chainId = chainConfig["chainId"];
+
 
             if (!window.getOfflineSigner || !window.keplr) {
                 console.error("Please install keplr extension");

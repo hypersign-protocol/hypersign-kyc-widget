@@ -175,8 +175,9 @@ import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 import { smartContractExecuteRPC } from '../../blockchains-metadata/cosmos/contract/execute'
 import { smartContractQueryRPC } from '../../blockchains-metadata/cosmos/contract/query'
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
-import NibiruChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/chains'
-import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
+import NibiruLocalNetChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
+import NibiruTestnetChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
+// import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
 import { createNonSigningClient, getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
@@ -191,12 +192,13 @@ export default {
         ...mapGetters(["getCavachAccessToken", "getVaultDataCredentials", "getRedirectUrl", 'getOnChainIssuerConfig']),
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
         getChainConfig() {
-            const { ecosystem, blockchain } = this.getOnChainIssuerConfig
+            const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
             let SupportedChains;
-            if (ecosystem === 'cosmos' && blockchain === 'comdex') {
-                SupportedChains = ComdexChainJson
-            } else if (ecosystem === 'cosmos' && blockchain === 'nibi') {
-                SupportedChains = NibiruChainJson
+
+            if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-localnet-0') {
+                SupportedChains = NibiruLocalNetChainJson
+            } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-testnet-1') {
+                SupportedChains = NibiruTestnetChainJson
             }
 
             if (!SupportedChains) {
