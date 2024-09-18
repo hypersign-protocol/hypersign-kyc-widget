@@ -71,7 +71,6 @@ export default {
                         await this.getUserAccessMnemomic()
                     }
                     this.userVaultDataRaw.mnemonic = this.getVaultMnemonic
-                    console.log('Memonic setup done ' + this.getVaultMnemonic)
 
                     /// setup vault wallet
                     await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })

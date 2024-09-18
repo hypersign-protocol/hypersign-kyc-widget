@@ -9,10 +9,10 @@ export function constructSBTMintMsg(owner, nftTokenId, nftTokenUri) {
     }
 }
 
-export function constructKYCSBTMintMsg() {
+export function constructKYCSBTMintMsg({ hypersign_proof }) {
     return {
         "mint": {
-
+            hypersign_proof
         }
     }
 }
