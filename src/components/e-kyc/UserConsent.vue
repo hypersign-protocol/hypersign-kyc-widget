@@ -46,9 +46,8 @@
                                 v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                             <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                            <i class="bi bi-person-vcard"
-                                v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-
+                            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+                            <!-- <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'SBTCredential'"></i> -->
                             <i class="bi bi-person-badge" v-if="eachCredential.type[1] == 'SBTCredential'"></i>
                         </div>
                         <div class="col-10 credential-row-type">
@@ -97,7 +96,12 @@ export default {
     },
     computed: {
         ...mapState(['steps']),
-        ...mapGetters(['getVaultDataCredentials', 'getUserDID', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
+        ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
+        getVaultDataCredentials() {
+            const { hypersign } = this.getVaultDataRaw
+            const { credentials } = hypersign
+            return credentials;
+        },
         credentailsTypesInWallet() {
             const types = this.getVaultDataCredentials.map(x => x.type)
             const allTypes = [].concat(...types)
@@ -114,6 +118,7 @@ export default {
             }
         },
         getTrustedIssuersCredentials() {
+
             return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
         checkIfOncainIdIsEnabled() {
