@@ -179,7 +179,8 @@ import NibiruLocalNetChainJson from '../../blockchains-metadata/cosmos/wallet/ni
 import NibiruTestnetChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
 // import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
-import { createNonSigningClient, getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { createNonSigningClient } from '../utils/cosmos-client'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
 import MESSAGE from '../utils/lang/en';
 
@@ -344,11 +345,7 @@ export default {
                     });
                     this.isLoading = false
                     // Implement feature in caach server to capture user's miniing step
-                    setTimeout(() => {
-                        this.nextStep();
-                    }, 2000)
-
-
+                    this.nextStep();
                 }
 
             } catch (e) {

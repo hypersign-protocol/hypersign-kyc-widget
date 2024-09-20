@@ -2,8 +2,8 @@
   <div>
     <h1 class="position-relative">
       {{ header }}
-      <span class="badge position-absolute top-10 translate-middle rounded-pill bg-warning" v-if="beta">
-        beta
+      <span class="badge position-absolute top-10 translate-middle rounded" v-if="beta">
+        Beta
       </span>
     </h1>
     <h6 style="color: grey">
@@ -39,11 +39,12 @@ export default {
 .badge {
   padding: 5px;
   float: right;
-  background-color: black;
+  background-color: rgb(236, 232, 200);
   /* border-radius: 40%; */
   font-size: x-small;
   /* font-weight: bold; */
   color: black;
+  font-weight: bold;
   width: auto;
   text-align: center;
   align-content: center;
