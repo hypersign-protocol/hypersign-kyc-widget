@@ -1,91 +1,48 @@
 <template>
   <div class="card maincontainer">
-    <load-ing
-      :active.sync="isLoadingPage"
-      :can-cancel="true"
-      :is-full-page="fullPage"
-    ></load-ing>
+    <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <NavBar />
     <div class="card-body">
-      <PageHeading
-        :header="'Liveliness Check'"
-        :subHeader="'Open camera and click your picture'"
-      />
+      <PageHeading :header="'Liveliness Check'" :subHeader="'Open camera and click your picture'" />
       <div class="scanQR web-camera-container">
-        <img
-          src="../assets/selfi.png"
-          width="200"
-          height="200"
-          v-if="!isCameraOpen"
-        />
+        <img src="../assets/selfi.png" width="200" height="200" v-if="!isCameraOpen" />
         <div v-show="isCameraOpen && isLoading" class="camera-loading">
           Waiting for camera...
         </div>
 
-        <div
-          v-if="isCameraOpen"
-          v-show="!isLoading"
-          class="camera-box"
-          :class="{ flash: isShotPhoto }"
-        >
+        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ flash: isShotPhoto }">
           <div class="camera-shutter" :class="{ flash: isShotPhoto }"></div>
 
-          <video
-            v-show="!isPhotoTaken"
-            ref="camera"
-            :width="250"
-            :height="250"
-            autoplay
-          ></video>
+          <video v-show="!isPhotoTaken" ref="camera" :width="250" :height="250" autoplay></video>
 
-          <canvas
-            v-show="isPhotoTaken"
-            id="photoTaken"
-            ref="canvas"
-            :width="250"
-            :height="250"
-          ></canvas>
+          <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="250" :height="250"></canvas>
         </div>
       </div>
 
       <div>
         <div class="" v-if="isCameraOpen && !isLoading">
-          <button
-            type="button"
-            class="btn btn-dark"
-            @click="takePhoto"
-            style="border-radius: 50%"
-          >
+          <button type="button" class="btn btn-dark" @click="takePhoto" style="border-radius: 50%">
             <i class="bi bi-camera" style="color: white; font-size: 26px"></i>
           </button>
         </div>
 
         <div style="padding: 10px">
-          <button
-            class="btn btn-outline-dark"
-            @click="submit()"
-            v-if="isPhotoTaken && isCameraOpen"
-          >
+          <button class="btn btn-outline-dark" @click="submit()" v-if="isPhotoTaken && isCameraOpen">
             Next
           </button>
-          <button
-            type="button"
-            class="btn"
-            :class="{
-              'btn-outline-dark': !isCameraOpen,
-              'btn-link btn-dark': isCameraOpen,
-            }"
-            @click="toggleCamera"
-          >
-            <span v-if="!isCameraOpen"
-              ><i class="bi bi-camera"></i> Open Camera</span
-            >
+          <button type="button" class="btn" :class="{
+            'btn-outline-dark': !isCameraOpen,
+            'btn-link btn-dark': isCameraOpen,
+          }" @click="toggleCamera">
+            <span v-if="!isCameraOpen"><i class="bi bi-camera"></i> Open Camera</span>
             <span v-else>Cancel</span>
           </button>
         </div>
       </div>
     </div>
-    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+    <div class="footer">
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+    </div>
     <div class="card-footer">
       <PoweredBy />
     </div>
