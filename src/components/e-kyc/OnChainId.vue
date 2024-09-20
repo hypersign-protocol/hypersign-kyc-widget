@@ -43,7 +43,7 @@
                                 <p class="card-text">
                                     <span style="visibility: hidden;" class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
-                                    }}</span>
+                                        }}</span>
                                     <!-- <span class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
                                     }}</span> -->
@@ -175,14 +175,14 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-import { smartContractExecuteRPC } from '../../blockchains-metadata/cosmos/contract/execute'
-import { smartContractQueryRPC } from '../../blockchains-metadata/cosmos/contract/query'
+import { smartContractExecuteRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/execute'
+import { smartContractQueryRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/query'
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
-import NibiruLocalNetChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
-import NibiruTestnetChainJson from '../../blockchains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
-// import ComdexChainJson from '../../blockchains-metadata/cosmos/wallet/comdex/chains'
-import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '../../blockchains-metadata/cosmos/contract/msg';
-import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '../../blockchains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
+import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
+// import ComdexChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/comdex/chains'
+import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
+import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient } from '../utils/cosmos-client'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
 import MESSAGE from '../utils/lang/en';
