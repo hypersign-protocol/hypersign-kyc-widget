@@ -1905,7 +1905,7 @@
 
 "@hypersign-protocol/hypersign-kyc-chains-metadata@github:hypersign-protocol/hypersign-kyc-chains-metadata":
   version "1.0.0"
-  resolved "https://codeload.github.com/hypersign-protocol/hypersign-kyc-chains-metadata/tar.gz/f20ef0611e0e27f938b810d54635a0b7431ad9cd"
+  resolved "https://codeload.github.com/hypersign-protocol/hypersign-kyc-chains-metadata/tar.gz/92016655756917f48e57dee0f154e74765b00978"
 
 "@hypersign-protocol/hypersign-vault-client@github:hypersign-protocol/hypersign-edv-client#deleteByDocumentId":
   version "1.0.0"

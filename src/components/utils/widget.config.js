@@ -1,5 +1,5 @@
 export default {
-    env: 'dev', // dev, stage, prod
+    env: 'prod', // dev, stage, prod
     steps: {
         // faceRecog: true,
         // idOcr: true,

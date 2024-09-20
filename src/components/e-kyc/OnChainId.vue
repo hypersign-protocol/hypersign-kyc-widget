@@ -323,7 +323,6 @@ export default {
                 // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
                 const smartContractMsg = constructKYCSBTMintMsg({ hypersign_proof: this.hypersign_proof });
-
                 // Perform the CreateTodo Smart Contract Execution
                 // Note: This is a blockchain transaction
                 const chainConfig = this.getChainConfig
