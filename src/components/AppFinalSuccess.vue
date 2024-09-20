@@ -6,10 +6,14 @@
         <i class="bi bi-check-circle final-msg-icon success"></i>
       </p>
       <h5 class="">Verified Successfully!</h5>
-
       <VerificationDetails />
     </div>
-    <div class="card-footer"><PoweredBy /></div>
+    <div class="footer">
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+    </div>
+    <div class="card-footer">
+      <PoweredBy />
+    </div>
   </div>
 </template>
 

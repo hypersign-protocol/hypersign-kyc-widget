@@ -13,7 +13,9 @@
                     @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
             </div>
         </div>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+        <div class="footer">
+            <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+        </div>
     </div>
 
 </template>
@@ -71,7 +73,6 @@ export default {
                         await this.getUserAccessMnemomic()
                     }
                     this.userVaultDataRaw.mnemonic = this.getVaultMnemonic
-                    console.log('Memonic setup done ' + this.getVaultMnemonic)
 
                     /// setup vault wallet
                     await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })

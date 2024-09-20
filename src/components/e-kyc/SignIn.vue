@@ -11,7 +11,11 @@
                 </div>
             </div>
         </div>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+
+        <div class="footer">
+            <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+        </div>
+
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 export default {
-    env: 'prod', // dev, stage, prod
+    env: 'dev', // dev, stage, prod
     steps: {
         // faceRecog: true,
         // idOcr: true,
@@ -18,7 +18,8 @@ export default {
         SBTCredential: {
             schemaId: "sch:hid:testnet:z6MkgHqTUpPtkXJ9dAMt25WQB5MHmC1qqc74z7q2fZk2kPQP:1.0",
             issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
-        }
+        },
+        GovernmentIdCredential: {},
         // CitizenshipCredential: {
         //     schemaId: "sch:hid:testnet:z6Mkkm7paF78CWtrpviRkwb83t99u34Up7tjjnap8yw1pWfz:1.0",
         //     issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
