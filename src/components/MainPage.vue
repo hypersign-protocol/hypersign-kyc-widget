@@ -26,7 +26,7 @@ import SignIn from "./e-kyc/SignIn.vue"
 import VaultPIN from './e-kyc/VaultPIN.vue'
 import UserConsent from './e-kyc/UserConsent.vue'
 import OnChainId4 from "./e-kyc/OnChainId.vue";
-
+import ZkProofs from "./e-kyc/ZKProofs.vue"
 import SessionExpired from './SessionExpired.vue';
 
 export default {
@@ -40,6 +40,7 @@ export default {
     AppOtp,
     LiveLiness3,
     IdDocs4,
+    ZkProofs,
     FinalResult,
     SignIn,
     VaultPIN,

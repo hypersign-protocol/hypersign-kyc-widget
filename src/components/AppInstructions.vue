@@ -54,25 +54,31 @@
 
         <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credentials"
+            <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credential"
               :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
+        <div class="row mb-4" v-if="checkIfzkProofIsEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="3" stepTitle="Mint your on-chain Identity in your favorite blockchain"
-              :isDone="hasSbtMintDone" />
+            <AppInstructionStep stepNumber="3" stepTitle="Generate proof(s) of your data" :isDone="false" />
           </div>
         </div>
 
+        <!-- <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
+          <div class="col">
+            <AppInstructionStep stepNumber="4" stepTitle="Generate proof and mint your on-chain identity"
+              :isDone="hasSbtMintDone" />
+          </div>
+        </div> -->
+
         <div class="row mb-4" v-if="checkIfUserConsentIsEnabled == true">
           <div class="col">
-            <AppInstructionStep :stepNumber="checkIfOncainIdIsEnabled ? '4' : '3'"
-              stepTitle="Generate proofs and provide consent of your data to be shared with the verifier app"
-              :isDone="false" />
+            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled ? '4' : '3'"
+              stepTitle="Provide consent of your data to the verifier app" :isDone="false" />
           </div>
         </div>
+
 
         <!-- <div class="d-flex" style="">
           <div class="vr" style="height: 300px;"></div>
@@ -112,6 +118,9 @@ export default {
     checkIfOncainIdIsEnabled() {
       return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
     },
+    checkIfzkProofIsEnabled() {
+      return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs).isEnabled
+    },
     checkIfIdDocumentIsEnabled() {
       return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
     },
@@ -129,7 +138,7 @@ export default {
       // next step: id verfcaiton
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
-        const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
+        const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.ZkProofs && step.isEnabled == true))
 
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
@@ -155,7 +164,7 @@ export default {
           this.nextStepNumeber = isVerificationStep?.id
         } else {
           // next step: check if on chain id is configured or not
-          const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
+          const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.ZkProofs && step.isEnabled == true))
           if (isOnChainIdConfigured) {
             // if yes, then go to onchainId page
             this.nextStepNumeber = isOnChainIdConfigured.id
