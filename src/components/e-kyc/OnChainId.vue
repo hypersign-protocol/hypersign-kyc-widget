@@ -180,10 +180,12 @@ import { smartContractQueryRPC } from '@hypersign-protocol/hypersign-kyc-chains-
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
 import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
+import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
+
 // import ComdexChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/comdex/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
-import { createNonSigningClient } from '../utils/cosmos-client'
+import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
 import MESSAGE from '../utils/lang/en';
 
@@ -203,6 +205,8 @@ export default {
                 SupportedChains = NibiruLocalNetChainJson
             } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-testnet-1') {
                 SupportedChains = NibiruTestnetChainJson
+            } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
+                SupportedChains = OsmosisTestnetChainJson
             }
 
             if (!SupportedChains) {
