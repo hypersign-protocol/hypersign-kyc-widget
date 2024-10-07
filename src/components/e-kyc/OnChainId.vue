@@ -327,12 +327,15 @@ export default {
                 // Note: This is a blockchain transaction
                 const chainConfig = this.getChainConfig
                 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
+                const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
+                const fee = calculateFee(500_000, (gasPriceAvg + chainCoinDenom).toString())
+
                 const result = await smartContractExecuteRPC(
                     this.cosmosConnection.signingClient,
                     chainCoinDenom,
                     this.connectedWalletAddress,
                     this.getOnChainIssuerConfig.contractAddress,
-                    smartContractMsg);
+                    smartContractMsg, fee);
 
                 if (result) {
                     this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
