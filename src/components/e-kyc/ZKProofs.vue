@@ -177,6 +177,11 @@ export default {
                 })
             })
             return result;
+        },
+        isIDDocEnabled() {
+            if (this.getWidgetConfigFromDb.onChainId.enabled) {
+                return true
+            } else return false
         }
     },
     data() {
@@ -193,7 +198,6 @@ export default {
             },
             hypersign_proofs: [],
             showModal: false,
-
         };
     },
     methods: {
