@@ -5,11 +5,11 @@
 
             <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
             <div class="center" v-if="ifNewUser">
-                <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+                <RegisterPIN style="width: 70%;" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
 
-            <div v-else>
-                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
+            <div v-else class="center">
+                <AskPIN style="width: 70%;" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
                     @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
             </div>
         </div>
@@ -52,6 +52,10 @@ export default {
         if (this.getWidgetConfigFromDb.onChainId.enabled) {
             this.enableAstep(STEP_NAMES.OnChainId)
         }
+
+        if (this.getWidgetConfigFromDb.zkProof.enabled) {
+            this.enableAstep(STEP_NAMES.ZkProofs)
+        }
     },
     methods: {
         ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
@@ -80,18 +84,15 @@ export default {
                     this.userVaultDataRaw.hypersign.didDoc = { ...this.getVaultWallet.didDocument }
                     this.userVaultDataRaw.hypersign.keys = { ...this.getVaultWallet.keys }
                     if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
-                    console.log('Vault Wallet setup done ' + this.getVaultWallet.didDocument.id)
 
                     /// setup vault
                     await this.initializeVault()
-                    console.log('Vault setup done ' + this.getVaultId)
 
                     if (this.ifNewUser) {
                         this.createKMS()
                     }
 
                     await this.retriveVaultCredentials()
-                    console.log('Finished retriving credentials ')
 
                     this.isLoadingPage = false
                     this.nextStep()
