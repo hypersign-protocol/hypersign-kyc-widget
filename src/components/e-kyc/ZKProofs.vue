@@ -196,8 +196,9 @@ export default {
             nft: {
                 metadata: null,
             },
-            hypersign_proofs: [],
+            hypersign_proofs: [], // request
             showModal: false,
+            credentials: []
         };
     },
     methods: {
@@ -271,11 +272,33 @@ export default {
             }
         },
 
+
+        // async generatezkProof(credential, proof_type) {
+        //     const verifyKey = await import(`../lib/${proof_type}/verify_key.json`)
+        //     console.log({ verifyKey, credential })
+
+        // },
+
         async getProof(proof) {
             this.isLoading = true
             // 
 
             console.log('Getting proof for proof type ' + proof.proof_type)
+            // TODO: get the required credential from edv
+
+            // const credentialType = proof.credentialType;
+            // const trustedIssuer = this.getWidgetConfigFromDb.issuerDID
+            // let trustedIssuerList = []
+            // if (issuerDID) {
+            //     trustedIssuerList = issuerDID.split(',')
+            // }
+            // const credential = {}; // getCredentialFromWallet(credentialType, trustedIssuer)
+
+            /// TODO: actual logic to generate proof
+
+            // const proof = await generatezkProof(credential, proof.proof_type )
+
+            /// TODO: call verify proof API 
 
             this.hypersign_proofs.map(x => {
                 if (x.proof_type == proof.proof_type) {
@@ -377,6 +400,7 @@ export default {
                     "sbt_code": hypersignProof.sbtCode,
                     "bgColor": hypersignProof.bgColor,
                     "proof_type": x.proofType,
+                    "credentialType": hypersignProof.credentialType[0]
                 })
             } else {
                 console.log('Invalid proof of type , x.proofType ' + x.proofType)

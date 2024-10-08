@@ -21,7 +21,7 @@ export default {
     ...mapGetters(["getIdDocumentLicenseKey"]),
     ...mapState(["steps"]),
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
+      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
         .isEnabled;
     },
   },
