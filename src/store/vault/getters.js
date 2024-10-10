@@ -59,4 +59,51 @@ export default {
             }
         }
     },
+
+    async getCredentialFromVault({state,params}) {
+     
+        
+        
+        const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
+        const vaultDataRaw = JSON.parse(raw)
+        if (!vaultDataRaw) {
+            return;
+        }
+
+        const { hypersign } = vaultDataRaw
+        const { credentials } = hypersign
+        const { schemaIds } = state;
+
+
+        Object.keys(schemaIds).forEach(schema => {
+            const { schemaId } = schemaIds[schema]
+            const credential = credentials.find(credential => {
+                if (credential) {
+
+                    // TODO: We can also add filter for trusted issuer later in the presentation request
+                    if ((credential.credentialSchema?.id === schemaId) && params.trustedIssuerList.includes(credential.issuer)) {
+                        return credential
+                    }
+                    if ((credential.type.includes(schema)) && params.trustedIssuerList.includes(credential.issuer)) {
+                        return credential
+                    }
+
+                }
+            })
+
+            if (credential) {
+
+                if (schema === params.credentialType) {
+                    return credential
+
+
+
+
+                }
+
+            } else {
+                console.log('Credential not found for schema ' + schemaId)
+            }
+        })
+    }
 }
