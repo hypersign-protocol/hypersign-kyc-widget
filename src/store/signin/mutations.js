@@ -54,15 +54,10 @@ export default {
             nextStepId = activeStep.id + 1
         }
 
-        console.log({
-            activeStep
-        })
 
         state.steps[activeStep.id].isActive = false;
         state.steps[nextStepId].isActive = true;
-        console.log({
-            nextStep: state.steps[nextStepId]
-        })
+
     },
     previousStep: (state) => {
         const activeStep = state.steps.find(x => (x.isActive == true))

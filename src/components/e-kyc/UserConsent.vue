@@ -34,7 +34,8 @@
                 </div>
             </div>
 
-            <div class="widget-card" style="width: 90%;margin:auto;margin-top: 30px;">
+            <div class="widget-card"
+                style="width: 90%;margin:auto;margin-top: 30px; max-height: 400px; overflow-y:  auto;">
                 <div class="container">
                     <div class="row credential-row p-1 mb-1" v-for="eachCredential in getTrustedIssuersCredentials"
                         v-bind:key="eachCredential.id">
@@ -46,8 +47,7 @@
                                 v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                             <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                            <i class="bi bi-person-vcard"
-                                v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+                            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
 
                             <i class="bi bi-person-badge" v-if="eachCredential.type[1] == 'SBTCredential'"></i>
                         </div>
@@ -58,7 +58,7 @@
                         <div class="col-1">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch"
-                                    id="flexSwitchCheckChecked" checked disabled>
+                                    id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled>
                             </div>
                         </div>
                     </div>
@@ -69,8 +69,8 @@
                     <i class="bi bi-check-circle"></i> Authorize
                 </button>
             </p>
+            <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
         </div>
-        <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
     </div>
 </template>
 
@@ -142,6 +142,18 @@ export default {
                 this.toastMessage = "";
             }, 5000);
         },
+        shouldShare(eachCredential) {
+            if ((eachCredential.type[1] == 'PersonhoodCredential') && this.checkIfLivelinessIsEnabled) {
+                return true
+            } else if ((eachCredential.type[1] == 'GovernmentIdCredential') && this.checkIfIdDocumentIsEnabled) {
+                return true
+            } else if ((eachCredential.type[1] == 'PassportCredential') && this.checkIfIdDocumentIsEnabled) {
+                return true
+            } else if ((eachCredential.type[1] == 'SBTCredential') && this.checkIfOncainIdIsEnabled) {
+                return true
+            }
+            return false
+        },
         async submit() {
             try {
 
@@ -169,13 +181,12 @@ export default {
             }
         },
         async generatePresentation() {
-
+            const filteredCredentials = this.getTrustedIssuersCredentials.filter(x => this.shouldShare(x))
             const params = {
-                "verifiableCredentials": [...this.getTrustedIssuersCredentials],
+                "verifiableCredentials": [...filteredCredentials],
                 "holderDid": this.getUserDID
             }
             return await this.hypersignVP.generate(params);
-
         },
     }
 }
@@ -195,6 +206,10 @@ export default {
 .credential-row-switch {
     align-content: right;
 
+}
+
+.form-switch {
+    padding-left: 1.5em;
 }
 
 .conset-message {
