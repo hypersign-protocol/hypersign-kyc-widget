@@ -90,7 +90,6 @@ export default {
         try {
             const resp = await fetch('https://api.ipify.org?format=json')
             const json = await resp.json()
-            console.log(json)
             return json.ip
         } catch (e) {
             console.error(e)
