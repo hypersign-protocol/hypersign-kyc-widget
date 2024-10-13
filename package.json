@@ -17,6 +17,7 @@
     "@digitalbazaar/x25519-key-agreement-key-2020": "^2.1.0",
     "@facephi/selphi-widget-web": "./lib/facephi-selphi-widget-web-5.35.0.tgz",
     "@facephi/selphid-widget-web": "./lib/facephi-selphid-widget-web-4.21.0.tgz",
+    "@hypersign-protocol/hypersign-kyc-chains-metadata": "github:hypersign-protocol/hypersign-kyc-chains-metadata",
     "@hypersign-protocol/hypersign-vault-client": "github:hypersign-protocol/hypersign-edv-client#deleteByDocumentId",
     "assert": "^2.1.0",
     "auth0-js": "^9.16.2",

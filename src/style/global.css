@@ -16,6 +16,7 @@ body{
     border-radius: 20px;
     box-shadow: 2px 5px 5px #80808087;
     margin: 0 auto;
+   
   }
 .btn-dark{
     color: black
@@ -44,4 +45,13 @@ h1{
 
 .min-h-36{
     min-height: 38rem;
+}
+
+.footer {
+    position: relative;
+    width: 100%;
+    /* Adjust as needed */
+    height: 20px;
+    /* Example footer height */
+    /* background-color: #f1f1f1; */
 }
