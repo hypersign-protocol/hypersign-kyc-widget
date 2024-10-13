@@ -3,13 +3,28 @@
 
 <script type="text/javascript">
 import { FPhi } from "@facephi/selphi-widget-web";
-import { mapActions, mapMutations, } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import { STEP_NAMES } from "@/config";
 import MESSAGE from '../utils/lang/en'
 import { EVENT, EVENTS } from '../utils/eventBus';
 export default {
     name: STEP_NAMES.LiveLiness,
     components: {
+    },
+    computed: {
+        ...mapState(['steps']),
+        checkIfOncainIdIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+        },
+        checkIfIdDocumentIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+        },
+        checkIfUserConsentIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent).isEnabled
+        },
+        checkIfLivelinessIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+        }
     },
     data: function () {
         return {
@@ -89,9 +104,6 @@ export default {
 
         onExtractionFinish: async function (extractionResult) {
             if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
-                // Continue process.
-
-                // store data in store
                 await this.$store.commit('setLivelinessDone', true)
                 await this.$store.commit('setLivelinessCapturedData', {
                     tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
@@ -100,31 +112,19 @@ export default {
                 })
 
                 this.isWidgetStarted = false;
-
-
-                // try {
-                //     this.isLoading = true;
-                //     this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
-                //     await this.verifyLiveliness()
-                //     this.nextStep()
-                //     this.isLoading = false;
-                // } catch (e) {
-                //     if (e.message) {
-                //         if (e.message.includes('Session with given ID')) {
-                //             this.isLoading = false;
-                //             this.nextStep(8)
-                //             return
-                //         }
-                //     }
-                //     this.toast(e.message, "error");
-                //     this.isLoading = false;
-                // }
-
                 this.isLoading = true;
                 this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
                 this.verifyLiveliness()
                     .then(() => {
-                        this.nextStep();
+                        let nextStepNumber = null
+                        if (this.checkIfIdDocumentIsEnabled) {
+                            nextStepNumber = 4
+                        } else if (this.checkIfOncainIdIsEnabled) {
+                            nextStepNumber = 5
+                        } else if (this.checkIfUserConsentIsEnabled) {
+                            nextStepNumber = 6
+                        }
+                        this.nextStep(nextStepNumber);
                         this.isLoading = false;
                     })
                     .catch((e) => {
@@ -259,14 +259,6 @@ export default {
                     <!-- <div>Selphi Web Widget Demo</div> -->
 
                     <div class="d-flex flex-column my-3">
-                        <!-- <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
-                            :disabled="isWidgetStarted" v-on:click.self="enableWidget">Start capture
-                        </button>
-                        <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-3"
-                            :disabled="!isWidgetStarted" v-on:click.self="disableWidget">Stop capture
-                        </button> -->
-
-
                         <button type="button" id="btnStartCapture" class="btn btn-primary btn-block"
                             :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()">
                             <i class="bi bi-play-circle"></i> Start Capture
@@ -295,36 +287,6 @@ export default {
                             <option :value="FPhiSelphiConstants.CameraType.Back">Back</option>
                         </select>
                     </div>
-                    <!-- 
-                <div class="form-group form-check m-0 mt-3">
-                    <input id="interactible" type="checkbox" class="form-check-input" :disabled="isWidgetStarted"
-                        v-model="interactible" />
-                    <label for="interactible" class="form-check-label">Interactible</label>
-                </div>
-                <div class="form-group form-check m-0">
-                    <input id="stabilizationStage" type="checkbox" class="form-check-input" :disabled="isWidgetStarted"
-                        v-model="stabilizationStage" />
-                    <label for="stabilizationStage" class="form-check-label">Stabilization stage</label>
-                </div>
-                <div class="form-group form-check m-0">
-                    <input id="cameraSwitchButton" type="checkbox" class="form-check-input" :disabled="isWidgetStarted"
-                        v-model="cameraSwitchButton" />
-                    <label for="cameraSwitchButton" class="form-check-label">Camera Switch Button</label>
-                </div>
-                <div class="form-group form-check m-0">
-                    <input id="faceTracking" type="checkbox" class="form-check-input" :disabled="isWidgetStarted"
-                        v-model="faceTracking" />
-                    <label for="faceTracking" class="form-check-label">Face Tracking</label>
-                </div>
-                <div class="form-group form-check m-0">
-                    <input id="showLog" type="checkbox" class="form-check-input" :disabled="isWidgetStarted"
-                        v-model="showLog" />
-                    <label for="showLog" class="form-check-label">Show extended log</label>
-                </div>
-
-                <div class="form-group mt-2">
-                    <div>Widget Version: <span id="widgetVersion">{{ widgetVersion }}</span></div>
-                </div> -->
                 </div>
             </div>
         </div>
