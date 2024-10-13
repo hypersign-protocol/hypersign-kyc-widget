@@ -205,7 +205,7 @@ export default {
         this.isWidgetStarted = false;
         this.back()
       })
-      setTimeout(this.verifyOCRDocStatus, 1000);
+      setTimeout(this.verifyOCRDocStatus, 4000);
     },
 
     onExceptionCaptured: function (exceptionResult) {
@@ -469,6 +469,8 @@ export default {
         </div>
       </div>
     </div>
-    <MessageBox :msg="toastMessage" :type="toastType" v-if="isToast" />
+    <div class="footer">
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+    </div>
   </div>
 </template>

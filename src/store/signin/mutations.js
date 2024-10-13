@@ -7,7 +7,7 @@ export default {
         localStorage.removeItem('mb-user-id');
         localStorage.removeItem(SignStoreConfig.LOCAL_STATES.PROFILE);
         localStorage.removeItem(SignStoreConfig.LOCAL_STATES.AUTH_SERVER_TOKEN);
-        localStorage.removeItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG);
+        //localStorage.removeItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG);
 
 
 
