@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h5 class="card-title">ProofOfKYC</h5>
+                                <h5 class="card-title">{{ hypersign_proof.proof_type }}</h5>
                                 <p class="card-text mt-2">{{ hypersign_proof.description }}</p>
                                 <!-- <p class="card-text">
 
@@ -43,7 +43,7 @@
                                 <p class="card-text">
                                     <span style="visibility: hidden;" class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
-                                        }}</span>
+                                    }}</span>
                                     <!-- <span class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
                                     }}</span> -->
@@ -196,7 +196,7 @@ export default {
     },
     computed: {
         ...mapGetters(["getCavachAccessToken", "getVaultDataCredentials", "getRedirectUrl", 'getOnChainIssuerConfig']),
-        ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
+        ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'hasSbtMintDone', 'steps']),
         getChainConfig() {
             const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
             let SupportedChains;
@@ -227,6 +227,12 @@ export default {
         },
         blockchainLabel() {
             return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
+        },
+        checkIfIdDocumentIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+        },
+        checkIfLivelinessIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
         }
     },
     data() {
@@ -308,11 +314,6 @@ export default {
                     return credential
                 }
             });
-
-            console.log(2)
-
-            console.log(credeital)
-
             if (credeital) {
                 return credeital
             } else {
@@ -370,13 +371,35 @@ export default {
 
     },
     async mounted() {
-        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
-        const getKycCredential = this.queryVaultDataCredentials()
-        if (getKycCredential) {
-            console.log(getKycCredential)
-            console.log(getKycCredential.type)
+
+        this.isLoading = true;
+        if (this.hasSbtMintDone) {
+            // then move to userconsent step
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent))
+            this.nextStep(userConsentStep)
+            return;
         }
-        const ProofType = HYPERSIGN_PROOF_TYPES.ProofOfKYC;
+
+        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
+        // const getKycCredential = this.queryVaultDataCredentials()
+        // if (getKycCredential) {
+        //     console.log(getKycCredential)
+        //     console.log(getKycCredential.type)
+        // }
+
+        let ProofType = HYPERSIGN_PROOF_TYPES.ProofOfKYC;
+        // check if ONLY liveliness configured
+        // then generate only personhood SBT
+
+        // if both configured
+        // then generate KYC 
+        if (this.checkIfIdDocumentIsEnabled && this.checkIfLivelinessIsEnabled) {
+            ProofType = HYPERSIGN_PROOF_TYPES.ProofOfKYC;
+        } else if (this.checkIfLivelinessIsEnabled) {
+            ProofType = HYPERSIGN_PROOF_TYPES.ProofOfPersonhood;
+        }
+
+        console.log(ProofType)
         this.hypersign_proof =
         {
             "credential_id": "",
@@ -386,6 +409,8 @@ export default {
             "sbt_code": ProofType.sbtCode,
             "proof_type": ProofType.type
         }
+
+        this.isLoading = false
     }
 
 }

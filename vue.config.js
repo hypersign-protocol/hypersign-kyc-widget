@@ -6,7 +6,7 @@ module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   devServer: {
     https: false,
-    port: 4888,
+    port: process.env.NODE_ENV == "production" ? 4888 : 4999,
   },
   configureWebpack: {
     resolve: {

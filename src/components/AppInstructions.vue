@@ -125,6 +125,8 @@ export default {
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
 
+
+    // TODO: this entire code block is not optimized, we MUST optimize it later.
     if (this.hasLivelinessDone) {
       // next step: id verfcaiton
       if (this.hasKycDone) {
@@ -157,8 +159,16 @@ export default {
           // next step: check if on chain id is configured or not
           const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId && step.isEnabled == true))
           if (isOnChainIdConfigured) {
-            // if yes, then go to onchainId page
-            this.nextStepNumeber = isOnChainIdConfigured.id
+
+            if (!this.hasSbtMintDone) {
+              // if yes, then go to onchainId page
+              this.nextStepNumeber = isOnChainIdConfigured.id
+            } else {
+              // if yes, then go to onchainId page
+              const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+              this.nextStepNumeber = userConsentStep.id
+            }
+
           } else {
             // go to user consent page
             const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))

@@ -12,7 +12,7 @@ export default {
     components: {
     },
     computed: {
-        ...mapState(['steps']),
+        ...mapState(['steps', 'hasLivelinessDone']),
         checkIfOncainIdIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
         },
@@ -66,6 +66,14 @@ export default {
         }
     },
     created() {
+
+        if (this.hasLivelinessDone) {
+            // then move to idDocStep step
+            const idDocStep = this.steps.find(step => (step.stepName == STEP_NAMES.IdDocs))
+            this.nextStep(idDocStep)
+            return;
+        }
+
         EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved);
     },
     beforeDestroy() {
