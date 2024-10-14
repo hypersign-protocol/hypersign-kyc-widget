@@ -35,7 +35,7 @@
             </div>
 
             <div class="widget-card"
-                style="width: 90%;margin:auto;margin-top: 30px; max-height: 400px; overflow-y:  auto;">
+                style="width: 90%;margin:auto;margin-top: 30px; max-height: 337px; overflow-y:  auto;">
                 <div class="container">
                     <div class="row credential-row p-1 mb-1" v-for="eachCredential in getTrustedIssuersCredentials"
                         v-bind:key="eachCredential.id">
@@ -99,6 +99,8 @@ export default {
     computed: {
         ...mapState(['steps']),
         ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
+
+        /// // vault
         getVaultDataCredentials() {
             const { hypersign } = this.getVaultDataRaw
             const { credentials } = hypersign
@@ -120,9 +122,10 @@ export default {
             }
         },
         getTrustedIssuersCredentials() {
-
             return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
+        ///
+
         checkIfOncainIdIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
         },

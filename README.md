@@ -24,3 +24,13 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 https://icons.getbootstrap.com/
+
+
+
+## TODO
+
+- [] Cache all contexts (many API calls are being made when click on Get Proof Now button)
+- [] Remove hardcoding of ProofType at line no. `1766` in `zkProofs.vue` file.
+- [] Remove hardcoing of credential 
+- [] Remove hardcoding of ISsuer DID resolution
+

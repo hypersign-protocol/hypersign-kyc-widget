@@ -50,16 +50,24 @@
                                         Get Proof Now
                                     </button>
                                 </template>
-                                <!-- <template v-else-if="!hypersign_proof.zkSBT">
+                                <template v-else-if="!hypersign_proof.zkSBT">
                                     <button class="btn btn-outline-dark" @click="mint(hypersign_proof)">
                                         <i class="bi bi-hammer"></i>
                                         Mint Your SBT
                                     </button>
-                                </template> -->
+                                </template>
                             </div>
                         </div>
-                        <div class="col-md-1" v-if="hypersign_proof.zkProof">
-                            <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
+
+                        <div class="col-md-1" v-if="isOnchainIdEnabled">
+                            <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT">
+                                <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-1" v-else>
+                            <div v-if="hypersign_proof.zkProof">
+                                <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -114,16 +122,16 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
-// import { smartContractExecuteRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/execute'
+import { smartContractExecuteRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/execute'
 import { smartContractQueryRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/query'
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
 import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
-// import ComdexChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/comdex/chains'
-// import { constructKYCSBTMintMsg } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
+import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
+import { constructKYCSBTMintMsg } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
-import { createNonSigningClient } from '../utils/cosmos-client'
+import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
 import MESSAGE from '../utils/lang/en';
 import * as cryptoi3 from '@iden3/js-crypto'
@@ -138,8 +146,33 @@ export default {
         ConnectWalletButton
     },
     computed: {
-        ...mapGetters(["getCavachAccessToken", "getVaultDataCredentials", "getRedirectUrl", 'getOnChainIssuerConfig', "getWidgetConfigFromDb", "getCredentialFromVault"]),
+        ...mapGetters(["getCavachAccessToken", "getVaultDataRaw", "getVaultDataCredentials", "getRedirectUrl", 'getOnChainIssuerConfig', "getWidgetConfigFromDb"]),
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
+        // vault
+        getVaultDataCredentials() {
+            const { hypersign } = this.getVaultDataRaw
+            const { credentials } = hypersign
+            return credentials;
+        },
+        getTrustedIssuers() {
+            const issuerDID = this.getWidgetConfigFromDb.issuerDID
+            if (issuerDID) {
+                return issuerDID.split(',')
+            } else {
+                return []
+            }
+        },
+        getTrustedIssuersCredentials() {
+            return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
+        },
+        checkIfZkProofOfPersonhoodPresent() {
+            return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfPersonHood') ? true : false
+        },
+        checkIfZkProofOfKycPresent() {
+            return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfKyc') ? true : false
+        },
+        ///////
+
         getChainConfig() {
             const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
             let SupportedChains;
@@ -148,6 +181,8 @@ export default {
                 SupportedChains = NibiruLocalNetChainJson
             } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-testnet-1') {
                 SupportedChains = NibiruTestnetChainJson
+            } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
+                SupportedChains = OsmosisTestnetChainJson
             }
 
             if (!SupportedChains) {
@@ -185,10 +220,21 @@ export default {
             return result;
         },
         isIDDocEnabled() {
+            if (this.getWidgetConfigFromDb.idOcr.enabled) {
+                return true
+            } else return false
+        },
+        isOnchainIdEnabled() {
             if (this.getWidgetConfigFromDb.onChainId.enabled) {
                 return true
             } else return false
-        }
+        },
+        isLivelinessEnabled() {
+            if (this.getWidgetConfigFromDb.faceRecog.enabled) {
+                return true
+            } else return false
+        },
+
     },
     data() {
         return {
@@ -290,7 +336,7 @@ export default {
                 case 'zkProofOfDOB': {
                     return this.generatezkProofOfDOB(credeital, proof_type)
                 }
-                
+
                 case 'zkProofKYC': {
                     return this.generatezkProofKYC(credeital, proof_type)
                 }
@@ -302,7 +348,7 @@ export default {
                 }
 
 
-                
+
 
                 default:
                     throw new Error("Invalid ProofType")
@@ -594,9 +640,7 @@ export default {
                 proof, publicSignals, uncompressed_proof
             }
         },
-
-
-        async generatezkProofOfDOB(credential, proof_type){
+        async generatezkProofOfDOB(credential, proof_type) {
 
 
 
@@ -726,111 +770,111 @@ export default {
             console.log(enabled);
 
 
-    
-
-
-        let issuer_siblings;
-        let issuer_oldKey;
-        let issuer_oldValue;
-        let issuer_isOld0;
-        let issuer_key;
-        let issuer_fnc;
-        let issuerId;
-
-
-        let user_siblings;
-        let user_oldKey;
-        let user_oldValue;
-        let user_isOld0;
-        let user_key;
-        let user_fnc;
-        let userId;
-
-
-        let type_siblings;
-        let type_oldKey;
-        let type_oldValue;
-        let type_isOld0;
-        let type_key;
-        let type_fnc;
-        let type;
-
-
-        let dateOfBirth;
-
-        let dob_siblings;
-        let dob_oldKey;
-        let dob_oldValue;
-        let dob_isOld0;
-        let dob_key;
-        let dob_fnc;
 
 
 
+            let issuer_siblings;
+            let issuer_oldKey;
+            let issuer_oldValue;
+            let issuer_isOld0;
+            let issuer_key;
+            let issuer_fnc;
+            let issuerId;
 
-        const circomProofs = []
 
-        for (let index = 0; index < keyValuePair.length; index++) {
-            const element = keyValuePair[index];
+            let user_siblings;
+            let user_oldKey;
+            let user_oldValue;
+            let user_isOld0;
+            let user_key;
+            let user_fnc;
+            let userId;
+
+
+            let type_siblings;
+            let type_oldKey;
+            let type_oldValue;
+            let type_isOld0;
+            let type_key;
+            let type_fnc;
+            let type;
+
+
+            let dateOfBirth;
+
+            let dob_siblings;
+            let dob_oldKey;
+            let dob_oldValue;
+            let dob_isOld0;
+            let dob_key;
+            let dob_fnc;
+
+
+
+
+            const circomProofs = []
+
+            for (let index = 0; index < keyValuePair.length; index++) {
+                const element = keyValuePair[index];
                 // eslint-disable-next-line no-undef
-            const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
-            if (element.name == 'issuerDid') {
+                const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
+                if (element.name == 'issuerDid') {
 
-                issuer_siblings = proof.siblings.map(e => e.bigInt())
-                issuer_oldKey = proof.oldKey.bigInt()
-                issuer_oldValue = proof.oldValue.bigInt()
-                issuer_isOld0 = proof.isOld0 == true ? 1 : 0
-                issuer_key = proof.key.bigInt()
-                issuer_fnc = proof.fnc
-                issuerId = proof.value.bigInt()
+                    issuer_siblings = proof.siblings.map(e => e.bigInt())
+                    issuer_oldKey = proof.oldKey.bigInt()
+                    issuer_oldValue = proof.oldValue.bigInt()
+                    issuer_isOld0 = proof.isOld0 == true ? 1 : 0
+                    issuer_key = proof.key.bigInt()
+                    issuer_fnc = proof.fnc
+                    issuerId = proof.value.bigInt()
+
+                }
+
+                if (element.name == 'holderDid') {
+                    user_siblings = proof.siblings.map(e => e.bigInt())
+                    user_oldKey = proof.oldKey.bigInt()
+                    user_oldValue = proof.oldValue.bigInt()
+                    user_isOld0 = proof.isOld0 == true ? 1 : 0
+                    user_key = proof.key.bigInt()
+                    user_fnc = proof.fnc
+                    userId = proof.value.bigInt()
+
+                }
+
+
+
+                if (element.name == 'credentialType') {
+                    type_siblings = proof.siblings.map(e => e.bigInt())
+                    type_oldKey = proof.oldKey.bigInt()
+                    type_oldValue = proof.oldValue.bigInt()
+                    type_isOld0 = proof.isOld0 == true ? 1 : 0
+                    type_key = proof.key.bigInt()
+                    type_fnc = proof.fnc
+                    type = proof.value.bigInt()
+
+                }
+
+
+                if (element.name == 'dateOfBirth') {
+                    dob_siblings = proof.siblings.map(e => e.bigInt())
+                    dob_oldKey = proof.oldKey.bigInt()
+                    dob_oldValue = proof.oldValue.bigInt()
+                    dob_isOld0 = proof.isOld0 == true ? 1 : 0
+                    dob_key = proof.key.bigInt()
+                    dob_fnc = proof.fnc
+                    dateOfBirth = proof.value.bigInt()
+
+
+                }
+                circomProofs.push({
+                    type: element.key,
+                    // eslint-disable-next-line no-undef
+                    value: (await merklized.mt.get(BigInt(element.key))).value,
+                    proof: proof,
+                    name: element.name
+                })
 
             }
-
-            if (element.name == 'holderDid') {
-                user_siblings = proof.siblings.map(e => e.bigInt())
-                user_oldKey = proof.oldKey.bigInt()
-                user_oldValue = proof.oldValue.bigInt()
-                user_isOld0 = proof.isOld0 == true ? 1 : 0
-                user_key = proof.key.bigInt()
-                user_fnc = proof.fnc
-                userId = proof.value.bigInt()
-
-            }
-
-
-
-            if (element.name == 'credentialType') {
-                type_siblings = proof.siblings.map(e => e.bigInt())
-                type_oldKey = proof.oldKey.bigInt()
-                type_oldValue = proof.oldValue.bigInt()
-                type_isOld0 = proof.isOld0 == true ? 1 : 0
-                type_key = proof.key.bigInt()
-                type_fnc = proof.fnc
-                type = proof.value.bigInt()
-
-            }
-
-
-            if (element.name == 'dateOfBirth') {
-                dob_siblings = proof.siblings.map(e => e.bigInt())
-                dob_oldKey = proof.oldKey.bigInt()
-                dob_oldValue = proof.oldValue.bigInt()
-                dob_isOld0 = proof.isOld0 == true ? 1 : 0
-                dob_key = proof.key.bigInt()
-                dob_fnc = proof.fnc
-                dateOfBirth = proof.value.bigInt()
-
-
-            }
-            circomProofs.push({
-                type: element.key,
-                                // eslint-disable-next-line no-undef
-                value: (await merklized.mt.get(BigInt(element.key))).value,
-                proof: proof,
-                name: element.name
-            })
-
-        }
 
 
 
@@ -841,30 +885,30 @@ export default {
                 proof, publicSignals, uncompressed_proof
             } = await utils.groth16FullProve({
                 issuer_pk, issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key, issuer_fnc,
-            user_siblings,
-            user_oldKey, user_oldValue,
-            user_isOld0,
-            user_key, user_fnc,
-            type_siblings,
-            type_oldKey, type_oldValue,
-            type_isOld0,
-            type_key, type_fnc,
-            dateOfBirth,
-            dob_siblings,
-            dob_oldKey, dob_oldValue,
-            dob_isOld0,
-            dob_key,
-            dob_fnc,
+                credentialRoot,
+                issuerId,
+                userId,
+                type,
+                enabled,
+                issuer_siblings,
+                issuer_oldKey,
+                issuer_oldValue,
+                issuer_isOld0,
+                issuer_key, issuer_fnc,
+                user_siblings,
+                user_oldKey, user_oldValue,
+                user_isOld0,
+                user_key, user_fnc,
+                type_siblings,
+                type_oldKey, type_oldValue,
+                type_isOld0,
+                type_key, type_fnc,
+                dateOfBirth,
+                dob_siblings,
+                dob_oldKey, dob_oldValue,
+                dob_isOld0,
+                dob_key,
+                dob_fnc,
             }
                 , wtns, verifyKey)
 
@@ -879,8 +923,6 @@ export default {
             }
 
         },
-
-
         async generatezkProofKYC(credential, proof_type) {
 
 
@@ -1013,106 +1055,106 @@ export default {
 
 
             let issuer_siblings;
-        let issuer_oldKey;
-        let issuer_oldValue;
-        let issuer_isOld0;
-        let issuer_key;
-        let issuer_fnc;
-        let issuerId;
+            let issuer_oldKey;
+            let issuer_oldValue;
+            let issuer_isOld0;
+            let issuer_key;
+            let issuer_fnc;
+            let issuerId;
 
 
-        let user_siblings;
-        let user_oldKey;
-        let user_oldValue;
-        let user_isOld0;
-        let user_key;
-        let user_fnc;
-        let userId;
+            let user_siblings;
+            let user_oldKey;
+            let user_oldValue;
+            let user_isOld0;
+            let user_key;
+            let user_fnc;
+            let userId;
 
 
-        let type_siblings;
-        let type_oldKey;
-        let type_oldValue;
-        let type_isOld0;
-        let type_key;
-        let type_fnc;
-        let type;
+            let type_siblings;
+            let type_oldKey;
+            let type_oldValue;
+            let type_isOld0;
+            let type_key;
+            let type_fnc;
+            let type;
 
-        const circomProofs = []
+            const circomProofs = []
 
-        for (let index = 0; index < keyValuePair.length; index++) {
-            const element = keyValuePair[index];
+            for (let index = 0; index < keyValuePair.length; index++) {
+                const element = keyValuePair[index];
 
-            // eslint-disable-next-line no-undef
-            const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
-            if (element.name == 'issuerDid') {
-                issuer_siblings = proof.siblings.map(e => e.bigInt())
-                issuer_oldKey = proof.oldKey.bigInt()
-                issuer_oldValue = proof.oldValue.bigInt()
-                issuer_isOld0 = proof.isOld0 == true ? 1 : 0
-                issuer_key = proof.key.bigInt()
-                issuer_fnc = proof.fnc
-                issuerId = proof.value.bigInt()
-
-            }
-
-            if (element.name == 'holderDid') {
-                user_siblings = proof.siblings.map(e => e.bigInt())
-                user_oldKey = proof.oldKey.bigInt()
-                user_oldValue = proof.oldValue.bigInt()
-                user_isOld0 = proof.isOld0 == true ? 1 : 0
-                user_key = proof.key.bigInt()
-                user_fnc = proof.fnc
-                userId = proof.value.bigInt()
-
-            }
-
-
-
-            if (element.name == 'credentialType') {
-                type_siblings = proof.siblings.map(e => e.bigInt())
-                type_oldKey = proof.oldKey.bigInt()
-                type_oldValue = proof.oldValue.bigInt()
-                type_isOld0 = proof.isOld0 == true ? 1 : 0
-                type_key = proof.key.bigInt()
-                type_fnc = proof.fnc
-                type = proof.value.bigInt()
-
-            }
-            circomProofs.push({
-                type: element.key,
-                
                 // eslint-disable-next-line no-undef
-                value: (await merklized.mt.get(BigInt(element.key))).value,
-                proof: proof,
-                name: element.name
-            })
+                const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
+                if (element.name == 'issuerDid') {
+                    issuer_siblings = proof.siblings.map(e => e.bigInt())
+                    issuer_oldKey = proof.oldKey.bigInt()
+                    issuer_oldValue = proof.oldValue.bigInt()
+                    issuer_isOld0 = proof.isOld0 == true ? 1 : 0
+                    issuer_key = proof.key.bigInt()
+                    issuer_fnc = proof.fnc
+                    issuerId = proof.value.bigInt()
 
-        }
+                }
+
+                if (element.name == 'holderDid') {
+                    user_siblings = proof.siblings.map(e => e.bigInt())
+                    user_oldKey = proof.oldKey.bigInt()
+                    user_oldValue = proof.oldValue.bigInt()
+                    user_isOld0 = proof.isOld0 == true ? 1 : 0
+                    user_key = proof.key.bigInt()
+                    user_fnc = proof.fnc
+                    userId = proof.value.bigInt()
+
+                }
+
+
+
+                if (element.name == 'credentialType') {
+                    type_siblings = proof.siblings.map(e => e.bigInt())
+                    type_oldKey = proof.oldKey.bigInt()
+                    type_oldValue = proof.oldValue.bigInt()
+                    type_isOld0 = proof.isOld0 == true ? 1 : 0
+                    type_key = proof.key.bigInt()
+                    type_fnc = proof.fnc
+                    type = proof.value.bigInt()
+
+                }
+                circomProofs.push({
+                    type: element.key,
+
+                    // eslint-disable-next-line no-undef
+                    value: (await merklized.mt.get(BigInt(element.key))).value,
+                    proof: proof,
+                    name: element.name
+                })
+
+            }
 
 
             const {
                 proof, publicSignals, uncompressed_proof
             } = await utils.groth16FullProve({
                 issuer_pk, issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key, issuer_fnc,
-            user_siblings,
-            user_oldKey, user_oldValue,
-            user_isOld0,
-            user_key, user_fnc,
-            type_siblings,
-            type_oldKey, type_oldValue,
-            type_isOld0,
-            type_key, type_fnc
+                credentialRoot,
+                issuerId,
+                userId,
+                type,
+                enabled,
+                issuer_siblings,
+                issuer_oldKey,
+                issuer_oldValue,
+                issuer_isOld0,
+                issuer_key, issuer_fnc,
+                user_siblings,
+                user_oldKey, user_oldValue,
+                user_isOld0,
+                user_key, user_fnc,
+                type_siblings,
+                type_oldKey, type_oldValue,
+                type_isOld0,
+                type_key, type_fnc
             }
                 , wtns, verifyKey)
 
@@ -1127,7 +1169,6 @@ export default {
             }
 
         },
-
         async generatezkProofOfMembership(credential, proof_type) {
 
 
@@ -1436,14 +1477,8 @@ export default {
         },
         async generatezkProofOfPersonHood(credential, proof_type) {
 
-
-
-
             const verifyKey = `circuits/${proof_type}/${proof_type}_final.zkey`
             const wtns = `circuits/${proof_type}/${proof_type}_circuit.wasm`
-
-
-
 
             // resolve issuerDid
             const issuerDid = {
@@ -1479,7 +1514,6 @@ export default {
             const publicKeyIssuerMultibase = issuerDid.verificationMethod[0].publicKeyMultibase
             const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
-
             const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
             console.log(publicKeyIssuer);
@@ -1490,17 +1524,10 @@ export default {
 
             console.log(issuerSignature);
 
-
-
-
-
-
             let keyValuePair = [];
             const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential))
 
             merklized.entries.forEach((e, index) => {
-
-
                 if (e.key.parts.length == 1 && e.key.parts[0].includes('credentialSubject')) {
                     keyValuePair.push({
 
@@ -1546,10 +1573,6 @@ export default {
                 })
             })
             const credentialRoot = (await merklized.mt.root()).bigInt()
-
-
-
-
             const issuer_pk = [
                 publicKeyIssuer.p[0],
                 publicKeyIssuer.p[1]
@@ -1560,7 +1583,6 @@ export default {
             ]
             const enabled = 1n
 
-
             let issuer_siblings;
             let issuer_oldKey;
             let issuer_oldValue;
@@ -1569,7 +1591,6 @@ export default {
             let issuer_fnc;
             let issuerId;
 
-
             let user_siblings;
             let user_oldKey;
             let user_oldValue;
@@ -1577,7 +1598,6 @@ export default {
             let user_key;
             let user_fnc;
             let userId;
-
 
             let type_siblings;
             let type_oldKey;
@@ -1616,8 +1636,6 @@ export default {
 
                 }
 
-
-
                 if (element.name == 'credentialType') {
                     type_siblings = proof.siblings.map(e => e.bigInt())
                     type_oldKey = proof.oldKey.bigInt()
@@ -1628,6 +1646,7 @@ export default {
                     type = proof.value.bigInt()
 
                 }
+
                 circomProofs.push({
                     type: element.key,
                     // eslint-disable-next-line no-undef
@@ -1637,7 +1656,6 @@ export default {
                 })
 
             }
-
 
             const {
                 proof, publicSignals, uncompressed_proof
@@ -1664,7 +1682,6 @@ export default {
             }
                 , wtns, verifyKey)
 
-
             console.log(
                 {
                     proof, publicSignals, uncompressed_proof,
@@ -1674,10 +1691,7 @@ export default {
                 proof, publicSignals, uncompressed_proof
             }
 
-        }
-
-
-        ,
+        },
         async getProof(proof) {
             this.isLoading = true
             // 
@@ -1747,26 +1761,27 @@ export default {
                 }
             }
 
-
-
-
             /// TODO: actual logic to generate proof
-
+            console.log('Before calling this.generatezkProof for type ' + 'zkProofOfPersonHood');
             const zkProof = await this.generatezkProof(credential, 'zkProofOfPersonHood' /*proof.proof_type */)
             console.log(zkProof);
+            console.log('After calling this.generatezkProof()')
+
             zkProof.proofType = 'zkProofOfPersonHood'
-            this.verifyZkProof(
+            console.log('Before calling this.verifyZkProof()')
+            const resp = await this.verifyZkProof(
                 zkProof
             )
+            console.log(resp);
 
             /// TODO: call verify proof API 
-
-            this.hypersign_proofs.map(x => {
-                if (x.proof_type == proof.proof_type) {
-                    x['zkProof'] = false
-                }
-            })
-
+            if (resp) {
+                this.hypersign_proofs.map(x => {
+                    if (x.proof_type == proof.proof_type) {
+                        x['zkProof'] = true
+                    }
+                })
+            }
             this.isLoading = false
         },
 
@@ -1776,50 +1791,59 @@ export default {
 
         async mint(proof) {
             try {
+                if (!this.isOnchainIdEnabled) {
+                    this.toast("OnChain ID minting is not enabled")
+                    return
+                }
+
                 if (this.showConnectWallet) {
                     this.showWalletModal()
                 }
                 console.log('Getting sbt for proof type ' + proof.proof_type)
 
-                this.hypersign_proofs.map(x => {
-                    if (x.proof_type == proof.proof_type) {
-                        x['zkSBT'] = true
-                    }
-                })
+                // return;
 
-                return;
+                this.isLoading = true
+                const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
+                // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                // this.isLoading = true
-                // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
-                // // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
+                const smartContractMsg = constructKYCSBTMintMsg({ hypersign_proof: proof });
+                // Perform the CreateTodo Smart Contract Execution
+                // Note: This is a blockchain transaction
+                const chainConfig = this.getChainConfig
+                const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
+                const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
+                const fee = calculateFee(500_000, (gasPriceAvg + chainCoinDenom).toString())
 
-                // const smartContractMsg = constructKYCSBTMintMsg({ hypersign_proof: this.hypersign_proofs[0] });
-                // // Perform the CreateTodo Smart Contract Execution
-                // // Note: This is a blockchain transaction
-                // const chainConfig = this.getChainConfig
-                // const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
-                // const result = await smartContractExecuteRPC(
-                //     this.cosmosConnection.signingClient,
-                //     chainCoinDenom,
-                //     this.connectedWalletAddress,
-                //     this.getOnChainIssuerConfig.contractAddress,
-                //     smartContractMsg);
+                const result = await smartContractExecuteRPC(
+                    this.cosmosConnection.signingClient,
+                    chainCoinDenom,
+                    this.connectedWalletAddress,
+                    this.getOnChainIssuerConfig.contractAddress,
+                    smartContractMsg, fee);
 
-                // if (result) {
-                //     this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
+                if (result) {
+                    this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
 
-                //     // TODO: call server to udpate status
-                //     await this.verifySbtMint({
-                //         blockchainLabel: this.blockchainLabel,
-                //         sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
-                //         ownerWalletAddress: this.connectedWalletAddress,
-                //         tokenId: sbtTokenId, // TODO what is this token ID.
-                //         transactionHash: result.transactionHash
-                //     });
-                //     this.isLoading = false
-                //     // Implement feature in caach server to capture user's miniing step
-                //     this.nextStep();
-                // }
+                    // TODO: call server to udpate status
+                    await this.verifySbtMint({
+                        blockchainLabel: this.blockchainLabel,
+                        sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
+                        ownerWalletAddress: this.connectedWalletAddress,
+                        tokenId: sbtTokenId, // TODO what is this token ID.
+                        transactionHash: result.transactionHash,
+                        proofType: proof.proofType
+
+                    });
+                    this.isLoading = false
+                    // Implement feature in caach server to capture user's miniing step
+                    this.hypersign_proofs.map(x => {
+                        if (x.proof_type == proof.proof_type) {
+                            x['zkSBT'] = true
+                        }
+                    })
+                    // this.nextStep();
+                }
 
             } catch (e) {
                 this.toast(e.message, 'error')
@@ -1838,7 +1862,7 @@ export default {
         }
     },
     async mounted() {
-        // this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
+        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
         // const getKycCredential = this.queryVaultDataCredentials()
         // if (getKycCredential) {
         //     console.log(getKycCredential)
@@ -1846,10 +1870,12 @@ export default {
         // }
 
         const requestedProofs = this.getWidgetConfigFromDb.zkProof.proofs
-
         if (requestedProofs.length <= 0) {
             return;
         }
+
+        // const allSBTCredentials = await this.getTrustedIssuersCredentials.filter()
+
 
         requestedProofs.forEach(x => {
             const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
@@ -1861,35 +1887,16 @@ export default {
                     "proof_type_image": hypersignProof.image,
                     "sbt_code": hypersignProof.sbtCode,
                     "bgColor": hypersignProof.bgColor,
-                    "proof_type": x.proofType,
-                    "credentialType": hypersignProof.credentialType[0]
+                    "proof_type": hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
+                    "proofType": x.proofType,
+                    "credentialType": hypersignProof.credentialType,
+                    "zkProof": !(this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType) ? true : false),
+                    "zkSBT": (this.getTrustedIssuersCredentials.find(y => y.type[1] == (x.proofType + 'SbtCredential')) ? true : false),
                 })
             } else {
-                console.log('Invalid proof of type , x.proofType ' + x.proofType)
+                console.error('Invalid proof of type , x.proofType ' + x.proofType)
             }
         })
-        //
-        // this.hypersign_proofs.push({
-        //     "credential_id": "",
-        //     "data": "",
-        //     "description": HYPERSIGN_PROOF_TYPES.ProofOfKYC.description,
-        //     "proof_type_image": HYPERSIGN_PROOF_TYPES.ProofOfKYC.image,
-        //     "sbt_code": HYPERSIGN_PROOF_TYPES.ProofOfKYC.sbtCode,
-        //     "proof_type": HYPERSIGN_PROOF_TYPES.ProofOfKYC.type,
-        //     bgColor: HYPERSIGN_PROOF_TYPES.ProofOfKYC.bgColor
-        // })
-
-        // this.hypersign_proofs.push({
-        //     "credential_id": "",
-        //     "data": "",
-        //     "description": HYPERSIGN_PROOF_TYPES.ProofOfPersonhood.description,
-        //     "proof_type_image": HYPERSIGN_PROOF_TYPES.ProofOfPersonhood.image,
-        //     "sbt_code": HYPERSIGN_PROOF_TYPES.ProofOfPersonhood.sbtCode,
-        //     "proof_type": HYPERSIGN_PROOF_TYPES.ProofOfPersonhood.type,
-        //     bgColor: HYPERSIGN_PROOF_TYPES.ProofOfPersonhood.bgColor
-        // })
-
-
     }
 
 }

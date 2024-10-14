@@ -275,7 +275,7 @@ export default {
 
 
 
-    verifyZkProof: ({ commit, getters }, payload) => {// eslint-disable-line
+    verifyZkProof: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
         return new Promise(async (resolve, reject) => { // eslint-disable-line
             const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/zk-proof`;
             const headers = {
@@ -298,7 +298,18 @@ export default {
             }
             const json = await RequestHandler(url, 'POST', body, headers)
 
-            resolve(json)
+            console.log(json)
+
+            if (json.credential && json.verifyResult) {
+                // commit('setSbtMintDone', true);
+                console.log('Updating each credentila in vault credential id ' + json.credential.id)
+                dispatch('updateVaultCredentials', json.credential);
+                return resolve(json)
+            } else {
+                return reject(new Error(json));
+            }
+
+            // resolve(json)
 
 
         })

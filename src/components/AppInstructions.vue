@@ -155,7 +155,8 @@ export default {
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+            const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.ZkProofs && step.isEnabled == true))//TODO remove
+            // const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
             this.nextStepNumeber = userConsentStep.id
           }
         } else {
