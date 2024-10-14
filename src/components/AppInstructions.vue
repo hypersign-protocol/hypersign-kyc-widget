@@ -60,7 +60,7 @@
           </div>
         </div>
 
-<!--
+        <!--
         <div class="row mb-4" v-if="checkIfOncainIdIsEnabled.isEnabled == true">
           <div class="col">
             <AppInstructionStep :stepNumber="3" :logo="checkIfOncainIdIsEnabled.logo"
@@ -68,17 +68,18 @@
           </div>
         </div>
         -->
-        
-         <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true">
+
+        <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle" :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
+            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle"
+              :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
           </div>
         </div>
 
 
         <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep :stepNumber="checkIfOncainIdIsEnabled.isEnabled ? 4 : 3"
+            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? 4 : 3"
               :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo"
               :isDone="false" />
           </div>
@@ -121,7 +122,7 @@ export default {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"]),
     checkIfOncainIdIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId)
+      return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
     },
     checkIfzkProofIsEnabled() {
       return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)

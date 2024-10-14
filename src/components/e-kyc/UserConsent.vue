@@ -124,7 +124,10 @@ export default {
             return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
         checkIfOncainIdIsEnabled() {
-            return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+            return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
+        },
+        checkIfzkProofIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
         },
         checkIfIdDocumentIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
@@ -156,7 +159,7 @@ export default {
                 return true
             } else if ((eachCredential.type[1] == 'PassportCredential') && this.checkIfIdDocumentIsEnabled) {
                 return true
-            } else if ((eachCredential.type[1] == 'SBTCredential') && this.checkIfOncainIdIsEnabled) {
+            } else if ((eachCredential.type[1] == 'SBTCredential') && this.checkIfzkProofIsEnabled) {
                 return true
             }
             return false
