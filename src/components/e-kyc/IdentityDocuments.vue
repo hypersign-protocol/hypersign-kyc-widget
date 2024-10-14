@@ -19,7 +19,7 @@ export default {
         : false;
     },
     ...mapGetters(["getIdDocumentLicenseKey"]),
-    ...mapState(["steps"]),
+    ...mapState(["steps", 'hasKycDone']),
     checkIfOncainIdIsEnabled() {
       return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
         .isEnabled;
@@ -75,6 +75,14 @@ export default {
 
 
   created() {
+    if (this.hasKycDone) {
+      // then move to onchainIdStep step
+      const onchainIdStep = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId))
+      this.nextStep(onchainIdStep)
+      return;
+    }
+
+
     this.licenseKey = this.getIdDocumentLicenseKey;
     // if (!this.licenseKey) {
     //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
