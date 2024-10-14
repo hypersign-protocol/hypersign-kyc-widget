@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+// import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-icons/font/bootstrap-icons';
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -15,8 +16,9 @@ import PoweredBy from "./components/commons/PoweredBy.vue";
 import ConsentBox from "./components/commons/ConsentBox.vue";
 import InfoMessage from "./components/commons/InfoMessage.vue";
 import router from "./router";
+import { BootstrapVue } from 'bootstrap-vue'
 Vue.config.productionTip = false
-
+Vue.use(BootstrapVue);
 Vue.component('load-ing', Loading)
 Vue.component('MessageBox', MessageBox)
 Vue.component('NavBar', NavBar);

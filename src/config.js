@@ -21,6 +21,7 @@ export const STEP_NAMES = Object.freeze({
     AppInstructions: "AppInstructions",
     LiveLiness: "LiveLiness3",
     IdDocs: "IdDocs4",
+    ZkProofs: "ZkProofs",
     OnChainId: "OnChainId4",
     UserConsent: "UserConsent",
     FinalResult: "FinalResult"
