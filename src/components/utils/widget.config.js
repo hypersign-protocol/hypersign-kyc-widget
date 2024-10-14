@@ -1,5 +1,5 @@
 export default {
-    env: 'dev', // dev, stage, prod
+    env: process.env.NODE_ENV == "production" ? 'prod' : 'dev', // dev, stage, prod
     steps: {
         // faceRecog: true,
         // idOcr: true,

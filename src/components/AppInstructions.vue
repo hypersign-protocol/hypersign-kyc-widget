@@ -45,37 +45,43 @@
 
       <div class="card widget-card" style="width: 70%; margin:auto;">
 
-        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled == true">
+        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="1" stepTitle="Conduct liveliness check to prove you are a human"
-              :isDone="hasLivelinessDone" />
+            <AppInstructionStep stepNumber="1" :stepTitle="checkIfLivelinessIsEnabled.stepTitle"
+              :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled == true">
+        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="2" stepTitle="Submit your ID document to recieve your KYC credential"
-              :isDone="hasKycDone" />
+
+            <AppInstructionStep stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo"
+              :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="checkIfzkProofIsEnabled == true">
+        <!--
+        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="3" stepTitle="Generate proof(s) of your data" :isDone="false" />
+            <AppInstructionStep :stepNumber="3" :logo="checkIfOncainIdIsEnabled.logo"
+              :stepTitle="checkIfOncainIdIsEnabled.stepTitle" :isDone="hasSbtMintDone" />
+          </div>
+        </div>
+        -->
+
+        <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true">
+          <div class="col">
+            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle"
+              :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
           </div>
         </div>
 
-        <!-- <div class="row mb-4" v-if="checkIfOncainIdIsEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="4" stepTitle="Generate proof and mint your on-chain identity"
-              :isDone="hasSbtMintDone" />
-          </div>
-        </div> -->
 
-        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled == true">
+        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled ? '4' : '3'"
-              stepTitle="Provide consent of your data to the verifier app" :isDone="false" />
+            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? 4 : 3"
+              :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo"
+              :isDone="false" />
           </div>
         </div>
 
@@ -116,24 +122,26 @@ export default {
     ...mapGetters(["getCavachAccessToken", "getRedirectUrl"]),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', "steps"]),
     checkIfOncainIdIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+      return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
     },
     checkIfzkProofIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs).isEnabled
+      return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs)
     },
     checkIfIdDocumentIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
+      return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs)
     },
     checkIfUserConsentIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent).isEnabled
+      return this.steps.find(x => x.stepName === STEP_NAMES.UserConsent)
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+      return this.steps.find(x => x.stepName === STEP_NAMES.LiveLiness)
     }
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
 
+
+    // TODO: this entire code block is not optimized, we MUST optimize it later.
     if (this.hasLivelinessDone) {
       // next step: id verfcaiton
       if (this.hasKycDone) {
@@ -166,8 +174,16 @@ export default {
           // next step: check if on chain id is configured or not
           const isOnChainIdConfigured = this.steps.find(step => (step.stepName == STEP_NAMES.ZkProofs && step.isEnabled == true))
           if (isOnChainIdConfigured) {
-            // if yes, then go to onchainId page
-            this.nextStepNumeber = isOnChainIdConfigured.id
+
+            if (!this.hasSbtMintDone) {
+              // if yes, then go to onchainId page
+              this.nextStepNumeber = isOnChainIdConfigured.id
+            } else {
+              // if yes, then go to onchainId page
+              const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+              this.nextStepNumeber = userConsentStep.id
+            }
+
           } else {
             // go to user consent page
             const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
