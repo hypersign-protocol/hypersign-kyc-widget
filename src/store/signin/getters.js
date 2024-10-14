@@ -59,6 +59,10 @@ export default {
 
     getOnChainIssuerConfig: () => {
         const t = localStorage.getItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG)
+        console.log(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG);
+        
+        console.log(t);
+        
         if (t) {
             return JSON.parse(t)
         } else {
