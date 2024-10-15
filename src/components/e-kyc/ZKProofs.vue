@@ -71,9 +71,9 @@
                 :beta="true" />
             <div class="container row  center mt-1" v-if="connectedWalletAddress">
                 <div class="col-md-8  ">
-                    <a @click="disconnectWallet()" href="#"
+                    <button class="btn btn-link" @click="disconnectWallet()"
                         style="text-decoration: underline; color:grey; cursor: pointer;" title="Disconnect Wallet">{{
-                            connectedWalletAddress }} <i class="bi bi-box-arrow-right"></i></a>
+                            connectedWalletAddress }} <i class="bi bi-box-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -1915,6 +1915,8 @@ export default {
                     "zkProof": (this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType) ? true : false),
                     "zkSBT": (this.getTrustedIssuersCredentials.find(y => y.type[1] == (x.proofType + 'SbtCredential')) ? true : false),
                 })
+
+                // this.showModal = true
             } else {
                 console.error('Invalid proof of type, x.proofType = ' + x.proofType)
             }
