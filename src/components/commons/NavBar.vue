@@ -33,7 +33,7 @@ export default {
     ...mapState(["steps",]),
     ...mapGetters(["getActiveStep"]),
     length() {
-      if (this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled == false) {
+      if (this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs).isEnabled == false) {
         if (this.getActiveStep.stepName === STEP_NAMES.UserConsent) {
           return 2
         } else {

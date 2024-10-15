@@ -6,7 +6,7 @@
     border-radius: 43%;
     font-size: inherit;
     font-weight: bold;
-    color: white;
+    color: orange;
     width: auto;
     text-align: center;
     align-content: center;
@@ -21,14 +21,62 @@
     width: 80%;
     /* min-width: 250px */
 }
+
+/* .modal-body {
+    padding: 10px
+} */
+
+
+
+.popup {
+    position: absolute;
+    bottom: 0;
+    /* Aligns the popup to the bottom of the parent */
+    left: 50%;
+    /* Aligns it horizontally */
+    transform: translate(-50%);
+    /* Adjust to center the div */
+    width: 100%;
+    height: 50%;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.987);
+    border: 1px solid #0000005e;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    /* Adds a shadow for popup effect */
+    z-index: 10;
+    border-radius: 0px 0px 20px 20px;
+    transition: bottom 0.1s ease;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent dark background */
+    z-index: 5;
+
+    /* Ensure the overlay is behind the popup but above other content */
+}
 </style>
 
 <template>
-    <div>
+    <div class="">
         <div class="container card-body min-h-36">
             <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+
             <PageHeading :header="'Proof & OnChain ID'" :subHeader="'Get Proof and Mint Your Onchain ID'"
                 :beta="true" />
+            <div class="container row  center mt-1" v-if="connectedWalletAddress">
+                <div class="col-md-8  ">
+                    <a @click="disconnectWallet()" href="#"
+                        style="text-decoration: underline; color:grey; cursor: pointer;" title="Disconnect Wallet">{{
+                            connectedWalletAddress }} <i class="bi bi-box-arrow-right"></i></a>
+                </div>
+            </div>
+
 
             <div class="row col-md-12" style="max-height: 500px;  overflow-y: auto; overflow-x: hidden;">
                 <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs"
@@ -72,9 +120,6 @@
                     </div>
                 </div>
             </div>
-
-
-
             <div class="container mt-3">
                 <div class="d-grid gap-1 " style="width: 20%;margin: auto;">
                     <button class="btn btn-outline-dark" @click="nextStep()">
@@ -100,22 +145,27 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Modal -->
-            <b-modal id="bottom-modal" v-model="showModal" hide-footer centered title="Modal from Bottom"
-                :no-fade="false" dialog-class="bottom-modal">
-                <div class="modal-body">
+        <div class="footer">
+            <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+        </div>
+
+        <div class="overlay" v-if="showModal"></div>
+        <div class="popup" v-if="showModal">
+            <div class="row">
+                <div class="col" style="text-align: end;">
+                    <b-button variant="btn btn-secondary-outline" @click="showModal = false"><i class="bi bi-x-circle"
+                            style="color:indianred"></i></b-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
                     <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem"
                         :blockchain="this.getOnChainIssuerConfig.blockchain"
                         :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
                 </div>
-                <b-button variant="secondary" @click="showModal = false">Close</b-button>
-            </b-modal>
-        </div>
-
-
-        <div class="footer">
-            <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+            </div>
         </div>
     </div>
 </template>
@@ -261,6 +311,7 @@ export default {
         async myEventListener(data) {
             this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
             this.connectedWalletAddress = data.user.walletAddress
+            this.showModal = false
         },
         async getContractMetadata(activeSmartContractAddress) {
             let client = null;
@@ -288,12 +339,6 @@ export default {
                 this.toastMessage = "";
             }, 5000);
         },
-
-
-        togglePopup() {
-            this.showPopup = !this.showPopup;
-        },
-
 
         // queryVaultDataCredentials(credentialType, trustedIssuer) {
         queryVaultDataCredentials() {
@@ -1761,6 +1806,7 @@ export default {
 
         showWalletModal() {
             this.showModal = true
+            // this.$root.$emit("bv::toggle::collapse", "sidebar-right");
         },
 
         async mint(proof) {
@@ -1772,6 +1818,7 @@ export default {
 
                 if (this.showConnectWallet) {
                     this.showWalletModal()
+                    return;
                 }
                 console.log('Getting sbt for proof type ' + proof.proof_type)
 
@@ -1872,6 +1919,9 @@ export default {
                 console.error('Invalid proof of type, x.proofType = ' + x.proofType)
             }
         })
+    },
+    beforeDestroy() {
+        this.disconnectWallet()
     }
 
 }

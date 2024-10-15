@@ -1,7 +1,7 @@
 <template>
   <div class="mt-2">
     <template>
-      <div class="container maincontainer" style="text-align: center;min-height: 83vh; max-height: 90vh">
+      <div class="container maincontainer parent" style="text-align: center;min-height: 83vh; max-height: 90vh">
         <NavBar />
         <component :is="getActiveStep.stepName">
         </component>

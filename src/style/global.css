@@ -54,3 +54,9 @@ h1{
     /* Example footer height */
     /* background-color: #f1f1f1; */
 }
+
+
+.parent {
+    position: relative;
+    /* Makes the parent the reference for absolute positioning */
+}

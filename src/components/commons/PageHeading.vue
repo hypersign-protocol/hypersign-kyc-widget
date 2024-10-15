@@ -39,7 +39,7 @@ export default {
 .badge {
   padding: 5px;
   float: right;
-  background-color: rgb(236, 232, 200);
+  background-color: #ffd900ce;
   /* border-radius: 40%; */
   font-size: x-small;
   /* font-weight: bold; */
