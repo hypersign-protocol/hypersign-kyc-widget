@@ -32,5 +32,8 @@ https://icons.getbootstrap.com/
 - [] Cache all contexts (many API calls are being made when click on Get Proof Now button)
 - [] Remove hardcoding of ProofType at line no. `1766` in `zkProofs.vue` file.
 - [] Remove hardcoing of credential 
-- [] Remove hardcoding of ISsuer DID resolution
+- [] Remove hardcoding of Issuer DID resolution
+- [] Fix the Wallet modal popup
+- [] Create Key for BJJ (also for ed25519)
+- [] Issue credential in BJJ
 
