@@ -26,3 +26,11 @@ export const STEP_NAMES = Object.freeze({
     UserConsent: "UserConsent",
     FinalResult: "FinalResult"
 })
+
+export const ZK_PROOF_TYPES = Object.freeze({
+    zkProofOfAge: 'zkProofOfAge',
+    zkProofOfDOB: 'zkProofOfDOB',
+    zkProofOfMembership: 'zkProofOfMembership',
+    zkProofOfPersonHood: 'zkProofOfPersonHood',
+    zkProofKYC: 'zkProofOfKYC',
+}) 

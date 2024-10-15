@@ -132,7 +132,7 @@ import { constructKYCSBTMintMsg } from '@hypersign-protocol/hypersign-kyc-chains
 import { constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
-import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from "@/config";
+import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE, ZK_PROOF_TYPES } from "@/config";
 import MESSAGE from '../utils/lang/en';
 import * as cryptoi3 from '@iden3/js-crypto'
 import * as MerkleTreeJSONLD from '@iden3/js-jsonld-merklization'
@@ -321,23 +321,23 @@ export default {
         async generatezkProof(credeital, proof_type) {
 
             switch (proof_type) {
-                case 'zkProofOfAge': {
+                case ZK_PROOF_TYPES.zkProofOfAge: {
                     return this.generatezkProofOfAge(credeital, proof_type)
                 }
 
-                case 'zkProofOfDOB': {
+                case ZK_PROOF_TYPES.zkProofOfDOB: {
                     return this.generatezkProofOfDOB(credeital, proof_type)
                 }
 
-                case 'zkProofOfKYC': {
+                case ZK_PROOF_TYPES.zkProofKYC: {
                     return this.generatezkProofKYC(credeital, proof_type)
                 }
 
-                case 'zkProofOfMembership': {
+                case ZK_PROOF_TYPES.zkProofOfMembership: {
                     return this.generatezkProofOfMembership(credeital, proof_type)
                 }
 
-                case 'zkProofOfPersonHood': {
+                case ZK_PROOF_TYPES.zkProofOfPersonHood: {
                     return this.generatezkProofOfPersonHood(credeital, proof_type)
                 }
 
