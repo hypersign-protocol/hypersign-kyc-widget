@@ -82,7 +82,7 @@ export default {
                     await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })
                     this.userVaultDataRaw.hypersign.did = this.getVaultWallet.didDocument.id;
                     this.userVaultDataRaw.hypersign.didDoc = { ...this.getVaultWallet.didDocument }
-                    this.userVaultDataRaw.hypersign.keys = { ...this.getVaultWallet.keys }
+                    this.userVaultDataRaw.hypersign.keys = this.getVaultWallet.keys
                     if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
 
                     /// setup vault
@@ -126,10 +126,11 @@ export default {
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
             const hypersignDID = new HypersignDID({ namespace: 'testnet' });
-            const kp = await hypersignDID.generateKeys({ seed });
+            const kp = await hypersignDID.bjjDID.generateKeys({ seed });
+            console.log(kp)
 
-
-            const didDocument = await hypersignDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
+            const didDocument = await hypersignDID.bjjDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
+            console.log(didDocument)
 
 
             this.userVaultDataRaw.hypersign.did = didDocument.id;
