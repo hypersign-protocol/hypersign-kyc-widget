@@ -49,9 +49,9 @@ export default {
             this.enableAstep(STEP_NAMES.IdDocs)
         }
 
-        // if (this.getWidgetConfigFromDb.onChainId.enabled) {
-        //     this.enableAstep(STEP_NAMES.OnChainId)
-        // }
+        if (this.getWidgetConfigFromDb.onChainId.enabled) {
+            this.enableAstep(STEP_NAMES.OnChainId)
+        }
 
         if (this.getWidgetConfigFromDb.zkProof.enabled) {
             this.enableAstep(STEP_NAMES.ZkProofs)

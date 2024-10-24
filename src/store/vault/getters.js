@@ -60,10 +60,7 @@ export default {
         }
     },
 
-    async getCredentialFromVault({state,params}) {
-     
-        
-        
+    getCredentialFromVault: (state) => params => {
         const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
         const vaultDataRaw = JSON.parse(raw)
         if (!vaultDataRaw) {
@@ -74,7 +71,7 @@ export default {
         const { credentials } = hypersign
         const { schemaIds } = state;
 
-
+        let credentialToReturn;
         Object.keys(schemaIds).forEach(schema => {
             const { schemaId } = schemaIds[schema]
             const credential = credentials.find(credential => {
@@ -91,19 +88,14 @@ export default {
                 }
             })
 
-            if (credential) {
 
-                if (schema === params.credentialType) {
-                    return credential
+            if (credential && params.credentialType.includes(schema)) {
+                credentialToReturn = credential
 
-
-
-
-                }
-
-            } else {
-                console.log('Credential not found for schema ' + schemaId)
             }
+
         })
+
+        return credentialToReturn
     }
 }

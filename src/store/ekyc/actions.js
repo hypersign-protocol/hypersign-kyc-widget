@@ -317,4 +317,26 @@ export default {
 
 
     }
+    ,
+    resolveIssuerId: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
+        return new Promise(async (resolve, reject) => { // eslint-disable-line
+            try {
+
+                const url = `https://api.prajna.hypersign.id/hypersign-protocol/hidnode/ssi/did/${payload.issuerDid}`;
+
+                const resp = await fetch(url)
+
+                const json = await resp.json()
+                if(resp.ok){
+                    resolve(json)
+                }
+
+                // resolve(json)
+            } catch (error) {
+                reject(error)
+            }
+
+
+        })
+    }
 }

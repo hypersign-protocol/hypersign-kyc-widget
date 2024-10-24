@@ -51,10 +51,8 @@
               :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
           </div>
         </div>
-
         <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled.isEnabled == true">
           <div class="col">
-
             <AppInstructionStep stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo"
               :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
           </div>
@@ -79,7 +77,7 @@
 
         <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? 4 : 3"
+            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '4' : '3'"
               :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo"
               :isDone="false" />
           </div>
