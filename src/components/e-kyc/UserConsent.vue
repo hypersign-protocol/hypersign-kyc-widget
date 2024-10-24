@@ -35,7 +35,7 @@
             </div>
 
             <div class="widget-card"
-                style="width: 90%;margin:auto;margin-top: 30px; max-height: 400px; overflow-y:  auto;">
+                style="width: 90%;margin:auto;margin-top: 30px; max-height: 337px; overflow-y:  auto;">
                 <div class="container">
                     <div class="row credential-row p-1 mb-1" v-for="eachCredential in getTrustedIssuersCredentials"
                         v-bind:key="eachCredential.id">
@@ -48,7 +48,10 @@
                             <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-                            <i class="bi bi-person-badge" v-if="eachCredential.type[1] == 'SBTCredential'"></i>
+
+                            <i class="bi bi-person-vcard"
+                                v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential')"></i>
+                            <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
                         </div>
                         <div class="col-10 credential-row-type">
                             {{ eachCredential.type[1] }}
@@ -80,6 +83,7 @@
 import { mapGetters, mapMutations, mapActions, mapState } from 'vuex';
 import { HypersignVerifiablePresentation } from 'hs-ssi-sdk';
 import { STEP_NAMES } from '@/config'
+import VaultConfig from '@/store/vault/config'
 import MESSAGE from '../utils/lang/en'
 export default {
     name: STEP_NAMES.UserConsent,
@@ -99,9 +103,14 @@ export default {
     computed: {
         ...mapState(['steps']),
         ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
+
+        /// // vault
         getVaultDataCredentials() {
-            const { hypersign } = this.getVaultDataRaw
+            const { hypersign } =  JSON.parse(localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
+            console.log(hypersign);
+            
             const { credentials } = hypersign
+            
             return credentials;
         },
         credentailsTypesInWallet() {
@@ -120,11 +129,15 @@ export default {
             }
         },
         getTrustedIssuersCredentials() {
-
             return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
+        ///
+
         checkIfOncainIdIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
+        },
+        checkIfzkProofIsEnabled() {
+            return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs).isEnabled
         },
         checkIfIdDocumentIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.IdDocs).isEnabled
@@ -150,13 +163,15 @@ export default {
             }, 5000);
         },
         shouldShare(eachCredential) {
-            if ((eachCredential.type[1] == 'PersonhoodCredential') && this.checkIfLivelinessIsEnabled) {
+            if ((eachCredential.type[1] == 'PersonhoodCredential') && this.checkIfLivelinessIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
-            } else if ((eachCredential.type[1] == 'GovernmentIdCredential') && this.checkIfIdDocumentIsEnabled) {
+            } else if ((eachCredential.type[1] == 'GovernmentIdCredential') && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
-            } else if ((eachCredential.type[1] == 'PassportCredential') && this.checkIfIdDocumentIsEnabled) {
+            } else if ((eachCredential.type[1] == 'PassportCredential') && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
-            } else if ((eachCredential.type[1] == 'SBTCredential') && this.checkIfOncainIdIsEnabled) {
+            } else if ((eachCredential.type[1].includes('zkProof') && !(eachCredential.type[1].includes('SbtCredential'))) && this.checkIfzkProofIsEnabled && !this.checkIfOncainIdIsEnabled) {
+                return true
+            } else if ((eachCredential.type[1].includes('SbtCredential')) && this.checkIfOncainIdIsEnabled) {
                 return true
             }
             return false

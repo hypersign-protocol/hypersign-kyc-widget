@@ -4,7 +4,7 @@ export const ENTITY_APP_SERCRET = '0a88981d30e66a8b188760b081c14.02178535aa9c0ee
 export const KAVACH_SERVER_BASE_URL = "https://stage.hypermine.in/kavach"
 
 // This must be in the format: <http/https>://<subdomain>.host/api/v1
-export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = 'https://<subdomain>.api.cavach.hypersign.id/api/v1'
+export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = process.env.NODE_ENV == "production" ? 'https://<subdomain>.api.cavach.hypersign.id/api/v1' : 'http://<subdomain>.localhost:3001/api/v1'
 // export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = 'http://<subdomain>.localhost:3001/api/v1'
 
 
@@ -21,7 +21,16 @@ export const STEP_NAMES = Object.freeze({
     AppInstructions: "AppInstructions",
     LiveLiness: "LiveLiness3",
     IdDocs: "IdDocs4",
+    ZkProofs: "ZkProofs",
     OnChainId: "OnChainId4",
     UserConsent: "UserConsent",
     FinalResult: "FinalResult"
 })
+
+export const ZK_PROOF_TYPES = Object.freeze({
+    zkProofOfAge: 'zkProofOfAge',
+    zkProofOfDOB: 'zkProofOfDOB',
+    zkProofOfMembership: 'zkProofOfMembership',
+    zkProofOfPersonHood: 'zkProofOfPersonHood',
+    zkProofKYC: 'zkProofOfKYC',
+}) 

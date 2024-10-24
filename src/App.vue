@@ -9,6 +9,7 @@
 // import { encrypt, decrypt } from './components/utils/symmetricCrypto';
 import WidgetConfig from './components/utils/widget.config'
 import { mapMutations } from 'vuex';
+import widgetConfig from './components/utils/widget.config';
 export default {
   name: "App",
   components: {
@@ -24,6 +25,7 @@ export default {
   },
 
   async created() {
+    console.log(widgetConfig);
 
     if (WidgetConfig) {
 
@@ -33,10 +35,11 @@ export default {
         { "id": 2, "isActive": false, "stepName": "AppInstructions", "previous": 1, "isEnabled": true },
         { "id": 3, "isActive": false, "stepName": "LiveLiness3", "name": "Facial Recognition", "previous": 2, "isEnabled": false, "stepTitle": "Conduct liveliness check to prove you are a human", logo: "face-id.png" },
         { "id": 4, "isActive": false, "stepName": "IdDocs4", "name": "Government-issued ID", "previous": 3, "isEnabled": false, "stepTitle": "Submit your ID document and recieve your KYC credential", logo: "profile.png" },
-        { "id": 5, "isActive": false, "stepName": "OnChainId4", "name": "On Chain Identity", "previous": 4, "isEnabled": false, stepTitle: "Generate Proof & Mint your on-chain Identity", logo: "proof.png" },
-        { "id": 6, "isActive": false, "stepName": "UserConsent", "name": "Provide User Consent", "previous": 5, "isEnabled": true, stepTitle: "Provide consent of your data to be shared with the verifier app", logo: "consent.png" },
-        { "id": 7, "isActive": false, "stepName": "FinalResult", "previous": 6, "isEnabled": true },
-        { "id": 8, "isActive": false, "stepName": "SessionExpired", "previous": 7, "isEnabled": true },
+        { "id": 5, "isActive": false, "stepName": "ZkProofs", "name": "Generate Proofs", "previous": 4, "isEnabled": false, stepTitle: "Generate Proof & Mint your on-chain Identity", logo: "proof.png" },
+        { "id": 6, "isActive": false, "stepName": "OnChainId4", "name": "On Chain Identity", "previous": 5, "isEnabled": false, stepTitle: "Generate Proof & Mint your on-chain Identity", logo: "proof.png" },
+        { "id": 7, "isActive": false, "stepName": "UserConsent", "name": "Provide User Consent", "previous": 6, "isEnabled": true, stepTitle: "Provide consent of your data to be shared with the verifier app", logo: "consent.png" },
+        { "id": 8, "isActive": false, "stepName": "FinalResult", "previous": 7, "isEnabled": true },
+        { "id": 9, "isActive": false, "stepName": "SessionExpired", "previous": 8, "isEnabled": true },
       ]
       this.setSteps(steps)
 

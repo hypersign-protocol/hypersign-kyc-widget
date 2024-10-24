@@ -16,7 +16,7 @@ body{
     border-radius: 20px;
     box-shadow: 2px 5px 5px #80808087;
     margin: 0 auto;
-   
+    max-width: 700px;
   }
 .btn-dark{
     color: black
@@ -34,7 +34,6 @@ h1{
 }
 
 .widget-card {
-    width: 45vw;
     border: 1px solid #8080801a;
     padding: 20px;
     border-radius: 20px;
@@ -54,4 +53,10 @@ h1{
     height: 20px;
     /* Example footer height */
     /* background-color: #f1f1f1; */
+}
+
+
+.parent {
+    position: relative;
+    /* Makes the parent the reference for absolute positioning */
 }

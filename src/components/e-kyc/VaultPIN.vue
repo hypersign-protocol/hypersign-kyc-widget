@@ -5,11 +5,11 @@
 
             <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
             <div class="center" v-if="ifNewUser">
-                <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+                <RegisterPIN style="width: 70%;" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
             </div>
 
-            <div v-else>
-                <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
+            <div v-else class="center">
+                <AskPIN style="width: 70%;" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
                     @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
             </div>
         </div>
@@ -52,6 +52,10 @@ export default {
         if (this.getWidgetConfigFromDb.onChainId.enabled) {
             this.enableAstep(STEP_NAMES.OnChainId)
         }
+
+        if (this.getWidgetConfigFromDb.zkProof.enabled) {
+            this.enableAstep(STEP_NAMES.ZkProofs)
+        }
     },
     methods: {
         ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
@@ -78,20 +82,17 @@ export default {
                     await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })
                     this.userVaultDataRaw.hypersign.did = this.getVaultWallet.didDocument.id;
                     this.userVaultDataRaw.hypersign.didDoc = { ...this.getVaultWallet.didDocument }
-                    this.userVaultDataRaw.hypersign.keys = { ...this.getVaultWallet.keys }
+                    this.userVaultDataRaw.hypersign.keys = this.getVaultWallet.keys
                     if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
-                    console.log('Vault Wallet setup done ' + this.getVaultWallet.didDocument.id)
 
                     /// setup vault
                     await this.initializeVault()
-                    console.log('Vault setup done ' + this.getVaultId)
 
                     if (this.ifNewUser) {
                         this.createKMS()
                     }
 
                     await this.retriveVaultCredentials()
-                    console.log('Finished retriving credentials ')
 
                     this.isLoadingPage = false
                     this.nextStep()
@@ -125,10 +126,11 @@ export default {
         async generateDID() {
             const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
             const hypersignDID = new HypersignDID({ namespace: 'testnet' });
-            const kp = await hypersignDID.generateKeys({ seed });
+            const kp = await hypersignDID.bjjDID.generateKeys({ seed });
+            console.log(kp)
 
-
-            const didDocument = await hypersignDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
+            const didDocument = await hypersignDID.bjjDID.generate({ publicKeyMultibase: kp.publicKeyMultibase });
+            console.log(didDocument)
 
 
             this.userVaultDataRaw.hypersign.did = didDocument.id;

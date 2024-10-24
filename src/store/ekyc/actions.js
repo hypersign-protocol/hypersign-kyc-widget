@@ -273,4 +273,70 @@ export default {
         })
     },
 
+
+
+    verifyZkProof: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
+        return new Promise(async (resolve, reject) => { // eslint-disable-line
+            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/zk-proof`;
+            const headers = {
+                'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                'x-ssi-access-token': getters.getSSIAccessToken,
+                'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+            };
+            headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
+
+
+            const body = {
+                sessionId: getters.getSession,
+                userDID: getters.getUserDID,
+                proof: payload.uncompressed_proof,
+                publicSignals: payload.publicSignals,
+                proofType: payload.proofType
+
+
+            }
+            const json = await RequestHandler(url, 'POST', body, headers)
+
+            console.log(json)
+
+            if (json.credential && json.verifyResult) {
+                // commit('setSbtMintDone', true);
+                console.log('Updating each credentila in vault credential id ' + json.credential.id)
+                dispatch('updateVaultCredentials', json.credential);
+                return resolve(json)
+            } else {
+                return reject(new Error(json));
+            }
+
+            // resolve(json)
+
+
+        })
+
+
+
+    }
+    ,
+    resolveIssuerId: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
+        return new Promise(async (resolve, reject) => { // eslint-disable-line
+            try {
+
+                const url = `https://api.prajna.hypersign.id/hypersign-protocol/hidnode/ssi/did/${payload.issuerDid}`;
+
+                const resp = await fetch(url)
+
+                const json = await resp.json()
+                if(resp.ok){
+                    resolve(json)
+                }
+
+                // resolve(json)
+            } catch (error) {
+                reject(error)
+            }
+
+
+        })
+    }
 }

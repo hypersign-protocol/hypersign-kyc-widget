@@ -20,12 +20,28 @@ export class VaultWallet {
     async Init() {
         // debugger //eslint-disable-line 
         const seedEntropy = this._getSeedEntropy();
-        this.keys = await this.hsDidSdk.generateKeys({
+        this.hskeys = [await this.hsDidSdk.generateKeys({
             seed: seedEntropy,
-        });
+        })]
+
+        this.hskeys.push(
+            await this.hsDidSdk.bjjDID.generateKeys({
+                mnemonic: this.mnemonic
+            })
+        )
+
+
+        this.keys = this.hskeys.find(x => x.type == "Ed25519VerificationKey2020")
+        this.bjjKeys = this.hskeys.find(x => x.type == "BabyJubJubKey2021")
         this.didDocument = await this.hsDidSdk.generate({
             publicKeyMultibase: this.keys.publicKeyMultibase,
         });
+        this.didDocument = await this.hsDidSdk.addVerificationMethod({
+            didDocument: this.didDocument,
+            type: "BabyJubJubKey2021", publicKeyMultibase: this.bjjKeys.publicKeyMultibase
+            
+        })
+        delete this.didDocument.alsoKnownAs
         this.authenticationKey = this._getAuthenticationKey(
             this.didDocument.id,
             this.keys.publicKeyMultibase,

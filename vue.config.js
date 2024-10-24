@@ -14,6 +14,7 @@ module.exports = defineConfig({
         // crypto: false, // Avoid overriding the 'fs' module,
         "crypto": require.resolve("crypto-browserify"),
         stream: require.resolve('stream-browserify'),
+        "constants": require.resolve("constants-browserify"),
         "buffer": require.resolve("buffer"),
         path: false,
         fs: false,

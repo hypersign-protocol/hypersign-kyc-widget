@@ -20,6 +20,10 @@ export default {
     },
     ...mapGetters(["getIdDocumentLicenseKey"]),
     ...mapState(["steps", 'hasKycDone']),
+    checkIfzkProofIsEnabled() {
+      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
+        .isEnabled;
+    },
     checkIfOncainIdIsEnabled() {
       return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
         .isEnabled;
@@ -324,10 +328,10 @@ export default {
       this.verifyOcrIDDoc()
         .then(() => {
           setTimeout(() => {
-            if (this.checkIfOncainIdIsEnabled) {
+            if (this.checkIfzkProofIsEnabled) {
               this.nextStep(5);
             } else {
-              this.nextStep(6);
+              this.nextStep(7);
             }
             this.isLoading = false;
           }, 3000);
