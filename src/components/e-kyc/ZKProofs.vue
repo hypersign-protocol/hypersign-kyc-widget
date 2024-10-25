@@ -88,7 +88,9 @@
                         </div>
                         <div class="col-md-9">
                             <div class="card-body">
-                                <h5 class="card-title">{{ hypersign_proof.proofType }}</h5>
+                                <h5 class="card-title">{{
+                                    hypersign_proof.proofType == "zkProofOfAge" ? hypersign_proof.proofType + ` >
+                                    ${getCriteria(hypersign_proof)} ` : "" }}</h5>
                                 <p class="card-text mt-2">{{ hypersign_proof.description }}</p>
 
                                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
@@ -318,7 +320,12 @@ export default {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId']),
         ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+        getCriteria(proof) {
+            const widgetConfig = this.getWidgetConfigFromDb
+            const proofConfig = widgetConfig.zkProof.proofs.find(e => e.proofType === proof.proofType)
+            return proofConfig.criteria
 
+        },
 
         isAllZkProofSBTMinted() {
             const result = this.hypersign_proofs.map(e => {

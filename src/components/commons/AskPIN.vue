@@ -52,6 +52,7 @@ export default {
             this.$emit('proceedWithUnlockVaultAndSyncDataEvent', true)
         },
         proceedWithAccountDeletion() {
+            localStorage.setItem("forgotPassword", true)
             this.$emit('proceedWithAccountDeletionFinal', true)
         },
         getPin(data) {

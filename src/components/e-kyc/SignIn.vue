@@ -26,6 +26,7 @@ import GoogleButton from '../commons/authButtons/GoogleButton.vue';
 import WidgetConfig from '../utils/widget.config'
 import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
+import SignStoreConfig from '@/store/signin/config'
 export default {
     name: STEP_NAMES.SignIn,
     computed: {
@@ -217,6 +218,10 @@ export default {
 
         async validationSessionId() {
             const params = this.$route.query;
+            if (localStorage.getItem("forgotPassword")) {
+                params.sessionId = localStorage.getItem(SignStoreConfig.LOCAL_STATES.SESSIONS)
+                localStorage.removeItem("forgotPassword")
+            }
             if (!params.sessionId) {
                 if (this.getSession != '') {
                     console.log(MESSAGE.SIGN.SESSION_NOT_FOUND_ERR)
