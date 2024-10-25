@@ -50,7 +50,7 @@
                             <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
 
                             <i class="bi bi-person-vcard"
-                                v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential')"></i>
+                                v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
                             <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
                         </div>
                         <div class="col-10 credential-row-type">
@@ -106,11 +106,8 @@ export default {
 
         /// // vault
         getVaultDataCredentials() {
-            const { hypersign } =  JSON.parse(localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
-            console.log(hypersign);
-            
+            const { hypersign } = JSON.parse(localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
             const { credentials } = hypersign
-            
             return credentials;
         },
         credentailsTypesInWallet() {
@@ -136,6 +133,23 @@ export default {
         checkIfOncainIdIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.OnChainId).isEnabled
         },
+        listOfEnabledZkCredential() {
+            if (this.getWidgetConfigFromDb.zkProof?.proofs?.length > 0) {
+                const data = this.getWidgetConfigFromDb.zkProof?.proofs?.map(e => e.proofType)
+                return new Set(data)
+            } else {
+                throw new Error("zkProof Config is not set")
+            }
+        },
+        listOfEnabledSBTCredential() {
+            if (this.getWidgetConfigFromDb.zkProof?.proofs?.length > 0) {
+                const data = this.getWidgetConfigFromDb.zkProof?.proofs?.map(e => e.proofType + 'SbtCredential')
+                return new Set(data)
+            } else {
+                throw new Error("zkProof Config is not set")
+            }
+        },
+
         checkIfzkProofIsEnabled() {
             return this.steps.find(x => x.stepName === STEP_NAMES.ZkProofs).isEnabled
         },
@@ -162,16 +176,23 @@ export default {
                 this.toastMessage = "";
             }, 5000);
         },
-        shouldShare(eachCredential) {
+        interSect(s1, s2) {
+            const intersect = s1.intersection(s2)
+            if (intersect.size > 0) {
+                return true
+            }
+            return false
+        },
+        shouldShare(eachCredential) {        
             if ((eachCredential.type[1] == 'PersonhoodCredential') && this.checkIfLivelinessIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
             } else if ((eachCredential.type[1] == 'GovernmentIdCredential') && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
             } else if ((eachCredential.type[1] == 'PassportCredential') && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled) {
                 return true
-            } else if ((eachCredential.type[1].includes('zkProof') && !(eachCredential.type[1].includes('SbtCredential'))) && this.checkIfzkProofIsEnabled && !this.checkIfOncainIdIsEnabled) {
+            } else if ((eachCredential.type[1].includes('zkProof') && !(eachCredential.type[1].includes('SbtCredential'))) && this.checkIfzkProofIsEnabled && !this.checkIfOncainIdIsEnabled && this.interSect(this.listOfEnabledZkCredential, new Set([eachCredential.type[1]]))) {
                 return true
-            } else if ((eachCredential.type[1].includes('SbtCredential')) && this.checkIfOncainIdIsEnabled) {
+            } else if ((eachCredential.type[1].includes('SbtCredential')) && this.checkIfOncainIdIsEnabled && this.interSect(this.listOfEnabledSBTCredential, new Set([eachCredential.type[1]]))) {
                 return true
             }
             return false

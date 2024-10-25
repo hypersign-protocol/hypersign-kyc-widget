@@ -122,7 +122,7 @@
 
             <div class="container mt-3">
                 <div class="d-grid gap-1 " style="width: 20%;margin: auto;"
-                    v-if=" !getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
+                    v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
                     <button class="btn btn-outline-dark" @click="nextStep(7)">
                         Next
                     </button>
@@ -696,6 +696,10 @@ export default {
                     proof, publicSignals, uncompressed_proof,
                 }
             );
+
+            if (publicSignals[0] !== "1") {
+                throw new Error("Age criteria " + parseInt((new Date() - new Date(parseInt(dateOfBirth))) / (1000 * 60 * 60 * 24 * 30 * 12)) + " > " + ageCriteria + " not fulfilled")
+            }
             return {
                 proof, publicSignals, uncompressed_proof
             }
@@ -1805,7 +1809,7 @@ export default {
         }
     },
     async mounted() {
-        this.isLoading=true
+        this.isLoading = true
         this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
         // const getKycCredential = this.queryVaultDataCredentials()
         // if (getKycCredential) {
@@ -1844,7 +1848,7 @@ export default {
                 console.error('Invalid proof of type, x.proofType = ' + x.proofType)
             }
         })
-        this.isLoading=false
+        this.isLoading = false
 
     },
     beforeDestroy() {

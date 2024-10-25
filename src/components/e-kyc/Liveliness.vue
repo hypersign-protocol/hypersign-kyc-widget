@@ -124,13 +124,13 @@ export default {
                 this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, "warning");
                 this.verifyLiveliness()
                     .then(() => {
-                        let nextStepNumber = null
+                        let nextStepNumber = null                        
                         if (this.checkIfIdDocumentIsEnabled) {
                             nextStepNumber = 4
                         } else if (this.checkIfOncainIdIsEnabled) {
                             nextStepNumber = 5
                         } else if (this.checkIfUserConsentIsEnabled) {
-                            nextStepNumber = 6
+                            nextStepNumber = 7
                         }
                         this.nextStep(nextStepNumber);
                         this.isLoading = false;
