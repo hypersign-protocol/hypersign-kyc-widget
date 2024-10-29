@@ -92,9 +92,7 @@
                                     hypersign_proof.proofType == "zkProofOfAge" ? hypersign_proof.proofType + ` >
                                     ${getCriteria(hypersign_proof)} ` : hypersign_proof.proofType }}</h5>
                                 <p class="card-text mt-2">{{ hypersign_proof.description }}</p>
-                                <p v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="card-text mt-6"> {{
-                                    hypersign_proof.proofType + "SBT" }}
-                                    Minted</p>
+
 
                                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
                                     <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)">
@@ -114,15 +112,15 @@
                         <div class="col-md-1" v-if="isOnchainIdEnabled">
                             <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT">
                                 <i class="bi bi-check2-circle" style="font-size:xx-large"> </i>
-                                <br />
-                                <i class="bi bi-person-fill-check" style="font-size:xx-large"></i>
-
                             </div>
-                            <div v-else-if="hypersign_proof.zkProof">
+
+                        </div>
+                        <div class="col-md-1" v-else>
+                            <div v-if="hypersign_proof.zkProof">
                                 <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
                             </div>
                         </div>
-                      
+
                     </div>
                 </div>
             </div>
