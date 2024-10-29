@@ -90,8 +90,11 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{
                                     hypersign_proof.proofType == "zkProofOfAge" ? hypersign_proof.proofType + ` >
-                                    ${getCriteria(hypersign_proof)} ` : "" }}</h5>
+                                    ${getCriteria(hypersign_proof)} ` : hypersign_proof.proofType }}</h5>
                                 <p class="card-text mt-2">{{ hypersign_proof.description }}</p>
+                                <p v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="card-text mt-6"> {{
+                                    hypersign_proof.proofType + "SBT" }}
+                                    Minted</p>
 
                                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
                                     <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)">
@@ -110,14 +113,16 @@
 
                         <div class="col-md-1" v-if="isOnchainIdEnabled">
                             <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT">
+                                <i class="bi bi-check2-circle" style="font-size:xx-large"> </i>
+                                <br />
+                                <i class="bi bi-person-fill-check" style="font-size:xx-large"></i>
+
+                            </div>
+                            <div v-else-if="hypersign_proof.zkProof">
                                 <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
                             </div>
                         </div>
-                        <div class="col-md-1" v-else>
-                            <div v-if="hypersign_proof.zkProof">
-                                <i class="bi bi-check2-circle" style="font-size:xx-large"></i>
-                            </div>
-                        </div>
+                      
                     </div>
                 </div>
             </div>
@@ -202,7 +207,7 @@ import * as MerkleTree from '@iden3/js-merkletree'
 import multibase from 'multibase'
 import * as utils from '../../zkUtils/utils'
 import documentLoader from 'hs-ssi-sdk/build/libs/w3cache/v1'
-
+import vaultConfig from '@/store/vault/config'
 export default {
     name: STEP_NAMES.ZkProofs,
     components: {
@@ -213,9 +218,12 @@ export default {
         ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
         // vault
         getVaultDataCredentials() {
-            const { hypersign } = this.getVaultDataRaw
+            const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
             const { credentials } = hypersign
             return credentials;
+        },
+        getTrustedIssuersCredentials() {
+            return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
         getTrustedIssuers() {
             const issuerDID = this.getWidgetConfigFromDb.issuerDID
@@ -225,9 +233,7 @@ export default {
                 return []
             }
         },
-        getTrustedIssuersCredentials() {
-            return this.getVaultDataCredentials.filter(x => this.getTrustedIssuers.includes(x.issuer))
-        },
+
         // checkIfZkProofOfPersonhoodPresent() {
         //     return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfPersonHood') ? true : false
         // },
@@ -325,6 +331,14 @@ export default {
             const proofConfig = widgetConfig.zkProof.proofs.find(e => e.proofType === proof.proofType)
             return proofConfig.criteria
 
+        },
+        getVaultDataCredentialsMethod() {
+            const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
+            const { credentials } = hypersign
+            return credentials;
+        },
+        getTrustedIssuersCredentialsMethod() {
+            return this.getVaultDataCredentialsMethod().filter(x => this.getTrustedIssuers.includes(x.issuer))
         },
 
         isAllZkProofSBTMinted() {
@@ -1489,7 +1503,6 @@ export default {
                 documentLoader: documentLoader
 
             })
-            console.log(merklized);
 
             merklized.entries.forEach((e, index) => {
                 if (e.key.parts.length == 1 && e.key.parts[0].includes('credentialSubject')) {
@@ -1677,8 +1690,6 @@ export default {
 
         },
         async getProof(proof) {
-
-            console.log(proof);
             try {
 
 
@@ -1691,18 +1702,12 @@ export default {
                     trustedIssuerList = trustedIssuer.split(',')
                 }
                 let criteria = null
-                if (proof.proof_type === 'proof_of_k_y_c') {
-                    credentialType = ['GovernmentIdCredential', 'PassportCredential']
 
-                }
-                if (proof.proof_type === 'proof_of_personhood') {
-                    credentialType = ['PersonhoodCredential']
+                credentialType = proof.credentialType
 
-                }
 
-                if (proof.proof_type === 'proof_of_age') {
 
-                    credentialType = ['GovernmentIdCredential', 'PassportCredential']
+                if (proof.proof_type === 'zk_proof_of_age') {
                     const proofConfig = widgetConfig.zkProof.proofs.find(e => e.proofType === proof.proofType)
                     criteria = proofConfig.criteria
 
@@ -1715,6 +1720,8 @@ export default {
                     })
 
 
+
+                // eslint-disable-next-line no-unreachable
                 const zkProof = await this.generatezkProof(credential, proof.proofType, criteria)
 
                 zkProof.proofType = proof.proofType
@@ -1729,6 +1736,7 @@ export default {
                         }
                     })
                 }
+                // eslint-disable-next-line no-unreachable
                 this.isLoading = false
             } catch (e) {
                 this.toast(e.message, 'error')
@@ -1753,22 +1761,46 @@ export default {
                     this.showWalletModal()
                     return;
                 }
-                console.log('Getting sbt for proof type ' + proof.proof_type)
 
-                // return;
+
+
+                this.isLoading = true
+                console.log(this.getTrustedIssuersCredentialsMethod());
+
+                const credential = this.getTrustedIssuersCredentialsMethod().find(y => y.type[1] == proof.proofType)
+
+
+
+                console.log('Getting sbt for proof type ' + proof.proof_type)
+                const zkProof = {
+                    proof_type: proof.proof_type,
+                    proof: credential?.credentialSubject?.proof,
+                    public_signales: credential?.credentialSubject.publicSignals
+
+                }
 
                 this.isLoading = true
                 const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
                 // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                const smartContractMsg = constructKYCSBTMintMsg({ hypersign_proof: proof });
+                const smartContractMsg = constructKYCSBTMintMsg({
+                    hypersign_proof:
+                    {
+                        credential_id: "235235",
+                        zk_proof: zkProof
+                    }
+                }
+                );
                 // Perform the CreateTodo Smart Contract Execution
                 // Note: This is a blockchain transaction
                 const chainConfig = this.getChainConfig
                 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
                 const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
-                const fee = calculateFee(500_000, (gasPriceAvg + chainCoinDenom).toString())
+                const fee = calculateFee(600_000, (gasPriceAvg + chainCoinDenom).toString())
+                console.log(smartContractMsg);
 
+                // throw new Error("hello")
+                // eslint-disable-next-line no-unreachable
                 const result = await smartContractExecuteRPC(
                     this.cosmosConnection.signingClient,
                     chainCoinDenom,
@@ -1801,6 +1833,8 @@ export default {
 
             } catch (e) {
                 this.toast(e.message, 'error')
+                console.log(e.message);
+
                 this.isLoading = false
             }
         },
@@ -1831,10 +1865,6 @@ export default {
 
         requestedProofs.forEach(x => {
             const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
-            console.log({
-                proofType: x.proofType,
-                credential: this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType)
-            })
             if (hypersignProof) {
                 this.hypersign_proofs.push({
                     "credential_id": "",
