@@ -1753,7 +1753,49 @@ export default {
                     this.showWalletModal()
                     return;
                 }
+
+
+
+                this.isLoading = true
+                const widgetConfig = this.getWidgetConfigFromDb
+                const trustedIssuer = widgetConfig.issuerDID
+                let credentialType;
+                let trustedIssuerList = []
+                if (trustedIssuer) {
+                    trustedIssuerList = trustedIssuer.split(',')
+                }
+                if (proof.proof_type === 'proof_of_k_y_c') {
+                    credentialType = ['zkProofOfKyc']
+
+                }
+                if (proof.proof_type === 'proof_of_personhood') {
+                    credentialType = ['zkProofOfPersonHood']
+
+                }
+
+                if (proof.proof_type === 'proof_of_age') {
+
+                    credentialType = ['zkProofOfAge']
+
+
+                }
+                console.log(credentialType, trustedIssuerList, proof.proof_type
+                );
+
+                const credential = this.$store.getters.getCredentialFromVault(
+                    {
+                        credentialType, trustedIssuerList, proofType: proof.proof_type
+                    })
+                console.log(credential.credentialSubject)
+
+
                 console.log('Getting sbt for proof type ' + proof.proof_type)
+                const zkProof = {
+                    proof_type: 'zk_' + proof.proof_type,
+                    proof: credential?.credentialSubject?.proof,
+                    public_signales: credential?.credentialSubject.publicSignals
+
+                }
 
                 // return;
 
@@ -1761,14 +1803,20 @@ export default {
                 const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
                 // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                const smartContractMsg = constructKYCSBTMintMsg({ hypersign_proof: proof });
+                const smartContractMsg = constructKYCSBTMintMsg({
+                    hypersign_proof:
+                        zkProof
+                });
                 // Perform the CreateTodo Smart Contract Execution
                 // Note: This is a blockchain transaction
                 const chainConfig = this.getChainConfig
                 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
                 const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
                 const fee = calculateFee(500_000, (gasPriceAvg + chainCoinDenom).toString())
+                console.log(smartContractMsg);
 
+                // throw new Error("hello")
+                // eslint-disable-next-line no-unreachable
                 const result = await smartContractExecuteRPC(
                     this.cosmosConnection.signingClient,
                     chainCoinDenom,

@@ -62,7 +62,10 @@ export default {
 
     getCredentialFromVault: (state) => params => {
         const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
+
         const vaultDataRaw = JSON.parse(raw)
+        console.log(vaultDataRaw);
+
         if (!vaultDataRaw) {
             return;
         }
@@ -79,6 +82,7 @@ export default {
 
                     // TODO: We can also add filter for trusted issuer later in the presentation request
                     if ((credential.credentialSchema?.id === schemaId) && params.trustedIssuerList.includes(credential.issuer)) {
+
                         return credential
                     }
                     if ((credential.type.includes(schema)) && params.trustedIssuerList.includes(credential.issuer)) {
@@ -88,8 +92,7 @@ export default {
                 }
             })
 
-
-            if (credential && params.credentialType.includes(schema)) {
+            if ((credential && params.credentialType.includes(schema)) || (credential && params.credentialType.includes(credential.type[1]))) {
                 credentialToReturn = credential
 
             }
