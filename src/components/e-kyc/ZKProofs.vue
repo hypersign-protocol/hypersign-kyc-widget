@@ -1794,7 +1794,7 @@ export default {
                 const chainConfig = this.getChainConfig
                 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
                 const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
-                const fee = calculateFee(600_000, (gasPriceAvg + chainCoinDenom).toString())
+                const fee = calculateFee(650_000, (gasPriceAvg + chainCoinDenom).toString())
                 console.log(smartContractMsg);
 
                 // throw new Error("hello")
