@@ -20,6 +20,9 @@ export default {
             issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
         },
         GovernmentIdCredential: {},
+        zkProofOfKYC: {},
+        zkProofOfAge: {},
+        zkProofOfPersonHood: {}
         // CitizenshipCredential: {
         //     schemaId: "sch:hid:testnet:z6Mkkm7paF78CWtrpviRkwb83t99u34Up7tjjnap8yw1pWfz:1.0",
         //     issuer: "did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr"
