@@ -23,6 +23,7 @@
     "@iden3/binfileutils": "^0.0.12",
     "@iden3/js-crypto": "^1.1.0",
     "@iden3/js-jsonld-merklization": "^1.4.1",
+    "@nibiruchain/nibijs": "^5.0.2",
     "assert": "^2.1.0",
     "auth0-js": "^9.16.2",
     "bip39": "^3.1.0",
