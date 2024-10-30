@@ -19,7 +19,9 @@
     max-height: 250px;
     float: left;
     width: 80%;
-    /* min-width: 250px */
+    font-size: small;
+    color: grey
+        /* min-width: 250px */
 }
 
 /* .modal-body {
@@ -80,18 +82,19 @@
 
             <div class="row col-md-12" style="max-height: 500px;  overflow-y: auto; overflow-x: hidden;">
                 <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs"
-                    v-bind:key="hypersign_proof.type" :style="`background-color: ${hypersign_proof.bgColor}`">
+                    v-bind:key="hypersign_proof.type"
+                    :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
                     <div class="row" style="text-align: left;">
                         <div class="col-md-2 center">
-                            <img :src="hypersign_proof.proof_type_image" class="img-fluid rounded-start" alt="..."
-                                style="opacity: 0.7;">
+                            <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start"
+                                alt="..." style="opacity: 0.7;">
                         </div>
                         <div class="col-md-9">
                             <div class="card-body">
-                                <h5 class="card-title">{{
+                                <h5 class="card-title" style="color:black">{{
                                     hypersign_proof.proofType == "zkProofOfAge" ? hypersign_proof.proofType + ` >
                                     ${getCriteria(hypersign_proof)} ` : hypersign_proof.proofType }}</h5>
-                                <p class="card-text mt-2">{{ hypersign_proof.description }}</p>
+                                <p class="card-text mt-2"><small>{{ hypersign_proof.description }}</small></p>
 
 
                                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
@@ -103,7 +106,7 @@
                                 <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
                                     <button class="btn btn-outline-dark" @click="mint(hypersign_proof)">
                                         <i class="bi bi-hammer"></i>
-                                        Mint Your SBT
+                                        Mint Your ID Token
                                     </button>
                                 </template>
                             </div>
@@ -324,6 +327,9 @@ export default {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
         ...mapActions(["getNewSession", 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId']),
         ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+        logoUrl(logo) {
+            return require('@/assets/' + logo);
+        },
         getCriteria(proof) {
             const widgetConfig = this.getWidgetConfigFromDb
             const proofConfig = widgetConfig.zkProof.proofs.find(e => e.proofType === proof.proofType)

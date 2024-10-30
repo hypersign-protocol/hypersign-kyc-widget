@@ -43,7 +43,7 @@
                                 <p class="card-text">
                                     <span style="visibility: hidden;" class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
-                                    }}</span>
+                                        }}</span>
                                     <!-- <span class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
                                     }}</span> -->
@@ -254,7 +254,7 @@ export default {
                 description: "Proves that user has finished his/her KYC",
                 bgColor: "#CCE5FF",
                 sbt_code: "T2",
-                proof_type_image: "https://cdn-icons-png.flaticon.com/128/17442/17442784.png"
+                proof_type_image: ""
             }
         };
     },
