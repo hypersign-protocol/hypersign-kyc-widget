@@ -189,6 +189,7 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 import { smartContractExecuteRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/execute'
 import { smartContractQueryRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/query'
@@ -605,8 +606,8 @@ export default {
 
             // eslint-disable-next-line no-undef
             const currentTimestamp = BigInt(new Date().valueOf())
-
-            const nullifier = 1235235n
+            // eslint-disable-next-line no-undef
+            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
 
             const circomProofs = []
             // Generate Circuit compatible proofs and prepate the circuit input 
@@ -722,7 +723,7 @@ export default {
                 }
             );
 
-            if (publicSignals[0] !== "1") {
+            if (publicSignals[1] !== "1") {
                 throw new Error("Age criteria " + parseInt((new Date() - new Date(parseInt(dateOfBirth))) / (1000 * 60 * 60 * 24 * 30 * 12)) + " > " + ageCriteria + " not fulfilled")
             }
             return {
@@ -944,10 +945,13 @@ export default {
 
 
 
+            // eslint-disable-next-line no-undef
+            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
 
             const {
                 proof, publicSignals, uncompressed_proof
             } = await utils.groth16FullProve({
+                nullifier,
                 issuer_pk, issuer_signature,
                 credentialRoot,
                 issuerId,
@@ -1167,11 +1171,13 @@ export default {
                 })
 
             }
-
+            // eslint-disable-next-line no-undef
+            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
 
             const {
                 proof, publicSignals, uncompressed_proof
             } = await utils.groth16FullProve({
+                nullifier,
                 issuer_pk, issuer_signature,
                 credentialRoot,
                 issuerId,
@@ -1566,6 +1572,8 @@ export default {
             issuerSignature.S
             ]
             const enabled = 1n
+            // eslint-disable-next-line no-undef
+            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
 
             let issuer_siblings;
             let issuer_oldKey;
@@ -1659,12 +1667,14 @@ export default {
                 type_siblings,
                 type_oldKey, type_oldValue,
                 type_isOld0,
-                type_key, type_fnc
+                type_key, type_fnc,
+                nullifier
             });
 
             const {
                 proof, publicSignals, uncompressed_proof
             } = await utils.groth16FullProve({
+                nullifier,
                 issuer_pk, issuer_signature,
                 credentialRoot,
                 issuerId,
@@ -1800,7 +1810,7 @@ export default {
                 const chainConfig = this.getChainConfig
                 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
                 const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
-                const fee = calculateFee(650_000, (gasPriceAvg + chainCoinDenom).toString())
+                const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
                 console.log(smartContractMsg);
 
                 // throw new Error("hello")
