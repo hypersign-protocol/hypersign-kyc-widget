@@ -197,6 +197,7 @@ import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue"
 import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
+import NibiruMainnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/cataclysm-1/chains'
 import { constructKYCSBTMintMsg } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
@@ -254,6 +255,8 @@ export default {
                 SupportedChains = NibiruTestnetChainJson
             } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
                 SupportedChains = OsmosisTestnetChainJson
+            } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'cataclysm-1') {
+                SupportedChains = NibiruMainnetChainJson
             }
 
             if (!SupportedChains) {
@@ -607,7 +610,7 @@ export default {
             // eslint-disable-next-line no-undef
             const currentTimestamp = BigInt(new Date().valueOf())
             // eslint-disable-next-line no-undef
-            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
+            const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
             const circomProofs = []
             // Generate Circuit compatible proofs and prepate the circuit input 
@@ -946,7 +949,7 @@ export default {
 
 
             // eslint-disable-next-line no-undef
-            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
+            const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
             const {
                 proof, publicSignals, uncompressed_proof
@@ -1172,7 +1175,7 @@ export default {
 
             }
             // eslint-disable-next-line no-undef
-            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
+            const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
             const {
                 proof, publicSignals, uncompressed_proof
@@ -1573,7 +1576,7 @@ export default {
             ]
             const enabled = 1n
             // eslint-disable-next-line no-undef
-            const nullifier =  BigInt('0x'+Buffer.from(uuidv4(),'utf-8').toString('hex'))
+            const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
             let issuer_siblings;
             let issuer_oldKey;
