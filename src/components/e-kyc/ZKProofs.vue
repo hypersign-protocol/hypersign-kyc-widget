@@ -75,7 +75,7 @@
                 <div class="col-md-8  ">
                     <button class="btn btn-link" @click="disconnectWallet()"
                         style="text-decoration: underline; color:grey; cursor: pointer;" title="Disconnect Wallet">{{
-                            connectedWalletAddress }} <i class="bi bi-box-arrow-right"></i></button>
+                            shorten(connectedWalletAddress) }} <i class="bi bi-box-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -180,6 +180,12 @@
             <div class="row">
                 <div class="col">
                     <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem"
+                        v-if="this.getOnChainIssuerConfig.ecosystem == 'cosmos'"
+                        :blockchain="this.getOnChainIssuerConfig.blockchain"
+                        :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
+
+                    <ConnectWalletButtonDiam :ecosystem="this.getOnChainIssuerConfig.ecosystem"
+                        v-if="this.getOnChainIssuerConfig.blockchain == 'diam'"
                         :blockchain="this.getOnChainIssuerConfig.blockchain"
                         :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
                 </div>
@@ -194,10 +200,15 @@ import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
 import { smartContractExecuteRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/execute'
 import { smartContractQueryRPC } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/query'
 import ConnectWalletButton from "../commons/authButtons/ConnectWalletButton.vue";
+import ConnectWalletButtonDiam from '../commons/authButtons/ConnectWalletButtonDiam.vue';
 import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
 import NibiruMainnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/cataclysm-1/chains'
+
+import DiamTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/diam/Diamante Testnet 2024/chains'
+
+
 import { constructKYCSBTMintMsg } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg';
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
@@ -214,7 +225,8 @@ import vaultConfig from '@/store/vault/config'
 export default {
     name: STEP_NAMES.ZkProofs,
     components: {
-        ConnectWalletButton
+        ConnectWalletButton,
+        ConnectWalletButtonDiam
     },
     computed: {
         ...mapGetters(["getCavachAccessToken", "getVaultDataRaw", "getVaultDataCredentials", "getRedirectUrl", 'getOnChainIssuerConfig', "getWidgetConfigFromDb"]),
@@ -257,6 +269,8 @@ export default {
                 SupportedChains = OsmosisTestnetChainJson
             } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'cataclysm-1') {
                 SupportedChains = NibiruMainnetChainJson
+            } else if (ecosystem === 'stellar' && blockchain === 'diam' && chainId === 'Diamante Testnet 2024') {
+                SupportedChains = DiamTestnetChainJson
             }
 
             if (!SupportedChains) {
@@ -265,14 +279,15 @@ export default {
             const requestedChainId = this.getOnChainIssuerConfig.chainId
             const chainConfig = SupportedChains.find(x => x.chainId == requestedChainId);
 
+            console.log({ chainConfig })
+
             if (!chainConfig) {
                 throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
             }
             return chainConfig
         },
         showConnectWallet() {
-
-            if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0 && this.connectedWalletAddress != '') {
+            if (this.connectedWalletAddress != '') {
                 return false
             } else {
                 return true
@@ -329,10 +344,18 @@ export default {
     },
     methods: {
         ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
-        ...mapActions(["getNewSession", 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId']),
-        ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+        ...mapActions(["getNewSession", 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
+        // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
         logoUrl(logo) {
             return require('@/assets/' + logo);
+        },
+        shorten(str) {
+            if (str.length <= 20) {
+                return str;
+            }
+            const firstPart = str.slice(0, 10);
+            const lastPart = str.slice(-10);
+            return `${firstPart}...${lastPart}`;
         },
         getCriteria(proof) {
             const widgetConfig = this.getWidgetConfigFromDb
@@ -351,8 +374,6 @@ export default {
 
         isAllZkProofSBTMinted() {
             const result = this.hypersign_proofs.map(e => {
-
-
                 if (e.zkSBT == false) {
                     return false
                 }
@@ -385,7 +406,9 @@ export default {
 
 
         async myEventListener(data) {
-            this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
+            if (this.getOnChainIssuerConfig.ecosystem == 'cosmos') {
+                this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
+            }
             this.connectedWalletAddress = data.user.walletAddress
             this.showModal = false
         },
@@ -1767,6 +1790,59 @@ export default {
             // this.$root.$emit("bv::toggle::collapse", "sidebar-right");
         },
 
+        async mintCosmosToken(credential, proof) {
+
+            const zkProof = {
+                proof_type: proof.proof_type,
+                proof: credential?.credentialSubject?.proof,
+                public_signales: credential?.credentialSubject.publicSignals
+            }
+
+            const smartContractMsg = constructKYCSBTMintMsg({
+                hypersign_proof:
+                {
+                    credential_id: credential?.id,
+                    zk_proof: zkProof
+                }
+            }
+            )
+
+            // Perform the CreateTodo Smart Contract Execution
+            // Note: This is a blockchain transaction
+            const chainConfig = this.getChainConfig
+            const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
+            const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
+            const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
+
+            // eslint-disable-next-line no-unreachable
+            return await smartContractExecuteRPC(
+                this.cosmosConnection.signingClient,
+                chainCoinDenom,
+                this.connectedWalletAddress,
+                this.getOnChainIssuerConfig.contractAddress,
+                smartContractMsg, fee);
+        },
+
+
+        async mintDiamToken(credential) {
+            ///  call asset generation api
+            const payload = {
+                "credetial": credential,
+                "onchainConfigId": this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration,
+                "walletAddress": this.connectedWalletAddress,
+                "blockchainLabel": this.blockchainLabel
+            }
+
+            const xdr = await this.createAssetToMint(payload);
+
+            /// ask user to sign the xdr..
+            const result = await this.cosmosConnection.signingClient(xdr)
+            console.log(result)
+            return {
+                transactionHash: "123123123"
+            }
+        },
+
         async mint(proof) {
             try {
                 if (!this.isOnchainIdEnabled) {
@@ -1779,51 +1855,19 @@ export default {
                     return;
                 }
 
-
-
                 this.isLoading = true
-                console.log(this.getTrustedIssuersCredentialsMethod());
-
                 const credential = this.getTrustedIssuersCredentialsMethod().find(y => y.type[1] == proof.proofType)
-
-
-
-                console.log('Getting sbt for proof type ' + proof.proof_type)
-                const zkProof = {
-                    proof_type: proof.proof_type,
-                    proof: credential?.credentialSubject?.proof,
-                    public_signales: credential?.credentialSubject.publicSignals
-
-                }
-
-                this.isLoading = true
                 const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
-                // const sbtTokenUri = "ipfs://" + sbtTokenId; // TODO: remove hardcoding
 
-                const smartContractMsg = constructKYCSBTMintMsg({
-                    hypersign_proof:
-                    {
-                        credential_id: "235235",
-                        zk_proof: zkProof
-                    }
+                let result;
+
+                if (this.getOnChainIssuerConfig.ecosystem == 'cosmos') {
+                    result = await this.mintCosmosToken(credential, proof);
+                } else if (this.getOnChainIssuerConfig.ecosystem == 'stellar' && this.getOnChainIssuerConfig.blockchain == 'diam') {
+                    result = await this.mintDiamToken(credential);
+                } else {
+                    throw new Error('Ecosystem or blockchain not supported')
                 }
-                );
-                // Perform the CreateTodo Smart Contract Execution
-                // Note: This is a blockchain transaction
-                const chainConfig = this.getChainConfig
-                const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
-                const gasPriceAvg = chainConfig["gasPriceStep"]["average"]
-                const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
-                console.log(smartContractMsg);
-
-                // throw new Error("hello")
-                // eslint-disable-next-line no-unreachable
-                const result = await smartContractExecuteRPC(
-                    this.cosmosConnection.signingClient,
-                    chainCoinDenom,
-                    this.connectedWalletAddress,
-                    this.getOnChainIssuerConfig.contractAddress,
-                    smartContractMsg, fee);
 
                 if (result) {
                     this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
@@ -1845,7 +1889,9 @@ export default {
                             x['zkSBT'] = true
                         }
                     })
-                    // this.nextStep();
+
+                } else {
+                    throw new Error('Could not mint SBT for proot type ' + proof.proof_type)
                 }
 
             } catch (e) {
@@ -1867,42 +1913,52 @@ export default {
         }
     },
     async mounted() {
-        this.isLoading = true
-        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
-        // const getKycCredential = this.queryVaultDataCredentials()
-        // if (getKycCredential) {
-        //     console.log(getKycCredential)
-        //     console.log(getKycCredential.type)
-        // }
-
-        const requestedProofs = this.getWidgetConfigFromDb.zkProof.proofs
-        if (requestedProofs.length <= 0) {
-            return;
-        }
-
-        requestedProofs.forEach(x => {
-            const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
-            if (hypersignProof) {
-                this.hypersign_proofs.push({
-                    "credential_id": "",
-                    "data": "",
-                    "description": hypersignProof.description,
-                    "proof_type_image": hypersignProof.image,
-                    "sbt_code": hypersignProof.sbtCode,
-                    "bgColor": hypersignProof.bgColor,
-                    "proof_type": hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
-                    "proofType": x.proofType,
-                    "credentialType": hypersignProof.credentialType,
-                    "zkProof": (this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType) ? true : false),
-                    "zkSBT": (this.getTrustedIssuersCredentials.find(y => y.type[1] == (x.proofType + 'SbtCredential')) ? true : false),
-                })
-
-                // this.showModal = true
-            } else {
-                console.error('Invalid proof of type, x.proofType = ' + x.proofType)
+        try {
+            this.isLoading = true
+            if (this.getOnChainIssuerConfig.ecosystem == 'cosmos') {
+                this.toast('Fetching SBT contract metadata', 'success')
+                this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
             }
-        })
-        this.isLoading = false
+
+            // const getKycCredential = this.queryVaultDataCredentials()
+            // if (getKycCredential) {
+            //     console.log(getKycCredential)
+            //     console.log(getKycCredential.type)
+            // }
+
+            const requestedProofs = this.getWidgetConfigFromDb.zkProof.proofs
+            if (requestedProofs.length <= 0) {
+                return;
+            }
+
+            requestedProofs.forEach(x => {
+                const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
+                if (hypersignProof) {
+                    this.hypersign_proofs.push({
+                        "credential_id": "",
+                        "data": "",
+                        "description": hypersignProof.description,
+                        "proof_type_image": hypersignProof.image,
+                        "sbt_code": hypersignProof.sbtCode,
+                        "bgColor": hypersignProof.bgColor,
+                        "proof_type": hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
+                        "proofType": x.proofType,
+                        "credentialType": hypersignProof.credentialType,
+                        "zkProof": (this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType) ? true : false),
+                        "zkSBT": (this.getTrustedIssuersCredentials.find(y => y.type[1] == (x.proofType + 'SbtCredential')) ? true : false),
+                    })
+                    // this.showModal = true
+                } else {
+                    throw new Error('Invalid proof of type: ' + x.proofType)
+                }
+            })
+            this.isLoading = false
+        }
+        catch (e) {
+            this.toast(e.message, 'error')
+        } finally {
+            this.isLoading = false
+        }
 
     },
     beforeDestroy() {
