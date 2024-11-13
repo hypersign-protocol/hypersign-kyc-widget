@@ -48,7 +48,7 @@ export default {
 
     },
     methods: {
-        ...mapMutations("walletStore", ['setCosmosConnection', 'setBlockchainUser']),
+        ...mapMutations(['setCosmosConnection']),
         getChainDetail() {
             console.log(this.blockchainlabel)
             const config = getStellarChainConfig(this.blockchainlabel)

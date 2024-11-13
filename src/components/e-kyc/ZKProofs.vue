@@ -1825,9 +1825,10 @@ export default {
 
 
         async mintDiamToken(credential) {
+            console.log(credential)
             ///  call asset generation api
             const payload = {
-                "credetial": credential,
+                credential,
                 "onchainConfigId": this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration,
                 "walletAddress": this.connectedWalletAddress,
                 "blockchainLabel": this.blockchainLabel
@@ -1837,9 +1838,12 @@ export default {
 
             /// ask user to sign the xdr..
             const result = await this.cosmosConnection.signingClient(xdr)
-            console.log(result)
+
+            if (result?.status != 200) {
+                throw new Error('Could not mint the asset')
+            }
             return {
-                transactionHash: "123123123"
+                transactionHash: result?.message?.hash
             }
         },
 
