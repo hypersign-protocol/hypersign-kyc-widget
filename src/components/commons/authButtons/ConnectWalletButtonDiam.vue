@@ -52,7 +52,7 @@ export default {
         getChainDetail() {
             console.log(this.blockchainlabel)
             const config = getStellarChainConfig(this.blockchainlabel)
-            console.log(config.stakeCurrency.coinImageUrl)
+
             return {
                 chainName: config.chainName,
                 chainId: config.chainId,
