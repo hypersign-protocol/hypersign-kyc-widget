@@ -1893,7 +1893,7 @@ export default {
                             ownerWalletAddress: this.connectedWalletAddress,
                             transactionHash: result.transactionHash,
                             proofType: proof.proofType,
-                            assetIssuerWalletAddress: result.asset.issuer, // intermediatory account
+                            assetIssuerWalletAddress: result?.assetMetadata?.issuer, // intermediatory account
                             issuerWalletAddress: this.getOnChainIssuerConfig.masterWalletAddress, // master wallet or source account 
                         }
                     }
