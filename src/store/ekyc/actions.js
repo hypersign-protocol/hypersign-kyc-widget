@@ -275,6 +275,33 @@ export default {
 
 
 
+    createAssetToMint: ({ getters }, payload) => {
+        return new Promise(async (resolve, reject) => { // eslint-disable-line
+            try {
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/asset-metadata`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
+                const body = {
+                    ...payload
+                }
+                const json = await RequestHandler(url, 'POST', body, headers)
+                if (json) {
+                    return resolve(json)
+                } else {
+                    return reject(new Error(json));
+                }
+            } catch (e) {
+                reject(new Error(`Error in creating asset metadata  ${e}`))
+            }
+        })
+    },
+
+
     verifyZkProof: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
         return new Promise(async (resolve, reject) => { // eslint-disable-line
             const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/zk-proof`;
@@ -327,7 +354,7 @@ export default {
                 const resp = await fetch(url)
 
                 const json = await resp.json()
-                if(resp.ok){
+                if (resp.ok) {
                     resolve(json)
                 }
 
