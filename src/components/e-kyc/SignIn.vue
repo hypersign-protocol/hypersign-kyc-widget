@@ -106,7 +106,8 @@ export default {
                     blockchain: chainIdComponents[1],
                     chainId: chainIdComponents[2],
                     contractAddress: kycContractAddress,
-                    sbtContractAddress
+                    sbtContractAddress,
+                    masterWalletAddress: onchainconfig?.options?.masterWalletAddress
                 })
 
             } else {

@@ -1834,16 +1834,16 @@ export default {
                 "blockchainLabel": this.blockchainLabel
             }
 
-            const xdr = await this.createAssetToMint(payload);
+            const assetResult = await this.createAssetToMint(payload);
 
             /// ask user to sign the xdr..
-            const result = await this.cosmosConnection.signingClient(xdr)
-
+            const result = await this.cosmosConnection.signingClient(assetResult.xdr)
             if (result?.status != 200) {
                 throw new Error('Could not mint the asset')
             }
             return {
-                transactionHash: result?.message?.hash
+                transactionHash: result?.message?.hash,
+                assetMetadata: assetResult.asset
             }
         },
 
@@ -1861,7 +1861,7 @@ export default {
 
                 this.isLoading = true
                 const credential = this.getTrustedIssuersCredentialsMethod().find(y => y.type[1] == proof.proofType)
-                const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
+                // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
 
                 let result;
 
@@ -1876,16 +1876,33 @@ export default {
                 if (result) {
                     this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
 
-                    // TODO: call server to udpate status
-                    await this.verifySbtMint({
-                        blockchainLabel: this.blockchainLabel,
-                        sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
-                        ownerWalletAddress: this.connectedWalletAddress,
-                        tokenId: sbtTokenId, // TODO what is this token ID.
-                        transactionHash: result.transactionHash,
-                        proofType: proof.proofType
+                    let sbtMintPayload;
 
-                    });
+                    if (this.getOnChainIssuerConfig.ecosystem == 'cosmos') {
+                        sbtMintPayload = {
+                            blockchainLabel: this.blockchainLabel,
+                            sbtContractAddress: this.getOnChainIssuerConfig.contractAddress,
+                            ownerWalletAddress: this.connectedWalletAddress,
+                            // tokenId: sbtTokenId, // TODO what is this token ID.
+                            transactionHash: result.transactionHash,
+                            proofType: proof.proofType
+                        }
+                    } else if (this.getOnChainIssuerConfig.ecosystem == 'stellar' && this.getOnChainIssuerConfig.blockchain == 'diam') {
+                        sbtMintPayload = {
+                            blockchainLabel: this.blockchainLabel,
+                            ownerWalletAddress: this.connectedWalletAddress,
+                            transactionHash: result.transactionHash,
+                            proofType: proof.proofType,
+                            assetIssuerWalletAddress: result.asset.issuer, // intermediatory account
+                            issuerWalletAddress: this.getOnChainIssuerConfig.masterWalletAddress, // master wallet or source account 
+                        }
+                    }
+
+                    console.log({ sbtMintPayload })
+
+                    // TODO: call server to udpate status
+                    await this.verifySbtMint(sbtMintPayload);
+
                     this.isLoading = false
                     // Implement feature in caach server to capture user's miniing step
                     this.hypersign_proofs.map(x => {

@@ -290,8 +290,8 @@ export default {
                     ...payload
                 }
                 const json = await RequestHandler(url, 'POST', body, headers)
-                if (json && json.xdr) {
-                    return resolve(json.xdr)
+                if (json) {
+                    return resolve(json)
                 } else {
                     return reject(new Error(json));
                 }
