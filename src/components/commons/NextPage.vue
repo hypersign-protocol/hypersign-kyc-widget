@@ -25,10 +25,10 @@
 </style>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex'
 export default {
   methods: {
-    ...mapMutations(["nextStep", "previousStep"]),
+    ...mapMutations(['nextStep', 'previousStep']),
   },
-};
+}
 </script>

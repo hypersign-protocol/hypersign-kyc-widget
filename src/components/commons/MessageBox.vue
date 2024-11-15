@@ -40,38 +40,40 @@ export default {
     msg: String,
     action: {
       String,
-      default: 'hide'
+      default: 'hide',
     },
     type: {
       String,
-      default: "success",
+      default: 'success',
     },
   },
   computed: {
     shortenMesssage() {
-      return this.msg; //this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
+      return this.msg // this.msg.length > 40 ? this.msg.substr(0, 40) + '...' : this.msg;
     },
     toastAction() {
-      if (this.action == 'show') {
+      if (this.action === 'show') {
         return 'toast1 show'
-      } if (this.action == 'hide') {
+      }
+      if (this.action === 'hide') {
         return 'toast1 hide'
       } else {
         return 'toast1 hide'
       }
     },
     toastColor() {
-      if (this.type == 'error') {
+      if (this.type === 'error') {
         return 'rgba(253, 170, 170, 0.972)'
-      } if (this.type == 'warning') {
+      }
+      if (this.type === 'warning') {
         return '#ffcc00'
       } else {
         return 'rgb(184, 230, 184)'
       }
-    }
+    },
   },
   data() {
-    return {};
+    return {}
   },
-};
+}
 </script>

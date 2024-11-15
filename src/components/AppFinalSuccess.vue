@@ -9,7 +9,11 @@
       <VerificationDetails />
     </div>
     <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+      <MessageBox
+        :msg="toastMessage"
+        :type="toastType"
+        :action="isToast ? 'show' : 'hide'"
+      />
     </div>
     <div class="card-footer">
       <PoweredBy />
@@ -18,15 +22,15 @@
 </template>
 
 <script type="text/javascript">
-import PoweredBy from "./commons/PoweredBy.vue";
-import VerificationDetails from "./commons/VerificationDetails.vue";
+import PoweredBy from './commons/PoweredBy.vue'
+import VerificationDetails from './commons/VerificationDetails.vue'
 export default {
-  name: "AppFinalSuccess",
+  name: 'AppFinalSuccess',
   components: {
     PoweredBy,
     VerificationDetails,
   },
-};
+}
 </script>
 <style type="text/css" scoped>
 .final-msg-icon {

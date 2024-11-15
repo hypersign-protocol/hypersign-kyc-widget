@@ -46,7 +46,7 @@
               <i class="bi bi-x-circle" v-else style="color: red"></i>
             </div>
             <div class="col-8">
-              <span style="font-size: small; color: ">{{ detail.type }}</span>
+              <span style="font-size: small; color:">{{ detail.type }}</span>
             </div>
             <div class="col" style="text-align: right">
               <span class="badge">{{ detail.score }}</span>
@@ -62,10 +62,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 export default {
   computed: {
-    ...mapState(["finalResult"]),
+    ...mapState(['finalResult']),
   },
   data() {
     return {
@@ -96,9 +96,9 @@ export default {
       //     threshold: "12",
       //     verified: true,
       //   },
-    };
+    }
   },
-};
+}
 </script>
 
 <style>
