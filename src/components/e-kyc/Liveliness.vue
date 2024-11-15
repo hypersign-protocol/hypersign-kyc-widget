@@ -210,6 +210,7 @@ export default {
       const trackStatusCode = Object.entries(FPhi.Selphi.TrackStatus).find(
         (e) => e[1] === eventData.detail.code
       )
+      console.warn(trackStatusCode)
     },
 
     // Widget methods

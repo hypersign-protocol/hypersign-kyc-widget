@@ -116,7 +116,7 @@
                     hypersign_proof.proofType == 'zkProofOfAge'
                       ? hypersign_proof.proofType +
                         ` >
-                                    ${getCriteria(hypersign_proof)} `
+                  ${getCriteria(hypersign_proof)} `
                       : hypersign_proof.proofType
                   }}
                 </h5>
@@ -388,8 +388,6 @@ export default {
         (x) => x.chainId === requestedChainId
       )
 
-      console.log({ chainConfig })
-
       if (!chainConfig) {
         throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
       }
@@ -409,10 +407,6 @@ export default {
       let result
       this.hypersign_proofs.forEach((x) => {
         result = result && x.zkProof
-        console.log({
-          result,
-          isProofDone: x.zkProof,
-        })
       })
       return result
     },
@@ -698,21 +692,16 @@ export default {
 
       const credentialRoot = (await merklized.mt.root()).bigInt()
 
-      console.log(credentialRoot)
-
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
-      console.log(issuer_pk)
 
       const issuer_signature = [
         issuerSignature.R8[0],
         issuerSignature.R8[1],
         issuerSignature.S,
       ]
-      console.log(issuer_signature)
 
       const enabled = 1n
-      console.log(enabled)
 
       let issuer_siblings
       let issuer_oldKey
@@ -864,12 +853,6 @@ export default {
           verifyKey
         )
 
-      console.log({
-        proof,
-        publicSignals,
-        uncompressed_proof,
-      })
-
       if (publicSignals[1] !== '1') {
         throw new Error(
           'Age criteria ' +
@@ -909,8 +892,6 @@ export default {
       ).toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
-
-      console.log(publicKeyIssuer)
 
       const issuerSignatureBase64 = credential.proof.proofValue
       const issuerSignature = cryptoi3.Signature.newFromCompressed(
@@ -965,21 +946,16 @@ export default {
 
       const credentialRoot = (await merklized.mt.root()).bigInt()
 
-      console.log(credentialRoot)
-
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
-      console.log(issuer_pk)
 
       const issuer_signature = [
         issuerSignature.R8[0],
         issuerSignature.R8[1],
         issuerSignature.S,
       ]
-      console.log(issuer_signature)
 
       const enabled = 1n
-      console.log(enabled)
 
       let issuer_siblings
       let issuer_oldKey
@@ -1117,11 +1093,6 @@ export default {
           verifyKey
         )
 
-      console.log({
-        proof,
-        publicSignals,
-        uncompressed_proof,
-      })
       return {
         proof,
         publicSignals,
@@ -1149,8 +1120,6 @@ export default {
       ).toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
-
-      console.log(publicKeyIssuer)
 
       const issuerSignatureBase64 = credential.proof.proofValue
       const issuerSignature = cryptoi3.Signature.newFromCompressed(
@@ -1637,8 +1606,6 @@ export default {
           // }
 
           if (k === 0) {
-            console.log(index, e.value)
-
             keyValuePair.push({
               key: index,
               value: e.value,
@@ -1733,34 +1700,6 @@ export default {
           name: element.name,
         })
       }
-      console.log({
-        issuer_pk,
-        issuer_signature,
-        credentialRoot,
-        issuerId,
-        userId,
-        type,
-        enabled,
-        issuer_siblings,
-        issuer_oldKey,
-        issuer_oldValue,
-        issuer_isOld0,
-        issuer_key,
-        issuer_fnc,
-        user_siblings,
-        user_oldKey,
-        user_oldValue,
-        user_isOld0,
-        user_key,
-        user_fnc,
-        type_siblings,
-        type_oldKey,
-        type_oldValue,
-        type_isOld0,
-        type_key,
-        type_fnc,
-        nullifier,
-      })
 
       const { proof, publicSignals, uncompressed_proof } =
         await utils.groth16FullProve(
@@ -1897,7 +1836,6 @@ export default {
     },
 
     async mintDiamToken(credential) {
-      console.log(credential)
       ///  call asset generation api
       const payload = {
         credential,
@@ -1980,8 +1918,6 @@ export default {
             }
           }
 
-          console.log({ sbtMintPayload })
-
           // TODO: call server to udpate status
           await this.verifySbtMint(sbtMintPayload)
 
@@ -1999,7 +1935,6 @@ export default {
         }
       } catch (e) {
         this.toast(e.message, 'error')
-        console.log(e.message)
 
         this.isLoading = false
       }
