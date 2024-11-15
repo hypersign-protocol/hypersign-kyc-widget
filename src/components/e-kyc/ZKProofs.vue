@@ -98,35 +98,28 @@
                   <small>{{ hypersign_proof.description }}</small>
                 </p>
 
-                                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                                    <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)"
-                                        :disabled="hypersign_proof.isLoading">
-                                        <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
-                                        <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof Now</span>
+                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
+                  <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                    <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
+                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof Now</span>
 
-                                        <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm"
-                                            role="status" aria-hidden="true"></span>
+                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
 
-                                        <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+                  </button>
+                </template>
+                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
+                  <button class="btn btn-outline-dark" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                    <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
 
+                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID Token</span>
+                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
 
-                                    </button>
-                                </template>
-                                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                                    <button class="btn btn-outline-dark" @click="mint(hypersign_proof)"
-                                        :disabled="hypersign_proof.isLoading">
-                                        <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
-
-                                        <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID
-                                            Token</span>
-                                        <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm"
-                                            role="status" aria-hidden="true"></span>
-
-                                        <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+                  </button>
+                </template>
+              </div>
+            </div>
 
             <div class="col-md-1" v-if="isOnchainIdEnabled">
               <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT">
@@ -274,97 +267,94 @@ export default {
       const requestedChainId = this.getOnChainIssuerConfig.chainId
       const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
 
-            if (!chainConfig) {
-                throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
-            }
-            return chainConfig
-        },
-        showConnectWallet() {
-            if (this.connectedWalletAddress != '') {
-                return false
-            } else {
-                return true
-            }
-        },
-        blockchainLabel() {
-            return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
-        },
-        isNextEnabled() {
-            let result;
-            this.hypersign_proofs.forEach(x => {
-
-                result = result && x['zkProof']
-                console.log({
-                    result,
-                    isProofDone: x['zkProof']
-                })
-            })
-            return result;
-        },
-        isIDDocEnabled() {
-            if (this.getWidgetConfigFromDb.idOcr.enabled) {
-                return true
-            } else return false
-        },
-        isOnchainIdEnabled() {
-            if (this.getWidgetConfigFromDb.onChainId.enabled) {
-                return true
-            } else return false
-        },
-        isLivelinessEnabled() {
-            if (this.getWidgetConfigFromDb.faceRecog.enabled) {
-                return true
-            } else return false
-        },
-
+      if (!chainConfig) {
+        throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
+      }
+      return chainConfig
     },
-    data() {
-        return {
-            isLoading: false,
-            fullPage: true,
-            toastMessage: "",
-            toastType: "success",
-            isToast: false,
-            error: false,
-            connectedWalletAddress: "",
-            nft: {
-                metadata: null,
-            },
-            hypersign_proofs: [], // request
-            showModal: false,
-            credentials: [],
-            zkproofLoader: []
-        };
+    showConnectWallet() {
+      if (this.connectedWalletAddress !== '') {
+        return false
+      } else {
+        return true
+      }
     },
-    methods: {
-        ...mapMutations(["setCavachAccessToken", "setRedirectUrl", "nextStep", "setPresentationRequest", 'setTenantSubdomain', 'setSSIAccessToken']),
-        ...mapActions(["getNewSession", 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
-        // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
-        logoUrl(logo) {
-            return require('@/assets/' + logo);
-        },
-        shorten(str) {
-            if (str.length <= 20) {
-                return str;
-            }
-            const firstPart = str.slice(0, 10);
-            const lastPart = str.slice(-10);
-            return `${firstPart}...${lastPart}`;
-        },
-        getCriteria(proof) {
-            const widgetConfig = this.getWidgetConfigFromDb
-            const proofConfig = widgetConfig.zkProof.proofs.find(e => e.proofType === proof.proofType)
-            return proofConfig.criteria
-
-        },
-        getVaultDataCredentialsMethod() {
-            const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
-            const { credentials } = hypersign
-            return credentials;
-        },
-        getTrustedIssuersCredentialsMethod() {
-            return this.getVaultDataCredentialsMethod().filter(x => this.getTrustedIssuers.includes(x.issuer))
-        },
+    blockchainLabel() {
+      return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
+    },
+    isNextEnabled() {
+      let result
+      this.hypersign_proofs.forEach((x) => {
+        result = result && x.zkProof
+        console.log({
+          result,
+          isProofDone: x.zkProof,
+        })
+      })
+      return result
+    },
+    isIDDocEnabled() {
+      if (this.getWidgetConfigFromDb.idOcr.enabled) {
+        return true
+      } else return false
+    },
+    isOnchainIdEnabled() {
+      if (this.getWidgetConfigFromDb.onChainId.enabled) {
+        return true
+      } else return false
+    },
+    isLivelinessEnabled() {
+      if (this.getWidgetConfigFromDb.faceRecog.enabled) {
+        return true
+      } else return false
+    },
+  },
+  data() {
+    return {
+      isLoading: false,
+      fullPage: true,
+      toastMessage: '',
+      toastType: 'success',
+      isToast: false,
+      error: false,
+      connectedWalletAddress: '',
+      nft: {
+        metadata: null,
+      },
+      hypersign_proofs: [], // request
+      showModal: false,
+      credentials: [],
+      zkproofLoader: [],
+    }
+  },
+  methods: {
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
+    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
+    // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+    logoUrl(logo) {
+      return require('@/assets/' + logo)
+    },
+    shorten(str) {
+      if (str.length <= 20) {
+        return str
+      }
+      const firstPart = str.slice(0, 10)
+      const lastPart = str.slice(-10)
+      return `${firstPart}...${lastPart}`
+    },
+    getCriteria(proof) {
+      const widgetConfig = this.getWidgetConfigFromDb
+      const proofConfig = widgetConfig.zkProof.proofs.find((e) => e.proofType === proof.proofType)
+      return proofConfig.criteria
+    },
+    getVaultDataCredentialsMethod() {
+      const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
+      const { credentials } = hypersign
+      return credentials
+    },
+    getTrustedIssuersCredentialsMethod() {
+      return this.getVaultDataCredentialsMethod().filter((x) => this.getTrustedIssuers.includes(x.issuer))
+    },
 
     isAllZkProofSBTMinted() {
       const result = this.hypersign_proofs.map((e) => {
@@ -1433,62 +1423,64 @@ export default {
           type = proof.value.bigInt()
         }
 
-                circomProofs.push({
-                    type: element.key,
-                    // eslint-disable-next-line no-undef
-                    value: (await merklized.mt.get(BigInt(element.key))).value,
-                    proof: proof,
-                    name: element.name
-                })
+        circomProofs.push({
+          type: element.key,
+          // eslint-disable-next-line no-undef
+          value: (await merklized.mt.get(BigInt(element.key))).value,
+          proof,
+          name: element.name,
+        })
+      }
 
-            }
-
-            const {
-                proof, publicSignals, uncompressed_proof
-            } = await utils.groth16FullProve({
-                nullifier,
-                issuer_pk, issuer_signature,
-                credentialRoot,
-                issuerId,
-                userId,
-                type,
-                enabled,
-                issuer_siblings,
-                issuer_oldKey,
-                issuer_oldValue,
-                issuer_isOld0,
-                issuer_key, issuer_fnc,
-                user_siblings,
-                user_oldKey, user_oldValue,
-                user_isOld0,
-                user_key, user_fnc,
-                type_siblings,
-                type_oldKey, type_oldValue,
-                type_isOld0,
-                type_key, type_fnc
-            }
-                , wtns, verifyKey)
-
-
-            return {
-                proof, publicSignals, uncompressed_proof
-            }
-
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          nullifier,
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          type,
+          enabled,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
         },
-        async getProof(proof) {
-            proof.isLoading = true
-            try {
+        wtns,
+        verifyKey
+      )
 
-
-
-                const widgetConfig = this.getWidgetConfigFromDb
-                const trustedIssuer = widgetConfig.issuerDID
-                let credentialType;
-                let trustedIssuerList = []
-                if (trustedIssuer) {
-                    trustedIssuerList = trustedIssuer.split(',')
-                }
-                let criteria = null
+      return {
+        proof,
+        publicSignals,
+        uncompressed_proof,
+      }
+    },
+    async getProof(proof) {
+      proof.isLoading = true
+      try {
+        const widgetConfig = this.getWidgetConfigFromDb
+        const trustedIssuer = widgetConfig.issuerDID
+        let trustedIssuerList = []
+        if (trustedIssuer) {
+          trustedIssuerList = trustedIssuer.split(',')
+        }
+        let criteria = null
 
         const credentialType = proof.credentialType
 
@@ -1509,27 +1501,23 @@ export default {
         zkProof.proofType = proof.proofType
         const resp = await this.verifyZkProof(zkProof)
 
-                if (resp) {
-                    this.hypersign_proofs.map(x => {
-                        if (x.proof_type == proof.proof_type) {
-                            x['zkProof'] = true
-                        }
-                    })
-                }
-                // eslint-disable-next-line no-unreachable
-                proof.isLoading = false
-            } catch (e) {
-                console.log(e);
-                
-                this.toast(e.message, 'error')
-            } finally {
-                proof.isLoading = false
+        if (resp) {
+          this.hypersign_proofs.map((x) => {
+            if (x.proof_type === proof.proof_type) {
+              x.zkProof = true
             }
+          })
+        }
+        // eslint-disable-next-line no-unreachable
+        proof.isLoading = false
+      } catch (e) {
+        console.log(e)
 
-
-
-
-        },
+        this.toast(e.message, 'error')
+      } finally {
+        proof.isLoading = false
+      }
+    },
 
     showWalletModal() {
       this.showModal = true
@@ -1584,22 +1572,21 @@ export default {
       }
     },
 
-        async mint(proof) {
-
-            try {
-                if (!this.isOnchainIdEnabled) {
-                    this.toast("OnChain ID minting is not enabled")
-                    return
-                }
+    async mint(proof) {
+      try {
+        if (!this.isOnchainIdEnabled) {
+          this.toast('OnChain ID minting is not enabled')
+          return
+        }
 
         if (this.showConnectWallet) {
           this.showWalletModal()
           return
         }
 
-                proof.isLoading = true
-                const credential = this.getTrustedIssuersCredentialsMethod().find(y => y.type[1] == proof.proofType)
-                // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
+        proof.isLoading = true
+        const credential = this.getTrustedIssuersCredentialsMethod().find((y) => y.type[1] === proof.proofType)
+        // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
 
         let result
 
@@ -1652,9 +1639,9 @@ export default {
       } catch (e) {
         this.toast(e.message, 'error')
 
-                proof.isLoading = false
-            }
-        },
+        proof.isLoading = false
+      }
+    },
 
     async disconnectWallet() {
       this.connectedWalletAddress = ''
@@ -1684,40 +1671,37 @@ export default {
         return
       }
 
-            requestedProofs.forEach(x => {
-                const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
-                if (hypersignProof) {
-                    this.hypersign_proofs.push({
-                        "credential_id": "",
-                        "data": "",
-                        "isLoading": false,
-                        "description": hypersignProof.description,
-                        "proof_type_image": hypersignProof.image,
-                        "sbt_code": hypersignProof.sbtCode,
-                        "bgColor": hypersignProof.bgColor,
-                        "proof_type": hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
-                        "proofType": x.proofType,
-                        "credentialType": hypersignProof.credentialType,
-                        "zkProof": (this.getTrustedIssuersCredentials.find(y => y.type[1] == x.proofType) ? true : false),
-                        "zkSBT": (this.getTrustedIssuersCredentials.find(y => y.type[1] == (x.proofType + 'SbtCredential')) ? true : false),
-                    })
-                    // this.showModal = true
-                } else {
-                    throw new Error('Invalid proof of type: ' + x.proofType)
-                }
-            })
-            this.isLoading = false
+      requestedProofs.forEach((x) => {
+        const hypersignProof = HYPERSIGN_PROOF_TYPES[x.proofType]
+        if (hypersignProof) {
+          this.hypersign_proofs.push({
+            credential_id: '',
+            data: '',
+            isLoading: false,
+            description: hypersignProof.description,
+            proof_type_image: hypersignProof.image,
+            sbt_code: hypersignProof.sbtCode,
+            bgColor: hypersignProof.bgColor,
+            proof_type: hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
+            proofType: x.proofType,
+            credentialType: hypersignProof.credentialType,
+            zkProof: !!this.getTrustedIssuersCredentials.find((y) => y.type[1] === x.proofType),
+            zkSBT: !!this.getTrustedIssuersCredentials.find((y) => y.type[1] === x.proofType + 'SbtCredential'),
+          })
+          // this.showModal = true
+        } else {
+          throw new Error('Invalid proof of type: ' + x.proofType)
         }
-        catch (e) {
-            this.toast(e.message, 'error')
-        } finally {
-            this.isLoading = false
-        }
-
-    },
-    beforeDestroy() {
-        this.disconnectWallet()
+      })
+      this.isLoading = false
+    } catch (e) {
+      this.toast(e.message, 'error')
+    } finally {
+      this.isLoading = false
     }
-
+  },
+  beforeDestroy() {
+    this.disconnectWallet()
+  },
 }
 </script>
