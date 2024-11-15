@@ -304,38 +304,44 @@ export default {
 
     verifyZkProof: ({ commit, getters, dispatch }, payload) => {// eslint-disable-line
         return new Promise(async (resolve, reject) => { // eslint-disable-line
-            const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/zk-proof`;
-            const headers = {
-                'Authorization': 'Bearer ' + getters.getCavachAccessToken,
-                'x-ssi-access-token': getters.getSSIAccessToken,
-                'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-                'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
-            };
-            headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
+            try {
 
 
-            const body = {
-                sessionId: getters.getSession,
-                userDID: getters.getUserDID,
-                proof: payload.uncompressed_proof,
-                publicSignals: payload.publicSignals,
-                proofType: payload.proofType
+                const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/zk-proof`;
+                const headers = {
+                    'Authorization': 'Bearer ' + getters.getCavachAccessToken,
+                    'x-ssi-access-token': getters.getSSIAccessToken,
+                    'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+                    'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod
+                };
+                headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken;
 
 
+                const body = {
+                    sessionId: getters.getSession,
+                    userDID: getters.getUserDID,
+                    proof: payload.uncompressed_proof,
+                    publicSignals: payload.publicSignals,
+                    proofType: payload.proofType
+
+
+                }
+                const json = await RequestHandler(url, 'POST', body, headers)
+
+                console.log(json)
+
+                if (json.credential && json.verifyResult) {
+                    // commit('setSbtMintDone', true);
+                    console.log('Updating each credentila in vault credential id ' + json.credential.id)
+                    dispatch('updateVaultCredentials', json.credential);
+                    return resolve(json)
+                } else {
+                    return reject(new Error(json));
+                }
+
+            } catch (error) {
+                reject("Error Occured: " + error.message ? error.message : error)
             }
-            const json = await RequestHandler(url, 'POST', body, headers)
-
-            console.log(json)
-
-            if (json.credential && json.verifyResult) {
-                // commit('setSbtMintDone', true);
-                console.log('Updating each credentila in vault credential id ' + json.credential.id)
-                dispatch('updateVaultCredentials', json.credential);
-                return resolve(json)
-            } else {
-                return reject(new Error(json));
-            }
-
             // resolve(json)
 
 
