@@ -98,15 +98,30 @@
 
 
                                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                                    <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)">
-                                        <i class="bi bi-shield-lock"></i>
-                                        Get Proof Now
+                                    <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)"
+                                        :disabled="hypersign_proof.isLoading">
+                                        <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
+                                        <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof Now</span>
+
+                                        <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm"
+                                            role="status" aria-hidden="true"></span>
+
+                                        <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+
+
                                     </button>
                                 </template>
                                 <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                                    <button class="btn btn-outline-dark" @click="mint(hypersign_proof)">
-                                        <i class="bi bi-hammer"></i>
-                                        Mint Your ID Token
+                                    <button class="btn btn-outline-dark" @click="mint(hypersign_proof)"
+                                        :disabled="hypersign_proof.isLoading">
+                                        <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
+
+                                        <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID
+                                            Token</span>
+                                        <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm"
+                                            role="status" aria-hidden="true"></span>
+
+                                        <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
                                     </button>
                                 </template>
                             </div>
@@ -339,7 +354,8 @@ export default {
             },
             hypersign_proofs: [], // request
             showModal: false,
-            credentials: []
+            credentials: [],
+            zkproofLoader: []
         };
     },
     methods: {
@@ -1674,28 +1690,6 @@ export default {
                 })
 
             }
-            console.log({
-                issuer_pk, issuer_signature,
-                credentialRoot,
-                issuerId,
-                userId,
-                type,
-                enabled,
-                issuer_siblings,
-                issuer_oldKey,
-                issuer_oldValue,
-                issuer_isOld0,
-                issuer_key, issuer_fnc,
-                user_siblings,
-                user_oldKey, user_oldValue,
-                user_isOld0,
-                user_key, user_fnc,
-                type_siblings,
-                type_oldKey, type_oldValue,
-                type_isOld0,
-                type_key, type_fnc,
-                nullifier
-            });
 
             const {
                 proof, publicSignals, uncompressed_proof
@@ -1730,10 +1724,11 @@ export default {
 
         },
         async getProof(proof) {
+            proof.isLoading = true
             try {
 
 
-                this.isLoading = true
+
                 const widgetConfig = this.getWidgetConfigFromDb
                 const trustedIssuer = widgetConfig.issuerDID
                 let credentialType;
@@ -1777,12 +1772,18 @@ export default {
                     })
                 }
                 // eslint-disable-next-line no-unreachable
-                this.isLoading = false
+                proof.isLoading = false
             } catch (e) {
+                console.log(e);
+                
                 this.toast(e.message, 'error')
             } finally {
-                this.isLoading = false
+                proof.isLoading = false
             }
+
+
+
+
         },
 
         showWalletModal() {
@@ -1848,6 +1849,7 @@ export default {
         },
 
         async mint(proof) {
+
             try {
                 if (!this.isOnchainIdEnabled) {
                     this.toast("OnChain ID minting is not enabled")
@@ -1859,7 +1861,7 @@ export default {
                     return;
                 }
 
-                this.isLoading = true
+                proof.isLoading = true
                 const credential = this.getTrustedIssuersCredentialsMethod().find(y => y.type[1] == proof.proofType)
                 // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
 
@@ -1919,7 +1921,7 @@ export default {
                 this.toast(e.message, 'error')
                 console.log(e.message);
 
-                this.isLoading = false
+                proof.isLoading = false
             }
         },
 
@@ -1958,6 +1960,7 @@ export default {
                     this.hypersign_proofs.push({
                         "credential_id": "",
                         "data": "",
+                        "isLoading": false,
                         "description": hypersignProof.description,
                         "proof_type_image": hypersignProof.image,
                         "sbt_code": hypersignProof.sbtCode,
