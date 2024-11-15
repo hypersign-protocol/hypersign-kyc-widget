@@ -4,13 +4,9 @@
       <!-- Note: You are giving consent of your data to Hypersign. We do not store or
       log your data, we verify and delete it. -->
       By continuing, you agree to our
-      <a href="https://docs.hypersign.id/privacy-policy" target="_blank"
-        >terms of use</a
-      >
+      <a href="https://docs.hypersign.id/privacy-policy" target="_blank">terms of use</a>
       and
-      <a href="https://docs.hypersign.id/privacy-policy" target="_blank"
-        >privacy policy</a
-      >
+      <a href="https://docs.hypersign.id/privacy-policy" target="_blank">privacy policy</a>
     </span>
   </p>
 </template>

@@ -65,49 +65,23 @@
 <template>
   <div class="">
     <div class="container card-body min-h-36">
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <PageHeading
-        :header="'Proof & OnChain ID'"
-        :subHeader="'Get Proof and Mint Your Onchain ID'"
-        :beta="true"
-      />
+      <PageHeading :header="'Proof & OnChain ID'" :subHeader="'Get Proof and Mint Your Onchain ID'" :beta="true" />
       <div class="container row center mt-1" v-if="connectedWalletAddress">
         <div class="col-md-8">
-          <button
-            class="btn btn-link"
-            @click="disconnectWallet()"
-            style="text-decoration: underline; color: grey; cursor: pointer"
-            title="Disconnect Wallet"
-          >
+          <button class="btn btn-link" @click="disconnectWallet()" style="text-decoration: underline; color: grey; cursor: pointer" title="Disconnect Wallet">
             {{ shorten(connectedWalletAddress) }}
             <i class="bi bi-box-arrow-right"></i>
           </button>
         </div>
       </div>
 
-      <div
-        class="row col-md-12"
-        style="max-height: 500px; overflow-y: auto; overflow-x: hidden"
-      >
-        <div
-          class="row widget-card mt-2 proofCard"
-          v-for="hypersign_proof in hypersign_proofs"
-          v-bind:key="hypersign_proof.type"
-          :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`"
-        >
+      <div class="row col-md-12" style="max-height: 500px; overflow-y: auto; overflow-x: hidden">
+        <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
           <div class="row" style="text-align: left">
             <div class="col-md-2 center">
-              <img
-                v-bind:src="logoUrl(hypersign_proof.proof_type_image)"
-                class="img-fluid rounded-start"
-                alt="..."
-                style="opacity: 0.7"
-              />
+              <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.7" />
             </div>
             <div class="col-md-9">
               <div class="card-body">
@@ -124,30 +98,14 @@
                   <small>{{ hypersign_proof.description }}</small>
                 </p>
 
-                <template
-                  v-if="
-                    !hypersign_proof.zkProof &&
-                    getWidgetConfigFromDb.zkProof.enabled
-                  "
-                >
-                  <button
-                    class="btn btn-outline-dark"
-                    @click="getProof(hypersign_proof)"
-                  >
+                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
+                  <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)">
                     <i class="bi bi-shield-lock"></i>
                     Get Proof Now
                   </button>
                 </template>
-                <template
-                  v-else-if="
-                    !hypersign_proof.zkSBT &&
-                    getWidgetConfigFromDb.onChainId.enabled
-                  "
-                >
-                  <button
-                    class="btn btn-outline-dark"
-                    @click="mint(hypersign_proof)"
-                  >
+                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
+                  <button class="btn btn-outline-dark" @click="mint(hypersign_proof)">
                     <i class="bi bi-hammer"></i>
                     Mint Your ID Token
                   </button>
@@ -170,32 +128,14 @@
       </div>
 
       <div class="container mt-3">
-        <div
-          class="d-grid gap-1"
-          style="width: 20%; margin: auto"
-          v-if="
-            !getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()
-          "
-        >
-          <button class="btn btn-outline-dark" @click="nextStep(7)">
-            Next
-          </button>
+        <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
+          <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
         </div>
       </div>
 
       <div class="container mt-3">
-        <div
-          class="d-grid gap-1"
-          style="width: 20%; margin: auto"
-          v-if="
-            isAllZkProofVerified() &&
-            isAllZkProofSBTMinted() &&
-            getWidgetConfigFromDb.onChainId.enabled
-          "
-        >
-          <button class="btn btn-outline-dark" @click="nextStep(7)">
-            Next
-          </button>
+        <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled">
+          <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
         </div>
       </div>
       <div class="container" style="display: none">
@@ -208,54 +148,28 @@
               </button>
             </template>
 
-            <ConnectWalletButton
-              :ecosystem="this.getOnChainIssuerConfig.ecosystem"
-              :blockchain="this.getOnChainIssuerConfig.blockchain"
-              :chainId="this.getOnChainIssuerConfig.chainId"
-              @authEvent="myEventListener"
-              v-if="!showConnectWallet"
-            />
+            <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" v-if="!showConnectWallet" />
           </div>
         </div>
       </div>
     </div>
 
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
 
     <div class="overlay" v-if="showModal"></div>
     <div class="popup" v-if="showModal">
       <div class="row">
         <div class="col" style="text-align: end">
-          <b-button
-            variant="btn btn-secondary-outline"
-            @click="showModal = false"
-            ><i class="bi bi-x-circle" style="color: indianred"></i
-          ></b-button>
+          <b-button variant="btn btn-secondary-outline" @click="showModal = false"><i class="bi bi-x-circle" style="color: indianred"></i></b-button>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <ConnectWalletButton
-            :ecosystem="this.getOnChainIssuerConfig.ecosystem"
-            v-if="this.getOnChainIssuerConfig.ecosystem == 'cosmos'"
-            :blockchain="this.getOnChainIssuerConfig.blockchain"
-            :chainId="this.getOnChainIssuerConfig.chainId"
-            @authEvent="myEventListener"
-          />
+          <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
 
-          <ConnectWalletButtonDiam
-            :ecosystem="this.getOnChainIssuerConfig.ecosystem"
-            v-if="this.getOnChainIssuerConfig.blockchain == 'diam'"
-            :blockchain="this.getOnChainIssuerConfig.blockchain"
-            :chainId="this.getOnChainIssuerConfig.chainId"
-            @authEvent="myEventListener"
-          />
+          <ConnectWalletButtonDiam :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.blockchain == 'diam'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
         </div>
       </div>
     </div>
@@ -276,20 +190,10 @@ import NibiruMainnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-met
 
 import DiamTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/diam/Diamante Testnet 2024/chains'
 
-import {
-  constructKYCSBTMintMsg,
-  constructQuerySBTContractMetadata,
-} from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
-import {
-  getCosmosChainConfig,
-  HYPERSIGN_PROOF_TYPES,
-} from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
+import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
-import {
-  STEP_NAMES,
-  SUPPORTED_CREDENTIAL_TYPEE,
-  ZK_PROOF_TYPES,
-} from '@/config'
+import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE, ZK_PROOF_TYPES } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import * as cryptoi3 from '@iden3/js-crypto'
 import * as MerkleTreeJSONLD from '@iden3/js-jsonld-merklization'
@@ -305,27 +209,16 @@ export default {
     ConnectWalletButtonDiam,
   },
   computed: {
-    ...mapGetters([
-      'getCavachAccessToken',
-      'getVaultDataRaw',
-      'getVaultDataCredentials',
-      'getRedirectUrl',
-      'getOnChainIssuerConfig',
-      'getWidgetConfigFromDb',
-    ]),
+    ...mapGetters(['getCavachAccessToken', 'getVaultDataRaw', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
     // vault
     getVaultDataCredentials() {
-      const { hypersign } = JSON.parse(
-        localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
-      )
+      const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
       const { credentials } = hypersign
       return credentials
     },
     getTrustedIssuersCredentials() {
-      return this.getVaultDataCredentials.filter((x) =>
-        this.getTrustedIssuers.includes(x.issuer)
-      )
+      return this.getVaultDataCredentials.filter((x) => this.getTrustedIssuers.includes(x.issuer))
     },
     getTrustedIssuers() {
       const issuerDID = this.getWidgetConfigFromDb.issuerDID
@@ -348,35 +241,15 @@ export default {
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
       let SupportedChains
 
-      if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'nibi' &&
-        chainId === 'nibiru-localnet-0'
-      ) {
+      if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-localnet-0') {
         SupportedChains = NibiruLocalNetChainJson
-      } else if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'nibi' &&
-        chainId === 'nibiru-testnet-1'
-      ) {
+      } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-testnet-1') {
         SupportedChains = NibiruTestnetChainJson
-      } else if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'osmo' &&
-        chainId === 'osmo-test-5'
-      ) {
+      } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
         SupportedChains = OsmosisTestnetChainJson
-      } else if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'nibi' &&
-        chainId === 'cataclysm-1'
-      ) {
+      } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'cataclysm-1') {
         SupportedChains = NibiruMainnetChainJson
-      } else if (
-        ecosystem === 'stellar' &&
-        blockchain === 'diam' &&
-        chainId === 'Diamante Testnet 2024'
-      ) {
+      } else if (ecosystem === 'stellar' && blockchain === 'diam' && chainId === 'Diamante Testnet 2024') {
         SupportedChains = DiamTestnetChainJson
       }
 
@@ -384,9 +257,7 @@ export default {
         throw new Error(MESSAGE.WALLET.ECO_SYSTEM_NOT_SUPPORTED)
       }
       const requestedChainId = this.getOnChainIssuerConfig.chainId
-      const chainConfig = SupportedChains.find(
-        (x) => x.chainId === requestedChainId
-      )
+      const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
 
       if (!chainConfig) {
         throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
@@ -444,21 +315,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'setCavachAccessToken',
-      'setRedirectUrl',
-      'nextStep',
-      'setPresentationRequest',
-      'setTenantSubdomain',
-      'setSSIAccessToken',
-    ]),
-    ...mapActions([
-      'getNewSession',
-      'verifySbtMint',
-      'verifyZkProof',
-      'resolveIssuerId',
-      'createAssetToMint',
-    ]),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
+    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
     // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
     logoUrl(logo) {
       return require('@/assets/' + logo)
@@ -473,22 +331,16 @@ export default {
     },
     getCriteria(proof) {
       const widgetConfig = this.getWidgetConfigFromDb
-      const proofConfig = widgetConfig.zkProof.proofs.find(
-        (e) => e.proofType === proof.proofType
-      )
+      const proofConfig = widgetConfig.zkProof.proofs.find((e) => e.proofType === proof.proofType)
       return proofConfig.criteria
     },
     getVaultDataCredentialsMethod() {
-      const { hypersign } = JSON.parse(
-        localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
-      )
+      const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
       const { credentials } = hypersign
       return credentials
     },
     getTrustedIssuersCredentialsMethod() {
-      return this.getVaultDataCredentialsMethod().filter((x) =>
-        this.getTrustedIssuers.includes(x.issuer)
-      )
+      return this.getVaultDataCredentialsMethod().filter((x) => this.getTrustedIssuers.includes(x.issuer))
     },
 
     isAllZkProofSBTMinted() {
@@ -520,9 +372,7 @@ export default {
 
     async myEventListener(data) {
       if (this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
-        this.nft.metadata = await this.getContractMetadata(
-          this.getOnChainIssuerConfig.sbtContractAddress
-        )
+        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
       }
       this.connectedWalletAddress = data.user.walletAddress
       this.showModal = false
@@ -540,11 +390,7 @@ export default {
       }
 
       const queryMetadataMsg = constructQuerySBTContractMetadata()
-      const queryMetadataMsgResult = await smartContractQueryRPC(
-        client,
-        activeSmartContractAddress,
-        queryMetadataMsg
-      )
+      const queryMetadataMsgResult = await smartContractQueryRPC(client, activeSmartContractAddress, queryMetadataMsg)
       return queryMetadataMsgResult
     },
     toast(msg, type = 'success') {
@@ -560,27 +406,16 @@ export default {
 
     // queryVaultDataCredentials(credentialType, trustedIssuer) {
     queryVaultDataCredentials() {
-      if (
-        !this.getVaultDataCredentials &&
-        this.getVaultDataCredentials.length <= 0
-      ) {
+      if (!this.getVaultDataCredentials && this.getVaultDataCredentials.length <= 0) {
         return undefined
       }
 
       const credeital = this.getVaultDataCredentials.find((credential) => {
-        if (
-          credential.type.includes(
-            SUPPORTED_CREDENTIAL_TYPEE.PassportCredential
-          )
-        ) {
+        if (credential.type.includes(SUPPORTED_CREDENTIAL_TYPEE.PassportCredential)) {
           return credential
         }
 
-        if (
-          credential.type.includes(
-            SUPPORTED_CREDENTIAL_TYPEE.GovernmentIdCredential
-          )
-        ) {
+        if (credential.type.includes(SUPPORTED_CREDENTIAL_TYPEE.GovernmentIdCredential)) {
           return credential
         }
       })
@@ -632,31 +467,20 @@ export default {
       })
 
       const publicKeyIssuerMultibase = verificationMethod.publicKeyMultibase
-      const hexPublicKey = Buffer.from(
-        multibase.decode(publicKeyIssuerMultibase),
-        'hex'
-      ).toString('hex')
+      const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
       const issuerSignatureBase64 = credential.proof.proofValue
-      const issuerSignature = cryptoi3.Signature.newFromCompressed(
-        multibase.decode(issuerSignatureBase64)
-      )
+      const issuerSignature = cryptoi3.Signature.newFromCompressed(multibase.decode(issuerSignatureBase64))
       delete credential.proof.proofValue
 
       const keyValuePair = []
-      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(
-        JSON.stringify(credential),
-        {
-          documentLoader,
-        }
-      )
+      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential), {
+        documentLoader,
+      })
       merklized.entries.forEach((e, index) => {
-        if (
-          e.key.parts.length === 1 &&
-          e.key.parts[0].includes('credentialSubject')
-        ) {
+        if (e.key.parts.length === 1 && e.key.parts[0].includes('credentialSubject')) {
           keyValuePair.push({
             key: index,
             value: e.value,
@@ -695,11 +519,7 @@ export default {
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
 
-      const issuer_signature = [
-        issuerSignature.R8[0],
-        issuerSignature.R8[1],
-        issuerSignature.S,
-      ]
+      const issuer_signature = [issuerSignature.R8[0], issuerSignature.R8[1], issuerSignature.S]
 
       const enabled = 1n
 
@@ -739,9 +559,7 @@ export default {
       // eslint-disable-next-line no-undef
       const currentTimestamp = BigInt(new Date().valueOf())
       // eslint-disable-next-line no-undef
-      const nullifier = BigInt(
-        '0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex')
-      )
+      const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
       const circomProofs = []
       // Generate Circuit compatible proofs and prepate the circuit input
@@ -749,10 +567,7 @@ export default {
         const element = keyValuePair[index]
 
         // eslint-disable-next-line no-undef
-        const proof = await merklized.mt.generateCircomVerifierProof(
-          BigInt(element.key),
-          MerkleTree.ZERO_HASH
-        )
+        const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
         if (element.name === 'issuerDid') {
           //  prepare issuer proof input
           issuer_siblings = proof.siblings.map((e) => e.bigInt())
@@ -810,60 +625,50 @@ export default {
       // eslint-disable-next-line no-undef
       const ageCriteria = BigInt(parseInt(criteria))
 
-      const { proof, publicSignals, uncompressed_proof } =
-        await utils.groth16FullProve(
-          {
-            issuer_pk,
-            issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            ageCriteria,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key,
-            issuer_fnc,
-            user_siblings,
-            user_oldKey,
-            user_oldValue,
-            user_isOld0,
-            user_key,
-            user_fnc,
-            type_siblings,
-            type_oldKey,
-            type_oldValue,
-            type_isOld0,
-            type_key,
-            type_fnc,
-            dateOfBirth,
-            dob_siblings,
-            dob_oldKey,
-            dob_oldValue,
-            dob_isOld0,
-            dob_key,
-            dob_fnc,
-            currentTimestamp,
-            nullifier,
-          },
-          wtns,
-          verifyKey
-        )
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          type,
+          enabled,
+          ageCriteria,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
+          dateOfBirth,
+          dob_siblings,
+          dob_oldKey,
+          dob_oldValue,
+          dob_isOld0,
+          dob_key,
+          dob_fnc,
+          currentTimestamp,
+          nullifier,
+        },
+        wtns,
+        verifyKey
+      )
 
       if (publicSignals[1] !== '1') {
-        throw new Error(
-          'Age criteria ' +
-            parseInt(
-              (new Date() - new Date(parseInt(dateOfBirth))) /
-                (1000 * 60 * 60 * 24 * 30 * 12)
-            ) +
-            ' > ' +
-            ageCriteria +
-            ' not fulfilled'
-        )
+        throw new Error('Age criteria ' + parseInt((new Date() - new Date(parseInt(dateOfBirth))) / (1000 * 60 * 60 * 24 * 30 * 12)) + ' > ' + ageCriteria + ' not fulfilled')
       }
       return {
         proof,
@@ -886,31 +691,20 @@ export default {
       })
 
       const publicKeyIssuerMultibase = verificationMethod.publicKeyMultibase
-      const hexPublicKey = Buffer.from(
-        multibase.decode(publicKeyIssuerMultibase),
-        'hex'
-      ).toString('hex')
+      const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
       const issuerSignatureBase64 = credential.proof.proofValue
-      const issuerSignature = cryptoi3.Signature.newFromCompressed(
-        multibase.decode(issuerSignatureBase64)
-      )
+      const issuerSignature = cryptoi3.Signature.newFromCompressed(multibase.decode(issuerSignatureBase64))
       delete credential.proof.proofValue
 
       const keyValuePair = []
-      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(
-        JSON.stringify(credential),
-        {
-          documentLoader,
-        }
-      )
+      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential), {
+        documentLoader,
+      })
       merklized.entries.forEach((e, index) => {
-        if (
-          e.key.parts.length === 1 &&
-          e.key.parts[0].includes('credentialSubject')
-        ) {
+        if (e.key.parts.length === 1 && e.key.parts[0].includes('credentialSubject')) {
           keyValuePair.push({
             key: index,
             value: e.value,
@@ -949,11 +743,7 @@ export default {
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
 
-      const issuer_signature = [
-        issuerSignature.R8[0],
-        issuerSignature.R8[1],
-        issuerSignature.S,
-      ]
+      const issuer_signature = [issuerSignature.R8[0], issuerSignature.R8[1], issuerSignature.S]
 
       const enabled = 1n
 
@@ -995,10 +785,7 @@ export default {
       for (let index = 0; index < keyValuePair.length; index++) {
         const element = keyValuePair[index]
         // eslint-disable-next-line no-undef
-        const proof = await merklized.mt.generateCircomVerifierProof(
-          BigInt(element.key),
-          MerkleTree.ZERO_HASH
-        )
+        const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
         if (element.name === 'issuerDid') {
           issuer_siblings = proof.siblings.map((e) => e.bigInt())
           issuer_oldKey = proof.oldKey.bigInt()
@@ -1048,50 +835,47 @@ export default {
       }
 
       // eslint-disable-next-line no-undef
-      const nullifier = BigInt(
-        '0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex')
-      )
+      const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
-      const { proof, publicSignals, uncompressed_proof } =
-        await utils.groth16FullProve(
-          {
-            nullifier,
-            issuer_pk,
-            issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key,
-            issuer_fnc,
-            user_siblings,
-            user_oldKey,
-            user_oldValue,
-            user_isOld0,
-            user_key,
-            user_fnc,
-            type_siblings,
-            type_oldKey,
-            type_oldValue,
-            type_isOld0,
-            type_key,
-            type_fnc,
-            dateOfBirth,
-            dob_siblings,
-            dob_oldKey,
-            dob_oldValue,
-            dob_isOld0,
-            dob_key,
-            dob_fnc,
-          },
-          wtns,
-          verifyKey
-        )
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          nullifier,
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          type,
+          enabled,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
+          dateOfBirth,
+          dob_siblings,
+          dob_oldKey,
+          dob_oldValue,
+          dob_isOld0,
+          dob_key,
+          dob_fnc,
+        },
+        wtns,
+        verifyKey
+      )
 
       return {
         proof,
@@ -1114,31 +898,20 @@ export default {
       })
 
       const publicKeyIssuerMultibase = verificationMethod.publicKeyMultibase
-      const hexPublicKey = Buffer.from(
-        multibase.decode(publicKeyIssuerMultibase),
-        'hex'
-      ).toString('hex')
+      const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
       const issuerSignatureBase64 = credential.proof.proofValue
-      const issuerSignature = cryptoi3.Signature.newFromCompressed(
-        multibase.decode(issuerSignatureBase64)
-      )
+      const issuerSignature = cryptoi3.Signature.newFromCompressed(multibase.decode(issuerSignatureBase64))
       delete credential.proof.proofValue
 
       const keyValuePair = []
-      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(
-        JSON.stringify(credential),
-        {
-          documentLoader,
-        }
-      )
+      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential), {
+        documentLoader,
+      })
       merklized.entries.forEach((e, index) => {
-        if (
-          e.key.parts.length === 1 &&
-          e.key.parts[0].includes('credentialSubject')
-        ) {
+        if (e.key.parts.length === 1 && e.key.parts[0].includes('credentialSubject')) {
           keyValuePair.push({
             key: index,
             value: e.value,
@@ -1177,11 +950,7 @@ export default {
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
 
-      const issuer_signature = [
-        issuerSignature.R8[0],
-        issuerSignature.R8[1],
-        issuerSignature.S,
-      ]
+      const issuer_signature = [issuerSignature.R8[0], issuerSignature.R8[1], issuerSignature.S]
 
       const enabled = 1n
 
@@ -1215,10 +984,7 @@ export default {
         const element = keyValuePair[index]
 
         // eslint-disable-next-line no-undef
-        const proof = await merklized.mt.generateCircomVerifierProof(
-          BigInt(element.key),
-          MerkleTree.ZERO_HASH
-        )
+        const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
         if (element.name === 'issuerDid') {
           issuer_siblings = proof.siblings.map((e) => e.bigInt())
           issuer_oldKey = proof.oldKey.bigInt()
@@ -1258,43 +1024,40 @@ export default {
         })
       }
       // eslint-disable-next-line no-undef
-      const nullifier = BigInt(
-        '0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex')
-      )
+      const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
-      const { proof, publicSignals, uncompressed_proof } =
-        await utils.groth16FullProve(
-          {
-            nullifier,
-            issuer_pk,
-            issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key,
-            issuer_fnc,
-            user_siblings,
-            user_oldKey,
-            user_oldValue,
-            user_isOld0,
-            user_key,
-            user_fnc,
-            type_siblings,
-            type_oldKey,
-            type_oldValue,
-            type_isOld0,
-            type_key,
-            type_fnc,
-          },
-          wtns,
-          verifyKey
-        )
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          nullifier,
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          type,
+          enabled,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
+        },
+        wtns,
+        verifyKey
+      )
 
       return {
         proof,
@@ -1317,31 +1080,20 @@ export default {
       })
 
       const publicKeyIssuerMultibase = verificationMethod.publicKeyMultibase
-      const hexPublicKey = Buffer.from(
-        multibase.decode(publicKeyIssuerMultibase),
-        'hex'
-      ).toString('hex')
+      const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
       const issuerSignatureBase64 = credential.proof.proofValue
-      const issuerSignature = cryptoi3.Signature.newFromCompressed(
-        multibase.decode(issuerSignatureBase64)
-      )
+      const issuerSignature = cryptoi3.Signature.newFromCompressed(multibase.decode(issuerSignatureBase64))
       delete credential.proof.proofValue
 
       const keyValuePair = []
-      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(
-        JSON.stringify(credential),
-        {
-          documentLoader,
-        }
-      )
+      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential), {
+        documentLoader,
+      })
       merklized.entries.forEach((e, index) => {
-        if (
-          e.key.parts.length === 1 &&
-          e.key.parts[0].includes('credentialSubject')
-        ) {
+        if (e.key.parts.length === 1 && e.key.parts[0].includes('credentialSubject')) {
           keyValuePair.push({
             key: index,
             value: e.value,
@@ -1387,22 +1139,12 @@ export default {
       // Prepare the circuit inputs
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
 
-      const issuer_signature = [
-        issuerSignature.R8[0],
-        issuerSignature.R8[1],
-        issuerSignature.S,
-      ]
+      const issuer_signature = [issuerSignature.R8[0], issuerSignature.R8[1], issuerSignature.S]
 
       const enabled = 1n
       const posidon = cryptoi3.Poseidon.hashBytes
 
-      const set = [
-        posidon(new TextEncoder().encode('USA')),
-        posidon(new TextEncoder().encode('RUS')),
-        posidon(new TextEncoder().encode('AUS')),
-        posidon(new TextEncoder().encode('CHN')),
-        posidon(new TextEncoder().encode('IND')),
-      ]
+      const set = [posidon(new TextEncoder().encode('USA')), posidon(new TextEncoder().encode('RUS')), posidon(new TextEncoder().encode('AUS')), posidon(new TextEncoder().encode('CHN')), posidon(new TextEncoder().encode('IND'))]
 
       let issuingStateCode
       let issuer_siblings
@@ -1442,10 +1184,7 @@ export default {
         const element = keyValuePair[index]
 
         // eslint-disable-next-line no-undef
-        const proof = await merklized.mt.generateCircomVerifierProof(
-          BigInt(element.key),
-          MerkleTree.ZERO_HASH
-        )
+        const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
         if (element.name === 'issuerDid') {
           issuer_siblings = proof.siblings.map((e) => e.bigInt())
           issuer_oldKey = proof.oldKey.bigInt()
@@ -1494,46 +1233,45 @@ export default {
         })
       }
 
-      const { proof, publicSignals, uncompressed_proof } =
-        await utils.groth16FullProve(
-          {
-            issuer_pk,
-            issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            set,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key,
-            issuer_fnc,
-            user_siblings,
-            user_oldKey,
-            user_oldValue,
-            user_isOld0,
-            user_key,
-            user_fnc,
-            type_siblings,
-            type_oldKey,
-            type_oldValue,
-            type_isOld0,
-            type_key,
-            type_fnc,
-            issuingStateCode,
-            issueStateCode_siblings,
-            issueStateCode_oldKey,
-            issueStateCode_oldValue,
-            issueStateCode_isOld0,
-            issueStateCode_key,
-            issueStateCode_fnc,
-          },
-          wtns,
-          verifyKey
-        )
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          set,
+          type,
+          enabled,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
+          issuingStateCode,
+          issueStateCode_siblings,
+          issueStateCode_oldKey,
+          issueStateCode_oldValue,
+          issueStateCode_isOld0,
+          issueStateCode_key,
+          issueStateCode_fnc,
+        },
+        wtns,
+        verifyKey
+      )
 
       return {
         proof,
@@ -1555,33 +1293,22 @@ export default {
       })
 
       const publicKeyIssuerMultibase = verificationMethod.publicKeyMultibase
-      const hexPublicKey = Buffer.from(
-        multibase.decode(publicKeyIssuerMultibase),
-        'hex'
-      ).toString('hex')
+      const hexPublicKey = Buffer.from(multibase.decode(publicKeyIssuerMultibase), 'hex').toString('hex')
 
       const publicKeyIssuer = cryptoi3.PublicKey.newFromHex(hexPublicKey)
 
       const issuerSignatureBase64 = credential.proof.proofValue
-      const issuerSignature = cryptoi3.Signature.newFromCompressed(
-        multibase.decode(issuerSignatureBase64)
-      )
+      const issuerSignature = cryptoi3.Signature.newFromCompressed(multibase.decode(issuerSignatureBase64))
 
       delete credential.proof.proofValue
 
       const keyValuePair = []
-      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(
-        JSON.stringify(credential),
-        {
-          documentLoader,
-        }
-      )
+      const merklized = await MerkleTreeJSONLD.Merklizer.merklizeJSONLD(JSON.stringify(credential), {
+        documentLoader,
+      })
 
       merklized.entries.forEach((e, index) => {
-        if (
-          e.key.parts.length === 1 &&
-          e.key.parts[0].includes('credentialSubject')
-        ) {
+        if (e.key.parts.length === 1 && e.key.parts[0].includes('credentialSubject')) {
           keyValuePair.push({
             key: index,
             value: e.value,
@@ -1617,16 +1344,10 @@ export default {
       const credentialRoot = (await merklized.mt.root()).bigInt()
 
       const issuer_pk = [publicKeyIssuer.p[0], publicKeyIssuer.p[1]]
-      const issuer_signature = [
-        issuerSignature.R8[0],
-        issuerSignature.R8[1],
-        issuerSignature.S,
-      ]
+      const issuer_signature = [issuerSignature.R8[0], issuerSignature.R8[1], issuerSignature.S]
       const enabled = 1n
       // eslint-disable-next-line no-undef
-      const nullifier = BigInt(
-        '0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex')
-      )
+      const nullifier = BigInt('0x' + Buffer.from(uuidv4(), 'utf-8').toString('hex'))
 
       let issuer_siblings
       let issuer_oldKey
@@ -1658,10 +1379,7 @@ export default {
         const element = keyValuePair[index]
 
         // eslint-disable-next-line no-undef
-        const proof = await merklized.mt.generateCircomVerifierProof(
-          BigInt(element.key),
-          MerkleTree.ZERO_HASH
-        )
+        const proof = await merklized.mt.generateCircomVerifierProof(BigInt(element.key), MerkleTree.ZERO_HASH)
         if (element.name === 'issuerDid') {
           issuer_siblings = proof.siblings.map((e) => e.bigInt())
           issuer_oldKey = proof.oldKey.bigInt()
@@ -1701,39 +1419,38 @@ export default {
         })
       }
 
-      const { proof, publicSignals, uncompressed_proof } =
-        await utils.groth16FullProve(
-          {
-            nullifier,
-            issuer_pk,
-            issuer_signature,
-            credentialRoot,
-            issuerId,
-            userId,
-            type,
-            enabled,
-            issuer_siblings,
-            issuer_oldKey,
-            issuer_oldValue,
-            issuer_isOld0,
-            issuer_key,
-            issuer_fnc,
-            user_siblings,
-            user_oldKey,
-            user_oldValue,
-            user_isOld0,
-            user_key,
-            user_fnc,
-            type_siblings,
-            type_oldKey,
-            type_oldValue,
-            type_isOld0,
-            type_key,
-            type_fnc,
-          },
-          wtns,
-          verifyKey
-        )
+      const { proof, publicSignals, uncompressed_proof } = await utils.groth16FullProve(
+        {
+          nullifier,
+          issuer_pk,
+          issuer_signature,
+          credentialRoot,
+          issuerId,
+          userId,
+          type,
+          enabled,
+          issuer_siblings,
+          issuer_oldKey,
+          issuer_oldValue,
+          issuer_isOld0,
+          issuer_key,
+          issuer_fnc,
+          user_siblings,
+          user_oldKey,
+          user_oldValue,
+          user_isOld0,
+          user_key,
+          user_fnc,
+          type_siblings,
+          type_oldKey,
+          type_oldValue,
+          type_isOld0,
+          type_key,
+          type_fnc,
+        },
+        wtns,
+        verifyKey
+      )
 
       return {
         proof,
@@ -1756,9 +1473,7 @@ export default {
         const credentialType = proof.credentialType
 
         if (proof.proof_type === 'zk_proof_of_age') {
-          const proofConfig = widgetConfig.zkProof.proofs.find(
-            (e) => e.proofType === proof.proofType
-          )
+          const proofConfig = widgetConfig.zkProof.proofs.find((e) => e.proofType === proof.proofType)
           criteria = proofConfig.criteria
         }
 
@@ -1769,11 +1484,7 @@ export default {
         })
 
         // eslint-disable-next-line no-unreachable
-        const zkProof = await this.generatezkProof(
-          credential,
-          proof.proofType,
-          criteria
-        )
+        const zkProof = await this.generatezkProof(credential, proof.proofType, criteria)
 
         zkProof.proofType = proof.proofType
         const resp = await this.verifyZkProof(zkProof)
@@ -1819,28 +1530,17 @@ export default {
       const chainCoinDenom = chainConfig.feeCurrencies[0].coinMinimalDenom
       const gasPriceAvg = chainConfig.gasPriceStep.average
       /* eslint-disable-next-line */
-      const fee = calculateFee(
-        700_000,
-        (gasPriceAvg + chainCoinDenom).toString()
-      )
+      const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
 
       /* eslint-disable-next-line */
-      return await smartContractExecuteRPC(
-        this.cosmosConnection.signingClient,
-        chainCoinDenom,
-        this.connectedWalletAddress,
-        this.getOnChainIssuerConfig.contractAddress,
-        smartContractMsg,
-        fee
-      )
+      return await smartContractExecuteRPC(this.cosmosConnection.signingClient, chainCoinDenom, this.connectedWalletAddress, this.getOnChainIssuerConfig.contractAddress, smartContractMsg, fee)
     },
 
     async mintDiamToken(credential) {
       ///  call asset generation api
       const payload = {
         credential,
-        onchainConfigId:
-          this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration,
+        onchainConfigId: this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration,
         walletAddress: this.connectedWalletAddress,
         blockchainLabel: this.blockchainLabel,
       }
@@ -1871,19 +1571,14 @@ export default {
         }
 
         this.isLoading = true
-        const credential = this.getTrustedIssuersCredentialsMethod().find(
-          (y) => y.type[1] === proof.proofType
-        )
+        const credential = this.getTrustedIssuersCredentialsMethod().find((y) => y.type[1] === proof.proofType)
         // const sbtTokenId = Math.floor(Math.random(100000) * 100000).toString(); // TODO: better random id
 
         let result
 
         if (this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
           result = await this.mintCosmosToken(credential, proof)
-        } else if (
-          this.getOnChainIssuerConfig.ecosystem === 'stellar' &&
-          this.getOnChainIssuerConfig.blockchain === 'diam'
-        ) {
+        } else if (this.getOnChainIssuerConfig.ecosystem === 'stellar' && this.getOnChainIssuerConfig.blockchain === 'diam') {
           result = await this.mintDiamToken(credential)
         } else {
           throw new Error('Ecosystem or blockchain not supported')
@@ -1903,18 +1598,14 @@ export default {
               transactionHash: result.transactionHash,
               proofType: proof.proofType,
             }
-          } else if (
-            this.getOnChainIssuerConfig.ecosystem === 'stellar' &&
-            this.getOnChainIssuerConfig.blockchain === 'diam'
-          ) {
+          } else if (this.getOnChainIssuerConfig.ecosystem === 'stellar' && this.getOnChainIssuerConfig.blockchain === 'diam') {
             sbtMintPayload = {
               blockchainLabel: this.blockchainLabel,
               ownerWalletAddress: this.connectedWalletAddress,
               transactionHash: result.transactionHash,
               proofType: proof.proofType,
               assetIssuerWalletAddress: result?.assetMetadata?.issuer, // intermediatory account
-              issuerWalletAddress:
-                this.getOnChainIssuerConfig.masterWalletAddress, // master wallet or source account
+              issuerWalletAddress: this.getOnChainIssuerConfig.masterWalletAddress, // master wallet or source account
             }
           }
 
@@ -1929,9 +1620,7 @@ export default {
             }
           })
         } else {
-          throw new Error(
-            'Could not mint SBT for proot type ' + proof.proof_type
-          )
+          throw new Error('Could not mint SBT for proot type ' + proof.proof_type)
         }
       } catch (e) {
         this.toast(e.message, 'error')
@@ -1954,9 +1643,7 @@ export default {
       this.isLoading = true
       if (this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
         this.toast('Fetching SBT contract metadata', 'success')
-        this.nft.metadata = await this.getContractMetadata(
-          this.getOnChainIssuerConfig.sbtContractAddress
-        )
+        this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
       }
 
       // const getKycCredential = this.queryVaultDataCredentials()
@@ -1983,12 +1670,8 @@ export default {
             proof_type: hypersignProof.type, //  x.proofType, TODO: need to change this in smart contracts,
             proofType: x.proofType,
             credentialType: hypersignProof.credentialType,
-            zkProof: !!this.getTrustedIssuersCredentials.find(
-              (y) => y.type[1] === x.proofType
-            ),
-            zkSBT: !!this.getTrustedIssuersCredentials.find(
-              (y) => y.type[1] === x.proofType + 'SbtCredential'
-            ),
+            zkProof: !!this.getTrustedIssuersCredentials.find((y) => y.type[1] === x.proofType),
+            zkSBT: !!this.getTrustedIssuersCredentials.find((y) => y.type[1] === x.proofType + 'SbtCredential'),
           })
           // this.showModal = true
         } else {

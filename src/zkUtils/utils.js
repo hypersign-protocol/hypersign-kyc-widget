@@ -6,28 +6,13 @@ const fastfile = require('fastfile')
 
 const Scalar = ffjavascript.Scalar
 
-const bls12381r$1 = ffjavascript.Scalar.e(
-  '73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001',
-  16
-)
-const bn128r$1 = ffjavascript.Scalar.e(
-  '21888242871839275222246405745257275088548364400416034343698204186575808495617'
-)
+const bls12381r$1 = ffjavascript.Scalar.e('73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001', 16)
+const bn128r$1 = ffjavascript.Scalar.e('21888242871839275222246405745257275088548364400416034343698204186575808495617')
 
-const bls12381q = ffjavascript.Scalar.e(
-  '1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab',
-  16
-)
-const bn128q = ffjavascript.Scalar.e(
-  '21888242871839275222246405745257275088696311157297823662689037894645226208583'
-)
+const bls12381q = ffjavascript.Scalar.e('1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab', 16)
+const bn128q = ffjavascript.Scalar.e('21888242871839275222246405745257275088696311157297823662689037894645226208583')
 function log2(V) {
-  const t =
-    ((V & 0xffff0000) !== 0 ? ((V &= 0xffff0000), 16) : 0) |
-    ((V & 0xff00ff00) !== 0 ? ((V &= 0xff00ff00), 8) : 0) |
-    ((V & 0xf0f0f0f0) !== 0 ? ((V &= 0xf0f0f0f0), 4) : 0) |
-    ((V & 0xcccccccc) !== 0 ? ((V &= 0xcccccccc), 2) : 0) |
-    ((V & 0xaaaaaaaa) !== 0)
+  const t = ((V & 0xffff0000) !== 0 ? ((V &= 0xffff0000), 16) : 0) | ((V & 0xff00ff00) !== 0 ? ((V &= 0xff00ff00), 8) : 0) | ((V & 0xf0f0f0f0) !== 0 ? ((V &= 0xf0f0f0f0), 4) : 0) | ((V & 0xcccccccc) !== 0 ? ((V &= 0xcccccccc), 2) : 0) | ((V & 0xaaaaaaaa) !== 0)
   return t
 }
 
@@ -238,23 +223,11 @@ async function readHeader_insideProve(fd, sections) {
 }
 
 async function groth16Prove(zkeyFileName, witnessFileName, logger) {
-  const { fd: fdWtns, sections: sectionsWtns } = await binFileUtils.readBinFile(
-    witnessFileName,
-    'wtns',
-    2,
-    1 << 25,
-    1 << 23
-  )
+  const { fd: fdWtns, sections: sectionsWtns } = await binFileUtils.readBinFile(witnessFileName, 'wtns', 2, 1 << 25, 1 << 23)
 
   const wtns = await readHeader_insideProve(fdWtns, sectionsWtns)
 
-  const { fd: fdZKey, sections: sectionsZKey } = await binFileUtils.readBinFile(
-    zkeyFileName,
-    'zkey',
-    2,
-    1 << 25,
-    1 << 23
-  )
+  const { fd: fdZKey, sections: sectionsZKey } = await binFileUtils.readBinFile(zkeyFileName, 'zkey', 2, 1 << 25, 1 << 23)
 
   const zkey = await readHeader(fdZKey, sectionsZKey)
 
@@ -263,15 +236,11 @@ async function groth16Prove(zkeyFileName, witnessFileName, logger) {
   }
 
   if (!ffjavascript.Scalar.eq(zkey.r, wtns.q)) {
-    throw new Error(
-      'Curve of the witness does not match the curve of the proving key'
-    )
+    throw new Error('Curve of the witness does not match the curve of the proving key')
   }
 
   if (wtns.nWitness !== zkey.nVars) {
-    throw new Error(
-      `Invalid witness length. Circuit: ${zkey.nVars}, witness: ${wtns.nWitness}`
-    )
+    throw new Error(`Invalid witness length. Circuit: ${zkey.nVars}, witness: ${wtns.nWitness}`)
   }
 
   const curve = zkey.curve
@@ -287,13 +256,7 @@ async function groth16Prove(zkeyFileName, witnessFileName, logger) {
   const buffCoeffs = await binFileUtils.readSection(fdZKey, sectionsZKey, 4)
 
   if (logger) logger.debug('Building ABC')
-  const [buffA_T, buffB_T, buffC_T] = await buildABC1(
-    curve,
-    zkey,
-    buffWitness,
-    buffCoeffs,
-    logger
-  )
+  const [buffA_T, buffB_T, buffC_T] = await buildABC1(curve, zkey, buffWitness, buffCoeffs, logger)
 
   const inc = power === Fr.s ? curve.Fr.shift : curve.Fr.w[power + 1]
 
@@ -310,61 +273,29 @@ async function groth16Prove(zkeyFileName, witnessFileName, logger) {
   const buffCodd_T = await Fr.fft(buffCodd, '', '', logger, 'FFT_C')
 
   if (logger) logger.debug('Join ABC')
-  const buffPodd_T = await joinABC(
-    curve,
-    zkey,
-    buffAodd_T,
-    buffBodd_T,
-    buffCodd_T,
-    logger
-  )
+  const buffPodd_T = await joinABC(curve, zkey, buffAodd_T, buffBodd_T, buffCodd_T, logger)
 
   let proof = {}
 
   if (logger) logger.debug('Reading A Points')
   const buffBasesA = await binFileUtils.readSection(fdZKey, sectionsZKey, 5)
-  proof.pi_a = await curve.G1.multiExpAffine(
-    buffBasesA,
-    buffWitness,
-    logger,
-    'multiexp A'
-  )
+  proof.pi_a = await curve.G1.multiExpAffine(buffBasesA, buffWitness, logger, 'multiexp A')
 
   if (logger) logger.debug('Reading B1 Points')
   const buffBasesB1 = await binFileUtils.readSection(fdZKey, sectionsZKey, 6)
-  let pib1 = await curve.G1.multiExpAffine(
-    buffBasesB1,
-    buffWitness,
-    logger,
-    'multiexp B1'
-  )
+  let pib1 = await curve.G1.multiExpAffine(buffBasesB1, buffWitness, logger, 'multiexp B1')
 
   if (logger) logger.debug('Reading B2 Points')
   const buffBasesB2 = await binFileUtils.readSection(fdZKey, sectionsZKey, 7)
-  proof.pi_b = await curve.G2.multiExpAffine(
-    buffBasesB2,
-    buffWitness,
-    logger,
-    'multiexp B2'
-  )
+  proof.pi_b = await curve.G2.multiExpAffine(buffBasesB2, buffWitness, logger, 'multiexp B2')
 
   if (logger) logger.debug('Reading C Points')
   const buffBasesC = await binFileUtils.readSection(fdZKey, sectionsZKey, 8)
-  proof.pi_c = await curve.G1.multiExpAffine(
-    buffBasesC,
-    buffWitness.slice((zkey.nPublic + 1) * curve.Fr.n8),
-    logger,
-    'multiexp C'
-  )
+  proof.pi_c = await curve.G1.multiExpAffine(buffBasesC, buffWitness.slice((zkey.nPublic + 1) * curve.Fr.n8), logger, 'multiexp C')
 
   if (logger) logger.debug('Reading H Points')
   const buffBasesH = await binFileUtils.readSection(fdZKey, sectionsZKey, 9)
-  const resH = await curve.G1.multiExpAffine(
-    buffBasesH,
-    buffPodd_T,
-    logger,
-    'multiexp H'
-  )
+  const resH = await curve.G1.multiExpAffine(buffBasesH, buffPodd_T, logger, 'multiexp H')
 
   const r = curve.Fr.random()
   const s = curve.Fr.random()
@@ -382,10 +313,7 @@ async function groth16Prove(zkeyFileName, witnessFileName, logger) {
 
   proof.pi_c = G1.add(proof.pi_c, G1.timesFr(proof.pi_a, s))
   proof.pi_c = G1.add(proof.pi_c, G1.timesFr(pib1, r))
-  proof.pi_c = G1.add(
-    proof.pi_c,
-    G1.timesFr(zkey.vk_delta_1, Fr.neg(Fr.mul(r, s)))
-  )
+  proof.pi_c = G1.add(proof.pi_c, G1.timesFr(zkey.vk_delta_1, Fr.neg(Fr.mul(r, s))))
 
   let publicSignals = []
 
@@ -395,15 +323,9 @@ async function groth16Prove(zkeyFileName, witnessFileName, logger) {
   }
 
   const uncompressed_proof = {}
-  const uncompressed_pia = Array.from(
-    curve.G1.toUncompressed(G1.toAffine(proof.pi_a))
-  )
-  const uncompressed_pib = Array.from(
-    curve.G2.toUncompressed(G2.toAffine(proof.pi_b))
-  )
-  const uncompressed_pic = Array.from(
-    curve.G1.toUncompressed(G1.toAffine(proof.pi_c))
-  )
+  const uncompressed_pia = Array.from(curve.G1.toUncompressed(G1.toAffine(proof.pi_a)))
+  const uncompressed_pib = Array.from(curve.G2.toUncompressed(G2.toAffine(proof.pi_b)))
+  const uncompressed_pic = Array.from(curve.G1.toUncompressed(G1.toAffine(proof.pi_c)))
 
   uncompressed_proof.pi_a = uncompressed_pia
   uncompressed_proof.pi_b = uncompressed_pib
@@ -434,10 +356,7 @@ function _toCompressed(arr, Gn) {
   return Gn.toObject(Gn.fromRprUncompressed(arr, 0))
 }
 
-async function toCompressProof(
-  { pi_a, pi_b, pi_c, protocol, curve },
-  verifyKey
-) {
+async function toCompressProof({ pi_a, pi_b, pi_c, protocol, curve }, verifyKey) {
   if (curve !== 'bn128') {
     throw new Error('Curve not supported')
   }
@@ -476,25 +395,12 @@ async function buildABC1(curve, zkey, witness, coeffs, logger) {
     const c = buffCoefV.getUint32(4, true)
     const s = buffCoefV.getUint32(8, true)
     const coef = buffCoef.slice(12, 12 + n8)
-    outBuf[m].set(
-      curve.Fr.add(
-        outBuf[m].slice(c * n8, c * n8 + n8),
-        curve.Fr.mul(coef, witness.slice(s * n8, s * n8 + n8))
-      ),
-      c * n8
-    )
+    outBuf[m].set(curve.Fr.add(outBuf[m].slice(c * n8, c * n8 + n8), curve.Fr.mul(coef, witness.slice(s * n8, s * n8 + n8))), c * n8)
   }
 
   for (let i = 0; i < zkey.domainSize; i++) {
-    if (logger && i % 1000000 === 0)
-      logger.debug(`QAP C: ${i}/${zkey.domainSize}`)
-    outBuffC.set(
-      curve.Fr.mul(
-        outBuffA.slice(i * n8, i * n8 + n8),
-        outBuffB.slice(i * n8, i * n8 + n8)
-      ),
-      i * n8
-    )
+    if (logger && i % 1000000 === 0) logger.debug(`QAP C: ${i}/${zkey.domainSize}`)
+    outBuffC.set(curve.Fr.mul(outBuffA.slice(i * n8, i * n8 + n8), outBuffB.slice(i * n8, i * n8 + n8)), i * n8)
   }
 
   return [outBuffA, outBuffB, outBuffC]
@@ -554,10 +460,4 @@ async function joinABC(curve, zkey, a, b, c, logger) {
   return outBuff
 }
 
-export {
-  readHeader,
-  getCurveFromQ,
-  getGroth16VK,
-  groth16FullProve,
-  toCompressProof,
-}
+export { readHeader, getCurveFromQ, getGroth16VK, groth16FullProve, toCompressProof }

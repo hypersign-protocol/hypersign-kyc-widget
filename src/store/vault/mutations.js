@@ -56,10 +56,7 @@ export default {
     if (vaultRaw) {
       vaultRaw = JSON.parse(vaultRaw)
       if (vaultRaw.hypersign) {
-        if (
-          Array.isArray(vaultRaw.credentials) &&
-          typeof payload === 'object'
-        ) {
+        if (Array.isArray(vaultRaw.credentials) && typeof payload === 'object') {
           vaultRaw.credentials.push(JSON.parse(payload))
         }
       }

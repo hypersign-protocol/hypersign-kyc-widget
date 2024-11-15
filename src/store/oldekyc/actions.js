@@ -1,8 +1,4 @@
-import {
-  KAVACH_SERVER_BASE_URL,
-  ENTITY_API_BASE_URL,
-  ENTITY_APP_SERCRET,
-} from '../../config'
+import { KAVACH_SERVER_BASE_URL, ENTITY_API_BASE_URL, ENTITY_APP_SERCRET } from '../../config'
 export default {
   addharQRVerify: ({ state }) => {
     return new Promise((resolve, reject) => {

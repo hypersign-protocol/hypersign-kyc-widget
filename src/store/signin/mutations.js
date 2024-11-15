@@ -17,10 +17,7 @@ export default {
 
   setOnChainIssuerConfig: (state, payload) => {
     console.log(state.hasKycDone)
-    localStorage.setItem(
-      SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG,
-      JSON.stringify(payload)
-    )
+    localStorage.setItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG, JSON.stringify(payload))
   },
   setCosmosConnection: (state, payload) => {
     state.cosmosConnection = { ...payload }
@@ -44,9 +41,7 @@ export default {
 
   /* eslint-disable */
   nextStep: (state, jumpToStepId = null) => {
-    const activeStep = state.steps.find(
-      (x) => x.isActive == true && x.isEnabled == true
-    )
+    const activeStep = state.steps.find((x) => x.isActive == true && x.isEnabled == true)
     let nextStepId = 0
     if (jumpToStepId) {
       nextStepId = jumpToStepId
@@ -64,10 +59,7 @@ export default {
   },
   setAuthorization: (state, authorization) => {
     state.authorization = authorization
-    localStorage.setItem(
-      SignStoreConfig.LOCAL_STATES.AUTHORIZATION,
-      authorization
-    )
+    localStorage.setItem(SignStoreConfig.LOCAL_STATES.AUTHORIZATION, authorization)
   },
 
   setSession(state, payload) {
@@ -99,10 +91,7 @@ export default {
 
   setProfile(state, payload) {
     console.log(state.hasKycDone)
-    localStorage.setItem(
-      SignStoreConfig.LOCAL_STATES.PROFILE,
-      JSON.stringify(payload)
-    )
+    localStorage.setItem(SignStoreConfig.LOCAL_STATES.PROFILE, JSON.stringify(payload))
   },
 
   setAsNewUser(state, payload) {
@@ -121,9 +110,6 @@ export default {
 
   setWidgetConfigFromDb: (state, payload) => {
     // state.widgetConfigFromDb = { ...payload }
-    localStorage.setItem(
-      SignStoreConfig.LOCAL_STATES.WIDGET_CONFIG,
-      JSON.stringify(payload)
-    )
+    localStorage.setItem(SignStoreConfig.LOCAL_STATES.WIDGET_CONFIG, JSON.stringify(payload))
   },
 }

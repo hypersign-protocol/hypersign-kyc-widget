@@ -12,19 +12,16 @@ export default {
   computed: {
     ...mapState(['steps', 'hasLivelinessDone']),
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
-        .isEnabled
+      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
     },
     checkIfIdDocumentIsEnabled() {
       return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
     },
     checkIfUserConsentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.UserConsent)
-        .isEnabled
+      return this.steps.find((x) => x.stepName === STEP_NAMES.UserConsent).isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness)
-        .isEnabled
+      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
     },
   },
   data: function () {
@@ -69,23 +66,15 @@ export default {
   created() {
     if (this.hasLivelinessDone) {
       // then move to idDocStep step
-      const idDocStep = this.steps.find(
-        (step) => step.stepName === STEP_NAMES.IdDocs
-      )
+      const idDocStep = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs)
       this.nextStep(idDocStep)
       return
     }
 
-    EVENT.subscribeEvent(
-      EVENTS.LIVELINESS,
-      this.onVerifyLivelinessStatusEventRecieved
-    )
+    EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   beforeDestroy() {
-    EVENT.unSubscribeEvent(
-      EVENTS.LIVELINESS,
-      this.onVerifyLivelinessStatusEventRecieved
-    )
+    EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   methods: {
     ...mapMutations(['nextStep', 'previousStep']),
@@ -115,11 +104,7 @@ export default {
     onModuleLoaded: function () {},
 
     onExtractionFinish: async function (extractionResult) {
-      if (
-        extractionResult.detail.bestImageCropped &&
-        extractionResult.detail.bestImageTokenized &&
-        extractionResult.detail.templateRaw
-      ) {
+      if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
         await this.$store.commit('setLivelinessDone', true)
         await this.$store.commit('setLivelinessCapturedData', {
           tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
@@ -207,9 +192,7 @@ export default {
     },
 
     onTrackStatus: function (eventData) {
-      const trackStatusCode = Object.entries(FPhi.Selphi.TrackStatus).find(
-        (e) => e[1] === eventData.detail.code
-      )
+      const trackStatusCode = Object.entries(FPhi.Selphi.TrackStatus).find((e) => e[1] === eventData.detail.code)
       console.warn(trackStatusCode)
     },
 
@@ -246,21 +229,11 @@ export default {
 <template>
   <div>
     <div class="card-body min-h-36">
-      <PageHeading
-        :header="'Facial Recognition'"
-        :subHeader="'We need to verify if you are a real human'"
-      />
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
+      <PageHeading :header="'Facial Recognition'" :subHeader="'We need to verify if you are a real human'" />
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <div class="row h-100">
         <!-- Selphi Web Widget Container: Properties and events setup -->
-        <div
-          class="col-12 col-md-9"
-          style="position: relative; min-height: 500px; max-height: 90%"
-        >
+        <div class="col-12 col-md-9" style="position: relative; min-height: 500px; max-height: 90%">
           <facephi-selphi
             v-if="isWidgetStarted"
             :bundlePath="bundlePath"
@@ -299,42 +272,14 @@ export default {
           <!-- <div>Selphi Web Widget Demo</div> -->
 
           <div class="d-flex flex-column my-3">
-            <button
-              type="button"
-              id="btnStartCapture"
-              class="btn btn-primary btn-block"
-              :disabled="isWidgetStarted"
-              title="Start Capture"
-              @click="enableWidget()"
-            >
-              <i class="bi bi-play-circle"></i> Start Capture
-            </button>
-            <button
-              type="button"
-              id="btnStopCapture"
-              class="btn btn-danger btn-block mt-2"
-              :disabled="!isWidgetStarted"
-              @click="disableWidget()"
-              title="Stop Capture"
-            >
-              <i class="bi bi-stop-circle"></i> Stop Capture
-            </button>
+            <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
+            <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button>
           </div>
 
           <div class="form-group">
             <label for="cameraResolution">Camera Resolution</label>
-            <select
-              id="cameraResolution"
-              :disabled="isWidgetStarted"
-              class="form-control mt-2"
-              :value="cameraResolution"
-              @change="onCameraResolutionChange($event)"
-            >
-              <option
-                v-for="key in Object.keys(FPhiCameraResolutions)"
-                :key="key"
-                :value="key"
-              >
+            <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2" :value="cameraResolution" @change="onCameraResolutionChange($event)">
+              <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
                 {{ FPhiCameraResolutions[key].title }}
               </option>
             </select>
@@ -342,15 +287,8 @@ export default {
 
           <div class="form-group">
             <label for="cameraType">Camera type</label>
-            <select
-              id="cameraType"
-              class="form-control mt-2"
-              :disabled="isWidgetStarted"
-              v-model="cameraType"
-            >
-              <option :value="FPhiSelphiConstants.CameraType.Front">
-                Front
-              </option>
+            <select id="cameraType" class="form-control mt-2" :disabled="isWidgetStarted" v-model="cameraType">
+              <option :value="FPhiSelphiConstants.CameraType.Front">Front</option>
               <option :value="FPhiSelphiConstants.CameraType.Back">Back</option>
             </select>
           </div>
@@ -358,11 +296,7 @@ export default {
       </div>
     </div>
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>

@@ -17,32 +17,15 @@
 <template>
   <div>
     <div class="card-body min-h-36">
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
-      <PageHeading
-        :header="'On-Chain ID'"
-        :subHeader="'Mint your onchain identity'"
-        :beta="true"
-      />
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+      <PageHeading :header="'On-Chain ID'" :subHeader="'Mint your onchain identity'" :beta="true" />
 
-      <div
-        class="widget-card mt-4"
-        style="width: 80%; margin: auto; min-height: 200px"
-        :style="`background-color: ${hypersign_proof.bgColor}`"
-      >
+      <div class="widget-card mt-4" style="width: 80%; margin: auto; min-height: 200px" :style="`background-color: ${hypersign_proof.bgColor}`">
         <div class="credential-row">
           <!-- <div class=" mb-3" style="max-width: 540px;"> -->
           <div class="row g-3" style="text-align: left">
             <div class="col-md-4">
-              <img
-                :src="hypersign_proof.proof_type_image"
-                class="img-fluid rounded-start"
-                alt="..."
-                style="opacity: 0.7"
-              />
+              <img :src="hypersign_proof.proof_type_image" class="img-fluid rounded-start" alt="..." style="opacity: 0.7" />
             </div>
             <div class="col-md-8">
               <div class="card-body">
@@ -55,47 +38,19 @@
                 <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
 
                 <p class="card-text">
-                  <span
-                    style="visibility: hidden"
-                    class="badge rounded-pill bg-secondary"
-                    >TYPE: {{ hypersign_proof.sbt_code }}</span
-                  >
+                  <span style="visibility: hidden" class="badge rounded-pill bg-secondary">TYPE: {{ hypersign_proof.sbt_code }}</span>
                   <!-- <span class="badge rounded-pill bg-secondary ">TYPE: {{
                                         hypersign_proof.sbt_code
                                     }}</span> -->
-                  <button
-                    id="walletAddressDisconnect"
-                    class="btn btn-light border rounded-pill btn-sm"
-                    :style="`background-color: ${getChainConfig.txExplorer.themeColor}`"
-                    disabled
-                  >
-                    <img
-                      :src="getChainConfig.currencies[0].coinImageUrl"
-                      class="rounded-circle"
-                      style="width: 20px"
-                      alt="Avatar"
-                    />
+                  <button id="walletAddressDisconnect" class="btn btn-light border rounded-pill btn-sm" :style="`background-color: ${getChainConfig.txExplorer.themeColor}`" disabled>
+                    <img :src="getChainConfig.currencies[0].coinImageUrl" class="rounded-circle" style="width: 20px" alt="Avatar" />
                     {{ getChainConfig.chainName }}
                   </button>
                 </p>
                 <div class="card-text">
-                  <div
-                    class="input-group input-group-sm mb-1"
-                    v-if="connectedWalletAddress"
-                  >
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Your Wallet Address"
-                      v-model="connectedWalletAddress"
-                      disabled
-                    />
-                    <span
-                      class="input-group-text btn btn-outline-secondary"
-                      @click="disconnectWallet()"
-                      id="basic-addon2"
-                      ><i class="bi bi-box-arrow-in-right"></i
-                    ></span>
+                  <div class="input-group input-group-sm mb-1" v-if="connectedWalletAddress">
+                    <input type="text" class="form-control" placeholder="Your Wallet Address" v-model="connectedWalletAddress" disabled />
+                    <span class="input-group-text btn btn-outline-secondary" @click="disconnectWallet()" id="basic-addon2"><i class="bi bi-box-arrow-in-right"></i></span>
                   </div>
                 </div>
               </div>
@@ -179,25 +134,14 @@
             </template>
             <!-- <ConnectWalletButton @authEvent="myEventListener" v-if="showConnectWallet" style="width:50%" /> -->
 
-            <ConnectWalletButton
-              :ecosystem="this.getOnChainIssuerConfig.ecosystem"
-              :blockchain="this.getOnChainIssuerConfig.blockchain"
-              :chainId="this.getOnChainIssuerConfig.chainId"
-              @authEvent="myEventListener"
-              style="width: 50%"
-              v-if="showConnectWallet"
-            />
+            <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" style="width: 50%" v-if="showConnectWallet" />
           </div>
         </div>
       </div>
     </div>
 
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>
@@ -212,14 +156,8 @@ import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-met
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
 
 // import ComdexChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/comdex/chains'
-import {
-  constructKYCSBTMintMsg,
-  constructQuerySBTContractMetadata,
-} from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
-import {
-  getCosmosChainConfig,
-  HYPERSIGN_PROOF_TYPES,
-} from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
+import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
+import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
 import { STEP_NAMES, SUPPORTED_CREDENTIAL_TYPEE } from '@/config'
 import MESSAGE from '../utils/lang/en'
@@ -230,40 +168,17 @@ export default {
     ConnectWalletButton,
   },
   computed: {
-    ...mapGetters([
-      'getCavachAccessToken',
-      'getVaultDataCredentials',
-      'getRedirectUrl',
-      'getOnChainIssuerConfig',
-    ]),
-    ...mapState([
-      'hasLivelinessDone',
-      'hasKycDone',
-      'cosmosConnection',
-      'hasSbtMintDone',
-      'steps',
-    ]),
+    ...mapGetters(['getCavachAccessToken', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig']),
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'hasSbtMintDone', 'steps']),
     getChainConfig() {
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
       let SupportedChains
 
-      if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'nibi' &&
-        chainId === 'nibiru-localnet-0'
-      ) {
+      if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-localnet-0') {
         SupportedChains = NibiruLocalNetChainJson
-      } else if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'nibi' &&
-        chainId === 'nibiru-testnet-1'
-      ) {
+      } else if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-testnet-1') {
         SupportedChains = NibiruTestnetChainJson
-      } else if (
-        ecosystem === 'cosmos' &&
-        blockchain === 'osmo' &&
-        chainId === 'osmo-test-5'
-      ) {
+      } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
         SupportedChains = OsmosisTestnetChainJson
       }
 
@@ -271,9 +186,7 @@ export default {
         throw new Error(MESSAGE.WALLET.ECO_SYSTEM_NOT_SUPPORTED)
       }
       const requestedChainId = this.getOnChainIssuerConfig.chainId
-      const chainConfig = SupportedChains.find(
-        (x) => x.chainId === requestedChainId
-      )
+      const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
 
       if (!chainConfig) {
         throw new Error(MESSAGE.WALLET.CHAIN_NOT_SUPPORTED + requestedChainId)
@@ -281,11 +194,7 @@ export default {
       return chainConfig
     },
     showConnectWallet() {
-      if (
-        this.cosmosConnection &&
-        Object.keys(this.cosmosConnection).length > 0 &&
-        this.connectedWalletAddress !== ''
-      ) {
+      if (this.cosmosConnection && Object.keys(this.cosmosConnection).length > 0 && this.connectedWalletAddress !== '') {
         return false
       } else return true
     },
@@ -296,8 +205,7 @@ export default {
       return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness)
-        .isEnabled
+      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
     },
   },
   data() {
@@ -324,19 +232,10 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'setCavachAccessToken',
-      'setRedirectUrl',
-      'nextStep',
-      'setPresentationRequest',
-      'setTenantSubdomain',
-      'setSSIAccessToken',
-    ]),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
     ...mapActions(['getNewSession', 'verifySbtMint']),
     async myEventListener(data) {
-      this.nft.metadata = await this.getContractMetadata(
-        this.getOnChainIssuerConfig.sbtContractAddress
-      )
+      this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
       this.connectedWalletAddress = data.user.walletAddress
     },
     async getContractMetadata(activeSmartContractAddress) {
@@ -352,11 +251,7 @@ export default {
       }
 
       const queryMetadataMsg = constructQuerySBTContractMetadata()
-      const queryMetadataMsgResult = await smartContractQueryRPC(
-        client,
-        activeSmartContractAddress,
-        queryMetadataMsg
-      )
+      const queryMetadataMsgResult = await smartContractQueryRPC(client, activeSmartContractAddress, queryMetadataMsg)
       return queryMetadataMsgResult
     },
     toast(msg, type = 'success') {
@@ -372,10 +267,7 @@ export default {
 
     // queryVaultDataCredentials(credentialType, trustedIssuer) {
     queryVaultDataCredentials() {
-      if (
-        !this.getVaultDataCredentials &&
-        this.getVaultDataCredentials.length <= 0
-      ) {
+      if (!this.getVaultDataCredentials && this.getVaultDataCredentials.length <= 0) {
         return undefined
       }
 
@@ -385,19 +277,11 @@ export default {
       // }
 
       const credeital = this.getVaultDataCredentials.find((credential) => {
-        if (
-          credential.type.includes(
-            SUPPORTED_CREDENTIAL_TYPEE.PassportCredential
-          )
-        ) {
+        if (credential.type.includes(SUPPORTED_CREDENTIAL_TYPEE.PassportCredential)) {
           return credential
         }
 
-        if (
-          credential.type.includes(
-            SUPPORTED_CREDENTIAL_TYPEE.GovernmentIdCredential
-          )
-        ) {
+        if (credential.type.includes(SUPPORTED_CREDENTIAL_TYPEE.GovernmentIdCredential)) {
           return credential
         }
       })
@@ -422,19 +306,9 @@ export default {
         const chainConfig = this.getChainConfig
         const chainCoinDenom = chainConfig.feeCurrencies[0].coinMinimalDenom
         const gasPriceAvg = chainConfig.gasPriceStep.average
-        const fee = calculateFee(
-          500_000,
-          (gasPriceAvg + chainCoinDenom).toString()
-        )
+        const fee = calculateFee(500_000, (gasPriceAvg + chainCoinDenom).toString())
 
-        const result = await smartContractExecuteRPC(
-          this.cosmosConnection.signingClient,
-          chainCoinDenom,
-          this.connectedWalletAddress,
-          this.getOnChainIssuerConfig.contractAddress,
-          smartContractMsg,
-          fee
-        )
+        const result = await smartContractExecuteRPC(this.cosmosConnection.signingClient, chainCoinDenom, this.connectedWalletAddress, this.getOnChainIssuerConfig.contractAddress, smartContractMsg, fee)
 
         if (result) {
           this.toast(MESSAGE.ON_CHAIN.IDENTITY_SUCCESS)
@@ -466,16 +340,12 @@ export default {
     this.isLoading = true
     if (this.hasSbtMintDone) {
       // then move to userconsent step
-      const userConsentStep = this.steps.find(
-        (step) => step.stepName === STEP_NAMES.UserConsent
-      )
+      const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent)
       this.nextStep(userConsentStep)
       return
     }
 
-    this.nft.metadata = await this.getContractMetadata(
-      this.getOnChainIssuerConfig.sbtContractAddress
-    )
+    this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
     // const getKycCredential = this.queryVaultDataCredentials()
     // if (getKycCredential) {
     //     console.log(getKycCredential)

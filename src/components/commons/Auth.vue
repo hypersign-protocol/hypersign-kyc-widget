@@ -1,9 +1,5 @@
 <template>
-  <load-ing
-    :active.sync="isLoadingPage"
-    :can-cancel="true"
-    :is-full-page="fullPage"
-  ></load-ing>
+  <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 </template>
 
 <script>

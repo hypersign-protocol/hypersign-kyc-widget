@@ -1,10 +1,6 @@
 const { HypersignDID } = require('hs-ssi-sdk')
-const {
-  X25519KeyAgreementKey2020,
-} = require('@digitalbazaar/x25519-key-agreement-key-2020')
-const {
-  Ed25519VerificationKey2020,
-} = require('@digitalbazaar/ed25519-verification-key-2020')
+const { X25519KeyAgreementKey2020 } = require('@digitalbazaar/x25519-key-agreement-key-2020')
+const { Ed25519VerificationKey2020 } = require('@digitalbazaar/ed25519-verification-key-2020')
 
 const bip39 = require('bip39')
 
@@ -45,31 +41,18 @@ export class VaultWallet {
       publicKeyMultibase: this.bjjKeys.publicKeyMultibase,
     })
     delete this.didDocument.alsoKnownAs
-    this.authenticationKey = this._getAuthenticationKey(
-      this.didDocument.id,
-      this.keys.publicKeyMultibase,
-      this.keys.privateKeyMultibase
-    )
-    this.ed25519Signer = await Ed25519VerificationKey2020.from(
-      this.authenticationKey
-    )
-    this.x25519Signer =
-      await X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({
-        keyPair: {
-          publicKeyMultibase: this.keys.publicKeyMultibase,
-          privateKeyMultibase: this.keys.privateKeyMultibase,
-        },
-      })
-    this.x25519Signer.id =
-      this.didDocument.id.split('#')[0] +
-      '#' +
-      this.x25519Signer.publicKeyMultibase
+    this.authenticationKey = this._getAuthenticationKey(this.didDocument.id, this.keys.publicKeyMultibase, this.keys.privateKeyMultibase)
+    this.ed25519Signer = await Ed25519VerificationKey2020.from(this.authenticationKey)
+    this.x25519Signer = await X25519KeyAgreementKey2020.fromEd25519VerificationKey2020({
+      keyPair: {
+        publicKeyMultibase: this.keys.publicKeyMultibase,
+        privateKeyMultibase: this.keys.privateKeyMultibase,
+      },
+    })
+    this.x25519Signer.id = this.didDocument.id.split('#')[0] + '#' + this.x25519Signer.publicKeyMultibase
 
     this.keyAgreementKey = {
-      id:
-        this.didDocument.id.split('#')[0] +
-        '#' +
-        this.x25519Signer.publicKeyMultibase,
+      id: this.didDocument.id.split('#')[0] + '#' + this.x25519Signer.publicKeyMultibase,
       type: 'X25519KeyAgreementKey2020',
       publicKeyMultibase: this.x25519Signer.publicKeyMultibase,
       privateKeyMultibase: this.x25519Signer.privateKeyMultibase,
@@ -82,10 +65,7 @@ export class VaultWallet {
 
       const authenticationKey = {
         '@context': 'https://w3id.org/security/suites/ed25519-2020/v1',
-        id:
-          this.didDocument.id.split('#')[0] +
-          '#' +
-          this.keys.publicKeyMultibase,
+        id: this.didDocument.id.split('#')[0] + '#' + this.keys.publicKeyMultibase,
         controller: this.didDocument.id,
         publicKeyMultibase: this.keys.publicKeyMultibase,
       }

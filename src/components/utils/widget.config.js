@@ -8,18 +8,15 @@ export default {
   },
   schemaIds: {
     PersonhoodCredential: {
-      schemaId:
-        'sch:hid:testnet:z6MkmS1CuEGST6FjcR1ojtM1rcmVcNXG31bFXGCcehx2WXMh:1.0',
+      schemaId: 'sch:hid:testnet:z6MkmS1CuEGST6FjcR1ojtM1rcmVcNXG31bFXGCcehx2WXMh:1.0',
       issuer: 'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
     },
     PassportCredential: {
-      schemaId:
-        'sch:hid:testnet:z6MkgMXXQL7YD7BufNLbjrwueoj4nmih9xujJ6aozJDmzFWx:1.0',
+      schemaId: 'sch:hid:testnet:z6MkgMXXQL7YD7BufNLbjrwueoj4nmih9xujJ6aozJDmzFWx:1.0',
       issuer: 'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
     },
     SBTCredential: {
-      schemaId:
-        'sch:hid:testnet:z6MkgHqTUpPtkXJ9dAMt25WQB5MHmC1qqc74z7q2fZk2kPQP:1.0',
+      schemaId: 'sch:hid:testnet:z6MkgHqTUpPtkXJ9dAMt25WQB5MHmC1qqc74z7q2fZk2kPQP:1.0',
       issuer: 'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
     },
     GovernmentIdCredential: {},

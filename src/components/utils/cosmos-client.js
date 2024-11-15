@@ -27,8 +27,7 @@ export async function createNonSigningClient(rpcUrl) {
 // }
 
 export function calculateFee(gasLimit, gasPrice) {
-  const processedGasPrice =
-    typeof gasPrice === 'string' ? GasPrice.fromString(gasPrice) : gasPrice
+  const processedGasPrice = typeof gasPrice === 'string' ? GasPrice.fromString(gasPrice) : gasPrice
   const { denom, amount: gasPriceAmount } = processedGasPrice
   // Note: Amount can exceed the safe integer range (https://github.com/cosmos/cosmjs/issues/1134),
   // which we handle by converting from Decimal to string without going through number.

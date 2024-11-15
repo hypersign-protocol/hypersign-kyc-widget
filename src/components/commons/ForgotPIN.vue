@@ -1,8 +1,6 @@
 <template>
   <div>
-    <a href="javascript:;" v-on:click="deleteAccountConfirmation()"
-      >Forgot PIN?</a
-    >
+    <a href="javascript:;" v-on:click="deleteAccountConfirmation()">Forgot PIN?</a>
   </div>
 </template>
 <script>

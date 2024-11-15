@@ -1,16 +1,7 @@
 <template>
   <div class="row">
     <div class="col-2 center align-items-center">
-      <div
-        class="border rounded-circle bg-light text-white center"
-        style="
-          padding: 1rem;
-          font-size: large;
-          font-weight: bolder;
-          width: 60px;
-          height: 60px;
-        "
-      >
+      <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
         <!-- {{ stepNumber }} -->
         <img :src="logoUrl" alt="Avatar" class="avatar" />
       </div>
@@ -22,11 +13,7 @@
     </div>
     <div class="col-2">
       <span>
-        <i
-          class="bi bi-check2-circle"
-          style="font-size: xx-large"
-          v-if="isDone"
-        ></i>
+        <i class="bi bi-check2-circle" style="font-size: xx-large" v-if="isDone"></i>
       </span>
     </div>
   </div>

@@ -42,10 +42,7 @@ async function decrypt(transitmessage, password, salt = null) {
       mode: CryptoJS.mode.CBC,
     })
 
-    if (!decrypted || decrypted === '')
-      throw Error(
-        'Decryption error: Could not decrypt the data. Please check your password.'
-      )
+    if (!decrypted || decrypted === '') throw Error('Decryption error: Could not decrypt the data. Please check your password.')
     return decrypted.toString(CryptoJS.enc.Utf8)
   } catch (e) {
     console.error(e)

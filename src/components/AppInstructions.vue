@@ -38,83 +38,36 @@
 <template>
   <div>
     <div class="card-body min-h-36">
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
-      <PageHeading
-        :header="'Hypersign KYC'"
-        :subHeader="'Follow these simple instructions to complete your KYC request'"
-      />
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+      <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
       <div class="card widget-card" style="width: 70%; margin: auto">
-        <div
-          class="row mb-4"
-          v-if="checkIfLivelinessIsEnabled.isEnabled == true"
-        >
+        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep
-              stepNumber="1"
-              :stepTitle="checkIfLivelinessIsEnabled.stepTitle"
-              :isDone="hasLivelinessDone"
-              :logo="checkIfLivelinessIsEnabled.logo"
-            />
+            <AppInstructionStep stepNumber="1" :stepTitle="checkIfLivelinessIsEnabled.stepTitle" :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
           </div>
         </div>
-        <div
-          class="row mb-4"
-          v-if="checkIfIdDocumentIsEnabled.isEnabled == true"
-        >
+        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep
-              stepNumber="2"
-              :logo="checkIfIdDocumentIsEnabled.logo"
-              :stepTitle="checkIfIdDocumentIsEnabled.stepTitle"
-              :isDone="hasKycDone"
-            />
+            <AppInstructionStep stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo" :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div
-          class="row mb-4"
-          v-if="
-            checkIfzkProofIsEnabled.isEnabled == true &&
-            checkIfOncainIdIsEnabled.isEnabled !== true
-          "
-        >
+        <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true && checkIfOncainIdIsEnabled.isEnabled !== true">
           <div class="col">
-            <AppInstructionStep
-              stepNumber="3"
-              :stepTitle="checkIfzkProofIsEnabled.stepTitle"
-              :logo="checkIfzkProofIsEnabled.logo"
-              :isDone="false"
-            />
+            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle" :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
           </div>
         </div>
 
         <div class="row mb-4" v-if="checkIfOncainIdIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep
-              :stepNumber="4"
-              :logo="checkIfOncainIdIsEnabled.logo"
-              :stepTitle="checkIfOncainIdIsEnabled.stepTitle"
-              :isDone="hasSbtMintDone"
-            />
+            <AppInstructionStep :stepNumber="4" :logo="checkIfOncainIdIsEnabled.logo" :stepTitle="checkIfOncainIdIsEnabled.stepTitle" :isDone="hasSbtMintDone" />
           </div>
         </div>
 
-        <div
-          class="row mb-4"
-          v-if="checkIfUserConsentIsEnabled.isEnabled == true"
-        >
+        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
           <div class="col">
-            <AppInstructionStep
-              :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '5' : '4'"
-              :stepTitle="checkIfUserConsentIsEnabled.stepTitle"
-              :logo="checkIfUserConsentIsEnabled.logo"
-              :isDone="false"
-            />
+            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '5' : '4'" :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo" :isDone="false" />
           </div>
         </div>
 
@@ -127,21 +80,12 @@
         <!-- <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
           width="100%" /> -->
         <div class="d-grid gap-1" style="width: 50%; margin: auto">
-          <button
-            class="btn btn-outline-dark btn-lg"
-            @click="nextStep(nextStepNumeber)"
-          >
-            Let's go!
-          </button>
+          <button class="btn btn-outline-dark btn-lg" @click="nextStep(nextStepNumeber)">Let's go!</button>
         </div>
       </div>
     </div>
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>
@@ -182,10 +126,7 @@ export default {
       // next step: id verfcaiton
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
-        const isOnChainIdConfigured = this.steps.find(
-          (step) =>
-            step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true
-        )
+        const isOnChainIdConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true)
 
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
@@ -194,70 +135,43 @@ export default {
             this.nextStepNumeber = isOnChainIdConfigured.id
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(
-              (step) =>
-                step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true
-            ) // TODO remove
+            const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true) // TODO remove
             // const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
             this.nextStepNumeber = userConsentStep.id
           }
         } else {
           // go to user consent page
-          const userConsentStep = this.steps.find(
-            (step) =>
-              step.stepName === STEP_NAMES.UserConsent &&
-              step.isEnabled === true
-          )
+          const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
           this.nextStepNumeber = userConsentStep.id
         }
       } else {
-        const isKYCConfigured = this.steps.find(
-          (step) =>
-            step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true
-        )
+        const isKYCConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true)
         if (isKYCConfigured) {
           // next step: go to Id verifcaiton
-          const isVerificationStep = this.steps.find(
-            (step) =>
-              step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true
-          )
+          const isVerificationStep = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true)
           this.nextStepNumeber = isVerificationStep?.id
         } else {
           // next step: check if on chain id is configured or not
-          const isOnChainIdConfigured = this.steps.find(
-            (step) =>
-              step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true
-          )
+          const isOnChainIdConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true)
           if (isOnChainIdConfigured) {
             if (!this.hasSbtMintDone) {
               // if yes, then go to onchainId page
               this.nextStepNumeber = isOnChainIdConfigured.id
             } else {
               // if yes, then go to onchainId page
-              const userConsentStep = this.steps.find(
-                (step) =>
-                  step.stepName === STEP_NAMES.UserConsent &&
-                  step.isEnabled === true
-              )
+              const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
               this.nextStepNumeber = userConsentStep.id
             }
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find(
-              (step) =>
-                step.stepName === STEP_NAMES.UserConsent &&
-                step.isEnabled === true
-            )
+            const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
             this.nextStepNumeber = userConsentStep.id
           }
         }
       }
     } else {
       // next step: go to liveliness
-      const livelinessVerifcationStep = this.steps.find(
-        (step) =>
-          step.stepName === STEP_NAMES.LiveLiness && step.isEnabled === true
-      )
+      const livelinessVerifcationStep = this.steps.find((step) => step.stepName === STEP_NAMES.LiveLiness && step.isEnabled === true)
       this.nextStepNumeber = livelinessVerifcationStep?.id
     }
   },

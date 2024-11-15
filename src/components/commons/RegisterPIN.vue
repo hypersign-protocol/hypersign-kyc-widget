@@ -17,13 +17,7 @@
     </div>
     <div class="container">
       <div class="row center mt-3">
-        <button
-          class="btn btn-outline-dark"
-          @click="submit()"
-          style="width: 50%"
-        >
-          <i class="bi bi-safe"></i> Unlock Vault
-        </button>
+        <button class="btn btn-outline-dark" @click="submit()" style="width: 50%"><i class="bi bi-safe"></i> Unlock Vault</button>
       </div>
     </div>
   </div>
@@ -42,8 +36,7 @@ export default {
     return {
       pin: '',
       reEnterPin: '',
-      warningMessage:
-        "The PIN secures your data vault, ensuring that no one else, including us, can access your data. You own your data! The PIN is needed to access your encrypted data vault, so don't lose it.",
+      warningMessage: "The PIN secures your data vault, ensuring that no one else, including us, can access your data. You own your data! The PIN is needed to access your encrypted data vault, so don't lose it.",
     }
   },
   methods: {

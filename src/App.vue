@@ -11,12 +11,7 @@ export default {
   name: 'App',
   components: {},
   methods: {
-    ...mapMutations([
-      'setSteps',
-      'setTrustedSchemaIdsAndIssuers',
-      'setIdDocumentLicenseKey',
-      'clearAllLocalStore',
-    ]),
+    ...mapMutations(['setSteps', 'setTrustedSchemaIdsAndIssuers', 'setIdDocumentLicenseKey', 'clearAllLocalStore']),
     handleBeforeUnload() {
       this.clearAllLocalStore()
     },
@@ -96,8 +91,7 @@ export default {
           name: 'Provide User Consent',
           previous: 6,
           isEnabled: true,
-          stepTitle:
-            'Provide consent of your data to be shared with the verifier app',
+          stepTitle: 'Provide consent of your data to be shared with the verifier app',
           logo: 'consent.png',
         },
         {

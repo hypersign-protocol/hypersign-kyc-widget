@@ -1,13 +1,6 @@
 <template>
   <div>
-    <button
-      class="btn btn-outline-dark btn-lg"
-      style="width: 100%"
-      @click="loginWithGoogle()"
-      :disabled="isDisable"
-    >
-      <i class="bi bi-google"></i> Continue with Google
-    </button>
+    <button class="btn btn-outline-dark btn-lg" style="width: 100%" @click="loginWithGoogle()" :disabled="isDisable"><i class="bi bi-google"></i> Continue with Google</button>
   </div>
 </template>
 

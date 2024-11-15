@@ -1,6 +1,4 @@
-const {
-  HypersignEdvClientEd25519VerificationKey2020,
-} = require('@hypersign-protocol/hypersign-vault-client')
+const { HypersignEdvClientEd25519VerificationKey2020 } = require('@hypersign-protocol/hypersign-vault-client')
 
 export class VaultClient {
   constructor(vaultWallet, { edvId, edvUrl } = {}) {
@@ -48,9 +46,7 @@ export class VaultClient {
       url: this.edvUrl,
       keyAgreementKey,
       controller: this.vaultWallet.authenticationKey.id,
-      edvId: this.edvId
-        ? this.edvId
-        : 'urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66',
+      edvId: this.edvId ? this.edvId : 'urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66',
     }
 
     await this.vault.registerEdv(config)

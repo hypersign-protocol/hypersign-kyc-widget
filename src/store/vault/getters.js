@@ -30,9 +30,7 @@ export default {
     return localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA)
   },
   getVaultDataRaw() {
-    const vaultDataRawStr = localStorage.getItem(
-      VaultConfig.LOCAL_STATES.VAULT_DATA_RAW
-    )
+    const vaultDataRawStr = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     return JSON.parse(vaultDataRawStr)
   },
 
@@ -41,9 +39,7 @@ export default {
   },
 
   getVaultDataCredentials() {
-    const vaultDataRawStr = localStorage.getItem(
-      VaultConfig.LOCAL_STATES.VAULT_DATA_RAW
-    )
+    const vaultDataRawStr = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     const vaultDataRaw = JSON.parse(vaultDataRawStr)
     const { hypersign } = vaultDataRaw
     const { credentials } = hypersign
@@ -52,9 +48,7 @@ export default {
 
   getUserDID() {
     // TODO check if user vault is unlocked
-    const vaultDataRawStr = localStorage.getItem(
-      VaultConfig.LOCAL_STATES.VAULT_DATA_RAW
-    )
+    const vaultDataRawStr = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     if (vaultDataRawStr) {
       const vaultDataRaw = JSON.parse(vaultDataRawStr)
 
@@ -84,25 +78,16 @@ export default {
       const credential = credentials.find((credential) => {
         if (credential) {
           // TODO: We can also add filter for trusted issuer later in the presentation request
-          if (
-            credential.credentialSchema?.id === schemaId &&
-            params.trustedIssuerList.includes(credential.issuer)
-          ) {
+          if (credential.credentialSchema?.id === schemaId && params.trustedIssuerList.includes(credential.issuer)) {
             return credential
           }
-          if (
-            credential.type.includes(schema) &&
-            params.trustedIssuerList.includes(credential.issuer)
-          ) {
+          if (credential.type.includes(schema) && params.trustedIssuerList.includes(credential.issuer)) {
             return credential
           }
         }
       })
 
-      if (
-        (credential && params.credentialType.includes(schema)) ||
-        (credential && params.credentialType.includes(credential.type[1]))
-      ) {
+      if ((credential && params.credentialType.includes(schema)) || (credential && params.credentialType.includes(credential.type[1]))) {
         credentialToReturn = credential
       }
     })

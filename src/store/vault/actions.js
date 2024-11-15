@@ -366,16 +366,10 @@ export default {
       const credential = credentials.find((credential) => {
         if (credential) {
           // TODO: We can also add filter for trusted issuer later in the presentation request
-          if (
-            credential.credentialSchema?.id === schemaId &&
-            trustedIssuerList.includes(credential.issuer)
-          ) {
+          if (credential.credentialSchema?.id === schemaId && trustedIssuerList.includes(credential.issuer)) {
             return credential
           }
-          if (
-            credential.type.includes(schema) &&
-            trustedIssuerList.includes(credential.issuer)
-          ) {
+          if (credential.type.includes(schema) && trustedIssuerList.includes(credential.issuer)) {
             return credential
           }
         }

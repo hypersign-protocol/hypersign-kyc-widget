@@ -1,10 +1,4 @@
-export async function RequestHandler(
-  url,
-  method = 'GET',
-  body = {},
-  headers = {},
-  queryParams = {}
-) {
+export async function RequestHandler(url, method = 'GET', body = {}, headers = {}, queryParams = {}) {
   if (!url) {
     throw new Error('url must be passed to RequestHandler')
   }

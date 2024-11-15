@@ -1,39 +1,19 @@
 <template>
   <div>
     <div class="card-body min-h-36">
-      <load-ing
-        :active.sync="isLoadingPage"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
+      <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <PageHeading
-        :header="'Vault Setup'"
-        :subHeader="'Setup a PIN to secure your vault'"
-      />
+      <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
       <div class="center" v-if="ifNewUser">
-        <RegisterPIN
-          style="width: 70%"
-          @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
-        />
+        <RegisterPIN style="width: 70%" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
       </div>
 
       <div v-else class="center">
-        <AskPIN
-          style="width: 70%"
-          @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData"
-          @proceedWithAccountDeletionFinal="
-            proceedWithAccountDeletionFinalHandler
-          "
-        />
+        <AskPIN style="width: 70%" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
       </div>
     </div>
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>
@@ -42,10 +22,7 @@
 import AskPIN from '../commons/AskPIN.vue'
 import RegisterPIN from '../commons/RegisterPIN.vue'
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-import {
-  generateMnemonicForWallet,
-  generateMnemonicToHDSeed,
-} from '../utils/hd-wallet'
+import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk'
 import { STEP_NAMES } from '../../config'
 // import VaultConfig from '../../store/vault/config'
@@ -53,15 +30,7 @@ export default {
   name: STEP_NAMES.VaultPIN,
   computed: {
     ...mapState(['ifNewUser', 'steps']),
-    ...mapGetters([
-      'getWidgetConfigFromDb',
-      'getActiveStep',
-      'getSteps',
-      'getVaultData',
-      'getVaultId',
-      'getVaultWallet',
-      'getVaultMnemonic',
-    ]),
+    ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', 'getSteps', 'getVaultData', 'getVaultId', 'getVaultWallet', 'getVaultMnemonic']),
   },
   components: {
     AskPIN,
@@ -86,20 +55,7 @@ export default {
   },
   methods: {
     ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
-    ...mapActions([
-      'unlockVault',
-      'deleteAccount',
-      'initializeVault',
-      'intitalizeVaultWallet',
-      'createKMS',
-      'lockVault',
-      'syncUserData',
-      'syncUserDataById',
-      'retriveVaultKeys',
-      'retriveVaultCredentials',
-      'addUpdateDocumentById',
-      'getUserAccessMnemomic',
-    ]),
+    ...mapActions(['unlockVault', 'deleteAccount', 'initializeVault', 'intitalizeVaultWallet', 'createKMS', 'lockVault', 'syncUserData', 'syncUserDataById', 'retriveVaultKeys', 'retriveVaultCredentials', 'addUpdateDocumentById', 'getUserAccessMnemomic']),
     enableAstep(stepName) {
       const stepToUpdate = this.steps.find((x) => x.stepName === stepName)
       stepToUpdate.isEnabled = true
@@ -117,14 +73,12 @@ export default {
 
           /// setup vault wallet
           await this.intitalizeVaultWallet({ mnemonic: this.getVaultMnemonic })
-          this.userVaultDataRaw.hypersign.did =
-            this.getVaultWallet.didDocument.id
+          this.userVaultDataRaw.hypersign.did = this.getVaultWallet.didDocument.id
           this.userVaultDataRaw.hypersign.didDoc = {
             ...this.getVaultWallet.didDocument,
           }
           this.userVaultDataRaw.hypersign.keys = this.getVaultWallet.keys
-          if (this.userVaultDataRaw)
-            this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+          if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
 
           /// setup vault
           await this.initializeVault()
@@ -163,9 +117,7 @@ export default {
       }
     },
     async generateDID() {
-      const seed = await generateMnemonicToHDSeed(
-        this.userVaultDataRaw.mnemonic
-      )
+      const seed = await generateMnemonicToHDSeed(this.userVaultDataRaw.mnemonic)
       const hypersignDID = new HypersignDID({ namespace: 'testnet' })
       const kp = await hypersignDID.bjjDID.generateKeys({ seed })
 

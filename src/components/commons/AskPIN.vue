@@ -6,20 +6,12 @@
         <PIN @pinTakenEvent="getPin" inputType="password" />
       </div>
       <div class="row">
-        <InfoMessage
-          message="This PIN is to secure your data vault. This ensures that you do not trust any one with your data, not even us. The PIN is used to access your encrypted data vault. Make sure you do not loose it."
-        />
+        <InfoMessage message="This PIN is to secure your data vault. This ensures that you do not trust any one with your data, not even us. The PIN is used to access your encrypted data vault. Make sure you do not loose it." />
       </div>
     </div>
     <div class="container">
       <div class="row center mt-3">
-        <button
-          class="btn btn-outline-dark"
-          @click="submit()"
-          style="width: 50%"
-        >
-          <i class="bi bi-unlock"></i> Unlock Vault
-        </button>
+        <button class="btn btn-outline-dark" @click="submit()" style="width: 50%"><i class="bi bi-unlock"></i> Unlock Vault</button>
       </div>
       <div class="row center mt-3">
         <ForgotPIN @proceedWithAccountDeletion="proceedWithAccountDeletion()" />

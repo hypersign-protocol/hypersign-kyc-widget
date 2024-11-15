@@ -37,10 +37,7 @@ export default {
   verifyLiveliness: ({ commit, state, getters, dispatch }) => {
     return new Promise(async (resolve, reject) => {
       // eslint-disable-line
-      if (
-        state.livelinessCapturedData.tokenSelfiImage === '' ||
-        !state.hasLivelinessDone
-      ) {
+      if (state.livelinessCapturedData.tokenSelfiImage === '' || !state.hasLivelinessDone) {
         return reject(new Error('User has not performed liveliness check'))
       }
       try {
@@ -49,15 +46,13 @@ export default {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-          'x-issuer-did-ver-method':
-            getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
           sessionId: getters.getSession,
           tokenSelfiImage: state.livelinessCapturedData.tokenSelfiImage,
-          biometricTemplateRaw:
-            state.livelinessCapturedData.biometricTemplateRaw,
+          biometricTemplateRaw: state.livelinessCapturedData.biometricTemplateRaw,
           bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
           userDID: getters.getUserDID,
         }
@@ -65,8 +60,7 @@ export default {
 
         if (json && json.serviceLivenessResult === 3) {
           commit('setLivelinessResult', json)
-          if (json.credential)
-            await dispatch('updateVaultCredentials', json.credential)
+          if (json.credential) await dispatch('updateVaultCredentials', json.credential)
           return resolve(json)
         } else {
           return reject(new Error(json))
@@ -80,13 +74,8 @@ export default {
   // eventSource -----
   verifyLivelinessStatus({ getters }) {
     const sessionId = getters.getSession
-    const url =
-      `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness/status/` +
-      sessionId
-    const eventSource = new EventSource(
-      url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`,
-      {}
-    )
+    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness/status/` + sessionId
+    const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
     eventSource.onopen = function (event) {
       console.log('Connection opened', event)
     }
@@ -96,10 +85,7 @@ export default {
         success: true,
         message: event.data,
       }
-      if (
-        event.data.includes('not generated') ||
-        event.data.includes('completed')
-      ) {
+      if (event.data.includes('not generated') || event.data.includes('completed')) {
         eventSource.close()
       }
 
@@ -119,10 +105,7 @@ export default {
   verifyOcrIDDoc: ({ commit, state, getters, dispatch }) => {
     return new Promise(async (resolve, reject) => {
       // eslint-disable-line
-      if (
-        state.kycCapturedData.tokenFrontDocumentImage === '' ||
-        !state.hasKycDone
-      ) {
+      if (state.kycCapturedData.tokenFrontDocumentImage === '' || !state.hasKycDone) {
         return reject(new Error('User has not performed ID capturing'))
       }
 
@@ -135,8 +118,7 @@ export default {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-          'x-issuer-did-ver-method':
-            getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
 
@@ -146,9 +128,7 @@ export default {
           // tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
           // tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
           bestImageTokenized: state.livelinessCapturedData.bestImageTokenized,
-          tokenFaceImage:
-            state.livelinessCapturedData.tokenSelfiImage ||
-            state.livelinessCapturedData.base64Image,
+          tokenFaceImage: state.livelinessCapturedData.tokenSelfiImage || state.livelinessCapturedData.base64Image,
           countryCode: state.kycCapturedData.countryCode || 'XXX',
           sessionId: getters.getSession,
           userDID: getters.getUserDID,
@@ -160,10 +140,7 @@ export default {
           commit('setOcrIdDocResult', json)
           if (json.credentials && json.credentials.length > 0) {
             json.credentials.forEach((credential) => {
-              console.log(
-                'Updating each credentila in vault credential id ' +
-                  credential.id
-              )
+              console.log('Updating each credentila in vault credential id ' + credential.id)
               dispatch('updateVaultCredentials', credential)
             })
           }
@@ -193,13 +170,11 @@ export default {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-          'x-issuer-did-ver-method':
-            getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
-          tokenFrontDocumentImage:
-            state.kycCapturedData.tokenFrontDocumentImage,
+          tokenFrontDocumentImage: state.kycCapturedData.tokenFrontDocumentImage,
           tokenBackDocumentImage: state.kycCapturedData.tokenBackDocumentImage,
           sessionId: getters.getSession,
           documentType: payload.documentType,
@@ -222,13 +197,8 @@ export default {
   // eventSource -----
   verifyOCRDocStatus({ getters }) {
     const sessionId = getters.getSession
-    const url =
-      `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/status/` +
-      sessionId
-    const eventSource = new EventSource(
-      url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`,
-      {}
-    )
+    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/status/` + sessionId
+    const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
     eventSource.onopen = function (event) {
       console.log('Connection opened', event)
     }
@@ -238,10 +208,7 @@ export default {
         success: true,
         message: event.data,
       }
-      if (
-        event.data.includes('not generated') ||
-        event.data.includes('completed')
-      ) {
+      if (event.data.includes('not generated') || event.data.includes('completed')) {
         eventSource.close()
       }
 
@@ -267,8 +234,7 @@ export default {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-          'x-issuer-did-ver-method':
-            getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -283,9 +249,7 @@ export default {
         if (json.credentials && json.credentials.length > 0) {
           commit('setSbtMintDone', true)
           json.credentials.forEach((credential) => {
-            console.log(
-              'Updating each credentila in vault credential id ' + credential.id
-            )
+            console.log('Updating each credentila in vault credential id ' + credential.id)
             dispatch('updateVaultCredentials', credential)
           })
           return resolve(json)
@@ -307,8 +271,7 @@ export default {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-          'x-issuer-did-ver-method':
-            getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -335,8 +298,7 @@ export default {
         Authorization: 'Bearer ' + getters.getCavachAccessToken,
         'x-ssi-access-token': getters.getSSIAccessToken,
         'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
-        'x-issuer-did-ver-method':
-          getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+        'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
       }
       headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
 
@@ -353,10 +315,7 @@ export default {
 
       if (json.credential && json.verifyResult) {
         // commit('setSbtMintDone', true);
-        console.log(
-          'Updating each credentila in vault credential id ' +
-            json.credential.id
-        )
+        console.log('Updating each credentila in vault credential id ' + json.credential.id)
         dispatch('updateVaultCredentials', json.credential)
         return resolve(json)
       } else {

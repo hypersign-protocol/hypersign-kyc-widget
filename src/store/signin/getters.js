@@ -20,9 +20,7 @@ export default {
     return localStorage.getItem(SignStoreConfig.LOCAL_STATES.REDIRECT_URL)
   },
   getProfile() {
-    const profileStr = localStorage.getItem(
-      SignStoreConfig.LOCAL_STATES.PROFILE
-    )
+    const profileStr = localStorage.getItem(SignStoreConfig.LOCAL_STATES.PROFILE)
     if (profileStr) {
       return JSON.parse(profileStr)
     } else {
@@ -38,9 +36,7 @@ export default {
   },
 
   getTenantKycServiceBaseUrl() {
-    const subdomain = localStorage.getItem(
-      SignStoreConfig.LOCAL_STATES.SUBDOMAIN
-    )
+    const subdomain = localStorage.getItem(SignStoreConfig.LOCAL_STATES.SUBDOMAIN)
     if (!subdomain) {
       throw new Error('Invalid accessToken')
     }
@@ -52,9 +48,7 @@ export default {
   },
 
   getPresentationRequestParsed() {
-    const base64EncodedPr = localStorage.getItem(
-      SignStoreConfig.LOCAL_STATES.PR
-    )
+    const base64EncodedPr = localStorage.getItem(SignStoreConfig.LOCAL_STATES.PR)
     const prStr = atob(base64EncodedPr)
     return JSON.parse(prStr)
   },

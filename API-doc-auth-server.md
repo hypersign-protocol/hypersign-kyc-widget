@@ -192,8 +192,7 @@ const presentationRequest = {
           trustedIssuer: [
             {
               required: true,
-              issuer:
-                'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
+              issuer: 'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
             },
           ],
         },
@@ -212,8 +211,7 @@ const presentationRequest = {
           trustedIssuer: [
             {
               required: true,
-              issuer:
-                'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
+              issuer: 'did:hid:testnet:zCyAz2wfKjAaWE4FW75KxpZh2wuo9kRAUZyV2xEe93cKr',
             },
           ],
         },
@@ -222,11 +220,9 @@ const presentationRequest = {
   ],
   reason: 'App needs this data to allow you access this Dapp',
   issuerDID: 'did:hid:testnet:z6Mkfp3QJeZnfNhgqCKf21CRWBQ5VWrYqryMiQ7WMaSeBPtM',
-  issuerDIDVerificationMethod:
-    'did:hid:testnet:z6Mkfp3QJeZnfNhgqCKf21CRWBQ5VWrYqryMiQ7WMaSeBPtM#key-1',
+  issuerDIDVerificationMethod: 'did:hid:testnet:z6Mkfp3QJeZnfNhgqCKf21CRWBQ5VWrYqryMiQ7WMaSeBPtM#key-1',
   domain: 'https://comdex.one/',
-  logoUrl:
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMsJ_pm-uPdm_MyNyRNpB9RXlnp3f9Fs1GPQ&usqp=CAU',
+  logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMsJ_pm-uPdm_MyNyRNpB9RXlnp3f9Fs1GPQ&usqp=CAU',
 }
 ```
 

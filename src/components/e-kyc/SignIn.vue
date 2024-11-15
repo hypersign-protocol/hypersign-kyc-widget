@@ -1,15 +1,8 @@
 <template>
   <div>
     <div class="card-body min-h-36">
-      <load-ing
-        :active.sync="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      ></load-ing>
-      <PageHeading
-        :header="'Login'"
-        :subHeader="'Create/Retrive your decentralized identity'"
-      />
+      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+      <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
       <div class="mt-4 p-4" style="width: 70%; margin: auto">
         <div>
           <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
@@ -20,11 +13,7 @@
     </div>
 
     <div class="footer">
-      <MessageBox
-        :msg="toastMessage"
-        :type="toastType"
-        :action="isToast ? 'show' : 'hide'"
-      />
+      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>
@@ -40,15 +29,7 @@ import SignStoreConfig from '@/store/signin/config'
 export default {
   name: STEP_NAMES.SignIn,
   computed: {
-    ...mapGetters([
-      'getCavachAccessToken',
-      'getSSIAccessToken',
-      'getRedirectUrl',
-      'getPresentationRequest',
-      'getOnChainIssuerConfig',
-      'getWidgetConfigFromDb',
-      'getSession',
-    ]),
+    ...mapGetters(['getCavachAccessToken', 'getSSIAccessToken', 'getRedirectUrl', 'getPresentationRequest', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb', 'getSession']),
     ...mapState(['hasLivelinessDone', 'hasKycDone']),
   },
   components: {
@@ -67,21 +48,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'setCavachAccessToken',
-      'setRedirectUrl',
-      'nextStep',
-      'setPresentationRequest',
-      'setTenantSubdomain',
-      'setSession',
-      'setSSIAccessToken',
-      'setOnChainIssuerConfig',
-    ]),
-    ...mapActions([
-      'getNewSession',
-      'getOnChainConfigByIdAction',
-      'fetchAppsWidgetConfig',
-    ]),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSession', 'setSSIAccessToken', 'setOnChainIssuerConfig']),
+    ...mapActions(['getNewSession', 'getOnChainConfigByIdAction', 'fetchAppsWidgetConfig']),
     myEventListener(data) {
       if (data.status === 'success') {
         this.$router.push(`/auth/${data.provider}`)
@@ -117,28 +85,17 @@ export default {
     },
     async validationForOnChainIdConfig() {
       if (this.getWidgetConfigFromDb.onChainId.enabled) {
-        const onchainIdConfiguration =
-          this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration
+        const onchainIdConfiguration = this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration
         if (!onchainIdConfiguration) {
-          if (
-            this.getOnChainIssuerConfig.chainId === '' ||
-            this.getOnChainIssuerConfig.ecosystem === '' ||
-            this.getOnChainIssuerConfig.blockchain === '' ||
-            this.getOnChainIssuerConfig.contractAddress === ''
-          ) {
+          if (this.getOnChainIssuerConfig.chainId === '' || this.getOnChainIssuerConfig.ecosystem === '' || this.getOnChainIssuerConfig.blockchain === '' || this.getOnChainIssuerConfig.contractAddress === '') {
             this.error = true
             throw new Error('Incorrect configuration for onchainId')
           }
-          throw new Error(
-            'Incorrect configuration: OnChainConfig Id must be passed for onchainId step'
-          )
+          throw new Error('Incorrect configuration: OnChainConfig Id must be passed for onchainId step')
         }
 
-        const onchainconfig = await this.getOnChainConfigByIdAction(
-          onchainIdConfiguration
-        )
-        const { blockchainLabel, kycContractAddress, sbtContractAddress } =
-          onchainconfig
+        const onchainconfig = await this.getOnChainConfigByIdAction(onchainIdConfiguration)
+        const { blockchainLabel, kycContractAddress, sbtContractAddress } = onchainconfig
 
         // chainID format: <ecosystem>:<blockchain>:<chainId>
         //  e.g: cosmos:comdex:localnet-1
@@ -227,8 +184,7 @@ export default {
         ],
         reason: this.getWidgetConfigFromDb.userConsent.reason,
         issuerDID: this.getWidgetConfigFromDb.issuerDID,
-        issuerDIDVerificationMethod:
-          this.getWidgetConfigFromDb.issuerVerificationMethodId,
+        issuerDIDVerificationMethod: this.getWidgetConfigFromDb.issuerVerificationMethodId,
         domain: this.getWidgetConfigFromDb.userConsent.domain,
         logoUrl: this.getWidgetConfigFromDb.userConsent.logoUrl,
       }
@@ -268,9 +224,7 @@ export default {
     async validationSessionId() {
       const params = this.$route.query
       if (localStorage.getItem('forgotPassword')) {
-        params.sessionId = localStorage.getItem(
-          SignStoreConfig.LOCAL_STATES.SESSIONS
-        )
+        params.sessionId = localStorage.getItem(SignStoreConfig.LOCAL_STATES.SESSIONS)
         localStorage.removeItem('forgotPassword')
       }
       if (!params.sessionId) {

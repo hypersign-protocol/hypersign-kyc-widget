@@ -12,9 +12,7 @@
               <h5>Your identity is verified!</h5>
             </li>
             <li>
-              <h6>
-                You will be redirected back to verifier app in {{ maxTimeOut }}
-              </h6>
+              <h6>You will be redirected back to verifier app in {{ maxTimeOut }}</h6>
             </li>
           </ul>
         </div>

@@ -1,37 +1,15 @@
 <template>
   <div>
-    <button
-      type="button"
-      class="btn btn-outline-dark btn-lg mb-2"
-      @click="connectWallet()"
-      :disabled="isDisable || !ifDiamInstalled"
-    >
-      <img
-        :src="getChainDetail().logoUrl"
-        class="rounded"
-        style="width: 20px"
-        alt="Avatar"
-      />
+    <button type="button" class="btn btn-outline-dark btn-lg mb-2" @click="connectWallet()" :disabled="isDisable || !ifDiamInstalled">
+      <img :src="getChainDetail().logoUrl" class="rounded" style="width: 20px" alt="Avatar" />
       Connect DIAM Wallet
     </button>
-    <small
-      style="color: indianred; text-decoration: underline"
-      v-if="!ifDiamInstalled"
-      ><a
-        href="https://chromewebstore.google.com/detail/diam-wallet/oakkognifoojdbfjaccegangippipdmn?hl=en"
-        target="_blank"
-        >DIAM Wallet extention</a
-      >
-      not installed in your browser</small
-    >
+    <small style="color: indianred; text-decoration: underline" v-if="!ifDiamInstalled"><a href="https://chromewebstore.google.com/detail/diam-wallet/oakkognifoojdbfjaccegangippipdmn?hl=en" target="_blank">DIAM Wallet extention</a> not installed in your browser</small>
   </div>
 </template>
 <script>
 import { mapMutations } from 'vuex'
-import {
-  getStellarCoinLogo,
-  getStellarChainConfig,
-} from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/stellar-wallet-utils'
+import { getStellarCoinLogo, getStellarChainConfig } from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/stellar-wallet-utils'
 import { AUTH_PROVIDERS } from '../../../config'
 
 export default {
@@ -94,9 +72,7 @@ export default {
         throw new Error(result.message)
       }
 
-      const walletAddress = result.walletAddress
-        ? result.walletAddress
-        : result.message[0].diamPublicKey
+      const walletAddress = result.walletAddress ? result.walletAddress : result.message[0].diamPublicKey
 
       if (!walletAddress) {
         throw new Error('No wallet address found')
