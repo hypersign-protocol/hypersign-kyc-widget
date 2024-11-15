@@ -67,7 +67,6 @@ export default {
   methods: {
     ...mapMutations(['setCosmosConnection']),
     getChainDetail() {
-      console.log(this.blockchainlabel)
       const config = getStellarChainConfig(this.blockchainlabel)
 
       return {

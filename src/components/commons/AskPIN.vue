@@ -49,7 +49,6 @@ export default {
     ...mapMutations(['nextStep', 'setVaultPin']),
     async submit() {
       if (!this.pin) {
-        console.error('Please enter your PIN')
         return
       }
       this.setVaultPin(this.pin)

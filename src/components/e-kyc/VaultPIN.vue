@@ -150,7 +150,6 @@ export default {
     },
 
     async proceedWithAccountDeletionFinalHandler() {
-      console.log('Inside proceedWithAccountDeletionFinalHandler ')
       try {
         this.isLoadingPage = true
         this.toast('Account reset in progress', 'warning')
@@ -169,12 +168,10 @@ export default {
       )
       const hypersignDID = new HypersignDID({ namespace: 'testnet' })
       const kp = await hypersignDID.bjjDID.generateKeys({ seed })
-      console.log(kp)
 
       const didDocument = await hypersignDID.bjjDID.generate({
         publicKeyMultibase: kp.publicKeyMultibase,
       })
-      console.log(didDocument)
 
       this.userVaultDataRaw.hypersign.did = didDocument.id
       this.userVaultDataRaw.hypersign.didDoc = { ...didDocument }

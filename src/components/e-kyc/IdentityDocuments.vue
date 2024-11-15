@@ -204,7 +204,6 @@ export default {
           this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, 'success')
         })
         .catch((e) => {
-          console.log(e)
           this.toast(e.message, 'error')
           this.isLoading = false
           this.isWidgetStarted = false
@@ -249,8 +248,6 @@ export default {
     },
 
     onExtractionTimeout: function () {
-      console.warn('[SelphID] onExtractionTimeout')
-
       this.isWidgetStarted = false
       // this.widgetResult = 'Error! Time limit exceeded';
       this.back()
@@ -267,9 +264,6 @@ export default {
     onTrackStatus: function (eventData) {
       const trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find(
         (e) => e[1] === eventData.detail.code
-      )
-      console.warn(
-        `[SelphID] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`
       )
     },
 

@@ -372,7 +372,6 @@ export default {
 
     // queryVaultDataCredentials(credentialType, trustedIssuer) {
     queryVaultDataCredentials() {
-      console.log(1)
       if (
         !this.getVaultDataCredentials &&
         this.getVaultDataCredentials.length <= 0
@@ -494,8 +493,6 @@ export default {
     } else if (this.checkIfLivelinessIsEnabled) {
       ProofType = HYPERSIGN_PROOF_TYPES.ProofOfPersonhood
     }
-
-    console.log(ProofType)
     this.hypersign_proof = {
       credential_id: '',
       data: '',

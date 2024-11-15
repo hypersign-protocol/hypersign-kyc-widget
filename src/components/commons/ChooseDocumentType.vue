@@ -51,7 +51,6 @@ export default {
 
   watch: {
     govIdType: function (newVal) {
-      console.log('watching govIdType newVal ' + newVal)
       if (newVal !== '') {
         this.$emit('EventChoosenDocumentType', { docType: newVal })
       }
@@ -85,7 +84,6 @@ export default {
     },
 
     submit() {
-      console.log('Inside chooseDocType ' + this.govIdType)
       this.$emit('EventChoosenDocumentType', { docType: this.govIdType })
     },
   },

@@ -19,8 +19,6 @@ It looks like you forgot your PIN. Since this is a non-custodial data vault, we 
     async deleteAccountConfirmation() {
       if (confirm(this.lostPinMessage)) {
         this.$emit('proceedWithAccountDeletion', true)
-      } else {
-        console.log('deleteAccountConfirmation rejected')
       }
     },
   },

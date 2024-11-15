@@ -92,7 +92,6 @@ export default {
     ...mapActions(['verifyLiveliness', 'verifyLivelinessStatus']),
     // Demo methods
     enableWidget: async function () {
-      console.warn('[Demo] Start Capture')
       this.widgetResult = ''
       const capabilities = await this.checkCapabilities()
       if (capabilities.camera && capabilities.wasm && capabilities.browser) {
@@ -103,7 +102,6 @@ export default {
     },
 
     disableWidget: function () {
-      console.warn('[Demo] Stop Capture')
       this.widgetResult = ''
       this.isWidgetStarted = false
     },
@@ -114,9 +112,7 @@ export default {
     },
 
     // Widget event handlers
-    onModuleLoaded: function () {
-      console.warn('[Selphi] onModuleLoaded')
-    },
+    onModuleLoaded: function () {},
 
     onExtractionFinish: async function (extractionResult) {
       if (
@@ -213,9 +209,6 @@ export default {
     onTrackStatus: function (eventData) {
       const trackStatusCode = Object.entries(FPhi.Selphi.TrackStatus).find(
         (e) => e[1] === eventData.detail.code
-      )
-      console.warn(
-        `[Selphi] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`
       )
     },
 

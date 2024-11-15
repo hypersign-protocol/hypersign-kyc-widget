@@ -70,7 +70,6 @@ export class VaultClient {
     if (preparedDoc.recipients.length === 0) {
       preparedDoc.recipients = this.recipient
     }
-    console.log(preparedDoc)
     const resp = await this.vault.insertDoc({ ...preparedDoc })
     if (resp && resp.statusCode && resp.statusCode === 500) {
       throw new Error(JSON.stringify(resp.message))

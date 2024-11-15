@@ -16,5 +16,6 @@ module.exports = {
     'array-callback-return': 'off',
     // semi: ['error', 'always'],
     'no-async-promise-executor': 'off',
+    'no-console': 'warn',
   },
 }

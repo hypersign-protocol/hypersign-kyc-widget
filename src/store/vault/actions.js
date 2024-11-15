@@ -31,7 +31,6 @@ export default {
   registerUser: ({ commit, getters, dispatch }) => {
     // eslint-disable-next-line
     return new Promise(async (resolve, reject) => {
-      console.log('Inside registerUser() ...')
       const url = `${VAULT_KMS_SERVER_BASE_URL}/auth`
       const headers = {
         'content-type': 'application/json',
@@ -98,7 +97,6 @@ export default {
 
   createKMS: async ({ getters, dispatch }) => {
     try {
-      console.log('Inside createKMS() ....')
       const mnemonic_raw = getters.getVaultMnemonic
       if (!mnemonic_raw) {
         throw new Error('No key found to be stored on kms')
@@ -183,7 +181,6 @@ export default {
 
   getUserAccessMnemomic: async ({ getters, commit }) => {
     try {
-      console.log('Inside getUserAccessMnemomic() ....')
       const vaultPin = getters.getVaultPin
       if (!vaultPin) {
         throw new Error('No vault pin specified')
@@ -208,7 +205,7 @@ export default {
             },
           ],
         })
-        console.log(queryResult)
+
         for (let i = 0; i < queryResult.length; i++) {
           const actualDoc = await vault.GetDecryptedDocument(queryResult[i].id)
           commit('updateVaultRawCredentials', [actualDoc.document])
@@ -407,7 +404,7 @@ export default {
           commit('setSbtMintDone', true)
         }
       } else {
-        console.log('Credential not found for schema ' + schemaId)
+        console.error('Credential not found for schema ' + schemaId)
       }
     })
   },

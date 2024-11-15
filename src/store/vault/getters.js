@@ -69,7 +69,6 @@ export default {
     const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
 
     const vaultDataRaw = JSON.parse(raw)
-    console.log(vaultDataRaw)
 
     if (!vaultDataRaw) {
       return

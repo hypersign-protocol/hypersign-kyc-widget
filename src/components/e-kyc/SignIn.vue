@@ -275,7 +275,6 @@ export default {
       }
       if (!params.sessionId) {
         if (this.getSession !== '') {
-          console.log(MESSAGE.SIGN.SESSION_NOT_FOUND_ERR)
           this.isLoading = true
           await this.getNewSession()
           this.isLoading = false

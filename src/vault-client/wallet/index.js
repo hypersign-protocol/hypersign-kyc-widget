@@ -15,7 +15,6 @@ export class VaultWallet {
       this.mnemonic = options.mnemonic
     } else {
       this.mnemonic = bip39.generateMnemonic(256)
-      console.log(this.mnemonic)
     }
     this.hsDidSdk = new HypersignDID({ namespace: 'testnet' })
   }
