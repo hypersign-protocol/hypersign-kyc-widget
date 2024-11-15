@@ -7,8 +7,7 @@
     "serve:dev": "NODE_ENV=dev vue-cli-service serve",
     "build": "npm run lint && vue-cli-service build",
     "lint": "npx prettier --write . && vue-cli-service lint",
-    "deploy": "npm run build && gh-pages -d dist",
-    "prepare": "husky install"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@babel/plugin-transform-private-methods": "^7.23.3",
@@ -73,7 +72,6 @@
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-vue": "^9.31.0",
     "file-loader": "^6.2.0",
-    "husky": "^9.1.6",
     "postcss": "^8.4.35",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.3.3",
