@@ -1,6 +1,5 @@
 export default {
-
-    getFinalResult(state) {
-        return state.finalResult
-    },
+  getFinalResult(state) {
+    return state.finalResult
+  },
 }

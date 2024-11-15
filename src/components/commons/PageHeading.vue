@@ -2,9 +2,7 @@
   <div>
     <h1 class="position-relative">
       {{ header }}
-      <span class="badge position-absolute top-10 translate-middle rounded" v-if="beta">
-        Beta
-      </span>
+      <span class="badge position-absolute top-10 translate-middle rounded" v-if="beta"> Beta </span>
     </h1>
     <h6 style="color: grey">
       {{ subHeader }}
@@ -30,9 +28,9 @@ export default {
     beta: {
       default: false,
       type: Boolean,
-    }
+    },
   },
-};
+}
 </script>
 
 <style scoped>

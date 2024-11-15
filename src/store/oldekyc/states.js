@@ -1,5 +1,5 @@
 export default {
-    qrString: "",
-    phoneNumber: "",
-    aadharData: {},
+  qrString: '',
+  phoneNumber: '',
+  aadharData: {},
 }

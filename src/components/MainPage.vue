@@ -1,43 +1,32 @@
 <template>
   <div class="mt-2">
     <template>
-      <div class="container maincontainer parent" style="text-align: center;min-height: 83vh; max-height: 90vh">
+      <!-- eslint-disable -->
+      <div class="container maincontainer parent" style="text-align: center; min-height: 83vh; max-height: 90vh">
         <NavBar />
-        <component :is="getActiveStep.stepName">
-        </component>
+        <component :is="getActiveStep.stepName"> </component>
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import AppInstructions from "./AppInstructions.vue";
-import AppScanQR from "./AppScanQR.vue";
-import AppClickPic from "./AppClickPic.vue";
-import AppFinalSuccess from "./AppFinalSuccess.vue";
-import AppFinalFail from "./AppFinalFail.vue";
-import AppOtp from "./AppOtp.vue";
-import LiveLiness3 from './e-kyc/Liveliness.vue';
+import AppInstructions from './AppInstructions.vue'
+import LiveLiness3 from './e-kyc/Liveliness.vue'
 import IdDocs4 from './e-kyc/IdentityDocuments.vue'
-
 import FinalResult from './e-kyc/Result.vue'
-import { mapGetters } from "vuex";
-import SignIn from "./e-kyc/SignIn.vue"
+import SignIn from './e-kyc/SignIn.vue'
 import VaultPIN from './e-kyc/VaultPIN.vue'
 import UserConsent from './e-kyc/UserConsent.vue'
-import OnChainId4 from "./e-kyc/OnChainId.vue";
-import ZkProofs from "./e-kyc/ZKProofs.vue"
-import SessionExpired from './SessionExpired.vue';
+import OnChainId4 from './e-kyc/OnChainId.vue'
+import ZkProofs from './e-kyc/ZKProofs.vue'
+import SessionExpired from './SessionExpired.vue'
 
+import { mapGetters } from 'vuex'
 export default {
-  name: "HelloWorld",
+  name: 'HelloWorld',
   components: {
     AppInstructions,
-    AppScanQR,
-    AppClickPic,
-    AppFinalSuccess,
-    AppFinalFail,
-    AppOtp,
     LiveLiness3,
     IdDocs4,
     ZkProofs,
@@ -46,11 +35,10 @@ export default {
     VaultPIN,
     UserConsent,
     OnChainId4,
-    SessionExpired
+    SessionExpired,
   },
   computed: {
-    ...mapGetters(["getActiveStep"]),
+    ...mapGetters(['getActiveStep']),
   },
-
-};
+}
 </script>
