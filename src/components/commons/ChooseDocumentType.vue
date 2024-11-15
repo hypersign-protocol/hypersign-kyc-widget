@@ -5,11 +5,10 @@
       <div class="col-md-12" style="text-align: left">
         <InfoMessage message="Choose a document type:" />
         <div class="row p-1" style="">
-
           <div class="grid">
-
             <label class="card">
-              <input name="plan" class="radio" type="radio" value="PASSPORT" v-model="govIdType">
+              <!-- prettier-ignore -->
+              <input name="plan" class="radio" type="radio" value="PASSPORT" v-model="govIdType" />
 
               <span class="plan-details">
                 <span class="plan-type">Passport</span>
@@ -18,14 +17,15 @@
             </label>
 
             <label class="card">
-              <input name="plan" class="radio" type="radio" value="ID_CARD" v-model="govIdType">
+              <!-- prettier-ignore -->
+              <input name="plan" class="radio" type="radio" value="ID_CARD" v-model="govIdType" />
 
               <span class="plan-details">
                 <span class="plan-type">Government ID</span>
+                <!-- prettier-ignore -->
                 <span><img src="../../assets/governament.png" width="180" /></span>
               </span>
             </label>
-
           </div>
         </div>
         <!-- <div class="row mt-2 ">
@@ -35,27 +35,24 @@
         </div> -->
       </div>
     </div>
-
   </div>
 </template>
-
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations } from 'vuex'
 export default {
-  name: "ChooseDocumentType",
+  name: 'ChooseDocumentType',
   computed: {
     extractedData() {
       const d = this.$store.state.kycExtractedData.extractionRaw.ocr
-      delete d['BARCODES'] // need to find better way to handle barcode
-      return d;
+      delete d.BARCODES // need to find better way to handle barcode
+      return d
     },
   },
 
   watch: {
     govIdType: function (newVal) {
-      console.log('watching govIdType newVal ' + newVal)
-      if (newVal != '') {
-        this.$emit("EventChoosenDocumentType", { docType: newVal });
+      if (newVal !== '') {
+        this.$emit('EventChoosenDocumentType', { docType: newVal })
       }
     },
   },
@@ -64,35 +61,33 @@ export default {
     return {
       isLoading: false,
       fullPage: true,
-      toastMessage: "",
-      toastType: "success",
+      toastMessage: '',
+      toastType: 'success',
       isToast: false,
 
-      govIdType: ''
-    };
+      govIdType: '',
+    }
   },
 
   methods: {
-    ...mapActions(["verifyResult"]),
-    ...mapMutations(["nextStep", "previousStep"]),
-    toast(msg, type = "success") {
-      this.isToast = true;
-      this.toastMessage = msg;
-      this.toastType = type;
+    ...mapActions(['verifyResult']),
+    ...mapMutations(['nextStep', 'previousStep']),
+    toast(msg, type = 'success') {
+      this.isToast = true
+      this.toastMessage = msg
+      this.toastType = type
 
       setTimeout(() => {
-        this.isToast = false;
-        this.toastMessage = "";
-      }, 5000);
+        this.isToast = false
+        this.toastMessage = ''
+      }, 5000)
     },
 
-
     submit() {
-      console.log('Inside chooseDocType ' + this.govIdType);
-      this.$emit("EventChoosenDocumentType", { docType: this.govIdType });
-    }
+      this.$emit('EventChoosenDocumentType', { docType: this.govIdType })
+    },
   },
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -135,7 +130,7 @@ export default {
   top: calc(1em + 2px);
 }
 
-@supports(-webkit-appearance: none) or (-moz-appearance: none) {
+@supports (-webkit-appearance: none) or (-moz-appearance: none) {
   .radio {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -160,8 +155,7 @@ export default {
       left: 25%;
       position: absolute;
       top: 50%;
-      transform:
-        rotate(45deg) translate(-50%, -50%);
+      transform: rotate(45deg) translate(-50%, -50%);
       width: 0.375rem;
     }
 
@@ -194,24 +188,24 @@ export default {
   border-color: #c4d1e1;
 }
 
-.radio:checked~.plan-details {
+.radio:checked ~ .plan-details {
   border-color: #558309;
 }
 
-.radio:focus~.plan-details {
+.radio:focus ~ .plan-details {
   box-shadow: 0 0 0 2px #c4d1e1;
 }
 
-.radio:disabled~.plan-details {
+.radio:disabled ~ .plan-details {
   color: #c4d1e1;
   cursor: default;
 }
 
-.radio:disabled~.plan-details .plan-type {
+.radio:disabled ~ .plan-details .plan-type {
   color: #c4d1e1;
 }
 
-.card:hover .radio:disabled~.plan-details {
+.card:hover .radio:disabled ~ .plan-details {
   border-color: #e2ebf6;
   box-shadow: none;
 }

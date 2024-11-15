@@ -1,5 +1,5 @@
-import { parseJwt, RequestHandler } from '../../components/utils/utils';
-import { EVENT, EVENTS } from '../../components/utils/eventBus';
+import { parseJwt, RequestHandler } from '../../components/utils/utils'
+import { EVENT, EVENTS } from '../../components/utils/eventBus'
 
 export default {
     //TODO: Change name of this method to somethin liek, submitUserConsent()

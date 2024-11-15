@@ -13,18 +13,18 @@ spec:
         app: kyc-widget
     spec:
       containers:
-      - name: kyc-widget
-        image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/kyc-widget:__LATEST_RELEASE_TAG__
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: "64Mi"
-            cpu: "50m"
-          requests:
-            memory: "32Mi"
-            cpu: "25m"
-        ports:
-        - containerPort: 4888
+        - name: kyc-widget
+          image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/kyc-widget:__LATEST_RELEASE_TAG__
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: '64Mi'
+              cpu: '50m'
+            requests:
+              memory: '32Mi'
+              cpu: '25m'
+          ports:
+            - containerPort: 4888
 ---
 apiVersion: v1
 kind: Service
@@ -37,5 +37,5 @@ spec:
   selector:
     app: kyc-widget
   ports:
-  - port: 4888
-    targetPort: 80
+    - port: 4888
+      targetPort: 80

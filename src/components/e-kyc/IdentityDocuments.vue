@@ -1,53 +1,49 @@
 <script type="text/javascript">
-import { FPhi } from "@facephi/selphid-widget-web";
-import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
-import PreviewData from "../commons/Preview.vue";
+import { FPhi } from '@facephi/selphid-widget-web'
+import { mapActions, mapMutations, mapGetters, mapState } from 'vuex'
+import PreviewData from '../commons/Preview.vue'
 import ChooseDocumentType from '../commons/ChooseDocumentType.vue'
-import { STEP_NAMES } from "@/config";
-import MESSAGE from "../utils/lang/en";
-import { EVENT, EVENTS } from "../utils/eventBus";
+import { STEP_NAMES } from '@/config'
+import MESSAGE from '../utils/lang/en'
+import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
   name: STEP_NAMES.IdDocs,
   components: {
     PreviewData,
-    ChooseDocumentType
+    ChooseDocumentType,
   },
   computed: {
     ifExtractedData() {
       return Object.keys(this.$store.state.kycExtractedData).length > 0
-        ? true
-        : false;
     },
-    ...mapGetters(["getIdDocumentLicenseKey"]),
-    ...mapState(["steps", 'hasKycDone']),
+    ...mapGetters(['getIdDocumentLicenseKey']),
+    ...mapState(['steps', 'hasKycDone']),
     checkIfzkProofIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
-        .isEnabled;
+      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs).isEnabled
     },
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
-        .isEnabled;
+      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
     },
   },
   data: function () {
     return {
       chooseDocumentType: false,
-      selectedDocumentType: "",
+      selectedDocumentType: '',
       manualMode: false,
       // Demo configuration
       isWidgetStarted: false,
       FPhiCameraResolutions: {
-        res600p: { title: "800x600", width: 800, height: 600 },
-        res768p: { title: "1024x768", width: 1024, height: 768 },
-        res720p: { title: "1280x720 (720p)", width: 1280, height: 720 },
-        res1080p: { title: "1920x1080 (1080p)", width: 1920, height: 1080 },
+        res600p: { title: '800x600', width: 800, height: 600 },
+        res768p: { title: '1024x768', width: 1024, height: 768 },
+        res720p: { title: '1280x720 (720p)', width: 1280, height: 720 },
+        res1080p: { title: '1920x1080 (1080p)', width: 1920, height: 1080 },
       },
-      cameraResolution: "res720p",
+      cameraResolution: 'res720p',
       // Widget configuration
       licenseKey:
-        "3D430010231C062B0411476A4A2707434F4734070A330C060B243C103604415F72240025040D16352D0730040F0A200D4B6A430F0C330D073504415F2B4A0A290C0E003E1C1A645B412B114A4564050211352D072243594762585B724C52577D5B58644D4100281C1B27250211314A536452275163582F76225056602C5971525655645A5E76205056612C597253505516595E7256552464295807505754665A5B7455525463595B75535757665D287627535C632E5877535A55635D597423555561295D70532257155B5A76535023645F5803565650645A5977545224605C5A0351275664595972205324645B590052545768595E7555525C62295A0556515565585C7423525462595807502654645D2876585056602E5A77535656635C2A7657555C625D597552525667595D7650535D625B5904565257695A5E73555557612A5D7450525666585C7354522062515970525555155D5E7424515C61295B70525457655A2C74505427612B5C7F532750655D5F75525152622C5A0752565468585D77275553602B5B725252506559597658525665585C7F575A50695B50765153576258587E505257125A2A7752502763505A7F51215660592874565356622D5A75532155665A2D7423515063505A7656505412582F74235021605B5D7051545767585F7525525360515B72505657695A2F7651515160515C05565350605D5C73525257605E580453565711585F7551505D62595A7F565450635A507751555165515A0551515061585F7423535061515B07522650645A5E7422505160515B74515255605D5B7425532465595C03565650685A587322555163515903505150655A5076255352622E597056565464585077555457645C5D0453225568585976515020612A590550515515585176515020622B597053565464582C76515020612B5D0456205163595175585457602A580552565465582A7659505061295A73575750125B2F7256522062515A73575751145B2F72565051605F590752505513585F76235151632B5876525555645B2F72565524635C5D0451225568585976515020612A590551505516595C76515026605F587F535056145C58725853266429597353255562585F76235156602C5A7357575012595175585457602A597053215513585F76235151612A5A73575750125B2F7256522062515A73575751145B2F725650516051580253505764582D7650532664295C75502251635D5873545557652B5D72565450635C2C73575554635C5D04572256145C587658505C602A5905535B5462585F74505023602A580553215564582D7750532664295C755022516359597556515262515B7E515456685A50765652526559597550255666592B76205057652A5B71565554635C2A7658522363505903535A5115595D73575550622A587F512055145B5D74245350612A5D7050205111585C7755525C612B5A7E512557635B5F73505051602D5B715154576859597525515065595973535655665B2B76575357645F590756255713585077535353612E59025026571158587353525D622B5C7E565754625C5175535352602D5C7F515B5760582A77545023652B5B74522554635A2A77555251625D5B02572754655D5A76245551652C5A00525257645B597757515C602E5875565355655A2C77535551612A5973515650695D5A7220555D635A590550575769595B75535224625F5800532756615B5A7459535461595B04505657675B5076595052625E5B71525056615B2873515124605C5B71532155115C2A74555253602C5A77515355605A2C7557525D625C5905525155605D5F73525554652D5C0051575516595876575227602C5A05532657685B5A73555557625A5805565150605B5F74505555602C5B71505054605A5977255550622B5B76535155605A517453505465515B77502050685D5D7357555C62295C7656515660585D75505551625A597750525766582A73575150605A587E502251635C2F755854576150597E53565511585B76535050625E597E532155645B2F72565524635C5D045322551558597655502660585970525654655B2F72565426635C5D0453505516585D76225020602C5A0252255461585F75585457655A5A7357575713582876575157605F590453225568582D7624532664295D7350225163595A77565023602B5805535654655B2F72565524635C5D0450565564582F7754505D62595B02502251635C2F75585457612D590552575462582876205020635C5D04562056145C587355542065505A73575754135C2F7558545761505804535A546758287650505061295A73575750125B2F725652536051590753505661582B7622532664295872575751145C5876585023602E590353255516585D72565524602D597E53225462585F72585457602C597153525568582D765153516159587F535051635D5072565221605959075257551558587658505C605E5974575754134A45640D0A0635061A23250C0625050C2815415F241A1C234D4109390B0C28120623310B00270D415F36090535044F473C010A230F1000040702230F270A331D04230F17476A1C1B33044F473C070E21080D0272520F270D10007C4A0635435947110610644D4115310B022706062B31050C645B41093F0B082A090C16244A4564040D0239060C1218130072524B0B0800173F0A052F0F08477C4A19340E0710331C4B7C4330003C18010F254149721E0C34120A0A3E4A5364504D557215456411110A26010D2313415F722E082504330D394A14",
-      bundlePath: window.location.origin + "/assets/selphid",
-      language: "en",
+        '3D430010231C062B0411476A4A2707434F4734070A330C060B243C103604415F72240025040D16352D0730040F0A200D4B6A430F0C330D073504415F2B4A0A290C0E003E1C1A645B412B114A4564050211352D072243594762585B724C52577D5B58644D4100281C1B27250211314A536452275163582F76225056602C5971525655645A5E76205056612C597253505516595E7256552464295807505754665A5B7455525463595B75535757665D287627535C632E5877535A55635D597423555561295D70532257155B5A76535023645F5803565650645A5977545224605C5A0351275664595972205324645B590052545768595E7555525C62295A0556515565585C7423525462595807502654645D2876585056602E5A77535656635C2A7657555C625D597552525667595D7650535D625B5904565257695A5E73555557612A5D7450525666585C7354522062515970525555155D5E7424515C61295B70525457655A2C74505427612B5C7F532750655D5F75525152622C5A0752565468585D77275553602B5B725252506559597658525665585C7F575A50695B50765153576258587E505257125A2A7752502763505A7F51215660592874565356622D5A75532155665A2D7423515063505A7656505412582F74235021605B5D7051545767585F7525525360515B72505657695A2F7651515160515C05565350605D5C73525257605E580453565711585F7551505D62595A7F565450635A507751555165515A0551515061585F7423535061515B07522650645A5E7422505160515B74515255605D5B7425532465595C03565650685A587322555163515903505150655A5076255352622E597056565464585077555457645C5D0453225568585976515020612A590550515515585176515020622B597053565464582C76515020612B5D0456205163595175585457602A580552565465582A7659505061295A73575750125B2F7256522062515A73575751145B2F72565051605F590752505513585F76235151632B5876525555645B2F72565524635C5D0451225568585976515020612A590551505516595C76515026605F587F535056145C58725853266429597353255562585F76235156602C5A7357575012595175585457602A597053215513585F76235151612A5A73575750125B2F7256522062515A73575751145B2F725650516051580253505764582D7650532664295C75502251635D5873545557652B5D72565450635C2C73575554635C5D04572256145C587658505C602A5905535B5462585F74505023602A580553215564582D7750532664295C755022516359597556515262515B7E515456685A50765652526559597550255666592B76205057652A5B71565554635C2A7658522363505903535A5115595D73575550622A587F512055145B5D74245350612A5D7050205111585C7755525C612B5A7E512557635B5F73505051602D5B715154576859597525515065595973535655665B2B76575357645F590756255713585077535353612E59025026571158587353525D622B5C7E565754625C5175535352602D5C7F515B5760582A77545023652B5B74522554635A2A77555251625D5B02572754655D5A76245551652C5A00525257645B597757515C602E5875565355655A2C77535551612A5973515650695D5A7220555D635A590550575769595B75535224625F5800532756615B5A7459535461595B04505657675B5076595052625E5B71525056615B2873515124605C5B71532155115C2A74555253602C5A77515355605A2C7557525D625C5905525155605D5F73525554652D5C0051575516595876575227602C5A05532657685B5A73555557625A5805565150605B5F74505555602C5B71505054605A5977255550622B5B76535155605A517453505465515B77502050685D5D7357555C62295C7656515660585D75505551625A597750525766582A73575150605A587E502251635C2F755854576150597E53565511585B76535050625E597E532155645B2F72565524635C5D045322551558597655502660585970525654655B2F72565426635C5D0453505516585D76225020602C5A0252255461585F75585457655A5A7357575713582876575157605F590453225568582D7624532664295D7350225163595A77565023602B5805535654655B2F72565524635C5D0450565564582F7754505D62595B02502251635C2F75585457612D590552575462582876205020635C5D04562056145C587355542065505A73575754135C2F7558545761505804535A546758287650505061295A73575750125B2F725652536051590753505661582B7622532664295872575751145C5876585023602E590353255516585D72565524602D597E53225462585F72585457602C597153525568582D765153516159587F535051635D5072565221605959075257551558587658505C605E5974575754134A45640D0A0635061A23250C0625050C2815415F241A1C234D4109390B0C28120623310B00270D415F36090535044F473C010A230F1000040702230F270A331D04230F17476A1C1B33044F473C070E21080D0272520F270D10007C4A0635435947110610644D4115310B022706062B31050C645B41093F0B082A090C16244A4564040D0239060C1218130072524B0B0800173F0A052F0F08477C4A19340E0710331C4B7C4330003C18010F254149721E0C34120A0A3E4A5364504D557215456411110A26010D2313415F722E082504330D394A14',
+      bundlePath: window.location.origin + '/assets/selphid',
+      language: 'en',
       initialTip: false,
       askSimpleMode: false,
       cameraWidth: 1280,
@@ -57,7 +53,7 @@ export default {
       forceLandscape: false,
       captureTimeout: 10,
       captureRetries: 3,
-      imageFormat: "image/jpeg",
+      imageFormat: 'image/jpeg',
       imageQuality: 1,
       debugMode: false,
       showLog: false,
@@ -67,81 +63,73 @@ export default {
       blurredThreshold: 0.1,
       widgetVersion: FPhi.SelphID.Version,
       FPhiSelphIDConstants: FPhi.SelphID,
-      widgetResult: "",
+      widgetResult: '',
 
       isLoading: false,
       fullPage: true,
-      toastMessage: "",
-      toastType: "success",
+      toastMessage: '',
+      toastType: 'success',
       isToast: false,
-    };
+    }
   },
-
 
   created() {
     if (this.hasKycDone) {
       // then move to onchainIdStep step
-      const onchainIdStep = this.steps.find(step => (step.stepName == STEP_NAMES.OnChainId))
+      const onchainIdStep = this.steps.find((step) => step.stepName === STEP_NAMES.OnChainId)
       this.nextStep(onchainIdStep)
-      return;
+      return
     }
 
-
-    this.licenseKey = this.getIdDocumentLicenseKey;
+    this.licenseKey = this.getIdDocumentLicenseKey
     // if (!this.licenseKey) {
     //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
     //   this.licenseKey = license;
     //   this.generateBrowserCache(license);
     // }
-    EVENT.subscribeEvent(
-      EVENTS.IDDOCOCR,
-      this.onVerifyIdOcrStatusEventRecieved
-    );
+    EVENT.subscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
   },
 
   beforeDestroy() {
-    EVENT.unSubscribeEvent(
-      EVENTS.IDDOCOCR,
-      this.onVerifyIdOcrStatusEventRecieved
-    );
+    EVENT.unSubscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
   },
 
   methods: {
-    ...mapMutations(["nextStep"]),
-    ...mapActions(["verifyOcrIDDoc", "verifyOCRDocStatus", "extractOcrIdDoc"]),
+    ...mapMutations(['nextStep']),
+    ...mapActions(['verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc']),
     // Demo methods
     enableWidget: async function () {
       // console.warn("[Demo] Start Capture");
-      //document.getElementById("widgetEventResult").innerText = "";
-      const capabilities = await this.checkCapabilities();
+      // document.getElementById("widgetEventResult").innerText = "";
+      const capabilities = await this.checkCapabilities()
       if (capabilities.camera && capabilities.wasm && capabilities.browser) {
-        this.isWidgetStarted = true;
+        this.isWidgetStarted = true
       } else {
         // ...
       }
     },
 
-    toast(msg, type = "success") {
-      this.isToast = true;
-      this.toastMessage = msg;
-      this.toastType = type;
+    toast(msg, type = 'success') {
+      this.isToast = true
+      this.toastMessage = msg
+      this.toastType = type
 
       setTimeout(() => {
-        this.isToast = false;
-        this.toastMessage = "";
-      }, 5000);
+        this.isToast = false
+        this.toastMessage = ''
+      }, 5000)
     },
 
     disableWidget: function () {
       // console.warn("[Demo] Stop Capture");
-      //document.getElementById("widgetEventResult").innerText = "";
-      this.isWidgetStarted = false;
-      this.selectedDocumentType = '';
+      // document.getElementById("widgetEventResult").innerText = "";
+      this.isWidgetStarted = false
+      this.selectedDocumentType = ''
     },
 
     onCameraResolutionChange: function (event) {
-      this.cameraWidth = this.FPhiCameraResolutions[event.target.value].width;
-      this.cameraHeight = this.FPhiCameraResolutions[event.target.value].height;
+      this.cameraWidth = this.FPhiCameraResolutions[event.target.value].width
+      this.cameraHeight = this.FPhiCameraResolutions[event.target.value].height
     },
 
     // Widget event handlers
@@ -150,8 +138,6 @@ export default {
     },
 
     onExtractionFinished: async function (extractionResult) {
-
-
       // if (
       //   extractionResult.detail.images.frontDocument &&
       //   extractionResult.detail.images.faceImage &&
@@ -169,55 +155,54 @@ export default {
       //   });
       //   this.isWidgetStarted = false;
       // } else {
-      this.isLoading = true;
+      this.isLoading = true
 
       //   call extractData
       // const data = extractionResult.detail;
       // await this.$store.commit("setKycExtractedData", { data, status: true });
-      await this.$store.commit("setKycCapturedData", {
-
+      await this.$store.commit('setKycCapturedData', {
         tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
         tokenBackDocumentImage: extractionResult.detail.images.backDocument,
 
         //   tokenFaceImage: extractionResult.detail.images.faceImage,
         //   countryCode:
         //     extractionResult.detail.extractionData.documentCountryIssuer,
-      });
-
-      this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
-
-      this.extractOcrIdDoc({ documentType: this.selectedDocumentType }).then(async res => {
-        if (res?.serviceDocument) {
-          let kycExtracted = {};
-
-          kycExtracted = {
-            ...JSON.parse(res.serviceDocument),
-          };
-          kycExtracted = {
-            // ...JSON.parse(res.serviceDocument),
-            ...kycExtracted,
-          };
-
-
-          await this.$store.commit("setKycExtractedData", {
-            data: {
-              extractionRaw: { ocr: kycExtracted },
-            },
-            status: true,
-          });
-        }
-
-        this.isWidgetStarted = false;
-        this.isLoading = false;
-        this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, "success");
-      }).catch((e) => {
-        console.log(e)
-        this.toast(e.message, "error");
-        this.isLoading = false;
-        this.isWidgetStarted = false;
-        this.back()
       })
-      setTimeout(this.verifyOCRDocStatus, 4000);
+
+      this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, 'warning')
+
+      this.extractOcrIdDoc({ documentType: this.selectedDocumentType })
+        .then(async (res) => {
+          if (res?.serviceDocument) {
+            let kycExtracted = {}
+
+            kycExtracted = {
+              ...JSON.parse(res.serviceDocument),
+            }
+            kycExtracted = {
+              // ...JSON.parse(res.serviceDocument),
+              ...kycExtracted,
+            }
+
+            await this.$store.commit('setKycExtractedData', {
+              data: {
+                extractionRaw: { ocr: kycExtracted },
+              },
+              status: true,
+            })
+          }
+
+          this.isWidgetStarted = false
+          this.isLoading = false
+          this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, 'success')
+        })
+        .catch((e) => {
+          this.toast(e.message, 'error')
+          this.isLoading = false
+          this.isWidgetStarted = false
+          this.back()
+        })
+      setTimeout(this.verifyOCRDocStatus, 4000)
     },
 
     onExceptionCaptured: function (exceptionResult) {
@@ -225,40 +210,38 @@ export default {
 
       switch (exceptionResult.detail.exceptionType) {
         case FPhi.SelphID.ExceptionType.CameraError:
-          console.error("Camera Error");
+          console.error('Camera Error')
           // ...
-          break;
+          break
         case FPhi.SelphID.ExceptionType.UnexpectedCaptureError:
-          console.error("Unexpected Error");
+          console.error('Unexpected Error')
           // ...
-          break;
+          break
         case FPhi.SelphID.ExceptionType.InitializingEngineError:
-          console.error("Engine Error");
+          console.error('Engine Error')
           // ...
-          break;
+          break
         case FPhi.SelphID.ExceptionType.LicenseError:
-          console.error("License Error");
+          console.error('License Error')
           // ...
-          break;
+          break
         default:
-          console.error(exceptionResult.detail.message);
+          console.error(exceptionResult.detail.message)
       }
 
-      this.isWidgetStarted = false;
-      this.widgetResult = "Error! Something went wrong";
+      this.isWidgetStarted = false
+      this.widgetResult = 'Error! Something went wrong'
       this.back()
     },
 
     onUserCancelled: function () {
-      this.isWidgetStarted = false;
-      this.widgetResult = "Error! The extraction has been cancelled";
+      this.isWidgetStarted = false
+      this.widgetResult = 'Error! The extraction has been cancelled'
       this.back()
     },
 
     onExtractionTimeout: function () {
-      console.warn("[SelphID] onExtractionTimeout");
-
-      this.isWidgetStarted = false;
+      this.isWidgetStarted = false
       // this.widgetResult = 'Error! Time limit exceeded';
       this.back()
     },
@@ -267,29 +250,25 @@ export default {
       // console.log(this.manualMode)
       const docType = this.selectedDocumentType
       this.disableWidget()
-      this.selectedDocumentType = docType;
+      this.selectedDocumentType = docType
       this.enableWidget()
     },
 
     onTrackStatus: function (eventData) {
-      let trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find(
-        (e) => e[1] === eventData.detail.code
-      );
-      console.warn(
-        `[SelphID] onTrackStatus (Code: ${trackStatusCode[1]} - ${trackStatusCode[0]}, Timestamp: ${eventData.detail.timeStamp}`
-      );
+      const trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code)
+      console.warn(trackStatusCode)
     },
 
     // Widget methods
     checkCapabilities: async function () {
       // Check device capabilities (browser, memory, webassembly...) with checkCapabilities method
-      const capabilities = await FPhi.SelphID.CheckCapabilities();
-      return capabilities;
+      const capabilities = await FPhi.SelphID.CheckCapabilities()
+      return capabilities
     },
 
     generateBrowserCache: function (license) {
       // Pre-load recources in cache (requires headers configuration)
-      FPhi.SelphID.generateBrowserCache(this.bundlndlePath, license);
+      FPhi.SelphID.generateBrowserCache(this.bundlndlePath, license)
     },
 
     async verifyIdDocEventHandler(data) {
@@ -321,45 +300,45 @@ export default {
       // }
 
       if (!data) {
-        throw new Error("Invalid event data");
+        throw new Error('Invalid event data')
       }
-      this.isLoading = true;
-      this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
+      this.isLoading = true
+      this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, 'warning')
       this.verifyOcrIDDoc()
         .then(() => {
           setTimeout(() => {
             if (this.checkIfzkProofIsEnabled) {
-              this.nextStep(5);
+              this.nextStep(5)
             } else {
-              this.nextStep(7);
+              this.nextStep(7)
             }
-            this.isLoading = false;
-          }, 3000);
+            this.isLoading = false
+          }, 3000)
         })
         .catch((e) => {
           if (e.message) {
-            if (e.message.includes("Session with given ID")) {
-              this.isLoading = false;
-              return this.nextStep(8);
+            if (e.message.includes('Session with given ID')) {
+              this.isLoading = false
+              return this.nextStep(8)
             } else {
-              this.toast(e.message, "error");
+              this.toast(e.message, 'error')
             }
           }
           console.error(e)
-          this.toast(e.message, "error");
-          this.isLoading = false;
+          this.toast(e.message, 'error')
+          this.isLoading = false
           this.back()
-        });
+        })
 
       // setTimeout(this.verifyOCRDocStatus, 1000);
     },
 
     onVerifyIdOcrStatusEventRecieved(event) {
-      const { success, message } = event;
+      const { success, message } = event
       if (success) {
-        this.toast(message);
+        this.toast(message)
       } else {
-        this.toast(message, "error");
+        this.toast(message, 'error')
       }
     },
 
@@ -370,33 +349,29 @@ export default {
     EventChoosenDocumentTypeHandler(data) {
       console.log('Inside EventChoosenDocumentTypeHandler data ' + JSON.stringify(data))
       if (!data || !data.docType) {
-        return;
+        return
       }
-      this.selectedDocumentType = data.docType;
+      this.selectedDocumentType = data.docType
       this.enableWidget()
       this.manualMode = false
     },
 
     back() {
       this.disableWidget()
-      this.selectedDocumentType = '';
+      this.selectedDocumentType = ''
     },
 
     rescanHandler() {
       this.back()
-    }
+    },
   },
-
-
-};
+}
 </script>
 
 <template>
   <div>
     <div class="card-body min-h-36">
-      <PageHeading :header="'ID Verification'"
-        :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`"
-        style="text-align: center" />
+      <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" />
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
       <div class="row" v-if="!chooseDocumentType">
@@ -412,66 +387,73 @@ export default {
         </div>
       </div>
       <div v-else>
-        <div class="row p-2" style="text-align: left; min-height: 550px;" v-if="!ifExtractedData">
+        <div class="row p-2" style="text-align: left; min-height: 550px" v-if="!ifExtractedData">
           <!-- SelphID Web Widget Container: Properties and events setup -->
           <div class="row col-12" v-if="selectedDocumentType != ''">
             <div class="col-12 col-md-9" style="">
-              <facephi-selphid v-if="isWidgetStarted && selectedDocumentType != ''" :licenseKey="licenseKey"
-                :bundlePath="bundlePath" :language="language" :initialTip="initialTip" :askSimpleMode="askSimpleMode"
-                :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraSelection="cameraSelection"
-                :previewCapture="previewCapture" :forceLandscape="forceLandscape" :captureTimeout="captureTimeout"
-                :captureRetries="captureRetries" :imageFormat="imageFormat" :imageQuality="imageQuality"
-                :documentType="documentType" :scanMode="scanMode" :blurredThreshold="blurredThreshold"
-                :showLog="showLog" :debugMode="debugMode" :documentMode="documentMode" @onmoduleloaded="onModuleLoaded"
-                @onextractionfinished="onExtractionFinished" @onusercancelled="onUserCancelled"
-                @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout"
-                @ontrackstatus="onTrackStatus" :startSimpleMode="manualMode"></facephi-selphid>
+              <facephi-selphid
+                v-if="isWidgetStarted && selectedDocumentType != ''"
+                :licenseKey="licenseKey"
+                :bundlePath="bundlePath"
+                :language="language"
+                :initialTip="initialTip"
+                :askSimpleMode="askSimpleMode"
+                :cameraWidth="cameraWidth"
+                :cameraHeight="cameraHeight"
+                :cameraSelection="cameraSelection"
+                :previewCapture="previewCapture"
+                :forceLandscape="forceLandscape"
+                :captureTimeout="captureTimeout"
+                :captureRetries="captureRetries"
+                :imageFormat="imageFormat"
+                :imageQuality="imageQuality"
+                :documentType="documentType"
+                :scanMode="scanMode"
+                :blurredThreshold="blurredThreshold"
+                :showLog="showLog"
+                :debugMode="debugMode"
+                :documentMode="documentMode"
+                @onmoduleloaded="onModuleLoaded"
+                @onextractionfinished="onExtractionFinished"
+                @onusercancelled="onUserCancelled"
+                @onexceptioncaptured="onExceptionCaptured"
+                @onextractiontimeout="onExtractionTimeout"
+                @ontrackstatus="onTrackStatus"
+                :startSimpleMode="manualMode"
+              ></facephi-selphid>
             </div>
             <div class="col-12 col-md-3 mt-3 mt-md-0">
               <!-- <div>SelphID Web Widget Demo</div> -->
 
               <div class="d-flex flex-column my-3">
-                <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted"
-                  title="Start Capture" @click="enableWidget()">
-                  <i class="bi bi-play-circle"></i> Start Capture
-                </button>
-                <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2"
-                  :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture">
-                  <i class="bi bi-stop-circle"></i> Stop Capture
-                </button>
-                <button type="button" id="btnStopCapture" class="btn btn-secondary btn-block mt-2" @click="back()"
-                  title="Back">
-                  <i class="bi bi-backspace"></i> Back
-                </button>
+                <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
+                <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button>
+                <button type="button" id="btnStopCapture" class="btn btn-secondary btn-block mt-2" @click="back()" title="Back"><i class="bi bi-backspace"></i> Back</button>
               </div>
 
-              <div class="form-group form-check form-switch  mt-2">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                  v-model="manualMode" @change="switchModes()" style="cursor:grab;">
+              <div class="form-group form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="manualMode" @change="switchModes()" style="cursor: grab" />
                 <label class="form-check-label" for="flexSwitchCheckDefault"><strong>Manual Mode</strong></label>
               </div>
 
               <hr />
               <div class="form-group mt-2">
                 <label for="cameraResolution">Camera Resolution</label>
-                <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2"
-                  :value="cameraResolution" @change="onCameraResolutionChange($event)">
+                <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2" :value="cameraResolution" @change="onCameraResolutionChange($event)">
                   <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
                     {{ FPhiCameraResolutions[key].title }}
                   </option>
                 </select>
               </div>
 
-              <div class="form-group  mt-2">
+              <div class="form-group mt-2">
                 <label for="cameraResolution">Document Type</label>
-                <input type="text" disabled :value="selectedDocumentType" style="width: 150px;">
+                <input type="text" disabled :value="selectedDocumentType" style="width: 150px" />
               </div>
-
-
             </div>
           </div>
           <div v-else class="row">
-            <div class=" center" style="align-items:normal;">
+            <div class="center" style="align-items: normal">
               <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
             </div>
           </div>

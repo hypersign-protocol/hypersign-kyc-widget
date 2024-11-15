@@ -23,27 +23,27 @@ import ekycGetters from './ekyc/getters'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-    state: {
-        ...oldekycState,
-        ...eKycState,
-        ...signinState,
-        ...vaultState
-    },
-    getters: {
-        ...signinGetters,
-        ...ekycGetters,
-        ...vaultGetters,
-    },
-    mutations: {
-        ...signinMutations,
-        ...oldEkycMutations,
-        ...ekycMutations,
-        ...vaultMutations,
-    },
-    actions: {
-        ...oldEkycActions,
-        ...signinActions,
-        ...ekycActions,
-        ...vaultActions,
-    },
+  state: {
+    ...oldekycState,
+    ...eKycState,
+    ...signinState,
+    ...vaultState,
+  },
+  getters: {
+    ...signinGetters,
+    ...ekycGetters,
+    ...vaultGetters,
+  },
+  mutations: {
+    ...signinMutations,
+    ...oldEkycMutations,
+    ...ekycMutations,
+    ...vaultMutations,
+  },
+  actions: {
+    ...oldEkycActions,
+    ...signinActions,
+    ...ekycActions,
+    ...vaultActions,
+  },
 })
