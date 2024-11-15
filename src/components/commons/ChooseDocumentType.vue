@@ -7,6 +7,7 @@
         <div class="row p-1" style="">
           <div class="grid">
             <label class="card">
+              <!-- prettier-ignore -->
               <input name="plan" class="radio" type="radio" value="PASSPORT" v-model="govIdType" />
 
               <span class="plan-details">
@@ -16,10 +17,12 @@
             </label>
 
             <label class="card">
+              <!-- prettier-ignore -->
               <input name="plan" class="radio" type="radio" value="ID_CARD" v-model="govIdType" />
 
               <span class="plan-details">
                 <span class="plan-type">Government ID</span>
+                <!-- prettier-ignore -->
                 <span><img src="../../assets/governament.png" width="180" /></span>
               </span>
             </label>
@@ -187,24 +190,24 @@ export default {
   border-color: #c4d1e1;
 }
 
-.radio:checked~.plan-details {
+.radio:checked ~ .plan-details {
   border-color: #558309;
 }
 
-.radio:focus~.plan-details {
+.radio:focus ~ .plan-details {
   box-shadow: 0 0 0 2px #c4d1e1;
 }
 
-.radio:disabled~.plan-details {
+.radio:disabled ~ .plan-details {
   color: #c4d1e1;
   cursor: default;
 }
 
-.radio:disabled~.plan-details .plan-type {
+.radio:disabled ~ .plan-details .plan-type {
   color: #c4d1e1;
 }
 
-.card:hover .radio:disabled~.plan-details {
+.card:hover .radio:disabled ~ .plan-details {
   border-color: #e2ebf6;
   box-shadow: none;
 }
