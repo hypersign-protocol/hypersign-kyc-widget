@@ -150,30 +150,30 @@ export default {
 
       switch (exceptionResult.detail.exceptionType) {
         case FPhi.Selphi.ExceptionType.CameraError:
-          console.error('Camera Error')
+          this.toast('Camera Error', 'error')
           // ...
           break
         case FPhi.Selphi.ExceptionType.UnexpectedCaptureError:
-          console.error('Unexpected Error')
+          this.toast('Unexpected Error', 'error')
           // ...
           break
         case FPhi.Selphi.ExceptionType.InitializingEngineError:
-          console.error('Engine Error')
+          this.toast('Engine Error', 'error')
           // ...
           break
         default:
-          console.error(exceptionResult.detail.message)
+          this.toast(exceptionResult.detail.message, 'error')
       }
 
       this.isWidgetStarted = false
-      this.widgetResult = 'Error! Something went wrong'
+      this.toast('Error! Something went wrong', 'error')
     },
 
     onUserCancel: function () {
       // console.warn("[Selphi] onUserCancel");
 
       this.isWidgetStarted = false
-      this.widgetResult = 'Error! The extraction has been cancelled'
+      this.toast('Error! The extraction has been cancelled', 'error')
     },
 
     onExtractionTimeout: function () {
@@ -232,65 +232,18 @@ export default {
       <PageHeading :header="'Facial Recognition'" :subHeader="'We need to verify if you are a real human'" />
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <div class="row h-100">
-        <!-- Selphi Web Widget Container: Properties and events setup -->
-        <div class="col-12 col-md-9" style="position: relative; min-height: 500px; max-height: 90%">
-          <facephi-selphi
-            v-if="isWidgetStarted"
-            :bundlePath="bundlePath"
-            :language="language"
-            :cameraWidth="cameraWidth"
-            :cameraHeight="cameraHeight"
-            :cameraType="cameraType"
-            :interactible="interactible"
-            :stabilizationStage="stabilizationStage"
-            :cameraSwitchButton="cameraSwitchButton"
-            :faceTracking="faceTracking"
-            :timeout="timeout"
-            :imageFormat="imageFormat"
-            :imageQuality="imageQuality"
-            :cropFactor="cropFactor"
-            :showLog="showLog"
-            @onmoduleloaded="onModuleLoaded"
-            @onstabilizing="onStabilizing"
-            @onextractionfinish="onExtractionFinish"
-            @onusercancel="onUserCancel"
-            @onexceptioncaptured="onExceptionCaptured"
-            @onextractiontimeout="onExtractionTimeout"
-            @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
-            @ontrackstatus="onTrackStatus"
-          ></facephi-selphi>
+        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
+          <facephi-selphi v-if="isWidgetStarted" :bundlePath="bundlePath" :language="language" :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraType="cameraType" :interactible="interactible" :stabilizationStage="stabilizationStage" :cameraSwitchButton="cameraSwitchButton" :faceTracking="faceTracking" :timeout="timeout" :imageFormat="imageFormat" :imageQuality="imageQuality" :cropFactor="cropFactor" :showLog="showLog" @onmoduleloaded="onModuleLoaded" @onstabilizing="onStabilizing" @onextractionfinish="onExtractionFinish" @onusercancel="onUserCancel" @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout" @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick" @ontrackstatus="onTrackStatus"></facephi-selphi>
           <div v-else>
             <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
           </div>
-          <div id="widgetEventResult" style="position: absolute; top: 0">
-            {{ widgetResult }}
-          </div>
         </div>
-
-        <!-- Widget demo configuration elements -->
-        <div class="col-12 col-md-3 mt-3 mt-md-0">
-          <!-- <div>Selphi Web Widget Demo</div> -->
-
-          <div class="d-flex flex-column my-3">
-            <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
-            <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button>
-          </div>
-
-          <div class="form-group">
-            <label for="cameraResolution">Camera Resolution</label>
-            <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2" :value="cameraResolution" @change="onCameraResolutionChange($event)">
-              <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
-                {{ FPhiCameraResolutions[key].title }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="cameraType">Camera type</label>
-            <select id="cameraType" class="form-control mt-2" :disabled="isWidgetStarted" v-model="cameraType">
-              <option :value="FPhiSelphiConstants.CameraType.Front">Front</option>
-              <option :value="FPhiSelphiConstants.CameraType.Back">Back</option>
-            </select>
+      </div>
+      <div class="row" v-if="!isWidgetStarted">
+        <div class="col-12 center">
+          <div class="col-md-4 d-flex flex-column">
+            <button type="button" id="btnStartCapture" class="btn btn-outline-dark btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
+            <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
           </div>
         </div>
       </div>
