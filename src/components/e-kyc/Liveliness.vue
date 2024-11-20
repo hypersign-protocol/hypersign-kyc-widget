@@ -233,7 +233,31 @@ export default {
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <div class="row h-100">
         <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
-          <facephi-selphi v-if="isWidgetStarted" :bundlePath="bundlePath" :language="language" :cameraWidth="cameraWidth" :cameraHeight="cameraHeight" :cameraType="cameraType" :interactible="interactible" :stabilizationStage="stabilizationStage" :cameraSwitchButton="cameraSwitchButton" :faceTracking="faceTracking" :timeout="timeout" :imageFormat="imageFormat" :imageQuality="imageQuality" :cropFactor="cropFactor" :showLog="showLog" @onmoduleloaded="onModuleLoaded" @onstabilizing="onStabilizing" @onextractionfinish="onExtractionFinish" @onusercancel="onUserCancel" @onexceptioncaptured="onExceptionCaptured" @onextractiontimeout="onExtractionTimeout" @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick" @ontrackstatus="onTrackStatus"></facephi-selphi>
+          <facephi-selphi
+            v-if="isWidgetStarted"
+            :bundlePath="bundlePath"
+            :language="language"
+            :cameraWidth="cameraWidth"
+            :cameraHeight="cameraHeight"
+            :cameraType="cameraType"
+            :interactible="interactible"
+            :stabilizationStage="stabilizationStage"
+            :cameraSwitchButton="cameraSwitchButton"
+            :faceTracking="faceTracking"
+            :timeout="timeout"
+            :imageFormat="imageFormat"
+            :imageQuality="imageQuality"
+            :cropFactor="cropFactor"
+            :showLog="showLog"
+            @onmoduleloaded="onModuleLoaded"
+            @onstabilizing="onStabilizing"
+            @onextractionfinish="onExtractionFinish"
+            @onusercancel="onUserCancel"
+            @onexceptioncaptured="onExceptionCaptured"
+            @onextractiontimeout="onExtractionTimeout"
+            @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
+            @ontrackstatus="onTrackStatus"
+          ></facephi-selphi>
           <div v-else>
             <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
           </div>
