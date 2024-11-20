@@ -78,7 +78,9 @@ export default {
             ...this.getVaultWallet.didDocument,
           }
           this.userVaultDataRaw.hypersign.keys = this.getVaultWallet.keys
-          if (this.userVaultDataRaw) this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+          if (this.userVaultDataRaw) {
+            this.setVaultRaw(JSON.stringify(this.userVaultDataRaw))
+          }
 
           /// setup vault
           await this.initializeVault()
