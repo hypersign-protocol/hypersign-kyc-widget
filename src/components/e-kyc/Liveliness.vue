@@ -229,7 +229,7 @@ export default {
 <template>
   <div>
     <div class="card-body min-h-36">
-      <PageHeading :header="'Facial Recognition'" :subHeader="'We need to verify if you are a real human'" />
+      <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" />
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <div class="row h-100">
         <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
@@ -242,7 +242,7 @@ export default {
       <div class="row" v-if="!isWidgetStarted">
         <div class="col-12 center">
           <div class="col-md-4 d-flex flex-column">
-            <button type="button" id="btnStartCapture" class="btn btn-outline-dark btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
+            <button type="button" id="btnStartCapture" class="btn btn-outline-dark" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
             <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
           </div>
         </div>
