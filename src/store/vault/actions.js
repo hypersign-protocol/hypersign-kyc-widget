@@ -344,6 +344,32 @@ export default {
     }
   },
 
+  async checkIfTruestedCredentialExistInVault({ getters }, filter) {
+    const { schemaType } = filter
+    let trustedIssuerDidList = []
+    const issuerDID = getters.getWidgetConfigFromDb.issuerDID
+    if (issuerDID) {
+      trustedIssuerDidList = issuerDID.split(',')
+    }
+
+    // Get vault credentials
+    const credentials = getters.getVaultCredentials
+    const credential = credentials.find((credential) => {
+      if (credential) {
+        if (credential.type.includes(schemaType) && trustedIssuerDidList.includes(credential.issuer)) {
+          return credential
+        }
+      }
+    })
+
+    if (credential) {
+      console.log('Credential of type schemaType ' + schemaType + ' exist for listed issuers ' + issuerDID)
+      return true
+    } else {
+      return false
+    }
+  },
+
   async checkIfCredentialAlreadyExistsInVault({ commit, getters, state }) {
     const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     const vaultDataRaw = JSON.parse(raw)

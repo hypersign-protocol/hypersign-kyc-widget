@@ -67,8 +67,8 @@ export default {
   created() {
     if (this.hasLivelinessDone) {
       // then move to idDocStep step
-      const idDocStep = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs)
-      this.nextStep(idDocStep)
+      const idDocStep = this.getIfIdDocumentStep
+      this.nextStep(idDocStep.id)
       return
     }
 

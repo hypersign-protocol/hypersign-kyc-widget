@@ -76,8 +76,8 @@ export default {
   created() {
     if (this.hasKycDone) {
       // then move to onchainIdStep step
-      const onchainIdStep = this.steps.find((step) => step.stepName === STEP_NAMES.OnChainId)
-      this.nextStep(onchainIdStep)
+      const onchainIdStep = this.getIfOncainIdStep
+      this.nextStep(onchainIdStep.id)
       return
     }
 

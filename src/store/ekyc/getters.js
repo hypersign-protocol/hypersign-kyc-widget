@@ -4,6 +4,12 @@ export default {
   getFinalResult(state) {
     return state.finalResult
   },
+  allStepsEnabledWithReqiredSchemaTypes(state) {
+    return state.steps
+      .filter((x) => x.isEnabled === true && x.requiredCredentialTypes)
+      .map((x) => x.requiredCredentialTypes)
+      .flat()
+  },
   getIfOncainIdStep(state) {
     return state.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
   },

@@ -33,7 +33,13 @@ export default {
     const vaultDataRawStr = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     return JSON.parse(vaultDataRawStr)
   },
-
+  getVaultCredentials() {
+    const vaultDataRawStr = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
+    const valutRaw = JSON.parse(vaultDataRawStr)
+    const { hypersign } = valutRaw
+    const { credentials } = hypersign
+    return credentials
+  },
   getAuthServerAuthToken() {
     return localStorage.getItem(VaultConfig.LOCAL_STATES.AUTH_SERVER_TOKEN)
   },

@@ -99,7 +99,6 @@ export default {
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
-
     // TODO: this entire code block is not optimized, we MUST optimize it later.
     if (this.hasLivelinessDone) {
       // next step: id verfcaiton

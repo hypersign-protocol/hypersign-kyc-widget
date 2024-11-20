@@ -195,7 +195,6 @@ export default {
         // const signedPresentation  = await this.signPresentation(presentation)
 
         // Submitting the presentation
-
         this.isLoading = true
         this.toast(MESSAGE.USER_CONSENT.DATA_SUBMIT, 'warning')
         this.$emit('verifyIdDocEvent', true)

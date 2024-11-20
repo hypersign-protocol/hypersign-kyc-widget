@@ -53,6 +53,8 @@ export default {
           isEnabled: false,
           stepTitle: 'Conduct liveliness check to prove you are a human',
           logo: 'face-id.png',
+          requiredCredentialTypes: ['PersonhoodCredential'],
+          hasDone: false,
         },
         {
           id: 4,
@@ -63,6 +65,8 @@ export default {
           isEnabled: false,
           stepTitle: 'Submit your ID document and recieve your KYC credential',
           logo: 'profile.png',
+          requiredCredentialTypes: ['PassportCredential', 'GovernmentIdCredential'],
+          hasDone: false,
         },
         {
           id: 5,
@@ -73,6 +77,8 @@ export default {
           isEnabled: false,
           stepTitle: 'Generate zkProof',
           logo: 'proof.png',
+          requiredCredentialTypes: ['zkProofOfKYC', 'zkProofOfAge', 'zkProofOfPersonHood'],
+          hasDone: false,
         },
         {
           id: 6,
@@ -83,6 +89,8 @@ export default {
           isEnabled: false,
           stepTitle: 'Generate zkProof & Mint your on-chain Identity',
           logo: 'proof.png',
+          requiredCredentialTypes: ['SBTCredential'],
+          hasDone: false,
         },
         {
           id: 7,
@@ -122,8 +130,6 @@ export default {
       if (WidgetConfig.licenseKey) {
         if (WidgetConfig.env === 'dev') {
           this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.dev)
-        } else if (WidgetConfig.env === 'stage') {
-          this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.stage)
         } else if (WidgetConfig.env === 'prod') {
           this.setIdDocumentLicenseKey(WidgetConfig.licenseKey.prod)
         } else {
