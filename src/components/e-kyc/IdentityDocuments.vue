@@ -16,13 +16,13 @@ export default {
     ifExtractedData() {
       return Object.keys(this.$store.state.kycExtractedData).length > 0
     },
-    ...mapGetters(['getIdDocumentLicenseKey']),
+    ...mapGetters(['getIdDocumentLicenseKey', 'getIfOncainIdStep', 'getIfzkProofStep']),
     ...mapState(['steps', 'hasKycDone']),
     checkIfzkProofIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs).isEnabled
+      return this.getIfzkProofStep.isEnabled
     },
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
+      return this.getIfOncainIdStep.isEnabled
     },
   },
   data: function () {

@@ -17,9 +17,9 @@ import { STEP_NAMES } from '@/config'
 export default {
   computed: {
     ...mapState(['steps']),
-    ...mapGetters(['getActiveStep']),
+    ...mapGetters(['getActiveStep', 'getIfzkProofStep']),
     length() {
-      if (this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs).isEnabled === false) {
+      if (this.getIfzkProofStep.isEnabled === false) {
         if (this.getActiveStep.stepName === STEP_NAMES.UserConsent) {
           return 2
         } else {

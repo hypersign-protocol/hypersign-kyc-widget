@@ -42,43 +42,37 @@
       <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
       <div class="card widget-card" style="width: 70%; margin: auto">
-        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled.isEnabled == true">
+        <div class="row mb-4" v-if="getIfLivelinessStep.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="1" :stepTitle="checkIfLivelinessIsEnabled.stepTitle" :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
+            <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />
           </div>
         </div>
-        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled.isEnabled == true">
+        <div class="row mb-4" v-if="getIfIdDocumentStep.isEnabled == true">
           <div class="col">
-            <AppInstructionStep stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo" :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
-          </div>
-        </div>
-
-        <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true && checkIfOncainIdIsEnabled.isEnabled !== true">
-          <div class="col">
-            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle" :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
+            <AppInstructionStep stepNumber="2" :logo="getIfIdDocumentStep.logo" :stepTitle="getIfIdDocumentStep.stepTitle" :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled.isEnabled == true">
+        <div class="row mb-4" v-if="getIfzkProofStep.isEnabled == true && getIfOncainIdStep.isEnabled !== true">
           <div class="col">
-            <AppInstructionStep :stepNumber="4" :logo="checkIfOncainIdIsEnabled.logo" :stepTitle="checkIfOncainIdIsEnabled.stepTitle" :isDone="hasSbtMintDone" />
+            <AppInstructionStep stepNumber="3" :stepTitle="getIfzkProofStep.stepTitle" :logo="getIfzkProofStep.logo" :isDone="false" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
+        <div class="row mb-4" v-if="getIfOncainIdStep.isEnabled == true">
           <div class="col">
-            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '5' : '4'" :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo" :isDone="false" />
+            <AppInstructionStep :stepNumber="4" :logo="getIfOncainIdStep.logo" :stepTitle="getIfOncainIdStep.stepTitle" :isDone="hasSbtMintDone" />
           </div>
         </div>
 
-        <!-- <div class="d-flex" style="">
-          <div class="vr" style="height: 300px;"></div>
-        </div> -->
+        <div class="row mb-4" v-if="getIfUserConsentStep.isEnabled == true">
+          <div class="col">
+            <AppInstructionStep :stepNumber="getIfzkProofStep.isEnabled ? '5' : '4'" :stepTitle="getIfUserConsentStep.stepTitle" :logo="getIfUserConsentStep.logo" :isDone="false" />
+          </div>
+        </div>
       </div>
 
       <div class="mt-3">
-        <!-- <img class="opacity-80" src="../assets/page0.png" style="padding: 20px; height:500px; width: 70%"
-          width="100%" /> -->
         <div class="d-grid gap-1" style="width: 50%; margin: auto">
           <button class="btn btn-outline-dark btn-lg" @click="nextStep(nextStepNumeber)">Let's go!</button>
         </div>
@@ -100,23 +94,8 @@ export default {
     AppInstructionStep,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getRedirectUrl']),
+    ...mapGetters(['getCavachAccessToken', 'getRedirectUrl', 'getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', 'steps']),
-    checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
-    },
-    checkIfzkProofIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
-    },
-    checkIfIdDocumentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs)
-    },
-    checkIfUserConsentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.UserConsent)
-    },
-    checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness)
-    },
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()

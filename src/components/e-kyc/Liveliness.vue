@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 import { FPhi } from '@facephi/selphi-widget-web'
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import { EVENT, EVENTS } from '../utils/eventBus'
@@ -11,17 +11,18 @@ export default {
   components: {},
   computed: {
     ...mapState(['steps', 'hasLivelinessDone']),
+    ...mapGetters(['getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
+      return this.getIfOncainIdStep.isEnabled
     },
     checkIfIdDocumentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
+      return this.getIfIdDocumentStep.isEnabled
     },
     checkIfUserConsentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.UserConsent).isEnabled
+      return this.getIfUserConsentStep.isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+      return this.getIfLivelinessStep.isEnabled
     },
   },
   data: function () {

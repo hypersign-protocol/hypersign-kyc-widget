@@ -168,7 +168,7 @@ export default {
     ConnectWalletButton,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig']),
+    ...mapGetters(['getCavachAccessToken', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getIfIdDocumentStep', 'getIfLivelinessStep']),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'hasSbtMintDone', 'steps']),
     getChainConfig() {
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
@@ -202,10 +202,10 @@ export default {
       return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
     },
     checkIfIdDocumentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
+      return this.getIfIdDocumentStep.isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+      return this.getIfLivelinessStep.isEnabled
     },
   },
   data() {
