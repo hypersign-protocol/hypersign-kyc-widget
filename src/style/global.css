@@ -4,12 +4,10 @@ body {
 
 .bottom {
   position: absolute;
-  bottom: 0; /* set the bottom to 0*/
+  bottom: 0;
 }
 
 .maincontainer {
-  /* width: 80vw;
-    height: 87vw; */
   background-color: #f5f5f5;
   border: 1px solid grey;
   border-radius: 20px;
@@ -48,13 +46,9 @@ h1 {
 .footer {
   position: relative;
   width: 100%;
-  /* Adjust as needed */
   height: 20px;
-  /* Example footer height */
-  /* background-color: #f1f1f1; */
 }
 
 .parent {
   position: relative;
-  /* Makes the parent the reference for absolute positioning */
 }

@@ -1,38 +1,28 @@
 <template>
   <div>
-    <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
-    <div class="row mt-2">
-      <div class="col-md-12" style="text-align: left">
-        <InfoMessage message="Choose a document type:" />
-        <div class="row p-1" style="">
-          <div class="grid">
-            <label class="card">
-              <!-- prettier-ignore -->
-              <input name="plan" class="radio" type="radio" value="PASSPORT" v-model="govIdType" />
-
-              <span class="plan-details">
-                <span class="plan-type">Passport</span>
-                <span><img src="../../assets/passport.png" width="180" /></span>
-              </span>
-            </label>
-
-            <label class="card">
-              <!-- prettier-ignore -->
-              <input name="plan" class="radio" type="radio" value="ID_CARD" v-model="govIdType" />
-
-              <span class="plan-details">
-                <span class="plan-type">Government ID</span>
-                <!-- prettier-ignore -->
-                <span><img src="../../assets/governament.png" width="180" /></span>
-              </span>
-            </label>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row center" style="">
+          <InfoMessage message="Choose a document type:" />
+          <div class="col-md-8">
+            <div class="list-group">
+              <button class="list-group-item d-flex justify-content-between align-items-center" @click="chooseDoc('PASSPORT')">
+                <span>
+                  <img src="../../assets/passport.png" width="40" />
+                  <span class="mx-2">Passport</span>
+                </span>
+                <i class="bi bi-chevron-compact-right"></i>
+              </button>
+              <button class="list-group-item d-flex justify-content-between align-items-center" @click="chooseDoc('ID_CARD')">
+                <span>
+                  <img src="../../assets/governament.png" width="35" />
+                  <span class="mx-2">ID Card</span>
+                </span>
+                <i class="bi bi-chevron-compact-right"></i>
+              </button>
+            </div>
           </div>
         </div>
-        <!-- <div class="row mt-2 ">
-          <div class="col-md-12">
-            <button class="btn btn-outline-dark" @click="submit()" :disabled="govIdType == ''">Continue</button>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -81,6 +71,10 @@ export default {
         this.isToast = false
         this.toastMessage = ''
       }, 5000)
+    },
+
+    chooseDoc(docType) {
+      this.govIdType = docType
     },
 
     submit() {

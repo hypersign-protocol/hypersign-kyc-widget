@@ -195,7 +195,6 @@ export default {
 
   getDocumentIdsByNamespace: async ({ getters, commit }, payload) => {
     try {
-      console.log('Inside getDocumentIdsByNamespace() ....')
       const vault = getters.getVault
       if (vault) {
         const queryResult = await vault.Query({
@@ -345,6 +344,32 @@ export default {
     }
   },
 
+  async checkIfTruestedCredentialExistInVault({ getters }, filter) {
+    const { schemaType } = filter
+    let trustedIssuerDidList = []
+    const issuerDID = getters.getWidgetConfigFromDb.issuerDID
+    if (issuerDID) {
+      trustedIssuerDidList = issuerDID.split(',')
+    }
+
+    // Get vault credentials
+    const credentials = getters.getVaultCredentials
+    const credential = credentials.find((credential) => {
+      if (credential) {
+        if (credential.type.includes(schemaType) && trustedIssuerDidList.includes(credential.issuer)) {
+          return credential
+        }
+      }
+    })
+
+    if (credential) {
+      console.log('Credential of type schemaType ' + schemaType + ' exist for listed issuers ' + issuerDID)
+      return true
+    } else {
+      return false
+    }
+  },
+
   async checkIfCredentialAlreadyExistsInVault({ commit, getters, state }) {
     const raw = localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW)
     const vaultDataRaw = JSON.parse(raw)
@@ -381,11 +406,6 @@ export default {
           commit('setLivelinessDone', true)
         }
 
-        // if (['CitizenshipCredential', 'DateOfBirthCredential'].findIndex(x => x === schema) >= 0) {
-        //     console.log("commiting setKycDone")
-        //     commit('setKycDone', true)
-        // }
-
         if (schema === 'PassportCredential') {
           commit('setKycDone', true)
         }
@@ -394,11 +414,11 @@ export default {
           commit('setKycDone', true)
         }
 
-        if (schema === 'SBTCredential') {
+        if (schema.includes('SBTCredential')) {
           commit('setSbtMintDone', true)
         }
       } else {
-        console.error('Credential not found for schema ' + schemaId)
+        console.warn('Credential not found for schema with id' + schemaId)
       }
     })
   },

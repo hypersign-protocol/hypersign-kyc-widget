@@ -399,7 +399,9 @@ async function buildABC1(curve, zkey, witness, coeffs, logger) {
   }
 
   for (let i = 0; i < zkey.domainSize; i++) {
-    if (logger && i % 1000000 === 0) logger.debug(`QAP C: ${i}/${zkey.domainSize}`)
+    if (logger && i % 1000000 === 0) {
+      logger.debug(`QAP C: ${i}/${zkey.domainSize}`)
+    }
     outBuffC.set(curve.Fr.mul(outBuffA.slice(i * n8, i * n8 + n8), outBuffB.slice(i * n8, i * n8 + n8)), i * n8)
   }
 

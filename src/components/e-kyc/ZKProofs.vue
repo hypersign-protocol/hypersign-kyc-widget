@@ -101,11 +101,11 @@
                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
                   <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
                     <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
-                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof Now</span>
+                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof</span>
 
                     <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
 
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Generating Proof...</span>
                   </button>
                 </template>
                 <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
@@ -115,7 +115,7 @@
                     <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID Token</span>
                     <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
 
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Loading...</span>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Minting ID...</span>
                   </button>
                 </template>
               </div>

@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     ...mapState(['steps']),
-    ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb']),
+    ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb', 'getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
 
     /// // vault
     getVaultDataCredentials() {
@@ -118,7 +118,7 @@ export default {
     ///
 
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
+      return this.getIfOncainIdStep.isEnabled
     },
     listOfEnabledZkCredential() {
       if (this.getWidgetConfigFromDb.zkProof?.proofs?.length > 0) {
@@ -138,16 +138,16 @@ export default {
     },
 
     checkIfzkProofIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs).isEnabled
+      return this.getIfzkProofStep.isEnabled
     },
     checkIfIdDocumentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
+      return this.getIfIdDocumentStep.isEnabled
     },
     checkIfUserConsentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.UserConsent).isEnabled
+      return this.getIfUserConsentStep.isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+      return this.getIfLivelinessStep.isEnabled
     },
   },
   methods: {
@@ -195,7 +195,6 @@ export default {
         // const signedPresentation  = await this.signPresentation(presentation)
 
         // Submitting the presentation
-
         this.isLoading = true
         this.toast(MESSAGE.USER_CONSENT.DATA_SUBMIT, 'warning')
         this.$emit('verifyIdDocEvent', true)

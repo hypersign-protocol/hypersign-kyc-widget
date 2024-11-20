@@ -168,7 +168,7 @@ export default {
     ConnectWalletButton,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig']),
+    ...mapGetters(['getCavachAccessToken', 'getIfUserConsentStep', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getIfIdDocumentStep', 'getIfLivelinessStep']),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'hasSbtMintDone', 'steps']),
     getChainConfig() {
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
@@ -202,10 +202,10 @@ export default {
       return `${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`
     },
     checkIfIdDocumentIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.IdDocs).isEnabled
+      return this.getIfIdDocumentStep.isEnabled
     },
     checkIfLivelinessIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness).isEnabled
+      return this.getIfLivelinessStep.isEnabled
     },
   },
   data() {
@@ -340,18 +340,13 @@ export default {
     this.isLoading = true
     if (this.hasSbtMintDone) {
       // then move to userconsent step
-      const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent)
+      const userConsentStep = this.getIfUserConsentStep
       this.nextStep(userConsentStep)
       return
     }
 
+    // prettier-ignore
     this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
-    // const getKycCredential = this.queryVaultDataCredentials()
-    // if (getKycCredential) {
-    //     console.log(getKycCredential)
-    //     console.log(getKycCredential.type)
-    // }
-
     let ProofType = HYPERSIGN_PROOF_TYPES.ProofOfKYC
     // check if ONLY liveliness configured
     // then generate only personhood SBT

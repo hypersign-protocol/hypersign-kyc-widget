@@ -52,7 +52,6 @@ export default {
   },
   methods: {
     startTimer() {
-      // Set up an interval to decrement the seconds every second
       this.timer = setInterval(() => {
         if (this.maxTimeOut > 0) {
           this.maxTimeOut--
@@ -63,7 +62,6 @@ export default {
     },
     stopTimer() {
       clearInterval(this.timer)
-      // window.location.href = `${this.getRedirectUrl}?idToken=${this.idToken}`;
       const data = JSON.stringify({
         status: 'fail',
         message: 'Session expired',

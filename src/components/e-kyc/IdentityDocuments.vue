@@ -16,13 +16,13 @@ export default {
     ifExtractedData() {
       return Object.keys(this.$store.state.kycExtractedData).length > 0
     },
-    ...mapGetters(['getIdDocumentLicenseKey']),
+    ...mapGetters(['getIdDocumentLicenseKey', 'getIfOncainIdStep', 'getIfzkProofStep']),
     ...mapState(['steps', 'hasKycDone']),
     checkIfzkProofIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs).isEnabled
+      return this.getIfzkProofStep.isEnabled
     },
     checkIfOncainIdIsEnabled() {
-      return this.steps.find((x) => x.stepName === STEP_NAMES.OnChainId).isEnabled
+      return this.getIfOncainIdStep.isEnabled
     },
   },
   data: function () {
@@ -76,8 +76,8 @@ export default {
   created() {
     if (this.hasKycDone) {
       // then move to onchainIdStep step
-      const onchainIdStep = this.steps.find((step) => step.stepName === STEP_NAMES.OnChainId)
-      this.nextStep(onchainIdStep)
+      const onchainIdStep = this.getIfOncainIdStep
+      this.nextStep(onchainIdStep.id)
       return
     }
 
@@ -354,11 +354,13 @@ export default {
       this.selectedDocumentType = data.docType
       this.enableWidget()
       this.manualMode = false
+      this.selectDocumentType()
     },
 
     back() {
       this.disableWidget()
       this.selectedDocumentType = ''
+      this.chooseDocumentType = false
     },
 
     rescanHandler() {
@@ -377,89 +379,55 @@ export default {
       <div class="row" v-if="!chooseDocumentType">
         <div class="row">
           <div class="center">
-            <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" />
+            <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" style="height: 300px" />
           </div>
         </div>
-        <div class="row mt-2">
+        <div class="row">
           <div class="col-md-12">
-            <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button>
+            <!-- <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button> -->
+            <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
           </div>
         </div>
       </div>
       <div v-else>
-        <div class="row p-2" style="text-align: left; min-height: 550px" v-if="!ifExtractedData">
-          <!-- SelphID Web Widget Container: Properties and events setup -->
-          <div class="row col-12" v-if="selectedDocumentType != ''">
-            <div class="col-12 col-md-9" style="">
-              <facephi-selphid
-                v-if="isWidgetStarted && selectedDocumentType != ''"
-                :licenseKey="licenseKey"
-                :bundlePath="bundlePath"
-                :language="language"
-                :initialTip="initialTip"
-                :askSimpleMode="askSimpleMode"
-                :cameraWidth="cameraWidth"
-                :cameraHeight="cameraHeight"
-                :cameraSelection="cameraSelection"
-                :previewCapture="previewCapture"
-                :forceLandscape="forceLandscape"
-                :captureTimeout="captureTimeout"
-                :captureRetries="captureRetries"
-                :imageFormat="imageFormat"
-                :imageQuality="imageQuality"
-                :documentType="documentType"
-                :scanMode="scanMode"
-                :blurredThreshold="blurredThreshold"
-                :showLog="showLog"
-                :debugMode="debugMode"
-                :documentMode="documentMode"
-                @onmoduleloaded="onModuleLoaded"
-                @onextractionfinished="onExtractionFinished"
-                @onusercancelled="onUserCancelled"
-                @onexceptioncaptured="onExceptionCaptured"
-                @onextractiontimeout="onExtractionTimeout"
-                @ontrackstatus="onTrackStatus"
-                :startSimpleMode="manualMode"
-              ></facephi-selphid>
-            </div>
-            <div class="col-12 col-md-3 mt-3 mt-md-0">
-              <!-- <div>SelphID Web Widget Demo</div> -->
-
-              <div class="d-flex flex-column my-3">
-                <button type="button" id="btnStartCapture" class="btn btn-primary btn-block" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
-                <button type="button" id="btnStopCapture" class="btn btn-danger btn-block mt-2" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button>
-                <button type="button" id="btnStopCapture" class="btn btn-secondary btn-block mt-2" @click="back()" title="Back"><i class="bi bi-backspace"></i> Back</button>
-              </div>
-
-              <div class="form-group form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="manualMode" @change="switchModes()" style="cursor: grab" />
-                <label class="form-check-label" for="flexSwitchCheckDefault"><strong>Manual Mode</strong></label>
-              </div>
-
-              <hr />
-              <div class="form-group mt-2">
-                <label for="cameraResolution">Camera Resolution</label>
-                <select id="cameraResolution" :disabled="isWidgetStarted" class="form-control mt-2" :value="cameraResolution" @change="onCameraResolutionChange($event)">
-                  <option v-for="key in Object.keys(FPhiCameraResolutions)" :key="key" :value="key">
-                    {{ FPhiCameraResolutions[key].title }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group mt-2">
-                <label for="cameraResolution">Document Type</label>
-                <input type="text" disabled :value="selectedDocumentType" style="width: 150px" />
-              </div>
-            </div>
-          </div>
-          <div v-else class="row">
-            <div class="center" style="align-items: normal">
-              <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
-            </div>
+        <div class="row" style="text-align: left; min-height: 550px" v-if="!ifExtractedData && selectedDocumentType != ''">
+          <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
+            <facephi-selphid
+              v-if="isWidgetStarted && selectedDocumentType != ''"
+              :licenseKey="licenseKey"
+              :bundlePath="bundlePath"
+              :language="language"
+              :initialTip="initialTip"
+              :askSimpleMode="askSimpleMode"
+              :cameraWidth="cameraWidth"
+              :cameraHeight="cameraHeight"
+              :cameraSelection="cameraSelection"
+              :previewCapture="previewCapture"
+              :forceLandscape="forceLandscape"
+              :captureTimeout="captureTimeout"
+              :captureRetries="captureRetries"
+              :imageFormat="imageFormat"
+              :imageQuality="imageQuality"
+              :documentType="documentType"
+              :scanMode="scanMode"
+              :blurredThreshold="blurredThreshold"
+              :showLog="showLog"
+              :debugMode="debugMode"
+              :documentMode="documentMode"
+              @onmoduleloaded="onModuleLoaded"
+              @onextractionfinished="onExtractionFinished"
+              @onusercancelled="onUserCancelled"
+              @onexceptioncaptured="onExceptionCaptured"
+              @onextractiontimeout="onExtractionTimeout"
+              @ontrackstatus="onTrackStatus"
+              :startSimpleMode="manualMode"
+            ></facephi-selphid>
           </div>
         </div>
         <div class="row" v-else>
-          <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" @EventrescanIDDoc="rescanHandler" />
+          <div class="col-md-12">
+            <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" @EventrescanIDDoc="rescanHandler" />
+          </div>
         </div>
       </div>
     </div>
