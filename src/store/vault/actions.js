@@ -195,7 +195,6 @@ export default {
 
   getDocumentIdsByNamespace: async ({ getters, commit }, payload) => {
     try {
-      console.log('Inside getDocumentIdsByNamespace() ....')
       const vault = getters.getVault
       if (vault) {
         const queryResult = await vault.Query({
@@ -381,11 +380,6 @@ export default {
           commit('setLivelinessDone', true)
         }
 
-        // if (['CitizenshipCredential', 'DateOfBirthCredential'].findIndex(x => x === schema) >= 0) {
-        //     console.log("commiting setKycDone")
-        //     commit('setKycDone', true)
-        // }
-
         if (schema === 'PassportCredential') {
           commit('setKycDone', true)
         }
@@ -394,11 +388,11 @@ export default {
           commit('setKycDone', true)
         }
 
-        if (schema === 'SBTCredential') {
+        if (schema.includes('SBTCredential')) {
           commit('setSbtMintDone', true)
         }
       } else {
-        console.error('Credential not found for schema ' + schemaId)
+        console.warn('Credential not found for schema with id' + schemaId)
       }
     })
   },
