@@ -1,21 +1,16 @@
 <template>
-  <div class="row">
-    <div class="col-2 center align-items-center">
-      <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
-        <!-- {{ stepNumber }} -->
-        <img :src="logoUrl" alt="Avatar" class="avatar" />
-      </div>
+  <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+    <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
+      <!-- {{ stepNumber }} -->
+      <img :src="logoUrl" alt="Avatar" class="avatar" />
     </div>
-    <div class="col-8" style="text-align: left">
-      <span style="font-size: medium; font-weight: bold; word-wrap: break-word">
-        {{ stepTitle }}
-      </span>
-    </div>
-    <div class="col-2">
-      <span>
-        <i class="bi bi-check2-circle" style="font-size: xx-large" v-if="isDone"></i>
-      </span>
-    </div>
+    <span style="font-size: medium; font-weight: bold; text-align: left; padding: 5px">
+      {{ stepTitle }}
+    </span>
+    <span>
+      <i class="bi bi-check2-circle" style="font-size: xx-large" v-if="isDone"></i>
+      <i class="bi bi-chevron-compact-right" v-else></i>
+    </span>
   </div>
 </template>
 

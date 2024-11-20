@@ -41,39 +41,14 @@
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
-      <div class="card widget-card" style="width: 70%; margin: auto">
-        <div class="row mb-4" v-if="checkIfLivelinessIsEnabled.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="1" :stepTitle="checkIfLivelinessIsEnabled.stepTitle" :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
-          </div>
+      <div class="" style="width: 70%; margin: auto">
+        <div class="list-group">
+          <AppInstructionStep v-if="checkIfLivelinessIsEnabled.isEnabled == true" stepNumber="1" :stepTitle="checkIfLivelinessIsEnabled.stepTitle" :isDone="hasLivelinessDone" :logo="checkIfLivelinessIsEnabled.logo" />
+          <AppInstructionStep v-if="checkIfIdDocumentIsEnabled.isEnabled == true" stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo" :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
+          <AppInstructionStep v-if="checkIfzkProofIsEnabled.isEnabled == true && checkIfOncainIdIsEnabled.isEnabled !== true" stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle" :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
+          <AppInstructionStep v-if="checkIfOncainIdIsEnabled.isEnabled == true" :stepNumber="4" :logo="checkIfOncainIdIsEnabled.logo" :stepTitle="checkIfOncainIdIsEnabled.stepTitle" :isDone="hasSbtMintDone" />
+          <AppInstructionStep v-if="checkIfUserConsentIsEnabled.isEnabled == true" :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '5' : '4'" :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo" :isDone="false" />
         </div>
-        <div class="row mb-4" v-if="checkIfIdDocumentIsEnabled.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="2" :logo="checkIfIdDocumentIsEnabled.logo" :stepTitle="checkIfIdDocumentIsEnabled.stepTitle" :isDone="hasKycDone" />
-          </div>
-        </div>
-
-        <div class="row mb-4" v-if="checkIfzkProofIsEnabled.isEnabled == true && checkIfOncainIdIsEnabled.isEnabled !== true">
-          <div class="col">
-            <AppInstructionStep stepNumber="3" :stepTitle="checkIfzkProofIsEnabled.stepTitle" :logo="checkIfzkProofIsEnabled.logo" :isDone="false" />
-          </div>
-        </div>
-
-        <div class="row mb-4" v-if="checkIfOncainIdIsEnabled.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep :stepNumber="4" :logo="checkIfOncainIdIsEnabled.logo" :stepTitle="checkIfOncainIdIsEnabled.stepTitle" :isDone="hasSbtMintDone" />
-          </div>
-        </div>
-
-        <div class="row mb-4" v-if="checkIfUserConsentIsEnabled.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep :stepNumber="checkIfzkProofIsEnabled.isEnabled ? '5' : '4'" :stepTitle="checkIfUserConsentIsEnabled.stepTitle" :logo="checkIfUserConsentIsEnabled.logo" :isDone="false" />
-          </div>
-        </div>
-
-        <!-- <div class="d-flex" style="">
-          <div class="vr" style="height: 300px;"></div>
-        </div> -->
       </div>
 
       <div class="mt-3">
