@@ -10,6 +10,9 @@ module.exports = defineConfig({
   },
   configureWebpack: {
     resolve: {
+      alias: {
+        zlib: 'browserify-zlib',
+      },
       fallback: {
         // crypto: false, // Avoid overriding the 'fs' module,
         crypto: require.resolve('crypto-browserify'),
@@ -19,6 +22,7 @@ module.exports = defineConfig({
         path: false,
         fs: false,
         timers: false,
+        zlib: 'browserify-zlib',
       },
     },
     plugins: [

@@ -195,9 +195,7 @@ import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-me
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
 import NibiruMainnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/cataclysm-1/chains'
-
 import DiamTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/diam/Diamante Testnet 2024/chains'
-
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
@@ -210,6 +208,7 @@ import multibase from 'multibase'
 import * as utils from '../../zkUtils/utils'
 import documentLoader from 'hs-ssi-sdk/build/libs/w3cache/v1'
 import vaultConfig from '@/store/vault/config'
+import { inflateRaw } from 'pako'
 export default {
   name: STEP_NAMES.ZkProofs,
   components: {
@@ -1523,6 +1522,16 @@ export default {
       this.showModal = true
       // this.$root.$emit("bv::toggle::collapse", "sidebar-right");
     },
+    uncompressProof(zkProof) {
+      zkProof.proof.pi_a = Array.from(new Uint8Array(inflateRaw(Buffer.from(zkProof.proof.pi_a, 'base64'))))
+      zkProof.proof.pi_b = Array.from(new Uint8Array(inflateRaw(Buffer.from(zkProof.proof.pi_b, 'base64'))))
+      zkProof.proof.pi_c = Array.from(new Uint8Array(inflateRaw(Buffer.from(zkProof.proof.pi_c, 'base64'))))
+      zkProof.public_signales = zkProof.public_signales.map((e) => {
+        return Buffer.from(inflateRaw(Buffer.from(e, 'base64')).buffer).toString()
+      })
+
+      return zkProof
+    },
 
     async mintCosmosToken(credential, proof) {
       const zkProof = {
@@ -1530,11 +1539,12 @@ export default {
         proof: credential?.credentialSubject?.proof,
         public_signales: credential?.credentialSubject.publicSignals,
       }
+      const originalProof = this.uncompressProof(zkProof)
 
       const smartContractMsg = constructKYCSBTMintMsg({
         hypersign_proof: {
           credential_id: credential?.id,
-          zk_proof: zkProof,
+          zk_proof: originalProof,
         },
       })
 
