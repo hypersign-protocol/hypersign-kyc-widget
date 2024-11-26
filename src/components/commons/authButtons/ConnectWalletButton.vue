@@ -1,7 +1,7 @@
 <template>
   <div>
     <button type="button" class="btn btn-outline-dark btn-lg mb-2" @click="connectWallet()" :disabled="isDisable">
-      <img src="/assest/images/keplr.jpeg" class="rounded" style="width: 20px" alt="Avatar" />
+      <img src="../../../assets/keplr.jpeg" class="rounded" style="width: 20px" alt="Avatar" />
       Connect Keplr Wallet
     </button>
   </div>
