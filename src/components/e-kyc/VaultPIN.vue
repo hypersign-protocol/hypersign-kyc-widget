@@ -5,11 +5,11 @@
 
       <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
       <div class="center" v-if="ifNewUser">
-        <RegisterPIN style="width: 70%" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+        <RegisterPIN class="width" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
       </div>
 
       <div v-else class="center">
-        <AskPIN style="width: 70%" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
+        <AskPIN class="width" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
       </div>
     </div>
     <div class="footer">
@@ -17,6 +17,18 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.width {
+  width: 70%;
+}
+
+@media (max-width: 768px) {
+  .width {
+    width: 100%;
+  }
+}
+</style>
 
 <script type="text/javascript">
 import AskPIN from '../commons/AskPIN.vue'
@@ -162,5 +174,3 @@ export default {
   },
 }
 </script>
-
-<style scoped></style>

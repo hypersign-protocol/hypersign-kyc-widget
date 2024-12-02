@@ -1,27 +1,39 @@
 <template>
   <div>
     <div class="container widget-card">
-      <div class="row mb-2">
-        Enter 5 digits PIN:
+      <div class="" style="text-align: left">
+        <span>Enter 5 digits PIN:</span>
         <PIN @pinTakenEvent="getPin" inputType="password" />
       </div>
 
-      <div class="row mb-2">
-        Confirm PIN:
+      <div class="" style="text-align: left">
+        <span>Confirm PIN:</span>
         <PIN @pinTakenEvent="getRenterPin" inputType="password" />
       </div>
 
-      <div class="row mb-1">
+      <div class="mb-1">
         <InfoMessage :message="warningMessage" />
       </div>
     </div>
     <div class="container">
       <div class="row center mt-3">
-        <button class="btn btn-outline-dark" @click="submit()" style="width: 50%"><i class="bi bi-safe"></i> Unlock Vault</button>
+        <button class="btn btn-outline-dark width" @click="submit()"><i class="bi bi-safe"></i> Unlock Vault</button>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.width {
+  width: 70%;
+}
+
+@media (max-width: 768px) {
+  .width {
+    width: 100%;
+  }
+}
+</style>
 
 <script type="text/javascript">
 import PIN from '../commons/PIN.vue'

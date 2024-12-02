@@ -5,7 +5,7 @@
         <!-- <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" /> -->
       </a>
 
-      <span style="float: right; padding-right: 10px; float: right; padding-top: 4px; padding-left: 10px; border: 1px solid #808080eb; border-radius: 33px; padding-bottom: 4px; background: #80808024; font-size: smaller" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
+      <span class="stepper" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
     </div>
   </div>
 </template>
@@ -40,3 +40,24 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.stepper {
+  float: right;
+  padding-right: 10px;
+  float: right;
+  padding-top: 4px;
+  padding-left: 10px;
+  border: 1px solid #808080eb;
+  border-radius: 33px;
+  padding-bottom: 4px;
+  background: #80808024;
+  font-size: smaller;
+}
+
+@media (max-width: 768px) {
+  .stepper {
+    font-size: x-small;
+  }
+}
+</style>

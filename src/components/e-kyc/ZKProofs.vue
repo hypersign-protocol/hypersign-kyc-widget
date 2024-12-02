@@ -16,14 +16,76 @@
 .proofCard {
   margin: auto;
   min-height: 150px;
-  max-height: 250px;
+  /* max-height: 250px; */
   float: left;
   width: 80%;
   font-size: small;
   color: grey;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   /* min-width: 250px */
 }
 
+.show-verified {
+  display: none;
+}
+.center-footer {
+  color: green;
+}
+@media (max-width: 768px) {
+  .proofCard {
+    /* margin: auto;
+    min-height: 150px;
+    float: left;
+    width: 80%;
+    font-size: small;
+    color: grey;
+    padding: 10px; */
+    width: 90%;
+    padding: 5px;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .card-title {
+    text-align: center;
+  }
+  .card-text {
+    text-align: center;
+  }
+  .card-body {
+    display: grid;
+  }
+  img {
+    max-width: 80px;
+    max-height: 80px;
+  }
+  h5 {
+    font-size: 1.3rem;
+  }
+  p {
+    font-size: 0.875rem;
+  }
+  .center-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: green;
+  }
+  .show-verified {
+    display: block;
+  }
+}
+
+.proof-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0px 6px 12px rgba(0, 0, 0, 0.15),
+    0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); */
 /* .modal-body {
     padding: 10px
 } */
@@ -81,7 +143,7 @@
         <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
           <div class="row" style="text-align: left">
             <div class="col-md-2 center">
-              <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.7" />
+              <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.6" />
             </div>
             <div class="col-md-9">
               <div class="card-body">
@@ -97,7 +159,8 @@
                 <p class="card-text mt-2">
                   <small>{{ hypersign_proof.description }}</small>
                 </p>
-
+              </div>
+              <div class="card-body">
                 <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
                   <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
                     <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
@@ -122,14 +185,10 @@
             </div>
 
             <div class="col-md-1" v-if="isOnchainIdEnabled">
-              <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT">
-                <i class="bi bi-check2-circle" style="font-size: xx-large"> </i>
-              </div>
+              <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
             </div>
             <div class="col-md-1" v-else>
-              <div v-if="hypersign_proof.zkProof">
-                <i class="bi bi-check2-circle" style="font-size: xx-large"></i>
-              </div>
+              <div v-if="hypersign_proof.zkProof" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
             </div>
           </div>
         </div>

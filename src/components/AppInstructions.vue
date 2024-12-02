@@ -33,6 +33,18 @@
 .checkbox-item input {
   margin-right: 5px;
 }
+
+.widget-card-width {
+  width: 70%;
+  margin: auto;
+}
+
+@media (max-width: 768px) {
+  .widget-card-width {
+    margin: auto;
+    width: 100%;
+  }
+}
 </style>
 
 <template>
@@ -41,7 +53,7 @@
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
-      <div class="card widget-card" style="width: 70%; margin: auto">
+      <div class="card widget-card widget-card-width">
         <div class="row mb-4" v-if="getIfLivelinessStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />

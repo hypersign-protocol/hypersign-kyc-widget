@@ -2,13 +2,26 @@
   <div class="mt-2">
     <template>
       <!-- eslint-disable -->
-      <div class="container maincontainer parent" style="text-align: center; min-height: 83vh; max-height: 90vh">
+      <div class="container maincontainer parent main-container-height" style="text-align: center">
         <NavBar />
         <component :is="getActiveStep.stepName"> </component>
       </div>
     </template>
   </div>
 </template>
+
+<style scoped>
+.main-container-height {
+  min-height: 83vh;
+  max-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .main-container-height {
+    height: 100%;
+  }
+}
+</style>
 
 <script>
 import AppInstructions from './AppInstructions.vue'

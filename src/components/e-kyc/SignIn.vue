@@ -3,7 +3,7 @@
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
-      <div class="mt-4 p-4" style="width: 70%; margin: auto">
+      <div class="mt-4 p-4 width" style="margin: auto">
         <div>
           <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
           <GoogleButton :is-disable="error" />
@@ -17,6 +17,18 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.width {
+  width: 70%;
+}
+
+@media (max-width: 768px) {
+  .width {
+    width: 100%;
+  }
+}
+</style>
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
