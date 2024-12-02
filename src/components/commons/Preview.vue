@@ -5,8 +5,19 @@
       <div class="col-md-12" style="text-align: left">
         <InfoMessage message="Please verify if your informations are correct" />
         <div class="card widget-card" style="width: 100%; margin: auto; max-height: 400px; overflow-y: scroll">
-          <div class="row">
-            <div class="col-8">
+          <div class="row center">
+            <div class="col-4">
+              <div class="" style="align-items: baseline">
+                <img class="avatar" :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" height="100" />
+              </div>
+              <div class="center mt-2">
+                <span class="btn btn-success-link" style="color: green">
+                  <i class="bi bi-check-all"></i>
+                  {{ $store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING }}
+                </span>
+              </div>
+            </div>
+            <div class="col-12">
               <table class="table table-hover" style="text-align: left">
                 <tbody>
                   <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
@@ -17,17 +28,6 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <div class="col-4">
-              <div class="center" style="align-items: baseline">
-                <img class="avatar" :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" height="100" />
-              </div>
-              <div class="center mt-2">
-                <button class="btn btn-success-link" style="color: green">
-                  <i class="bi bi-check-all"></i>
-                  {{ $store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING }}
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -133,4 +133,12 @@ export default {
   border-radius: 50%;
   border: 4px solid rgba(73, 133, 73, 0.47);
 }
+/* .show-user-image {
+  display: block;
+}
+@media (max-width: 768px) {
+  .show-user-image {
+    display: none;
+  }
+} */
 </style>

@@ -74,20 +74,7 @@ export default {
   },
 
   created() {
-    if (this.hasKycDone) {
-      // then move to onchainIdStep step
-      const onchainIdStep = this.getIfOncainIdStep
-      this.nextStep(onchainIdStep.id)
-      return
-    }
-
-    this.licenseKey = this.getIdDocumentLicenseKey
-    // if (!this.licenseKey) {
-    //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
-    //   this.licenseKey = license;
-    //   this.generateBrowserCache(license);
-    // }
-    EVENT.subscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
+    this.prepare()
   },
 
   beforeDestroy() {
@@ -97,6 +84,22 @@ export default {
   methods: {
     ...mapMutations(['nextStep']),
     ...mapActions(['verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc']),
+    prepare() {
+      if (this.hasKycDone) {
+        // then move to onchainIdStep step
+        const onchainIdStep = this.getIfOncainIdStep
+        this.nextStep(onchainIdStep.id)
+        return
+      }
+
+      this.licenseKey = this.getIdDocumentLicenseKey
+      // if (!this.licenseKey) {
+      //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
+      //   this.licenseKey = license;
+      //   this.generateBrowserCache(license);
+      // }
+      EVENT.subscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
+    },
     // Demo methods
     enableWidget: async function () {
       // console.warn("[Demo] Start Capture");
@@ -255,8 +258,8 @@ export default {
     },
 
     onTrackStatus: function (eventData) {
-      const trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code)
-      console.warn(trackStatusCode)
+      // const trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code)
+      console.warn(eventData.detail.code)
     },
 
     // Widget methods
@@ -358,12 +361,15 @@ export default {
     },
 
     back() {
+      console.log('Inside back..')
       this.disableWidget()
       this.selectedDocumentType = ''
       this.chooseDocumentType = false
     },
 
-    rescanHandler() {
+    rescanHandler(result) {
+      console.log('Inside rescan handler... ' + result)
+      this.prepare()
       this.back()
     },
   },
@@ -382,11 +388,9 @@ export default {
             <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" style="height: 300px" />
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <!-- <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button> -->
-            <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
-          </div>
+        <div>
+          <!-- <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button> -->
+          <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
         </div>
       </div>
       <div v-else>
