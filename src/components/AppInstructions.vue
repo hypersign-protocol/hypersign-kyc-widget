@@ -100,6 +100,7 @@
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
 import AppInstructionStep from './commons/AppInstructionStep.vue'
 import { STEP_NAMES } from '@/config'
+import { EVENT, EVENTS } from './utils/eventBus'
 export default {
   name: 'AppInstructions',
   components: {
@@ -184,14 +185,13 @@ export default {
       return this.stepNumber
     },
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
   },
 }

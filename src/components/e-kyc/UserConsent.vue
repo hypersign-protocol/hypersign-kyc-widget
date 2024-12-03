@@ -87,6 +87,7 @@ import { HypersignVerifiablePresentation } from 'hs-ssi-sdk'
 import { STEP_NAMES } from '@/config'
 import VaultConfig from '@/store/vault/config'
 import MESSAGE from '../utils/lang/en'
+import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
   name: STEP_NAMES.UserConsent,
   data() {
@@ -169,14 +170,13 @@ export default {
     ...mapActions(['verifyResult']),
     ...mapMutations(['nextStep', 'previousStep', 'setUserPresentationConsent']),
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
     interSect(s1, s2) {
       const intersect = s1.intersection(s2)

@@ -1,12 +1,10 @@
 <template>
-  <div class="navbar navbar-expand-md navbar-light">
-    <div class="container">
-      <a href="#" class="navbar-brand">
-        <!-- <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" /> -->
-      </a>
+  <div class="navbar navbar-expand-md navbar-light" style="justify-content: end">
+    <a href="#" class="navbar-brand">
+      <!-- <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" /> -->
+    </a>
 
-      <span class="stepper" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
-    </div>
+    <span class="stepper" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
   </div>
 </template>
 

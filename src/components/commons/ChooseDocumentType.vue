@@ -29,6 +29,7 @@
 </template>
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
   name: 'ChooseDocumentType',
   computed: {
@@ -63,14 +64,13 @@ export default {
     ...mapActions(['verifyResult']),
     ...mapMutations(['nextStep', 'previousStep']),
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
 
     chooseDoc(docType) {

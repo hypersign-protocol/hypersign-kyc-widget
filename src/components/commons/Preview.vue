@@ -4,7 +4,7 @@
     <div class="row mt-2">
       <div class="col-md-12" style="text-align: left">
         <InfoMessage message="Please verify if your informations are correct" />
-        <div class="card widget-card" style="width: 100%; margin: auto; max-height: 400px; overflow-y: scroll">
+        <div class="card widget-card preview">
           <div class="row center">
             <div class="col-4">
               <div class="" style="align-items: baseline">
@@ -45,6 +45,7 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
   name: 'PreviewData',
   computed: {
@@ -70,14 +71,13 @@ export default {
     ...mapActions(['verifyResult']),
     ...mapMutations(['nextStep', 'previousStep']),
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
 
     snakeToPascal(str) {
@@ -133,12 +133,16 @@ export default {
   border-radius: 50%;
   border: 4px solid rgba(73, 133, 73, 0.47);
 }
-/* .show-user-image {
-  display: block;
+.preview {
+  width: 100%;
+  margin: auto;
+  max-height: 400px;
+  overflow-y: scroll;
 }
+
 @media (max-width: 768px) {
-  .show-user-image {
-    display: none;
+  .preview {
+    max-height: 500px;
   }
-} */
+}
 </style>

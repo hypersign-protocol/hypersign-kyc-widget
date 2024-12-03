@@ -268,6 +268,7 @@ import * as utils from '../../zkUtils/utils'
 import documentLoader from 'hs-ssi-sdk/build/libs/w3cache/v1'
 import vaultConfig from '@/store/vault/config'
 import { inflateRaw } from 'pako'
+import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
   name: STEP_NAMES.ZkProofs,
   components: {
@@ -465,14 +466,13 @@ export default {
       return queryMetadataMsgResult
     },
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
 
     // queryVaultDataCredentials(credentialType, trustedIssuer) {

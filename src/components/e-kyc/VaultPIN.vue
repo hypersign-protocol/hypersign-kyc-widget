@@ -37,6 +37,7 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import { generateMnemonicForWallet, generateMnemonicToHDSeed } from '../utils/hd-wallet'
 import { HypersignDID } from 'hs-ssi-sdk'
 import { STEP_NAMES } from '../../config'
+import { EVENT, EVENTS } from '../utils/eventBus'
 // import VaultConfig from '../../store/vault/config'
 export default {
   name: STEP_NAMES.VaultPIN,
@@ -144,15 +145,24 @@ export default {
       this.userVaultDataRaw.hypersign.keys = { ...kp }
     },
     toast(msg, type = 'success') {
-      this.isToast = true
-      this.toastMessage = msg
-      this.toastType = type
-
-      setTimeout(() => {
-        this.isToast = false
-        this.toastMessage = ''
-      }, 5000)
+      EVENT.emitEvent(
+        EVENTS.NOTIFY,
+        JSON.stringify({
+          toastMessage: msg,
+          toastType: type,
+        })
+      )
     },
+    // toast(msg, type = 'success') {
+    //   this.isToast = true
+    //   this.toastMessage = msg
+    //   this.toastType = type
+
+    //   setTimeout(() => {
+    //     this.isToast = false
+    //     this.toastMessage = ''
+    //   }, 5000)
+    // },
   },
   data() {
     return {

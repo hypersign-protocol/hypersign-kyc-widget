@@ -1,10 +1,13 @@
 <template>
-  <div class="mt-2">
+  <div>
     <template>
       <!-- eslint-disable -->
       <div class="container maincontainer parent main-container-height" style="text-align: center">
         <NavBar />
         <component :is="getActiveStep.stepName"> </component>
+        <div class="footer">
+          <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+        </div>
       </div>
     </template>
   </div>
@@ -12,8 +15,8 @@
 
 <style scoped>
 .main-container-height {
-  min-height: 83vh;
-  max-height: 100vh;
+  min-height: 90dvh;
+  max-height: 100dvh;
 }
 
 @media (max-width: 768px) {
@@ -34,7 +37,7 @@ import UserConsent from './e-kyc/UserConsent.vue'
 import OnChainId4 from './e-kyc/OnChainId.vue'
 import ZkProofs from './e-kyc/ZKProofs.vue'
 import SessionExpired from './SessionExpired.vue'
-
+import { EVENT, EVENTS } from './utils/eventBus'
 import { mapGetters } from 'vuex'
 export default {
   name: 'HelloWorld',
@@ -52,6 +55,28 @@ export default {
   },
   computed: {
     ...mapGetters(['getActiveStep']),
+  },
+  created() {
+    EVENT.subscribeEvent(EVENTS.NOTIFY, this.onNotification)
+  },
+  data() {
+    return {
+      toastMessage: '',
+      toastType: 'success',
+      isToast: false,
+    }
+  },
+  methods: {
+    onNotification(event) {
+      event = JSON.parse(event)
+      this.isToast = true
+      this.toastMessage = event.toastMessage
+      this.toastType = event.toastType
+      setTimeout(() => {
+        this.isToast = false
+        this.toastMessage = ''
+      }, 5000)
+    },
   },
 }
 </script>

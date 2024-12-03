@@ -22,4 +22,5 @@ export const EVENT = {
 export const EVENTS = {
   LIVELINESS: 'verifyLivelinessStatusEvent',
   IDDOCOCR: 'verifyIdDocStatusEvent',
+  NOTIFY: 'notify-user',
 }

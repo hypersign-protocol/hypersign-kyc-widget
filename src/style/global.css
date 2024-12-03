@@ -13,7 +13,7 @@ body {
   border-radius: 20px;
   box-shadow: 2px 5px 5px #80808087;
   margin: 0 auto;
-  max-width: 700px;
+  max-width: 650px;
 }
 .btn-dark {
   color: black;
@@ -41,7 +41,9 @@ body {
 }
 
 .widget-card {
-  border: 1px solid #8080801a;
+  /* border: 1px solid #8080801a; */
+  box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .1);
+  transition: all .3s ease;
   padding: 20px;
   border-radius: 20px;
   background: white;
@@ -50,7 +52,9 @@ body {
 
 @media (max-width: 768px) {
   .widget-card {
-    border: 1px solid #8080801a;
+    /* border: 1px solid #8080801a; */
+    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .1);
+    transition: all .3s ease;
     /* padding: 15px; */
     border-radius: 20px;
     background: white;
@@ -62,9 +66,14 @@ body {
   min-height: 38rem;
 }
 
-.footer {
-  position: relative;
+.footer {  
   width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  display: flex;
   height: 20px;
 }
 

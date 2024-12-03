@@ -60,7 +60,7 @@ export default {
           id: 4,
           isActive: false,
           stepName: 'IdDocs4',
-          name: 'Government-issued ID',
+          name: 'Gov-Issued ID',
           previous: 3,
           isEnabled: false,
           stepTitle: 'Submit your ID document and recieve your KYC credential',
