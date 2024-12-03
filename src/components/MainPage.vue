@@ -18,7 +18,7 @@
 
 @media (max-width: 768px) {
   .main-container-height {
-    height: 100%;
+    height: 100dvh;
   }
 }
 </style>
