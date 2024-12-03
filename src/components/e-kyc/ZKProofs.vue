@@ -139,7 +139,7 @@
         </div>
       </div>
 
-      <div class="row col-md-12" style="max-height: 90dvh; overflow-y: auto; overflow-x: hidden">
+      <div class="row col-md-12" style="max-height: 80dvh; overflow-y: auto; overflow-x: hidden">
         <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
           <div class="row" style="text-align: left">
             <div class="col-md-2 center">
