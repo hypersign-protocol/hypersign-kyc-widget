@@ -4,11 +4,9 @@
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
       <div class="mt-4 p-4 width" style="margin: auto">
-        <div>
-          <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
-          <GoogleButton :is-disable="error" />
-          <ConsentBox />
-        </div>
+        <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
+        <GoogleButton :is-disable="error" />
+        <ConsentBox />
       </div>
     </div>
 

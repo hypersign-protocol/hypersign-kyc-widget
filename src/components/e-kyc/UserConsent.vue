@@ -5,25 +5,23 @@
       <PageHeading :header="'User Consent'" style="text-align: center" />
 
       <div class="widget-card widget-card-width" v-if="getPresentationRequestParsed">
-        <div class="container credential-row">
-          <div class="row">
-            <div class="col-md-2">
-              <img :src="getPresentationRequestParsed.logoUrl" class="avatar" v-if="getPresentationRequestParsed.logoUrl" />
-              <i class="bi bi-robot avatar" style="font-size: xxx-large; display: inline-block" v-else></i>
-            </div>
-            <div class="col-md-10" style="text-align: left; font-size: large">
-              <div class="row center-text-align" v-if="getPresentationRequestParsed.domain">
-                <div class="col-md-12">
-                  {{ getPresentationRequestParsed.domain }}
-                </div>
+        <div class="row">
+          <div class="col-md-2">
+            <img :src="getPresentationRequestParsed.logoUrl" class="avatar" v-if="getPresentationRequestParsed.logoUrl" />
+            <i class="bi bi-robot avatar" style="font-size: xxx-large; display: inline-block" v-else></i>
+          </div>
+          <div class="col-md-10" style="text-align: left; font-size: large">
+            <div class="row center-text-align" v-if="getPresentationRequestParsed.domain">
+              <div class="col-md-12">
+                {{ getPresentationRequestParsed.domain }}
               </div>
-              <div class="row center-text-align" style="color: grey; font-size: smaller">
-                <div class="col-md-12">
-                  <span v-if="getPresentationRequestParsed.reason">
-                    {{ getPresentationRequestParsed.reason }}
-                  </span>
-                  <span v-else> verifier app needs your information to allow you serivce </span>
-                </div>
+            </div>
+            <div class="row center-text-align" style="color: grey; font-size: smaller">
+              <div class="col-md-12">
+                <span v-if="getPresentationRequestParsed.reason">
+                  {{ getPresentationRequestParsed.reason }}
+                </span>
+                <span v-else> verifier app needs your information to allow you serivce </span>
               </div>
             </div>
           </div>
@@ -31,49 +29,45 @@
       </div>
 
       <div class="widget-card widget-card-width mt-1" style="overflow-y: auto; max-height: 335px">
-        <div class="container">
-          <div class="list-group mb-1 list-group-flush">
-            <a href="javascript:void(0);" class="list-group-item list-group-item-action flex-column align-items-start" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ eachCredential.type[1] }}</h5>
-                <small>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled />
-                  </div>
-                  <!-- <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
-                  <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
-                  <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
-                  <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i> -->
-                </small>
-              </div>
-              <p style="text-align: left"><InfoMessage :message="shorten(eachCredential.id)"></InfoMessage></p>
-              <!-- <small style="text-align: left"><InfoMessage :message="'Valid Until: 12/12/2202'"></InfoMessage></small> -->
-            </a>
-            <!-- <li class="list-group-item d-flex justify-content-between align-items-center" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-              <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
-              <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
-              <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-              <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-              <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-              <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
-              <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
-              {{ eachCredential.type[1] }}
-              <InfoMessage :message="eachCredential.id"></InfoMessage>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled />
-              </div>
-            </li> -->
-          </div>
-          <!-- <div class="row credential-row p-1 mb-1" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-          </div> -->
+        <div class="list-group mb-1 list-group-flush">
+          <a href="javascript:void(0);" class="list-group-item list-group-item-action flex-column align-items-start" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ eachCredential.type[1] }}</h5>
+              <small>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled />
+                </div>
+                <!-- <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
+                <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
+                <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
+                <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i> -->
+              </small>
+            </div>
+            <p style="text-align: left"><InfoMessage :message="shorten(eachCredential.id)"></InfoMessage></p>
+            <!-- <small style="text-align: left"><InfoMessage :message="'Valid Until: 12/12/2202'"></InfoMessage></small> -->
+          </a>
+          <!-- <li class="list-group-item d-flex justify-content-between align-items-center" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
+            <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
+            <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
+            <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
+            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+            <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+            <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
+            <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
+            {{ eachCredential.type[1] }}
+            <InfoMessage :message="eachCredential.id"></InfoMessage>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled />
+            </div>
+          </li> -->
         </div>
       </div>
-      <p style="margin-top: 1%">
+      <div class="mt-1">
         <button class="btn btn-outline-dark" @click="submit()"><i class="bi bi-check-circle"></i> Authorize</button>
-      </p>
+      </div>
     </div>
     <div class="footer">
       <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />

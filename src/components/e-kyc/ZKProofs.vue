@@ -139,7 +139,7 @@
         </div>
       </div>
 
-      <div class="row col-md-12" style="max-height: 80dvh; overflow-y: auto; overflow-x: hidden">
+      <div class="row col-md-12" style="max-height: 70dvh; overflow-y: auto; overflow-x: hidden">
         <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
           <div class="row" style="text-align: left">
             <div class="col-md-2 center">
@@ -194,13 +194,13 @@
         </div>
       </div>
 
-      <div class="container mt-3">
+      <div>
         <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
           <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
         </div>
       </div>
 
-      <div class="container mt-3">
+      <div>
         <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled">
           <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
         </div>
