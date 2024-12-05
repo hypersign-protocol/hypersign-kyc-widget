@@ -1,24 +1,18 @@
 <template>
-  <div>
+  <div class="kyc-container">
     <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
-    <div class="row mt-2">
+    <div class="row">
       <div class="col-md-12" style="text-align: left">
         <InfoMessage message="Please verify if your informations are correct" />
-        <div class="card widget-card preview">
-          <div class="row center">
-            <div class="col-4">
-              <div class="" style="align-items: baseline">
-                <img class="avatar" :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" height="100" />
-              </div>
-              <div class="center mt-2">
-                <span class="btn btn-success-link" style="color: green">
-                  <i class="bi bi-check-all"></i>
-                  {{ $store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING }}
-                </span>
-              </div>
-            </div>
-            <div class="col-12">
-              <table class="table table-hover" style="text-align: left">
+        <v-card class="preview profile-card">
+          <div class="profile-image">
+            <v-avatar size="100">
+              <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
+            </v-avatar>
+          </div>
+          <div class="profile-details">
+            <v-simple-table style="text-align: left">
+              <template v-slot:default>
                 <tbody>
                   <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
                     <td>
@@ -27,17 +21,42 @@
                     <td style="">{{ data[1] }}</td>
                   </tr>
                 </tbody>
-              </table>
-            </div>
+              </template>
+            </v-simple-table>
           </div>
-        </div>
+          <!-- <div class="row center">
+            <div class="col-4">
+              <div class="mt-1" style="align-items: baseline">
+                <v-badge overlap bordered bottom color="green accent-5" dot offset-x="15" offset-y="15" :content="$store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING">
+                  <v-avatar size="100">
+                    <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
+                  </v-avatar>
+                </v-badge>
+              </div>
+            </div>
+            <div class="col-12">
+              <v-simple-table style="text-align: left">
+                <template v-slot:default>
+                  <tbody>
+                    <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
+                      <td>
+                        <strong>{{ snakeToPascal(data[0]) }}</strong>
+                      </td>
+                      <td style="">{{ data[1] }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </div>
+          </div> -->
+        </v-card>
       </div>
     </div>
 
     <div class="row mt-2">
       <div class="col-md-12">
-        <button class="btn btn-light" @click="rescan()">Rescan</button>
-        <button class="btn btn-outline-dark" @click="submit()">Continue</button>
+        <v-btn class="btn btn-light" @click="rescan()">Rescan</v-btn>
+        <v-btn class="btn btn-outline-dark" @click="submit()">Continue</v-btn>
       </div>
     </div>
   </div>
@@ -144,5 +163,35 @@ export default {
   .preview {
     max-height: 500px;
   }
+}
+
+.profile-image {
+  position: fixed;
+  top: 30px; /* Adjusted so half the image is outside the card */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px; /* Adjust the size of the image */
+  height: 100px; /* Adjust the size of the image */
+  border-radius: 50%;
+  border: 4px solid #fff; /* Optional border around the image */
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-details {
+  margin-top: 60px; /* Adjust to align details properly */
+}
+
+.profile-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
 }
 </style>

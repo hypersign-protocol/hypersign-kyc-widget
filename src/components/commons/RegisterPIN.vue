@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container widget-card">
+    <v-card class="widget-card">
       <div class="" style="text-align: left">
         <span>Enter 5 digits PIN:</span>
         <PIN @pinTakenEvent="getPin" inputType="password" />
@@ -14,10 +14,10 @@
       <div class="mb-1">
         <InfoMessage :message="warningMessage" />
       </div>
-    </div>
+    </v-card>
     <div class="container">
       <div class="row center mt-3">
-        <button class="btn btn-outline-dark width" @click="submit()"><i class="bi bi-safe"></i> Unlock Vault</button>
+        <v-btn class="btn btn-outline-dark width" @click="submit()"><i class="bi bi-safe"></i> Unlock Vault</v-btn>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-outline-dark btn-lg" style="width: 100%" @click="loginWithGoogle()" :disabled="isDisable"><i class="bi bi-google"></i> Continue with Google</button>
+    <v-btn class="btn btn-outline-dark btn-lg" style="width: 100%" @click="loginWithGoogle()" :disabled="isDisable"><i class="bi bi-google"></i> Continue with Google</v-btn>
   </div>
 </template>
 

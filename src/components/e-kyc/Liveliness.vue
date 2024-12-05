@@ -227,53 +227,48 @@ export default {
 </script>
 
 <template>
-  <div>
-    <div class="card-body min-h-36">
-      <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" />
-      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <div class="row h-100">
-        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
-          <facephi-selphi
-            v-if="isWidgetStarted"
-            :bundlePath="bundlePath"
-            :language="language"
-            :cameraWidth="cameraWidth"
-            :cameraHeight="cameraHeight"
-            :cameraType="cameraType"
-            :interactible="interactible"
-            :stabilizationStage="stabilizationStage"
-            :cameraSwitchButton="cameraSwitchButton"
-            :faceTracking="faceTracking"
-            :timeout="timeout"
-            :imageFormat="imageFormat"
-            :imageQuality="imageQuality"
-            :cropFactor="cropFactor"
-            :showLog="showLog"
-            @onmoduleloaded="onModuleLoaded"
-            @onstabilizing="onStabilizing"
-            @onextractionfinish="onExtractionFinish"
-            @onusercancel="onUserCancel"
-            @onexceptioncaptured="onExceptionCaptured"
-            @onextractiontimeout="onExtractionTimeout"
-            @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
-            @ontrackstatus="onTrackStatus"
-          ></facephi-selphi>
-          <div v-else>
-            <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
-          </div>
-        </div>
-      </div>
-      <div class="row" v-if="!isWidgetStarted">
-        <div class="col-12 center">
-          <div class="col-md-4 d-flex flex-column">
-            <button type="button" id="btnStartCapture" class="btn btn-outline-dark" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</button>
-            <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
-          </div>
+  <div class="card-body min-h-36">
+    <!-- <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" /> -->
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+    <div class="row h-100">
+      <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
+        <facephi-selphi
+          v-if="isWidgetStarted"
+          :bundlePath="bundlePath"
+          :language="language"
+          :cameraWidth="cameraWidth"
+          :cameraHeight="cameraHeight"
+          :cameraType="cameraType"
+          :interactible="interactible"
+          :stabilizationStage="stabilizationStage"
+          :cameraSwitchButton="cameraSwitchButton"
+          :faceTracking="faceTracking"
+          :timeout="timeout"
+          :imageFormat="imageFormat"
+          :imageQuality="imageQuality"
+          :cropFactor="cropFactor"
+          :showLog="showLog"
+          @onmoduleloaded="onModuleLoaded"
+          @onstabilizing="onStabilizing"
+          @onextractionfinish="onExtractionFinish"
+          @onusercancel="onUserCancel"
+          @onexceptioncaptured="onExceptionCaptured"
+          @onextractiontimeout="onExtractionTimeout"
+          @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
+          @ontrackstatus="onTrackStatus"
+        ></facephi-selphi>
+        <div v-else>
+          <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
         </div>
       </div>
     </div>
-    <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+    <div class="row" v-if="!isWidgetStarted && !isLoading">
+      <div class="col-12 center">
+        <div class="col-md-4 d-flex flex-column">
+          <v-btn type="v-btn" id="btnStartCapture" class="btn btn-outline-dark" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</v-btn>
+          <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
+        </div>
+      </div>
     </div>
   </div>
 </template>

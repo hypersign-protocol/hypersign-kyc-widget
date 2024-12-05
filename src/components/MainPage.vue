@@ -2,13 +2,13 @@
   <div>
     <template>
       <!-- eslint-disable -->
-      <div class="container maincontainer parent main-container-height" style="text-align: center">
-        <NavBar />
+      <v-card class="maincontainer main-container-height" style="text-align: center; background-color: #f5f5f5">
+        <NavBar v-if="getActiveStep.name && getActiveStep.isEnabled == true" />
         <component :is="getActiveStep.stepName"> </component>
         <div class="footer">
           <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
         </div>
-      </div>
+      </v-card>
     </template>
   </div>
 </template>

@@ -1,11 +1,27 @@
 <template>
-  <div class="navbar navbar-expand-md navbar-light" style="justify-content: end">
+  <v-row>
+    <v-col cols="12" offset-sm="0">
+      <v-card>
+        <v-toolbar color="white" flat>
+          <v-btn icon light>
+            <i class="bi bi-arrow-left"></i>
+          </v-btn>
+          <v-toolbar-title class="grey--text text--darken-4"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon light>
+            <v-icon color="grey darken-2">mdi-magnify</v-icon>
+          </v-btn>
+        </v-toolbar>
+      </v-card>
+    </v-col>
+  </v-row>
+  <!-- <div class="navbar navbar-expand-md navbar-light" style="justify-content: end">
     <a href="#" class="navbar-brand">
-      <!-- <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" /> -->
+      <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" />
     </a>
 
     <span class="stepper" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
-  </div>
+  </div> -->
 </template>
 
 <script>

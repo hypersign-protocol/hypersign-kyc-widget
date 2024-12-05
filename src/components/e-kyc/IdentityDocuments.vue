@@ -374,61 +374,55 @@ export default {
 </script>
 
 <template>
-  <div>
-    <div class="card-body min-h-36">
-      <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" />
-      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-
-      <div class="row" v-if="!chooseDocumentType">
-        <div class="row">
-          <div class="center">
-            <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" style="height: 300px" />
-          </div>
-        </div>
-        <div>
-          <!-- <button class="btn btn-outline-dark" @click="selectDocumentType()">Start</button> -->
-          <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
+  <div class="card-body min-h-36">
+    <!-- <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" /> -->
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+    <div class="row" v-if="!chooseDocumentType">
+      <div class="col-12">
+        <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" style="height: 300px" />
+      </div>
+      <div class="col-12">
+        <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
+      </div>
+    </div>
+    <div v-else>
+      <div class="row" style="text-align: left; min-height: 550px" v-if="!ifExtractedData && selectedDocumentType != ''">
+        <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
+          <facephi-selphid
+            v-if="isWidgetStarted && selectedDocumentType != ''"
+            :licenseKey="licenseKey"
+            :bundlePath="bundlePath"
+            :language="language"
+            :initialTip="initialTip"
+            :askSimpleMode="askSimpleMode"
+            :cameraWidth="cameraWidth"
+            :cameraHeight="cameraHeight"
+            :cameraSelection="cameraSelection"
+            :previewCapture="previewCapture"
+            :forceLandscape="forceLandscape"
+            :captureTimeout="captureTimeout"
+            :captureRetries="captureRetries"
+            :imageFormat="imageFormat"
+            :imageQuality="imageQuality"
+            :documentType="documentType"
+            :scanMode="scanMode"
+            :blurredThreshold="blurredThreshold"
+            :showLog="showLog"
+            :debugMode="debugMode"
+            :documentMode="documentMode"
+            @onmoduleloaded="onModuleLoaded"
+            @onextractionfinished="onExtractionFinished"
+            @onusercancelled="onUserCancelled"
+            @onexceptioncaptured="onExceptionCaptured"
+            @onextractiontimeout="onExtractionTimeout"
+            @ontrackstatus="onTrackStatus"
+            :startSimpleMode="manualMode"
+          ></facephi-selphid>
         </div>
       </div>
-      <div v-else>
-        <div class="row" style="text-align: left; min-height: 550px" v-if="!ifExtractedData && selectedDocumentType != ''">
-          <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
-            <facephi-selphid
-              v-if="isWidgetStarted && selectedDocumentType != ''"
-              :licenseKey="licenseKey"
-              :bundlePath="bundlePath"
-              :language="language"
-              :initialTip="initialTip"
-              :askSimpleMode="askSimpleMode"
-              :cameraWidth="cameraWidth"
-              :cameraHeight="cameraHeight"
-              :cameraSelection="cameraSelection"
-              :previewCapture="previewCapture"
-              :forceLandscape="forceLandscape"
-              :captureTimeout="captureTimeout"
-              :captureRetries="captureRetries"
-              :imageFormat="imageFormat"
-              :imageQuality="imageQuality"
-              :documentType="documentType"
-              :scanMode="scanMode"
-              :blurredThreshold="blurredThreshold"
-              :showLog="showLog"
-              :debugMode="debugMode"
-              :documentMode="documentMode"
-              @onmoduleloaded="onModuleLoaded"
-              @onextractionfinished="onExtractionFinished"
-              @onusercancelled="onUserCancelled"
-              @onexceptioncaptured="onExceptionCaptured"
-              @onextractiontimeout="onExtractionTimeout"
-              @ontrackstatus="onTrackStatus"
-              :startSimpleMode="manualMode"
-            ></facephi-selphid>
-          </div>
-        </div>
-        <div class="row" v-else>
-          <div class="col-md-12">
-            <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" @EventrescanIDDoc="rescanHandler" />
-          </div>
+      <div class="row" v-else>
+        <div class="col-md-12">
+          <PreviewData @verifyIdDocEvent="verifyIdDocEventHandler" @EventrescanIDDoc="rescanHandler" />
         </div>
       </div>
     </div>

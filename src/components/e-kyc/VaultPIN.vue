@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 

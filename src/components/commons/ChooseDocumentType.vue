@@ -1,30 +1,20 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row center" style="">
-          <InfoMessage message="Choose a document type:" />
-          <div class="col-md-8">
-            <div class="list-group">
-              <button class="list-group-item d-flex justify-content-between align-items-center" @click="chooseDoc('PASSPORT')">
-                <span>
-                  <img src="../../assets/passport.png" width="40" />
-                  <span class="mx-2">Passport</span>
-                </span>
-                <i class="bi bi-chevron-compact-right"></i>
-              </button>
-              <button class="list-group-item d-flex justify-content-between align-items-center" @click="chooseDoc('ID_CARD')">
-                <span>
-                  <img src="../../assets/governament.png" width="35" />
-                  <span class="mx-2">ID Card</span>
-                </span>
-                <i class="bi bi-chevron-compact-right"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="kyc-container">
+    <v-card class="mx-auto" tile>
+      <v-list shaped>
+        <!-- <v-subheader>Choose Document Type</v-subheader> -->
+        <v-list-item-group v-model="selectedItem" color="secondary">
+          <v-list-item v-for="(item, i) in items" :key="i" @click="chooseDoc(item.type)">
+            <v-list-item-icon>
+              <img :src="item.icon" width="40" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title style="text-align: start">{{ item.text }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
   </div>
 </template>
 <script>
@@ -55,7 +45,18 @@ export default {
       toastMessage: '',
       toastType: 'success',
       isToast: false,
-
+      items: [
+        {
+          icon: require('../../assets/passport.png'),
+          text: 'Passport',
+          type: 'PASSPORT',
+        },
+        {
+          icon: require('../../assets/governament.png'),
+          text: 'Government ID Card',
+          type: 'ID_CARD',
+        },
+      ],
       govIdType: '',
     }
   },

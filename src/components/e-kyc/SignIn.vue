@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />

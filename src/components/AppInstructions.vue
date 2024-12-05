@@ -48,12 +48,12 @@
 </style>
 
 <template>
-  <div>
+  <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
 
-      <div class="card widget-card widget-card-width">
+      <v-card class="widget-card widget-card-width">
         <div class="row mb-4" v-if="getIfLivelinessStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />
@@ -82,11 +82,11 @@
             <AppInstructionStep :stepNumber="getIfzkProofStep.isEnabled ? '5' : '4'" :stepTitle="getIfUserConsentStep.stepTitle" :logo="getIfUserConsentStep.logo" :isDone="false" />
           </div>
         </div>
-      </div>
+      </v-card>
 
       <div class="mt-3">
-        <div class="d-grid gap-1" style="width: 50%; margin: auto">
-          <button class="btn btn-outline-dark btn-lg" @click="nextStep(nextStepNumeber)">Let's go!</button>
+        <div class="d-grid gap-1" style="margin: auto">
+          <v-btn class="btn btn-outline-dark btn-lg btn-width" @click="nextStep(nextStepNumeber)">Let's go!</v-btn>
         </div>
       </div>
     </div>
@@ -196,3 +196,13 @@ export default {
   },
 }
 </script>
+<style lang="css">
+.btn-width {
+  width: 50%;
+}
+@media (max-width: 768px) {
+  .btn-width {
+    width: 100%;
+  }
+}
+</style>

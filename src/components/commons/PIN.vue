@@ -1,10 +1,13 @@
 <template>
   <form class="row center">
-    <input class="col" :type="inputType" ref="input1" maxlength="1" v-model="pin1" @keyup.exact="gotoInput(2)" @keyup.exact.backspace="backToInput(1)" @focus="selectInput(1)" />
-    <input class="col" :type="inputType" ref="input2" maxlength="1" v-model="pin2" @keyup.exact="gotoInput(3)" @keyup.exact.backspace="backToInput(1)" @focus="selectInput(2)" />
-    <input class="col" :type="inputType" ref="input3" maxlength="1" v-model="pin3" @keyup.exact="gotoInput(4)" @keyup.exact.backspace="backToInput(2)" @focus="selectInput(3)" />
-    <input class="col" :type="inputType" ref="input4" maxlength="1" v-model="pin4" @keyup.exact="gotoInput(5)" @keyup.exact.backspace="backToInput(3)" @focus="selectInput(4)" />
-    <input class="col" :type="inputType" ref="input5" maxlength="1" v-model="pin5" @keyup.exact="done" @keyup.exact.backspace="backToInput(4)" @focus="selectInput(5)" />
+    <!-- <v-text-field class="col" :type="inputType" ref="input1" maxlength="1" v-model="pin1" @keyup.exact="gotoInput(2)" @keyup.exact.backspace="backToInput(1)" @focus="selectInput(1)" />
+    <v-text-field class="col" :type="inputType" ref="input2" maxlength="1" v-model="pin2" @keyup.exact="gotoInput(3)" @keyup.exact.backspace="backToInput(1)" @focus="selectInput(2)" />
+    <v-text-field class="col" :type="inputType" ref="input3" maxlength="1" v-model="pin3" @keyup.exact="gotoInput(4)" @keyup.exact.backspace="backToInput(2)" @focus="selectInput(3)" />
+    <v-text-field class="col" :type="inputType" ref="input4" maxlength="1" v-model="pin4" @keyup.exact="gotoInput(5)" @keyup.exact.backspace="backToInput(3)" @focus="selectInput(4)" />
+    <v-text-field class="col" :type="inputType" ref="input5" maxlength="1" v-model="pin5" @keyup.exact="done" @keyup.exact.backspace="backToInput(4)" @focus="selectInput(5)" /> -->
+    <div class="ma-auto position-relative" style="max-width: 300px">
+      <v-otp-input length="5" v-model="pin" @finish="done"></v-otp-input>
+    </div>
     <!-- <div>{{ pins }}</div> -->
   </form>
 </template>
@@ -20,40 +23,41 @@ export default {
   },
   data() {
     return {
-      pin1: '',
-      pin2: '',
-      pin3: '',
-      pin4: '',
-      pin5: '',
+      // pin1: '',
+      // pin2: '',
+      // pin3: '',
+      // pin4: '',
+      // pin5: '',
+      pin: '',
     }
   },
 
-  computed: {
-    pins() {
-      return this.pin1 + this.pin2 + this.pin3 + this.pin4 + this.pin5
-    },
-  },
+  // computed: {
+  //   pins() {
+  //     return this.pin1 + this.pin2 + this.pin3 + this.pin4 + this.pin5
+  //   },
+  // },
 
   mounted() {
-    this.$refs.input1.focus()
+    // this.$refs.input1.focus()
   },
 
   methods: {
-    gotoInput(num) {
-      const input = this.$refs['input' + num]
-      input.select()
-      input.focus()
-    },
+    // gotoInput(num) {
+    //   const input = this.$refs['input' + num]
+    //   input.select()
+    //   input.focus()
+    // },
     done() {
-      this.$emit('pinTakenEvent', this.pins)
+      this.$emit('pinTakenEvent', this.pin)
     },
-    selectInput(num) {
-      this.$refs['input' + num].select()
-    },
-    backToInput(num) {
-      this['pin' + num + 1] = ''
-      this.gotoInput(num)
-    },
+    // selectInput(num) {
+    //   this.$refs['input' + num].select()
+    // },
+    // backToInput(num) {
+    //   this['pin' + num + 1] = ''
+    //   this.gotoInput(num)
+    // },
   },
 }
 </script>
