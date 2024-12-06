@@ -6,7 +6,7 @@
         <div class="col-md-12 center">
           <ul style="list-style-type: none">
             <li>
-              <i class="bi bi-check-circle final-msg-icon success"></i>
+              <i class="bi bi-check-circle final-msg-icon successt"></i>
             </li>
             <li>
               <h5>Your identity is verified!</h5>
@@ -101,7 +101,7 @@ export default {
   color: red;
 }
 
-.success {
+.successt {
   color: green;
 }
 </style>
