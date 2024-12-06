@@ -8,9 +8,45 @@
           </v-btn>
           <v-toolbar-title class="grey--text text--darken-4"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon light>
-            <v-icon color="grey darken-2">mdi-magnify</v-icon>
-          </v-btn>
+          <v-menu bottom left offset-y="true">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon text v-bind="attrs" v-on="on">
+                <!-- <i class="bi bi-list"></i> -->
+                <i class="bi bi-three-dots-vertical"></i>
+              </v-btn>
+            </template>
+            <!-- <v-list>
+              <v-list-item>
+                <v-list-item-title>Item 1</v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>Item 2</v-list-item-title>
+              </v-list-item>
+            </v-list> -->
+            <v-card class="mx-auto" max-width="300" tile>
+              <v-list dense>
+                <v-subheader>MENU</v-subheader>
+                <v-list-item-group v-model="selectedItem" color="primary">
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <i class="bi bi-list"></i>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Item 1</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <i class="bi bi-list"></i>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Item 2</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-card>
+          </v-menu>
         </v-toolbar>
       </v-card>
     </v-col>

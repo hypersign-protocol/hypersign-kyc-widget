@@ -1,12 +1,22 @@
 <template>
   <div class="kyc-container">
-    <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
+    <!-- <v-row>
+      <v-col>
+        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
+        <InfoMessage message="Verify Your Information" class="showOnMobile" />
+      </v-col>
+    </v-row> -->
+    <div class="row">
+      <div class="col-md-12">
+        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
+        <!-- <InfoMessage message="Verify Your Information" class="showOnMobile" /> -->
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12" style="text-align: left">
-        <InfoMessage message="Please verify if your informations are correct" />
         <v-card class="preview profile-card">
           <div class="profile-image">
-            <v-avatar size="100">
+            <v-avatar size="100" class="elevation-3">
               <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
             </v-avatar>
           </div>
@@ -24,31 +34,6 @@
               </template>
             </v-simple-table>
           </div>
-          <!-- <div class="row center">
-            <div class="col-4">
-              <div class="mt-1" style="align-items: baseline">
-                <v-badge overlap bordered bottom color="green accent-5" dot offset-x="15" offset-y="15" :content="$store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING">
-                  <v-avatar size="100">
-                    <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
-                  </v-avatar>
-                </v-badge>
-              </div>
-            </div>
-            <div class="col-12">
-              <v-simple-table style="text-align: left">
-                <template v-slot:default>
-                  <tbody>
-                    <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
-                      <td>
-                        <strong>{{ snakeToPascal(data[0]) }}</strong>
-                      </td>
-                      <td style="">{{ data[1] }}</td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </div>
-          </div> -->
         </v-card>
       </div>
     </div>
@@ -85,7 +70,6 @@ export default {
       isToast: false,
     }
   },
-
   methods: {
     ...mapActions(['verifyResult']),
     ...mapMutations(['nextStep', 'previousStep']),
@@ -159,30 +143,34 @@ export default {
   overflow-y: scroll;
 }
 
+.showOnMobile {
+  display: none;
+}
+.notShowOnMobile {
+  display: block;
+}
 @media (max-width: 768px) {
   .preview {
     max-height: 500px;
+  }
+  .showOnMobile {
+    display: block;
+  }
+  .notShowOnMobile {
+    display: none;
   }
 }
 
 .profile-image {
   position: fixed;
-  top: 30px; /* Adjusted so half the image is outside the card */
+  top: 82px; /* Adjusted so half the image is outside the card */
   left: 50%;
   transform: translateX(-50%);
-  width: 100px; /* Adjust the size of the image */
-  height: 100px; /* Adjust the size of the image */
-  border-radius: 50%;
-  border: 4px solid #fff; /* Optional border around the image */
-  background: #fff;
+  /* border-radius: 50%; */
+  /* border: 4px solid #fff; */
+  /* background: #fff; */
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.profile-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .profile-details {

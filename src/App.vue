@@ -101,7 +101,7 @@ export default {
           id: 7,
           isActive: false,
           stepName: 'UserConsent',
-          name: 'Provide User Consent',
+          name: 'User Consent',
           previous: 6,
           isEnabled: true,
           stepTitle: 'Provide consent of your data to be shared with the verifier app',

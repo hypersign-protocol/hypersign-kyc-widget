@@ -1,7 +1,7 @@
 <template>
   <div class="card-body">
     <PageHeading :header="'Congratulations!'" style="text-align: center" />
-    <div class="center" style="margin-top: 3%">
+    <div class="center mt-3">
       <div class="row" v-if="getFinalResult">
         <div class="col-md-12 center">
           <ul style="list-style-type: none">
@@ -12,7 +12,7 @@
               <h5>Your identity is verified!</h5>
             </li>
             <li>
-              <h6>You will be redirected back to verifier app in {{ maxTimeOut }}</h6>
+              <h6>You will be redirected back to the verifier app in {{ maxTimeOut }}</h6>
             </li>
           </ul>
         </div>

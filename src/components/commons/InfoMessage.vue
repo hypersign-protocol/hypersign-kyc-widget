@@ -1,9 +1,9 @@
 <template>
-  <p class="consent-message">
+  <div class="consent-message">
     <span>
       {{ message }}
     </span>
-  </p>
+  </div>
 </template>
 
 <script>
@@ -20,8 +20,7 @@ export default {
 <style type="text/css" scoped>
 .consent-message {
   color: grey;
-  /* padding: 5px; */
-  padding-top: 5px;
+  padding: 5px;
   font-size: x-small;
 }
 </style>
