@@ -8,7 +8,7 @@
           </v-btn>
           <v-toolbar-title class="grey--text text--darken-4"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-menu bottom left offset-y="true">
+          <v-menu bottom left :offset-y="true">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon text v-bind="attrs" v-on="on">
                 <!-- <i class="bi bi-list"></i> -->
@@ -26,7 +26,7 @@
             <v-card class="mx-auto" max-width="300" tile>
               <v-list dense>
                 <v-subheader>MENU</v-subheader>
-                <v-list-item-group v-model="selectedItem" color="primary">
+                <v-list-item-group color="primary">
                   <v-list-item>
                     <v-list-item-icon>
                       <i class="bi bi-list"></i>

@@ -134,7 +134,7 @@
           </v-btn>
         </div>
       </div> -->
-      <v-row align="center" justify="center" dense>
+      <v-row align="center" dense>
         <v-col cols="12" md="6">
           <v-card class="mx-auto mb-1" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
             <v-list-item three-line>
@@ -156,7 +156,6 @@
             </v-list-item>
 
             <v-card-actions>
-              <!-- <v-btn text>Button</v-btn> -->
               <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
                 <v-btn text class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
                   <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
