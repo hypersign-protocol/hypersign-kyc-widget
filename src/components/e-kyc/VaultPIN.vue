@@ -153,16 +153,6 @@ export default {
         })
       )
     },
-    // toast(msg, type = 'success') {
-    //   this.isToast = true
-    //   this.toastMessage = msg
-    //   this.toastType = type
-
-    //   setTimeout(() => {
-    //     this.isToast = false
-    //     this.toastMessage = ''
-    //   }, 5000)
-    // },
   },
   data() {
     return {

@@ -11,18 +11,9 @@
           <v-menu bottom left :offset-y="true">
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon text v-bind="attrs" v-on="on">
-                <!-- <i class="bi bi-list"></i> -->
                 <i class="bi bi-three-dots-vertical"></i>
               </v-btn>
             </template>
-            <!-- <v-list>
-              <v-list-item>
-                <v-list-item-title>Item 1</v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>Item 2</v-list-item-title>
-              </v-list-item>
-            </v-list> -->
             <v-card class="mx-auto" max-width="300" tile>
               <v-list dense>
                 <v-subheader>MENU</v-subheader>

@@ -9,10 +9,6 @@
         <ConsentBox />
       </div>
     </div>
-
-    <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
-    </div>
   </div>
 </template>
 

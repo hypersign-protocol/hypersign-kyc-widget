@@ -134,7 +134,7 @@
           </v-btn>
         </div>
       </div> -->
-      <v-row align="center" dense>
+      <v-row dense>
         <v-col cols="12" md="6">
           <v-card class="mx-auto mb-1" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
             <v-list-item three-line>
