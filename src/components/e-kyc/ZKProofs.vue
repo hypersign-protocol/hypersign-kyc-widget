@@ -283,6 +283,9 @@ export default {
       }
     },
     getChainConfig() {
+      if (!this.getOnChainIssuerConfig) {
+        return {}
+      }
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
       let SupportedChains
 
@@ -1581,8 +1584,8 @@ export default {
       // Perform the CreateTodo Smart Contract Execution
       // Note: This is a blockchain transaction
       const chainConfig = this.getChainConfig
-      const chainCoinDenom = chainConfig.feeCurrencies[0].coinMinimalDenom
-      const gasPriceAvg = chainConfig.gasPriceStep.average
+      const chainCoinDenom = chainConfig?.feeCurrencies[0]?.coinMinimalDenom
+      const gasPriceAvg = chainConfig?.gasPriceStep?.average
       /* eslint-disable-next-line */
       const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
 
@@ -1695,7 +1698,7 @@ export default {
   async mounted() {
     try {
       this.isLoading = true
-      if (this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
+      if (this.getOnChainIssuerConfig && this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
         this.toast('Fetching SBT contract metadata', 'success')
         this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
       }
