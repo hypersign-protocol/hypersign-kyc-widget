@@ -6,7 +6,7 @@ body {
   position: absolute;
   bottom: 0;
 }
-.kyc-container{
+.kyc-container {
   padding: 10px;
 }
 .maincontainer {
@@ -44,8 +44,8 @@ body {
 
 .widget-card {
   /* border: 1px solid #8080801a; */
-  box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .1);
-  transition: all .3s ease;
+  box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
   padding: 20px;
   border-radius: 20px;
   background: white;
@@ -55,8 +55,8 @@ body {
 @media (max-width: 768px) {
   .widget-card {
     /* border: 1px solid #8080801a; */
-    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .1);
-    transition: all .3s ease;
+    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
     /* padding: 15px; */
     border-radius: 20px;
     background: white;
@@ -68,7 +68,7 @@ body {
   min-height: 38rem;
 }
 
-.footer {  
+.footer {
   width: 100%;
   position: absolute;
   bottom: 0;
