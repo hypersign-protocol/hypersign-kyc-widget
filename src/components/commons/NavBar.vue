@@ -16,22 +16,24 @@
             </template>
             <v-card class="mx-auto" max-width="300" tile>
               <v-list dense>
-                <v-subheader>MENU</v-subheader>
                 <v-list-item-group color="primary">
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <i class="bi bi-list"></i>
-                    </v-list-item-icon>
+                  <v-list-item class="center">
+                    <v-avatar size="40">
+                      <!-- <v-img v-if="getProfile.picture" :src="getProfile.picture"></v-img> -->
+                      <v-img :src="logoUrl"></v-img>
+                    </v-avatar>
+                  </v-list-item>
+                  <v-list-item class="center">
                     <v-list-item-content>
-                      <v-list-item-title>Item 1</v-list-item-title>
+                      <v-list-item-title>{{ getProfile.name }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-icon>
-                      <i class="bi bi-list"></i>
+                      <i class="bi bi-envelope-at"></i>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title>Item 2</v-list-item-title>
+                      <v-list-item-title>{{ getProfile.email }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
@@ -49,12 +51,15 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters(['currentStep']),
+    ...mapGetters(['currentStep', 'getProfile']),
     currentStepNumber() {
       return this.$store.getters.currentStepNumber - 3
     },
     totalConfiguredSteps() {
       return this.$store.getters.enabledStepsToShow.length
+    },
+    logoUrl() {
+      return require('@/assets/' + 'selfi.png')
     },
   },
   methods: {
