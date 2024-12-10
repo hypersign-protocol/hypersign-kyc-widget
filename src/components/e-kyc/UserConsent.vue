@@ -146,8 +146,6 @@ export default {
       return `${firstPart}...${lastPart}`
     },
     shouldShare(eachCredential) {
-      console.log({ checkIfzkProofIsEnabled: this.checkIfzkProofIsEnabled })
-      console.log({ checkIfIdDocumentIsEnabled: this.checkIfIdDocumentIsEnabled })
       if (eachCredential.type[1] === 'PersonhoodCredential' && this.checkIfLivelinessIsEnabled && !this.checkIfzkProofIsEnabled) {
         return true
       } else if (eachCredential.type[1] === 'GovernmentIdCredential' && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled && !this.checkIfOncainIdIsEnabled) {
