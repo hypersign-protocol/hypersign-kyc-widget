@@ -33,7 +33,7 @@ export default {
     } else return false
   },
   checkIfzkProofIsEnabled(state, getters) {
-    if (getters.getWidgetConfigFromDb.zkProofs?.enabled) {
+    if (getters.getWidgetConfigFromDb.zkProof?.enabled) {
       return true
     } else return false
   },
