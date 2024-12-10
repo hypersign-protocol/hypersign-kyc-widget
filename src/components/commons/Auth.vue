@@ -10,7 +10,7 @@ export default {
   name: 'AuthTication',
   components: {},
   computed: {
-    ...mapGetters(['getActiveStep', 'getOnChainIssuerConfig']),
+    ...mapGetters(['getOnChainIssuerConfig']),
   },
   data() {
     return {
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     ...mapMutations(['nextStep', 'setProfile', 'setCosmosConnection']),
-    ...mapActions(['registerUser']),
+    ...mapActions(['registerUser', 'nextStep']),
     async getUserInfo(accessToken) {
       if (accessToken) {
         const that = this
@@ -58,17 +58,17 @@ export default {
         setTimeout(async () => {
           await this.registerUser()
           ///
-          this.nextStep(1)
+          this.nextStep()
           this.isLoadingPage = false
           this.$router.push({ path: '/' })
         }, 1500)
       } else if (provider === AUTH_PROVIDERS.KEPLR) {
-        this.nextStep(1)
+        this.nextStep()
         this.$router.push({ path: '/' })
       }
     } catch (e) {
       this.isLoadingPage = false
-      this.nextStep(1)
+      this.nextStep()
       this.$router.push({ path: '/' })
     }
   },

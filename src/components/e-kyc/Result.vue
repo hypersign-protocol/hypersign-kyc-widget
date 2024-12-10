@@ -28,7 +28,7 @@
               <h5>We are sorry!</h5>
             </li>
             <li>
-              <h7>We could not verify your identity</h7>
+              <h6>We could not verify your identity</h6>
             </li>
           </ul>
         </div>

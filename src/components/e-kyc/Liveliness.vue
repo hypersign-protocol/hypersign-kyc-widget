@@ -11,19 +11,7 @@ export default {
   components: {},
   computed: {
     ...mapState(['steps', 'hasLivelinessDone']),
-    ...mapGetters(['getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
-    checkIfOncainIdIsEnabled() {
-      return this.getIfOncainIdStep.isEnabled
-    },
-    checkIfIdDocumentIsEnabled() {
-      return this.getIfIdDocumentStep.isEnabled
-    },
-    checkIfUserConsentIsEnabled() {
-      return this.getIfUserConsentStep.isEnabled
-    },
-    checkIfLivelinessIsEnabled() {
-      return this.getIfLivelinessStep.isEnabled
-    },
+    ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getWidgetConfigFromDb', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
   },
   data: function () {
     return {
@@ -66,9 +54,8 @@ export default {
   },
   created() {
     if (this.hasLivelinessDone) {
-      // then move to idDocStep step
-      const idDocStep = this.getIfIdDocumentStep
-      this.nextStep(idDocStep.id)
+      const nextStepNumber = this.getNextStepIndex()
+      this.nextStep(nextStepNumber)
       return
     }
 
@@ -78,8 +65,22 @@ export default {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   methods: {
-    ...mapMutations(['nextStep', 'previousStep']),
-    ...mapActions(['verifyLiveliness', 'verifyLivelinessStatus']),
+    ...mapMutations(['previousStep']),
+    ...mapActions(['verifyLiveliness', 'verifyLivelinessStatus', 'nextStep']),
+    getStepIndex(step) {
+      return this.enabledSteps.indexOf(step)
+    },
+    getNextStepIndex() {
+      let nextStepNumberIndex = null
+      if (this.checkIfIdDocumentIsEnabled) {
+        nextStepNumberIndex = this.getStepIndex(this.getIfIdDocumentStep) // 4
+      } else if (this.checkIfOncainIdIsEnabled || this.checkIfzkProofIsEnabled) {
+        nextStepNumberIndex = this.getStepIndex(this.getIfzkProofStep) // 5
+      } else if (this.checkIfUserConsentIsEnabled) {
+        nextStepNumberIndex = this.getStepIndex(this.getIfUserConsentStep) // 6
+      }
+      return nextStepNumberIndex
+    },
     // Demo methods
     enableWidget: async function () {
       this.widgetResult = ''
@@ -118,14 +119,7 @@ export default {
         this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, 'warning')
         this.verifyLiveliness()
           .then(() => {
-            let nextStepNumber = null
-            if (this.checkIfIdDocumentIsEnabled) {
-              nextStepNumber = 4
-            } else if (this.checkIfOncainIdIsEnabled) {
-              nextStepNumber = 5
-            } else if (this.checkIfUserConsentIsEnabled) {
-              nextStepNumber = 7
-            }
+            const nextStepNumber = this.getNextStepIndex()
             this.nextStep(nextStepNumber)
             this.isLoading = false
           })

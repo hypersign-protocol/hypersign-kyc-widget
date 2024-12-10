@@ -176,7 +176,7 @@
                 <v-row align="center" justify="end">
                   <!-- <v-chip draggable>Default</v-chip> -->
                   <!-- <i class="bi bi-check2-circle" style="font-size: medium"></i> -->
-                  <span v-if="isOnchainIdEnabled">
+                  <span v-if="checkIfOncainIdIsEnabled">
                     <span v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: large"></i></span>
                   </span>
                   <span v-else>
@@ -236,7 +236,7 @@
               </div>
             </div>
 
-            <div class="col-md-1" v-if="isOnchainIdEnabled">
+            <div class="col-md-1" v-if="checkIfOncainIdIsEnabled">
               <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
             </div>
             <div class="col-md-1" v-else>
@@ -247,11 +247,11 @@
       </div> -->
 
       <div class="d-grid gap-1" style="margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
-        <v-btn class="btn btn-outline-dark" @click="nextStep(7)">Next</v-btn>
+        <v-btn class="btn btn-outline-dark" @click="goToUserConsentStep()">Next</v-btn>
       </div>
 
       <div class="d-grid gap-1" style="margin: auto" v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled">
-        <v-btn class="btn btn-outline-dark" @click="nextStep(7)">Next</v-btn>
+        <v-btn class="btn btn-outline-dark" @click="goToUserConsentStep()">Next</v-btn>
       </div>
       <div class="container" style="display: none">
         <div class="row mt-2">
@@ -338,8 +338,8 @@ export default {
     ConnectWalletButtonDiam,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getVaultDataRaw', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
+    ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getIfUserConsentStep', 'getCavachAccessToken', 'getVaultDataRaw', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'steps']),
     // vault
     getVaultDataCredentials() {
       const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
@@ -357,15 +357,6 @@ export default {
         return []
       }
     },
-
-    // checkIfZkProofOfPersonhoodPresent() {
-    //     return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfPersonHood') ? true : false
-    // },
-    // checkIfZkProofOfKycPresent() {
-    //     return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfKyc') ? true : false
-    // },
-    /// ////
-
     getChainConfig() {
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
       let SupportedChains
@@ -407,27 +398,8 @@ export default {
       let result
       this.hypersign_proofs.forEach((x) => {
         result = result && x.zkProof
-        console.log({
-          result,
-          isProofDone: x.zkProof,
-        })
       })
       return result
-    },
-    isIDDocEnabled() {
-      if (this.getWidgetConfigFromDb.idOcr.enabled) {
-        return true
-      } else return false
-    },
-    isOnchainIdEnabled() {
-      if (this.getWidgetConfigFromDb.onChainId.enabled) {
-        return true
-      } else return false
-    },
-    isLivelinessEnabled() {
-      if (this.getWidgetConfigFromDb.faceRecog.enabled) {
-        return true
-      } else return false
     },
   },
   data() {
@@ -457,9 +429,13 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
-    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
+    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint', 'nextStep']),
     // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+    goToUserConsentStep() {
+      const userConsentStepIndex = this.enabledSteps.indexOf(this.getIfUserConsentStep)
+      this.nextStep(userConsentStepIndex)
+    },
     logoUrl(logo) {
       return require('@/assets/' + logo)
     },
@@ -1713,7 +1689,7 @@ export default {
 
     async mint(proof) {
       try {
-        if (!this.isOnchainIdEnabled) {
+        if (!this.checkIfOncainIdIsEnabled) {
           this.toast('OnChain ID minting is not enabled')
           return
         }

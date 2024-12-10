@@ -12,6 +12,7 @@ export default {
     },
   },
   steps: [],
+  currentStepIndex: 0,
   schemaIds: {},
   idToken: '',
   authorization: null,

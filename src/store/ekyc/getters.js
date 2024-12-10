@@ -4,15 +4,6 @@ export default {
   getFinalResult(state) {
     return state.finalResult
   },
-  allStepsEnabledWithReqiredSchemaTypes(state) {
-    return state.steps
-      .filter((x) => x.isEnabled === true && x.requiredCredentialTypes)
-      .map((x) => x.requiredCredentialTypes)
-      .flat()
-  },
-  getIfOncainIdStep(state) {
-    return state.steps.find((x) => x.stepName === STEP_NAMES.OnChainId)
-  },
   getIfzkProofStep(state) {
     return state.steps.find((x) => x.stepName === STEP_NAMES.ZkProofs)
   },
@@ -24,5 +15,31 @@ export default {
   },
   getIfLivelinessStep(state) {
     return state.steps.find((x) => x.stepName === STEP_NAMES.LiveLiness)
+  },
+  // Checking ....
+  checkIfOncainIdIsEnabled(state, getters) {
+    if (getters.getWidgetConfigFromDb.onChainId.enabled) {
+      return true
+    } else return false
+  },
+  checkIfIdDocumentIsEnabled(state, getters) {
+    if (getters.getWidgetConfigFromDb.idOcr.enabled) {
+      return true
+    } else return false
+  },
+  checkIfLivelinessIsEnabled(state, getters) {
+    if (getters.getWidgetConfigFromDb.faceRecog.enabled) {
+      return true
+    } else return false
+  },
+  checkIfzkProofIsEnabled(state, getters) {
+    if (getters.getWidgetConfigFromDb.zkProofs?.enabled) {
+      return true
+    } else return false
+  },
+  checkIfUserConsentIsEnabled(state, getters) {
+    if (getters.getWidgetConfigFromDb.userConsent.enabled) {
+      return true
+    } else return false
   },
 }

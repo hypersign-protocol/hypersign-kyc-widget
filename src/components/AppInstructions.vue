@@ -21,11 +21,7 @@
 }
 
 .box {
-  /* width: 200px;
-  height: 100px; */
   margin: 10px;
-  /* background-color: lightblue;
-  border: 1px solid #ccc; */
   box-sizing: border-box;
   padding: 20px;
 }
@@ -65,15 +61,9 @@
           </div>
         </div>
 
-        <div class="row mb-4" v-if="getIfzkProofStep.isEnabled == true && getIfOncainIdStep.isEnabled !== true">
+        <div class="row mb-4" v-if="getIfzkProofStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="3" :stepTitle="getIfzkProofStep.stepTitle" :logo="getIfzkProofStep.logo" :isDone="false" />
-          </div>
-        </div>
-
-        <div class="row mb-4" v-if="getIfOncainIdStep.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep :stepNumber="4" :logo="getIfOncainIdStep.logo" :stepTitle="getIfOncainIdStep.stepTitle" :isDone="hasSbtMintDone" />
           </div>
         </div>
 
@@ -104,63 +94,71 @@ export default {
     AppInstructionStep,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getRedirectUrl', 'getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
+    ...mapGetters(['enabledSteps', 'getCavachAccessToken', 'getRedirectUrl', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
     ...mapState(['hasLivelinessDone', 'hasKycDone', 'hasSbtMintDone', 'steps']),
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
+    // this.hasLivelinessDone
+    // this.hasKycDone
+    // this.hasSbtMintDone
+    // const livelinessVerifcationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.LiveLiness)
+    // const zkProofVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
+    // const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
+    // const idDocVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
     // TODO: this entire code block is not optimized, we MUST optimize it later.
     if (this.hasLivelinessDone) {
       // next step: id verfcaiton
       if (this.hasKycDone) {
         // next step: check if on chain id is configured or not
-        const isOnChainIdConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true)
+        const isOnChainIdConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
 
         if (isOnChainIdConfigured) {
           // if yes, then go to onchainId page
           if (!this.hasSbtMintDone) {
             // if minting already done..
-            this.nextStepNumeber = isOnChainIdConfigured.id
+            this.nextStepNumeber = this.enabledSteps.indexOf(isOnChainIdConfigured)
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true) // TODO remove
-            // const userConsentStep = this.steps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
-            this.nextStepNumeber = userConsentStep.id
+            const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs) // TODO remove
+            // const userConsentStep = this.enabledSteps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+            this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
           }
         } else {
           // go to user consent page
-          const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
-          this.nextStepNumeber = userConsentStep.id
+          const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
+          this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
         }
       } else {
-        const isKYCConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true)
+        const isKYCConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
         if (isKYCConfigured) {
           // next step: go to Id verifcaiton
-          const isVerificationStep = this.steps.find((step) => step.stepName === STEP_NAMES.IdDocs && step.isEnabled === true)
-          this.nextStepNumeber = isVerificationStep?.id
+          // const isVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
+          this.nextStepNumeber = this.enabledSteps.indexOf(isKYCConfigured)
         } else {
           // next step: check if on chain id is configured or not
-          const isOnChainIdConfigured = this.steps.find((step) => step.stepName === STEP_NAMES.ZkProofs && step.isEnabled === true)
-          if (isOnChainIdConfigured) {
+          const iszkProofConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
+          if (iszkProofConfigured) {
             if (!this.hasSbtMintDone) {
+              console.log('Sbt minint not done')
               // if yes, then go to onchainId page
-              this.nextStepNumeber = isOnChainIdConfigured.id
+              this.nextStepNumeber = this.enabledSteps.indexOf(iszkProofConfigured) // isOnChainIdConfigured.id
             } else {
               // if yes, then go to onchainId page
-              const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
-              this.nextStepNumeber = userConsentStep.id
+              const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
+              this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep) // userConsentStep.id
             }
           } else {
             // go to user consent page
-            const userConsentStep = this.steps.find((step) => step.stepName === STEP_NAMES.UserConsent && step.isEnabled === true)
-            this.nextStepNumeber = userConsentStep.id
+            const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
+            this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep) // userConsentStep.id
           }
         }
       }
     } else {
       // next step: go to liveliness
-      const livelinessVerifcationStep = this.steps.find((step) => step.stepName === STEP_NAMES.LiveLiness && step.isEnabled === true)
-      this.nextStepNumeber = livelinessVerifcationStep?.id
+      const livelinessVerifcationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.LiveLiness)
+      this.nextStepNumeber = this.enabledSteps.indexOf(livelinessVerifcationStep) // livelinessVerifcationStep?.id
     }
   },
   data() {
@@ -175,8 +173,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep']),
-    ...mapActions(['getNewSession', 'checkIfCredentialAlreadyExistsInVault']),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl']),
+    ...mapActions(['getNewSession', 'checkIfCredentialAlreadyExistsInVault', 'nextStep']),
     incrementStep() {
       this.stepNumber = this.stepNumber + 1
       return this.stepNumber

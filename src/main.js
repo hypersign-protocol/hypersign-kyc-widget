@@ -15,6 +15,7 @@ import PageHeading from './components/commons/PageHeading.vue'
 import PoweredBy from './components/commons/PoweredBy.vue'
 import ConsentBox from './components/commons/ConsentBox.vue'
 import InfoMessage from './components/commons/InfoMessage.vue'
+import StepNavigator from './components/commons/StepNavigator.vue'
 import router from './router'
 // import { BootstrapVue } from 'bootstrap-vue'
 import Vuetify from 'vuetify'
@@ -28,6 +29,7 @@ Vue.component('PageHeading', PageHeading)
 Vue.component('PoweredBy', PoweredBy)
 Vue.component('ConsentBox', ConsentBox)
 Vue.component('InfoMessage', InfoMessage)
+Vue.component('StepNavigator', StepNavigator)
 Vue.use(Vuetify)
 new Vue({
   router,

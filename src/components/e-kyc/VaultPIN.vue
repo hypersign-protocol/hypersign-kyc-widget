@@ -43,7 +43,7 @@ export default {
   name: STEP_NAMES.VaultPIN,
   computed: {
     ...mapState(['ifNewUser', 'steps']),
-    ...mapGetters(['getWidgetConfigFromDb', 'getActiveStep', 'getSteps', 'getVaultData', 'getVaultId', 'getVaultWallet', 'getVaultMnemonic']),
+    ...mapGetters(['getWidgetConfigFromDb', 'getSteps', 'getVaultData', 'getVaultId', 'getVaultWallet', 'getVaultMnemonic']),
   },
   components: {
     AskPIN,
@@ -58,21 +58,18 @@ export default {
       this.enableAstep(STEP_NAMES.IdDocs)
     }
 
-    if (this.getWidgetConfigFromDb.onChainId.enabled) {
-      this.enableAstep(STEP_NAMES.OnChainId)
-    }
-
     if (this.getWidgetConfigFromDb.zkProof.enabled) {
       this.enableAstep(STEP_NAMES.ZkProofs)
     }
   },
   methods: {
-    ...mapMutations(['nextStep', 'setVaultRaw', 'setAStep', 'previousStep']),
-    ...mapActions(['unlockVault', 'deleteAccount', 'initializeVault', 'intitalizeVaultWallet', 'createKMS', 'lockVault', 'syncUserData', 'syncUserDataById', 'retriveVaultKeys', 'retriveVaultCredentials', 'addUpdateDocumentById', 'getUserAccessMnemomic']),
+    ...mapMutations(['setVaultRaw', 'setAStep']),
+    ...mapActions(['nextStep', 'previousStep', 'unlockVault', 'deleteAccount', 'initializeVault', 'intitalizeVaultWallet', 'createKMS', 'lockVault', 'syncUserData', 'syncUserDataById', 'retriveVaultKeys', 'retriveVaultCredentials', 'addUpdateDocumentById', 'getUserAccessMnemomic']),
     enableAstep(stepName) {
       const stepToUpdate = this.steps.find((x) => x.stepName === stepName)
       stepToUpdate.isEnabled = true
-      this.setAStep(stepToUpdate)
+      this.$store.dispatch('updateStepState', stepToUpdate)
+      // this.setAStep(stepToUpdate)
     },
     async unlockVaultAndSyncData(data) {
       try {

@@ -3,7 +3,7 @@
     <v-card class="mx-auto" tile>
       <v-list shaped>
         <!-- <v-subheader>Choose Document Type</v-subheader> -->
-        <v-list-item-group v-model="selectedItem" color="secondary">
+        <v-list-item-group color="secondary">
           <v-list-item v-for="(item, i) in items" :key="i" @click="chooseDoc(item.type)">
             <v-list-item-icon>
               <img :src="item.icon" width="40" />

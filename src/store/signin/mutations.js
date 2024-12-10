@@ -2,6 +2,39 @@ import SignStoreConfig from './config'
 import VaultStoreConfig from '../vault/config'
 
 export default {
+  NEXT_STEP(state, stepNumber = null) {
+    const enabledSteps = state.steps.filter((step) => step.isEnabled)
+    if (stepNumber !== null) {
+      // Jump to specific step number (1-based index)
+      const targetIndex = stepNumber
+      if (targetIndex >= 0 && targetIndex < enabledSteps.length) {
+        state.currentStepIndex = targetIndex
+      }
+    } else {
+      // Default behavior: move to the next step
+      if (state.currentStepIndex < enabledSteps.length - 1) {
+        state.currentStepIndex++
+      }
+    }
+  },
+  PREVIOUS_STEP(state) {
+    if (state.currentStepIndex > 0) {
+      state.currentStepIndex--
+    }
+  },
+  SET_STEP(state, step) {
+    const index = state.steps.findIndex((s) => s.stepName === step && s.isEnabled)
+    if (index !== -1) {
+      state.currentStepIndex = index
+    }
+  },
+  // Update the enabled state of a step
+  UPDATE_STEP_STATE(state, payload) {
+    const step = state.steps.find((s) => s.stepName === payload.stepName)
+    if (step) {
+      step.isEnabled = payload.isEnabled
+    }
+  },
   clearAllLocalStore() {
     localStorage.removeItem('mb-user-id')
     localStorage.removeItem(SignStoreConfig.LOCAL_STATES.PROFILE)
@@ -25,38 +58,10 @@ export default {
   setSteps: (state, payload) => {
     state.steps = payload
   },
-  setAStep: (state, payload) => {
-    const items = [...state.steps] // create a new copy
-    const stepIndex = items.findIndex((step) => step.id === payload.id)
-
-    // mutate it
-    items[stepIndex] = { ...payload }
-
-    // return the new copy
-    state.steps = items
-  },
   setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
     state.schemaIds = schemaIds
   },
 
-  /* eslint-disable */
-  nextStep: (state, jumpToStepId = null) => {
-    const activeStep = state.steps.find((x) => x.isActive == true && x.isEnabled == true)
-    let nextStepId = 0
-    if (jumpToStepId) {
-      nextStepId = jumpToStepId
-    } else if (activeStep) {
-      nextStepId = activeStep.id + 1
-    }
-    state.steps[activeStep.id].isActive = false
-    state.steps[nextStepId].isActive = true
-  },
-  previousStep: (state) => {
-    const activeStep = state.steps.find((x) => x.isActive == true)
-    const previousStepId = activeStep.previous
-    state.steps[activeStep.id].isActive = false
-    state.steps[previousStepId].isActive = true
-  },
   setAuthorization: (state, authorization) => {
     state.authorization = authorization
     localStorage.setItem(SignStoreConfig.LOCAL_STATES.AUTHORIZATION, authorization)

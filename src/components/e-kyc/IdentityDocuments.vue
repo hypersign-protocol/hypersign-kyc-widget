@@ -1,6 +1,6 @@
 <script type="text/javascript">
 import { FPhi } from '@facephi/selphid-widget-web'
-import { mapActions, mapMutations, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import PreviewData from '../commons/Preview.vue'
 import ChooseDocumentType from '../commons/ChooseDocumentType.vue'
 import { STEP_NAMES } from '@/config'
@@ -16,14 +16,8 @@ export default {
     ifExtractedData() {
       return Object.keys(this.$store.state.kycExtractedData).length > 0
     },
-    ...mapGetters(['getIdDocumentLicenseKey', 'getIfOncainIdStep', 'getIfzkProofStep']),
+    ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getWidgetConfigFromDb', 'getIdDocumentLicenseKey', 'getIfzkProofStep', 'getIfUserConsentStep']),
     ...mapState(['steps', 'hasKycDone']),
-    checkIfzkProofIsEnabled() {
-      return this.getIfzkProofStep.isEnabled
-    },
-    checkIfOncainIdIsEnabled() {
-      return this.getIfOncainIdStep.isEnabled
-    },
   },
   data: function () {
     return {
@@ -82,22 +76,27 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['nextStep']),
-    ...mapActions(['verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc']),
+    ...mapActions(['nextStep', 'verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc']),
+    getStepIndex(step) {
+      return this.enabledSteps.indexOf(step)
+    },
+    getNextStepIndex() {
+      let nextStepNumberIndex = null
+      if (this.checkIfOncainIdIsEnabled || this.checkIfzkProofIsEnabled) {
+        nextStepNumberIndex = this.getStepIndex(this.getIfzkProofStep) // 5
+      } else if (this.checkIfUserConsentIsEnabled) {
+        nextStepNumberIndex = this.getStepIndex(this.getIfUserConsentStep) // 6
+      }
+      return nextStepNumberIndex
+    },
     prepare() {
       if (this.hasKycDone) {
         // then move to onchainIdStep step
-        const onchainIdStep = this.getIfOncainIdStep
-        this.nextStep(onchainIdStep.id)
+        const nextStepIndex = this.getNextStepIndex()
+        this.nextStep(nextStepIndex)
         return
       }
-
       this.licenseKey = this.getIdDocumentLicenseKey
-      // if (!this.licenseKey) {
-      //   let license = window.prompt("Please, enter the license key before start the operations: ") || "";
-      //   this.licenseKey = license;
-      //   this.generateBrowserCache(license);
-      // }
       EVENT.subscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
     },
     // Demo methods
@@ -121,8 +120,6 @@ export default {
       )
     },
     disableWidget: function () {
-      // console.warn("[Demo] Stop Capture");
-      // document.getElementById("widgetEventResult").innerText = "";
       this.isWidgetStarted = false
       this.selectedDocumentType = ''
     },
@@ -138,39 +135,12 @@ export default {
     },
 
     onExtractionFinished: async function (extractionResult) {
-      // if (
-      //   extractionResult.detail.images.frontDocument &&
-      //   extractionResult.detail.images.faceImage &&
-      //   this.documentIdType.selected == "PASSPORT"
-      // ) {
-      //   const data = extractionResult.detail;
-      //   await this.$store.commit("setKycExtractedData", { data, status: true });
-      //   await this.$store.commit("setKycCapturedData", {
-      //     documentIdType:this.documentIdType.selected,
-      //     tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
-      //     tokenBackDocumentImage: extractionResult.detail.images.backDocument,
-      //     tokenFaceImage: extractionResult.detail.images.faceImage,
-      //     countryCode:
-      //       extractionResult.detail.extractionData.documentCountryIssuer,
-      //   });
-      //   this.isWidgetStarted = false;
-      // } else {
       this.isLoading = true
-
-      //   call extractData
-      // const data = extractionResult.detail;
-      // await this.$store.commit("setKycExtractedData", { data, status: true });
       await this.$store.commit('setKycCapturedData', {
         tokenFrontDocumentImage: extractionResult.detail.images.frontDocument,
         tokenBackDocumentImage: extractionResult.detail.images.backDocument,
-
-        //   tokenFaceImage: extractionResult.detail.images.faceImage,
-        //   countryCode:
-        //     extractionResult.detail.extractionData.documentCountryIssuer,
       })
-
       this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, 'warning')
-
       this.extractOcrIdDoc({ documentType: this.selectedDocumentType })
         .then(async (res) => {
           if (res?.serviceDocument) {
@@ -180,7 +150,6 @@ export default {
               ...JSON.parse(res.serviceDocument),
             }
             kycExtracted = {
-              // ...JSON.parse(res.serviceDocument),
               ...kycExtracted,
             }
 
@@ -272,33 +241,6 @@ export default {
     },
 
     async verifyIdDocEventHandler(data) {
-      // try {
-      //     if (!data) {
-      //         throw new Error('Invalid event data')
-      //     }
-      //     this.isLoading = true;
-      //     this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, "warning");
-      //     await this.verifyOcrIDDoc()
-      //     setTimeout(() => {
-      //         if (this.checkIfOncainIdIsEnabled) {
-      //             this.nextStep(5);
-      //         } else {
-      //             this.nextStep(6);
-      //         }
-      //         this.isLoading = false;
-      //     }, 3000)
-
-      // } catch (e) {
-      //     if (e.message) {
-      //         if (e.message.includes('Session with given ID')) {
-      //             this.isLoading = false;
-      //             return this.nextStep(8)
-      //         }
-      //     }
-      //     this.toast(e.message, "error");
-      //     this.isLoading = false;
-      // }
-
       if (!data) {
         throw new Error('Invalid event data')
       }
@@ -307,11 +249,8 @@ export default {
       this.verifyOcrIDDoc()
         .then(() => {
           setTimeout(() => {
-            if (this.checkIfzkProofIsEnabled) {
-              this.nextStep(5)
-            } else {
-              this.nextStep(7)
-            }
+            const nextStepIndex = this.getNextStepIndex()
+            this.nextStep(nextStepIndex)
             this.isLoading = false
           }, 3000)
         })

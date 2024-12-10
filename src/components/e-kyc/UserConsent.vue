@@ -2,7 +2,6 @@
   <div>
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <!-- <PageHeading :header="'User Consent'" style="text-align: center" /> -->
       <div class="kyc-container">
         <v-card class="mx-auto" outlined style="text-align: start">
           <v-list-item three-line>
@@ -17,36 +16,12 @@
             </v-list-item-avatar>
           </v-list-item>
         </v-card>
-        <!-- <v-card class="widget-card widget-card-width" v-if="getPresentationRequestParsed">
-          <div class="row">
-            <div class="col-md-2">
-              <img :src="getPresentationRequestParsed.logoUrl" class="avatar" v-if="getPresentationRequestParsed.logoUrl" />
-              <i class="bi bi-robot avatar" style="font-size: xxx-large; display: inline-block" v-else></i>
-            </div>
-            <div class="col-md-10" style="text-align: left; font-size: large">
-              <div class="row center-text-align" v-if="getPresentationRequestParsed.domain">
-                <div class="col-md-12">
-                  {{ getPresentationRequestParsed.domain }}
-                </div>
-              </div>
-              <div class="row center-text-align" style="color: grey; font-size: smaller">
-                <div class="col-md-12">
-                  <span v-if="getPresentationRequestParsed.reason">
-                    {{ getPresentationRequestParsed.reason }}
-                  </span>
-                  <span v-else>The verifier app needs the following information to allow you use their serivce </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </v-card> -->
       </div>
       <div class="mt-1" style="overflow-y: auto; max-height: 335px; text-align: left">
         <v-list two-line subheader>
           <v-list-item link v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
             <v-list-item-avatar style="border: 1px solid lightgrey">
               <v-avatar>
-                <!-- <i class="bi bi-clipboard-check"></i> -->
                 <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
                 <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
                 <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
@@ -69,27 +44,6 @@
             </v-list-item-action>
           </v-list-item>
         </v-list>
-        <!-- <div class="list-group mb-1 list-group-flush" style="display: none">
-          <a href="javascript:void(0);" class="list-group-item list-group-item-action flex-column align-items-start" v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ eachCredential.type[1] }}</h5>
-              <small>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" :checked="shouldShare(eachCredential)" disabled />
-                </div>
-                <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
-                <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
-                <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
-                <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
-              </small>
-            </div>
-            <p style="text-align: left"><InfoMessage :message="shorten(eachCredential.id)"></InfoMessage></p>
-            <small style="text-align: left"><InfoMessage :message="'Valid Until: 12/12/2202'"></InfoMessage></small>
-          </a>
-        </div> -->
       </div>
       <div class="mt-1">
         <v-btn class="btn btn-outline-dark" @click="submit()"><i class="bi bi-check-circle"></i> Authorize</v-btn>
@@ -122,8 +76,7 @@ export default {
   },
   computed: {
     ...mapState(['steps']),
-    ...mapGetters(['getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb', 'getIfOncainIdStep', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
-
+    ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'getUserDID', 'getVaultDataRaw', 'getPresentationRequestParsed', 'getWidgetConfigFromDb', 'getIfzkProofStep', 'getIfIdDocumentStep', 'getIfUserConsentStep', 'getIfLivelinessStep']),
     /// // vault
     getVaultDataCredentials() {
       const { hypersign } = JSON.parse(localStorage.getItem(VaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
@@ -148,11 +101,6 @@ export default {
     getTrustedIssuersCredentials() {
       return this.getVaultDataCredentials.filter((x) => this.getTrustedIssuers.includes(x.issuer))
     },
-    ///
-
-    checkIfOncainIdIsEnabled() {
-      return this.getIfOncainIdStep.isEnabled
-    },
     listOfEnabledZkCredential() {
       if (this.getWidgetConfigFromDb.zkProof?.proofs?.length > 0) {
         const data = this.getWidgetConfigFromDb.zkProof?.proofs?.map((e) => e.proofType)
@@ -169,23 +117,10 @@ export default {
         throw new Error('zkProof Config is not set')
       }
     },
-
-    checkIfzkProofIsEnabled() {
-      return this.getIfzkProofStep.isEnabled
-    },
-    checkIfIdDocumentIsEnabled() {
-      return this.getIfIdDocumentStep.isEnabled
-    },
-    checkIfUserConsentIsEnabled() {
-      return this.getIfUserConsentStep.isEnabled
-    },
-    checkIfLivelinessIsEnabled() {
-      return this.getIfLivelinessStep.isEnabled
-    },
   },
   methods: {
-    ...mapActions(['verifyResult']),
-    ...mapMutations(['nextStep', 'previousStep', 'setUserPresentationConsent']),
+    ...mapActions(['verifyResult', 'nextStep']),
+    ...mapMutations(['previousStep', 'setUserPresentationConsent']),
     toast(msg, type = 'success') {
       EVENT.emitEvent(
         EVENTS.NOTIFY,
@@ -244,6 +179,7 @@ export default {
         this.isLoading = false
         this.nextStep()
       } catch (e) {
+        this.nextStep(8)
         this.toast(e.message, 'error')
         this.isLoading = false
       }
