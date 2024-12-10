@@ -191,61 +191,6 @@
           </v-card>
         </v-col>
       </v-row>
-      <!-- <div class="row col-md-12" style="max-height: 70dvh; overflow-y: auto; overflow-x: hidden">
-        <v-card class="mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
-          <div class="row" style="text-align: left">
-            <div class="col-md-2 center">
-              <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.6" />
-            </div>
-            <div class="col-md-9">
-              <div class="card-body">
-                <h5 class="card-title" style="color: black">
-                  {{
-                    hypersign_proof.proofType == 'zkProofOfAge'
-                      ? hypersign_proof.proofType +
-                        ` >
-                  ${getCriteria(hypersign_proof)} `
-                      : hypersign_proof.proofType
-                  }}
-                </h5>
-                <p class="card-text mt-2">
-                  <small>{{ hypersign_proof.description }}</small>
-                </p>
-              </div>
-              <div class="card-body">
-                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                  <v-btn text class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                    <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
-                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof</span>
-
-                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Generating Proof...</span>
-                  </v-btn>
-                </template>
-                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                  <v-btn text class="btn btn-outline-dark" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                    <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
-
-                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID Token</span>
-                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Minting ID...</span>
-                  </v-btn>
-                </template>
-              </div>
-            </div>
-
-            <div class="col-md-1" v-if="checkIfOncainIdIsEnabled">
-              <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
-            </div>
-            <div class="col-md-1" v-else>
-              <div v-if="hypersign_proof.zkProof" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
-            </div>
-          </div>
-        </v-card>
-      </div> -->
-
       <div class="d-grid gap-1" style="margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
         <v-btn class="btn btn-outline-dark" @click="goToUserConsentStep()">Next</v-btn>
       </div>
@@ -268,26 +213,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="text-center">
-      <v-bottom-sheet v-model="sheet">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="purple" dark v-bind="attrs" v-on="on">Open In</v-btn>
-        </template>
-        <v-list>
-          <v-subheader>Open in</v-subheader>
-          <v-list-item v-for="tile in tiles" :key="tile.title" @click="sheet = false">
-            <v-list-item-avatar>
-              <v-avatar size="32px" tile>
-                <img :src="`https://cdn.vuetifyjs.com/images/bottom-sheets/${tile.img}`" :alt="tile.title" />
-              </v-avatar>
-            </v-list-item-avatar>
-            <v-list-item-title>{{ tile.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-bottom-sheet>
-    </div> -->
-
     <div class="overlay" v-if="showModal"></div>
     <div class="popup" v-if="showModal">
       <div class="row">
@@ -296,7 +221,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col">
+        <div class="col" v-if="this.getOnChainIssuerConfig">
           <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
           <ConnectWalletButtonDiam :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.blockchain == 'diam'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
         </div>
