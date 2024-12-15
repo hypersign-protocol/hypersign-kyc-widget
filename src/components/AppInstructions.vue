@@ -76,7 +76,7 @@
 
       <div class="mt-3">
         <div class="d-grid gap-1" style="margin: auto">
-          <v-btn class="btn btn-outline-dark btn-lg btn-width" @click="nextStep(nextStepNumeber)">Let's go!</v-btn>
+          <v-btn block color="secondary" @click="nextStep(nextStepNumeber)">Let's go!</v-btn>
         </div>
       </div>
     </div>

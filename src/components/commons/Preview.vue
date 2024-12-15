@@ -38,12 +38,30 @@
       </div>
     </div>
 
-    <div class="row mt-2">
-      <div class="col-md-12">
-        <v-btn class="btn btn-light" @click="rescan()">Rescan</v-btn>
-        <v-btn class="btn btn-outline-dark" @click="submit()">Continue</v-btn>
+    <div class="container">
+      <div class="row center mt-1">
+        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
+        <v-btn outlined class="mt-1" block color="secondary" @click="rescan()">Rescan</v-btn>
       </div>
     </div>
+
+    <!-- <v-row>
+      <v-col>
+        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn text color="secondary" @click="rescan()">Rescan</v-btn>
+      </v-col>
+    </v-row> -->
+
+    <!-- <div class="row mt-2">
+      <div class="col-md-12">
+        
+      </div>
+      <div class="col-md"></div>
+    </div> -->
   </div>
 </template>
 
@@ -151,7 +169,7 @@ export default {
 }
 @media (max-width: 768px) {
   .preview {
-    max-height: 500px;
+    max-height: 458px;
   }
   .showOnMobile {
     display: block;
@@ -178,8 +196,8 @@ export default {
 }
 
 .profile-details p {
-  margin: 8px 0;
-  font-size: 14px;
+  margin: 5px 0;
+  font-size: 12px;
   color: #333;
 }
 </style>

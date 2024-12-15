@@ -17,36 +17,38 @@
           </v-list-item>
         </v-card>
       </div>
-      <div class="mt-1" style="overflow-y: auto; max-height: 335px; text-align: left">
-        <v-list two-line subheader>
-          <v-list-item link v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-            <v-list-item-avatar style="border: 1px solid lightgrey">
-              <v-avatar>
-                <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
-                <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
-                <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-                <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
-                <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
-              </v-avatar>
-            </v-list-item-avatar>
+      <div class="mt-1 kyc-container" style="overflow-y: auto; max-height: 335px; text-align: left">
+        <v-card>
+          <v-list two-line subheader>
+            <v-list-item link v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
+              <v-list-item-avatar style="border: 1px solid lightgrey">
+                <v-avatar>
+                  <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
+                  <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
+                  <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
+                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
+                  <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
+                </v-avatar>
+              </v-list-item-avatar>
 
-            <v-list-item-content>
-              <v-list-item-title class="text-overline">{{ eachCredential.type[1] }}</v-list-item-title>
-              <v-list-item-subtitle>{{ shorten(eachCredential.id) }}</v-list-item-subtitle>
-            </v-list-item-content>
+              <v-list-item-content>
+                <v-list-item-title class="text-overline">{{ eachCredential.type[1] }}</v-list-item-title>
+                <v-list-item-subtitle>{{ shorten(eachCredential.id) }}</v-list-item-subtitle>
+              </v-list-item-content>
 
-            <v-list-item-action>
-              <v-btn icon ripple>
-                <v-switch :input-value="shouldShare(eachCredential)" flat disabled></v-switch>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
+              <v-list-item-action>
+                <v-btn icon ripple>
+                  <v-switch :input-value="shouldShare(eachCredential)" flat disabled></v-switch>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-card>
       </div>
-      <div class="mt-1">
-        <v-btn class="btn btn-outline-dark" @click="submit()"><i class="bi bi-check-circle"></i> Authorize</v-btn>
+      <div class="mt-1 kyc-container">
+        <v-btn block color="secondary" @click="submit()"><i class="bi bi-check-circle mx-1"></i> Authorize</v-btn>
       </div>
     </div>
   </div>

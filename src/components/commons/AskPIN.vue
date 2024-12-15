@@ -11,10 +11,10 @@
     </v-card>
     <div class="container">
       <div class="row center mt-3">
-        <v-btn class="btn btn-outline-dark width" @click="submit()"><i class="bi bi-unlock"></i> Unlock Vault</v-btn>
+        <v-btn block color="secondary" @click="submit()"><i class="bi bi-unlock mx-1"></i> Unlock Vault</v-btn>
       </div>
-      <div class="row center mt-3">
-        <ForgotPIN @proceedWithAccountDeletion="proceedWithAccountDeletion()" />
+      <div class="row">
+        <ForgotPIN @proceedWithAccountDeletion="proceedWithAccountDeletion()" style="width: 100%" class="mt-1" />
       </div>
     </div>
   </div>

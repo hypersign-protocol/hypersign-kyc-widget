@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="javascript:;" v-on:click="deleteAccountConfirmation()">Forgot PIN?</a>
+    <v-btn outlined block color="secondary" @click="deleteAccountConfirmation()">Forgot PIN?</v-btn>
     <v-row justify="center">
       <v-dialog v-model="confirmationDialog" max-width="310">
         <v-card>

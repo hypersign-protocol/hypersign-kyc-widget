@@ -136,7 +136,7 @@
       </div> -->
       <v-row dense>
         <v-col cols="12" md="6">
-          <v-card class="mx-auto mb-1" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
+          <v-card class="mx-auto mb-2" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
             <v-list-item three-line>
               <v-list-item-content>
                 <div class="text-overline mb-4">
@@ -157,7 +157,7 @@
 
             <v-card-actions>
               <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                <v-btn text class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                <v-btn outlined color="secondary" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
                   <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
                   <span v-if="!hypersign_proof.isLoading" class="sr-only">Get Proof</span>
                   <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -165,7 +165,7 @@
                 </v-btn>
               </template>
               <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                <v-btn text class="btn btn-outline-dark" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                <v-btn outlined color="secondary" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
                   <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
                   <span v-if="!hypersign_proof.isLoading" class="sr-only">Mint ID Token</span>
                   <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -174,15 +174,20 @@
               </template>
               <v-list-item>
                 <v-row align="center" justify="end">
-                  <!-- <v-chip draggable>Default</v-chip> -->
-                  <!-- <i class="bi bi-check2-circle" style="font-size: medium"></i> -->
                   <span v-if="checkIfOncainIdIsEnabled">
-                    <span v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: large"></i></span>
+                    <span v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer">
+                      <i class="bi bi-check2-circle" style="font-size: large"></i>
+                    </span>
+                    <span v-else-if="hypersign_proof.isLoading">
+                      <v-progress-circular size="15" :width="1" color="green" indeterminate></v-progress-circular>
+                    </span>
                   </span>
                   <span v-else>
                     <span v-if="hypersign_proof.zkProof" class="center-footer">
                       <i class="bi bi-check2-circle" style="font-size: large"></i>
-                      <!-- <span class="show-verified">Verified!</span> -->
+                    </span>
+                    <span v-else-if="hypersign_proof.isLoading">
+                      <v-progress-circular size="15" :width="1" color="green" indeterminate></v-progress-circular>
                     </span>
                   </span>
                 </v-row>
@@ -191,18 +196,22 @@
           </v-card>
         </v-col>
       </v-row>
-      <div class="d-grid gap-1" style="margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
-        <v-btn class="btn btn-outline-dark" @click="goToUserConsentStep()">Next</v-btn>
-      </div>
+      <v-row v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified() && !isLoading">
+        <v-col>
+          <v-btn block color="secondary" @click="goToUserConsentStep()">Continue</v-btn>
+        </v-col>
+      </v-row>
 
-      <div class="d-grid gap-1" style="margin: auto" v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled">
-        <v-btn class="btn btn-outline-dark" @click="goToUserConsentStep()">Next</v-btn>
-      </div>
+      <v-row v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled && !isLoading">
+        <v-col>
+          <v-btn block color="secondary" @click="goToUserConsentStep()">Continue</v-btn>
+        </v-col>
+      </v-row>
       <div class="container" style="display: none">
         <div class="row mt-2">
           <div class="col-md-12 center">
             <template v-if="showConnectWallet">
-              <v-btn class="btn btn-outline-dark" @click="mint()">
+              <v-btn outlined color="secondary" @click="mint()">
                 <i class="bi bi-shield-lock"></i>
                 Generate Proof (s)
               </v-btn>

@@ -17,7 +17,7 @@
     </v-card>
     <div class="container">
       <div class="row center mt-3">
-        <v-btn class="btn btn-outline-dark width" @click="submit()"><i class="bi bi-safe"></i> Setup Vault</v-btn>
+        <v-btn block color="secondary" @click="submit()"><i class="bi bi-safe mx-1"></i> Setup Vault</v-btn>
       </div>
     </div>
     <v-row justify="center">

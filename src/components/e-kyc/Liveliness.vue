@@ -46,7 +46,6 @@ export default {
       widgetVersion: FPhi.Selphi.Version,
       FPhiSelphiConstants: FPhi.Selphi,
       widgetResult: '',
-
       toastMessage: '',
       toastType: 'success',
       isToast: false,
@@ -161,14 +160,14 @@ export default {
       }
 
       this.isWidgetStarted = false
-      this.toast('Error! Something went wrong', 'error')
+      this.toast('Error: Something went wrong', 'error')
     },
 
     onUserCancel: function () {
       // console.warn("[Selphi] onUserCancel");
 
       this.isWidgetStarted = false
-      this.toast('Error! The extraction has been cancelled', 'error')
+      this.toast('Error: The extraction has been cancelled', 'error')
     },
 
     onExtractionTimeout: function () {
@@ -259,7 +258,7 @@ export default {
     <div class="row" v-if="!isWidgetStarted && !isLoading">
       <div class="col-12 center">
         <div class="col-md-4 d-flex flex-column">
-          <v-btn type="v-btn" id="btnStartCapture" class="btn btn-outline-dark" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</v-btn>
+          <v-btn type="v-btn" id="btnStartCapture" block color="secondary" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</v-btn>
           <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
         </div>
       </div>
