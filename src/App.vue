@@ -80,7 +80,7 @@ export default {
           name: 'Proofs Generation',
           previous: 4,
           isEnabled: false,
-          stepTitle: 'Generate Zero Knowledge Proof(s) & Mint your on-chain Identity',
+          stepTitle: 'Generate ZK Proof(s) & Mint your on-chain Identity',
           logo: 'proof.png',
           requiredCredentialTypes: ['zkProofOfKYC', 'zkProofOfAge', 'zkProofOfPersonHood'],
           hasDone: false,

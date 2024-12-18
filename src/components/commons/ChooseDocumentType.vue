@@ -1,7 +1,7 @@
 <template>
   <div class="kyc-container">
-    <v-card class="mx-auto" tile>
-      <v-list shaped>
+    <v-card class="mx-auto widget-card-width" tile>
+      <v-list flat>
         <!-- <v-subheader>Choose Document Type</v-subheader> -->
         <v-list-item-group color="secondary">
           <v-list-item v-for="(item, i) in items" :key="i" @click="chooseDoc(item.type)">

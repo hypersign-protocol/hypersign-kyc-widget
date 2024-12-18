@@ -257,8 +257,8 @@ export default {
     </div>
     <div class="row" v-if="!isWidgetStarted && !isLoading">
       <div class="col-12 center">
-        <div class="col-md-4 d-flex flex-column">
-          <v-btn type="v-btn" id="btnStartCapture" block color="secondary" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle"></i> Start Capture</v-btn>
+        <div class="col-md-4 d-flex flex-column widget-card-width">
+          <v-btn type="v-btn" id="btnStartCapture" block color="secondary" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle mx-1"></i> Start Capture</v-btn>
           <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
         </div>
       </div>

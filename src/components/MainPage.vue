@@ -19,7 +19,7 @@
   max-height: 100dvh;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .main-container-height {
     height: 100dvh;
   }

@@ -9,7 +9,7 @@
       </div> -->
     </div>
     <div class="col-8" style="text-align: left">
-      <span style="font-size: medium; font-weight: bold; word-wrap: break-word">
+      <span class="app-font" style="font-weight: bold; word-wrap: break-word">
         {{ stepTitle }}
       </span>
     </div>

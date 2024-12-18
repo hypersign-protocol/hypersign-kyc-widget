@@ -1,5 +1,5 @@
 <template>
-  <div class="kyc-container">
+  <div class="kyc-container widget-card-width">
     <!-- <v-row>
       <v-col>
         <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
@@ -21,7 +21,7 @@
             </v-avatar>
           </div>
           <div class="profile-details">
-            <v-simple-table style="text-align: left">
+            <v-simple-table style="text-align: left" dense>
               <template v-slot:default>
                 <tbody>
                   <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
@@ -167,7 +167,7 @@ export default {
 .notShowOnMobile {
   display: block;
 }
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .preview {
     max-height: 458px;
   }

@@ -31,7 +31,7 @@
 .center-footer {
   color: green;
 }
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .proofCard {
     /* margin: auto;
     min-height: 150px;
@@ -75,6 +75,10 @@
   }
   .show-verified {
     display: block;
+  }
+
+  .title-font-size {
+    font-size: 0.6rem !important;
   }
 }
 
@@ -134,13 +138,13 @@
           </v-btn>
         </div>
       </div> -->
-      <v-row dense>
-        <v-col cols="12" md="6">
+      <v-row dense class="kyc-container">
+        <v-col cols="12">
           <v-card class="mx-auto mb-2" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
             <v-list-item three-line>
               <v-list-item-content>
-                <div class="text-overline mb-4">
-                  {{ hypersign_proof.proofType }}
+                <div class="text-overline mb-4 title-font-size">
+                  {{ hypersign_proof.proofType.replace(/([a-z])([A-Z])/g, '$1 $2') }}
                   <v-chip v-if="hypersign_proof.proofType == 'zkProofOfAge'">
                     <span>{{ getCriteria(hypersign_proof) }} +</span>
                   </v-chip>

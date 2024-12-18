@@ -29,18 +29,6 @@
 .checkbox-item input {
   margin-right: 5px;
 }
-
-.widget-card-width {
-  width: 70%;
-  margin: auto;
-}
-
-@media (max-width: 768px) {
-  .widget-card-width {
-    margin: auto;
-    width: 100%;
-  }
-}
 </style>
 
 <template>
@@ -75,7 +63,7 @@
       </v-card>
 
       <div class="mt-3">
-        <div class="d-grid gap-1" style="margin: auto">
+        <div class="d-grid gap-1 widget-card-width" style="margin: auto">
           <v-btn block color="secondary" @click="nextStep(nextStepNumeber)">Let's go!</v-btn>
         </div>
       </div>
@@ -193,11 +181,11 @@ export default {
 </script>
 <style lang="css">
 .btn-width {
-  width: 50%;
+  width: 70%;
 }
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .btn-width {
-    width: 100%;
+    width: 70%;
   }
 }
 </style>

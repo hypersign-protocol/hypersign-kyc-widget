@@ -21,11 +21,32 @@ body {
   color: black;
 }
 
+.widget-card-width {
+  width: 70%;
+  margin: auto;
+}
+
+@media (max-width: 400px) {
+  .widget-card-width {
+    margin: auto;
+    width: 100%;
+  }
+}
+
+.app-font {
+  font-size: medium
+}
+
+@media (max-width: 400px) {
+  .app-font {
+    font-size: small
+  }
+}
 /* h1 {
   font-size: revert;
 } */
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   h1 {
     font-size: 1.5rem;
   }
@@ -52,7 +73,7 @@ body {
   margin-top: 5%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .widget-card {
     /* border: 1px solid #8080801a; */
     box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);

@@ -84,7 +84,7 @@ export default {
   font-size: smaller;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .stepper {
     font-size: x-small;
   }

@@ -226,7 +226,7 @@ export default {
   margin: auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .widget-card-width {
     margin: auto;
     width: 100%;

@@ -54,7 +54,7 @@
   width: 70%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .width {
     width: 100%;
   }
