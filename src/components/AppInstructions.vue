@@ -183,7 +183,7 @@ export default {
 .btn-width {
   width: 70%;
 }
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .btn-width {
     width: 70%;
   }

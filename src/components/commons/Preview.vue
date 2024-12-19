@@ -167,7 +167,7 @@ export default {
 .notShowOnMobile {
   display: block;
 }
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .preview {
     max-height: 458px;
   }

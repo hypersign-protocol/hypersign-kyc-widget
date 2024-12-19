@@ -31,7 +31,7 @@
 .center-footer {
   color: green;
 }
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .proofCard {
     /* margin: auto;
     min-height: 150px;

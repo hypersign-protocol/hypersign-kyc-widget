@@ -23,7 +23,7 @@
   width: 70%;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .width {
     width: 100%;
   }
