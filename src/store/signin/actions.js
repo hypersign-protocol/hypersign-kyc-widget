@@ -1,5 +1,20 @@
 import { RequestHandler } from '../../components/utils/utils'
 export default {
+  // nextStep({ commit, getters }) {
+  //   commit('NEXT_STEP', getters)
+  // },
+  nextStep({ commit }, stepNumber = null) {
+    commit('NEXT_STEP', stepNumber)
+  },
+  previousStep({ commit }) {
+    commit('PREVIOUS_STEP')
+  },
+  setStep({ commit }, step) {
+    commit('SET_STEP', step)
+  },
+  updateStepState({ commit }, payload) {
+    commit('UPDATE_STEP_STATE', payload)
+  },
   getNewSession: async ({ commit, dispatch, getters }, payload) => {
     try {
       const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`

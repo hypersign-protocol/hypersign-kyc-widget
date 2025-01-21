@@ -3,7 +3,7 @@
   bottom: 9%;
   width: 100%;
   height: 100%;
-  border-radius: 2px 2px 20px 20px;
+  border-radius: 2px 2px 2px 2px;
   z-index: 100;
   text-align: left;
   padding-left: 5px;

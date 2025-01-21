@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 // import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.css'
+// import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-icons/font/bootstrap-icons'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
@@ -15,10 +15,13 @@ import PageHeading from './components/commons/PageHeading.vue'
 import PoweredBy from './components/commons/PoweredBy.vue'
 import ConsentBox from './components/commons/ConsentBox.vue'
 import InfoMessage from './components/commons/InfoMessage.vue'
+import StepNavigator from './components/commons/StepNavigator.vue'
 import router from './router'
-import { BootstrapVue } from 'bootstrap-vue'
+// import { BootstrapVue } from 'bootstrap-vue'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
 Vue.config.productionTip = false
-Vue.use(BootstrapVue)
+// Vue.use(BootstrapVue)
 Vue.component('load-ing', Loading)
 Vue.component('MessageBox', MessageBox)
 Vue.component('NavBar', NavBar)
@@ -26,9 +29,29 @@ Vue.component('PageHeading', PageHeading)
 Vue.component('PoweredBy', PoweredBy)
 Vue.component('ConsentBox', ConsentBox)
 Vue.component('InfoMessage', InfoMessage)
-
+Vue.component('StepNavigator', StepNavigator)
+Vue.use(Vuetify)
 new Vue({
   router,
   store,
   render: (h) => h(App),
+  vuetify: new Vuetify({
+    theme: {
+      themes: {
+        light: {
+          colors: {
+            primary: '#1E88E5', // Blue primary color
+            secondary: '#8E24AA', // Purple secondary color
+            accent: '#FFC107', // Yellow accent color
+            background: '#F5F5F5', // Light background color
+            surface: '#FFFFFF', // Card/Component background color
+            error: '#D32F2F', // Error color
+            info: '#1976D2', // Info color
+            success: '#388E3C', // Success color
+            warning: '#F57C00', // Warning color
+          },
+        },
+      },
+    },
+  }),
 }).$mount('#app')

@@ -26,12 +26,12 @@
 }
 
 .show-verified {
-  display: none;
+  display: block;
 }
 .center-footer {
   color: green;
 }
-@media (max-width: 768px) {
+@media (max-width: 450px) {
   .proofCard {
     /* margin: auto;
     min-height: 150px;
@@ -76,6 +76,10 @@
   .show-verified {
     display: block;
   }
+
+  .title-font-size {
+    font-size: 0.6rem !important;
+  }
 }
 
 .proof-card:hover {
@@ -93,21 +97,17 @@
 .popup {
   position: absolute;
   bottom: 0;
-  /* Aligns the popup to the bottom of the parent */
   left: 50%;
-  /* Aligns it horizontally */
   transform: translate(-50%);
-  /* Adjust to center the div */
   width: 100%;
   height: 50%;
-  padding: 20px;
+  /* padding: 20px; */
   background-color: rgba(255, 255, 255, 0.987);
   border: 1px solid #0000005e;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  /* Adds a shadow for popup effect */
   z-index: 10;
-  border-radius: 0px 0px 20px 20px;
-  transition: bottom 0.1s ease;
+  /* border-radius: 0px 0px 20px 20px; */
+  transition: bottom 0.9s ease;
 }
 
 .overlay {
@@ -129,90 +129,96 @@
     <div class="container card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <PageHeading :header="'Proof & OnChain ID'" :subHeader="'Get Proof and Mint Your Onchain ID'" :beta="true" />
-      <div class="container row center mt-1" v-if="connectedWalletAddress">
-        <div class="col-md-8">
-          <button class="btn btn-link" @click="disconnectWallet()" style="text-decoration: underline; color: grey; cursor: pointer" title="Disconnect Wallet">
+      <!-- <PageHeading :header="'Proof & OnChain ID'" :subHeader="'Get Proof and Mint Your Onchain ID'" :beta="true" /> -->
+      <!-- <div class="row" v-if="connectedWalletAddress">
+        <div class="col-md-12" style="text-align: start">
+          <v-btn text class="btn btn-link" @click="disconnectWallet()" style="text-decoration: underline; color: grey; cursor: pointer" title="Disconnect Wallet">
             {{ shorten(connectedWalletAddress) }}
             <i class="bi bi-box-arrow-right"></i>
-          </button>
+          </v-btn>
         </div>
-      </div>
+      </div> -->
+      <v-row dense class="kyc-container">
+        <v-col cols="12">
+          <v-card class="mx-auto mb-2" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <div class="text-overline mb-4 title-font-size">
+                  {{ hypersign_proof.proofType.replace(/([a-z])([A-Z])/g, '$1 $2') }}
+                  <v-chip v-if="hypersign_proof.proofType == 'zkProofOfAge'">
+                    <span>{{ getCriteria(hypersign_proof) }} +</span>
+                  </v-chip>
+                </div>
+                <v-list-item-subtitle>
+                  {{ hypersign_proof.description }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
 
-      <div class="row col-md-12" style="max-height: 70dvh; overflow-y: auto; overflow-x: hidden">
-        <div class="row widget-card mt-2 proofCard" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
-          <div class="row" style="text-align: left">
-            <div class="col-md-2 center">
-              <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.6" />
-            </div>
-            <div class="col-md-9">
-              <div class="card-body">
-                <h5 class="card-title" style="color: black">
-                  {{
-                    hypersign_proof.proofType == 'zkProofOfAge'
-                      ? hypersign_proof.proofType +
-                        ` >
-                  ${getCriteria(hypersign_proof)} `
-                      : hypersign_proof.proofType
-                  }}
-                </h5>
-                <p class="card-text mt-2">
-                  <small>{{ hypersign_proof.description }}</small>
-                </p>
-              </div>
-              <div class="card-body">
-                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                  <button class="btn btn-outline-dark" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                    <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
-                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Get Proof</span>
+              <v-list-item-avatar tile size="60">
+                <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.6" />
+              </v-list-item-avatar>
+            </v-list-item>
 
-                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+            <v-card-actions>
+              <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
+                <v-btn outlined color="secondary" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                  <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
+                  <span v-if="!hypersign_proof.isLoading" class="sr-only">Get Proof</span>
+                  <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                  <span v-if="hypersign_proof.isLoading" class="sr-only">Generating Proof...</span>
+                </v-btn>
+              </template>
+              <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
+                <v-btn outlined color="secondary" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                  <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
+                  <span v-if="!hypersign_proof.isLoading" class="sr-only">Mint ID Token</span>
+                  <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                  <span v-if="hypersign_proof.isLoading" class="sr-only">Minting ID...</span>
+                </v-btn>
+              </template>
+              <v-list-item>
+                <v-row align="center" justify="end">
+                  <span v-if="checkIfOncainIdIsEnabled">
+                    <span v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer">
+                      <i class="bi bi-check2-circle" style="font-size: large"></i>
+                    </span>
+                    <span v-else-if="hypersign_proof.isLoading">
+                      <v-progress-circular size="15" :width="1" color="green" indeterminate></v-progress-circular>
+                    </span>
+                  </span>
+                  <span v-else>
+                    <span v-if="hypersign_proof.zkProof" class="center-footer">
+                      <i class="bi bi-check2-circle" style="font-size: large"></i>
+                    </span>
+                    <span v-else-if="hypersign_proof.isLoading">
+                      <v-progress-circular size="15" :width="1" color="green" indeterminate></v-progress-circular>
+                    </span>
+                  </span>
+                </v-row>
+              </v-list-item>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified() && !isLoading">
+        <v-col>
+          <v-btn block color="secondary" @click="goToUserConsentStep()">Continue</v-btn>
+        </v-col>
+      </v-row>
 
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Generating Proof...</span>
-                  </button>
-                </template>
-                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                  <button class="btn btn-outline-dark" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                    <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
-
-                    <span v-if="!hypersign_proof.isLoading" class="sr-only"> Mint Your ID Token</span>
-                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-
-                    <span v-if="hypersign_proof.isLoading" class="sr-only"> Minting ID...</span>
-                  </button>
-                </template>
-              </div>
-            </div>
-
-            <div class="col-md-1" v-if="isOnchainIdEnabled">
-              <div v-if="hypersign_proof.zkProof && hypersign_proof.zkSBT" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
-            </div>
-            <div class="col-md-1" v-else>
-              <div v-if="hypersign_proof.zkProof" class="center-footer"><i class="bi bi-check2-circle" style="font-size: x-large"></i><span class="show-verified">Verified!</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="!getWidgetConfigFromDb.onChainId.enabled && isAllZkProofVerified()">
-          <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="d-grid gap-1" style="width: 20%; margin: auto" v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled">
-          <button class="btn btn-outline-dark" @click="nextStep(7)">Next</button>
-        </div>
-      </div>
+      <v-row v-if="isAllZkProofVerified() && isAllZkProofSBTMinted() && getWidgetConfigFromDb.onChainId.enabled && !isLoading">
+        <v-col>
+          <v-btn block color="secondary" @click="goToUserConsentStep()">Continue</v-btn>
+        </v-col>
+      </v-row>
       <div class="container" style="display: none">
         <div class="row mt-2">
           <div class="col-md-12 center">
             <template v-if="showConnectWallet">
-              <button class="btn btn-outline-dark" @click="mint()">
+              <v-btn outlined color="secondary" @click="mint()">
                 <i class="bi bi-shield-lock"></i>
                 Generate Proof (s)
-              </button>
+              </v-btn>
             </template>
 
             <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" v-if="!showConnectWallet" />
@@ -220,22 +226,16 @@
         </div>
       </div>
     </div>
-
-    <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
-    </div>
-
     <div class="overlay" v-if="showModal"></div>
     <div class="popup" v-if="showModal">
       <div class="row">
         <div class="col" style="text-align: end">
-          <b-button variant="btn btn-secondary-outline" @click="showModal = false"><i class="bi bi-x-circle" style="color: indianred"></i></b-button>
+          <v-btn variant="btn btn-secondary-outline" text @click="showModal = false"><i class="bi bi-x-circle" style="color: indianred"></i></v-btn>
         </div>
       </div>
       <div class="row">
-        <div class="col">
+        <div class="col" v-if="this.getOnChainIssuerConfig">
           <ConnectWalletButton :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
-
           <ConnectWalletButtonDiam :ecosystem="this.getOnChainIssuerConfig.ecosystem" v-if="this.getOnChainIssuerConfig.blockchain == 'diam'" :blockchain="this.getOnChainIssuerConfig.blockchain" :chainId="this.getOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
         </div>
       </div>
@@ -276,8 +276,8 @@ export default {
     ConnectWalletButtonDiam,
   },
   computed: {
-    ...mapGetters(['getCavachAccessToken', 'getVaultDataRaw', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
-    ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection']),
+    ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getIfUserConsentStep', 'getCavachAccessToken', 'getVaultDataRaw', 'getVaultDataCredentials', 'getRedirectUrl', 'getOnChainIssuerConfig', 'getWidgetConfigFromDb']),
+    ...mapState(['hasLivelinessDone', 'hasKycDone', 'cosmosConnection', 'steps']),
     // vault
     getVaultDataCredentials() {
       const { hypersign } = JSON.parse(localStorage.getItem(vaultConfig.LOCAL_STATES.VAULT_DATA_RAW))
@@ -295,16 +295,10 @@ export default {
         return []
       }
     },
-
-    // checkIfZkProofOfPersonhoodPresent() {
-    //     return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfPersonHood') ? true : false
-    // },
-    // checkIfZkProofOfKycPresent() {
-    //     return this.getTrustedIssuersCredentials.find(x => x.type[1] == 'zkProofOfKyc') ? true : false
-    // },
-    /// ////
-
     getChainConfig() {
+      if (!this.getOnChainIssuerConfig) {
+        return {}
+      }
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
       let SupportedChains
 
@@ -345,31 +339,20 @@ export default {
       let result
       this.hypersign_proofs.forEach((x) => {
         result = result && x.zkProof
-        console.log({
-          result,
-          isProofDone: x.zkProof,
-        })
       })
       return result
-    },
-    isIDDocEnabled() {
-      if (this.getWidgetConfigFromDb.idOcr.enabled) {
-        return true
-      } else return false
-    },
-    isOnchainIdEnabled() {
-      if (this.getWidgetConfigFromDb.onChainId.enabled) {
-        return true
-      } else return false
-    },
-    isLivelinessEnabled() {
-      if (this.getWidgetConfigFromDb.faceRecog.enabled) {
-        return true
-      } else return false
     },
   },
   data() {
     return {
+      sheet: false,
+      tiles: [
+        { img: 'keep.png', title: 'Keep' },
+        { img: 'inbox.png', title: 'Inbox' },
+        { img: 'hangouts.png', title: 'Hangouts' },
+        { img: 'messenger.png', title: 'Messenger' },
+        { img: 'google.png', title: 'Google+' },
+      ],
       isLoading: false,
       fullPage: true,
       toastMessage: '',
@@ -387,9 +370,13 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'nextStep', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
-    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint']),
+    ...mapMutations(['setCavachAccessToken', 'setRedirectUrl', 'setPresentationRequest', 'setTenantSubdomain', 'setSSIAccessToken']),
+    ...mapActions(['getNewSession', 'verifySbtMint', 'verifyZkProof', 'resolveIssuerId', 'createAssetToMint', 'nextStep']),
     // ...mapGetters(['getCredentialFromVault', 'getWidgetConfigFromDb']),
+    goToUserConsentStep() {
+      const userConsentStepIndex = this.enabledSteps.indexOf(this.getIfUserConsentStep)
+      this.nextStep(userConsentStepIndex)
+    },
     logoUrl(logo) {
       return require('@/assets/' + logo)
     },
@@ -1610,8 +1597,8 @@ export default {
       // Perform the CreateTodo Smart Contract Execution
       // Note: This is a blockchain transaction
       const chainConfig = this.getChainConfig
-      const chainCoinDenom = chainConfig.feeCurrencies[0].coinMinimalDenom
-      const gasPriceAvg = chainConfig.gasPriceStep.average
+      const chainCoinDenom = chainConfig?.feeCurrencies[0]?.coinMinimalDenom
+      const gasPriceAvg = chainConfig?.gasPriceStep?.average
       /* eslint-disable-next-line */
       const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
 
@@ -1643,7 +1630,7 @@ export default {
 
     async mint(proof) {
       try {
-        if (!this.isOnchainIdEnabled) {
+        if (!this.checkIfOncainIdIsEnabled) {
           this.toast('OnChain ID minting is not enabled')
           return
         }
@@ -1724,7 +1711,7 @@ export default {
   async mounted() {
     try {
       this.isLoading = true
-      if (this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
+      if (this.getOnChainIssuerConfig && this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
         this.toast('Fetching SBT contract metadata', 'success')
         this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
       }

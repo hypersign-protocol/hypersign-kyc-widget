@@ -6,10 +6,6 @@ import vaultGetters from './vault/getters'
 import vaultMutations from './vault/mutations'
 import vaultActions from './vault/actions'
 
-import oldekycState from './oldekyc/states'
-import oldEkycMutations from './oldekyc/mutations'
-import oldEkycActions from './oldekyc/actions'
-
 import signinGetters from './signin/getters'
 import signinState from './signin/states'
 import signinMutations from './signin/mutations'
@@ -24,7 +20,6 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    ...oldekycState,
     ...eKycState,
     ...signinState,
     ...vaultState,
@@ -36,12 +31,10 @@ export default new Vuex.Store({
   },
   mutations: {
     ...signinMutations,
-    ...oldEkycMutations,
     ...ekycMutations,
     ...vaultMutations,
   },
   actions: {
-    ...oldEkycActions,
     ...signinActions,
     ...ekycActions,
     ...vaultActions,

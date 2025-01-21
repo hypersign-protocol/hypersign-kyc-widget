@@ -1,18 +1,18 @@
 <template>
   <div class="card-body">
     <PageHeading :header="'Congratulations!'" style="text-align: center" />
-    <div class="center" style="margin-top: 3%">
+    <div class="center mt-3">
       <div class="row" v-if="getFinalResult">
         <div class="col-md-12 center">
           <ul style="list-style-type: none">
             <li>
-              <i class="bi bi-check-circle final-msg-icon success"></i>
+              <i class="bi bi-check-circle final-msg-icon successt"></i>
             </li>
             <li>
               <h5>Your identity is verified!</h5>
             </li>
             <li>
-              <h6>You will be redirected back to verifier app in {{ maxTimeOut }}</h6>
+              <h6>You will be redirected back to the verifier app in {{ maxTimeOut }}</h6>
             </li>
           </ul>
         </div>
@@ -28,7 +28,7 @@
               <h5>We are sorry!</h5>
             </li>
             <li>
-              <h7>We could not verify your identity</h7>
+              <h6>We could not verify your identity</h6>
             </li>
           </ul>
         </div>
@@ -101,7 +101,7 @@ export default {
   color: red;
 }
 
-.success {
+.successt {
   color: green;
 }
 </style>

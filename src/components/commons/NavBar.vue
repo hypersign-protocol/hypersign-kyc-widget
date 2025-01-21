@@ -1,39 +1,70 @@
 <template>
-  <div class="navbar navbar-expand-md navbar-light" style="justify-content: end">
-    <a href="#" class="navbar-brand">
-      <!-- <img class="" src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="100px" /> -->
-    </a>
-
-    <span class="stepper" v-if="getActiveStep.name && getActiveStep.isEnabled == true"> {{ getActiveStep.name }} ({{ getActiveStep.id - length - lengthToMinus }}/{{ kycStepsLength }}) </span>
-  </div>
+  <v-row>
+    <v-col cols="12" offset-sm="0">
+      <v-card>
+        <v-toolbar color="white" flat>
+          <v-btn icon light @click="previousStep()">
+            <i class="bi bi-arrow-left"></i>
+          </v-btn>
+          <v-toolbar-title class="grey--text text--darken-4"> {{ currentStep.name }} ({{ currentStepNumber }}/{{ totalConfiguredSteps }}) </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-menu bottom left :offset-y="true">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon text v-bind="attrs" v-on="on">
+                <i class="bi bi-three-dots-vertical"></i>
+              </v-btn>
+            </template>
+            <v-card class="mx-auto" max-width="300" tile>
+              <v-list dense>
+                <v-list-item-group color="primary">
+                  <v-list-item class="center">
+                    <v-avatar size="40">
+                      <!-- <v-img v-if="getProfile.picture" :src="getProfile.picture"></v-img> -->
+                      <v-img :src="logoUrl"></v-img>
+                    </v-avatar>
+                  </v-list-item>
+                  <v-list-item class="center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{ getProfile.name }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <i class="bi bi-envelope-at"></i>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ getProfile.email }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-card>
+          </v-menu>
+        </v-toolbar>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import { STEP_NAMES } from '@/config'
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapState(['steps']),
-    ...mapGetters(['getActiveStep', 'getIfzkProofStep']),
-    length() {
-      if (this.getIfzkProofStep.isEnabled === false) {
-        if (this.getActiveStep.stepName === STEP_NAMES.UserConsent) {
-          return 2
-        } else {
-          return 1
-        }
-      } else {
-        return 1
-      }
+    ...mapGetters(['currentStep', 'getProfile']),
+    currentStepNumber() {
+      return this.$store.getters.currentStepNumber - 3
     },
-    lengthToMinus() {
-      const allRelevantSteps = this.steps.filter((step) => step.name != null)
-      const notActiveSteps = allRelevantSteps.filter((step) => step.isActive === true)
-      return notActiveSteps ? notActiveSteps.length : 0
+    totalConfiguredSteps() {
+      return this.$store.getters.enabledStepsToShow.length
     },
-    kycStepsLength() {
-      return this.steps.filter((step) => step.name != null && step.isEnabled === true).length
+    logoUrl() {
+      return require('@/assets/' + 'selfi.png')
+    },
+  },
+  methods: {
+    previousStep() {
+      this.$store.dispatch('previousStep')
     },
   },
 }
@@ -53,7 +84,7 @@ export default {
   font-size: smaller;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 450px) {
   .stepper {
     font-size: x-small;
   }

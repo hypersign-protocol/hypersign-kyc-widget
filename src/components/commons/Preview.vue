@@ -1,24 +1,28 @@
 <template>
-  <div>
-    <!-- <PageHeading :header="'Preview'" :subHeader="'Please verify if your data is correct before sumitting'" /> -->
-    <div class="row mt-2">
+  <div class="kyc-container widget-card-width">
+    <!-- <v-row>
+      <v-col>
+        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
+        <InfoMessage message="Verify Your Information" class="showOnMobile" />
+      </v-col>
+    </v-row> -->
+    <div class="row">
+      <div class="col-md-12">
+        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
+        <!-- <InfoMessage message="Verify Your Information" class="showOnMobile" /> -->
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-12" style="text-align: left">
-        <InfoMessage message="Please verify if your informations are correct" />
-        <div class="card widget-card preview">
-          <div class="row center">
-            <div class="col-4">
-              <div class="" style="align-items: baseline">
-                <img class="avatar" :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" height="100" />
-              </div>
-              <div class="center mt-2">
-                <span class="btn btn-success-link" style="color: green">
-                  <i class="bi bi-check-all"></i>
-                  {{ $store.state.kycExtractedData.extractionRaw.ocr.OVERALL_RATING }}
-                </span>
-              </div>
-            </div>
-            <div class="col-12">
-              <table class="table table-hover" style="text-align: left">
+        <v-card class="preview profile-card">
+          <div class="profile-image">
+            <v-avatar size="100" class="elevation-3">
+              <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
+            </v-avatar>
+          </div>
+          <div class="profile-details">
+            <v-simple-table style="text-align: left" dense>
+              <template v-slot:default>
                 <tbody>
                   <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
                     <td>
@@ -27,19 +31,37 @@
                     <td style="">{{ data[1] }}</td>
                   </tr>
                 </tbody>
-              </table>
-            </div>
+              </template>
+            </v-simple-table>
           </div>
-        </div>
+        </v-card>
       </div>
     </div>
 
-    <div class="row mt-2">
-      <div class="col-md-12">
-        <button class="btn btn-light" @click="rescan()">Rescan</button>
-        <button class="btn btn-outline-dark" @click="submit()">Continue</button>
+    <div class="container">
+      <div class="row center mt-1">
+        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
+        <v-btn outlined class="mt-1" block color="secondary" @click="rescan()">Rescan</v-btn>
       </div>
     </div>
+
+    <!-- <v-row>
+      <v-col>
+        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn text color="secondary" @click="rescan()">Rescan</v-btn>
+      </v-col>
+    </v-row> -->
+
+    <!-- <div class="row mt-2">
+      <div class="col-md-12">
+        
+      </div>
+      <div class="col-md"></div>
+    </div> -->
   </div>
 </template>
 
@@ -66,7 +88,6 @@ export default {
       isToast: false,
     }
   },
-
   methods: {
     ...mapActions(['verifyResult']),
     ...mapMutations(['nextStep', 'previousStep']),
@@ -140,9 +161,43 @@ export default {
   overflow-y: scroll;
 }
 
-@media (max-width: 768px) {
+.showOnMobile {
+  display: none;
+}
+.notShowOnMobile {
+  display: block;
+}
+@media (max-width: 450px) {
   .preview {
-    max-height: 500px;
+    max-height: 458px;
   }
+  .showOnMobile {
+    display: block;
+  }
+  .notShowOnMobile {
+    display: none;
+  }
+}
+
+.profile-image {
+  position: fixed;
+  top: 82px; /* Adjusted so half the image is outside the card */
+  left: 50%;
+  transform: translateX(-50%);
+  /* border-radius: 50%; */
+  /* border: 4px solid #fff; */
+  /* background: #fff; */
+  overflow: hidden;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.profile-details {
+  margin-top: 60px; /* Adjust to align details properly */
+}
+
+.profile-details p {
+  margin: 5px 0;
+  font-size: 12px;
+  color: #333;
 }
 </style>

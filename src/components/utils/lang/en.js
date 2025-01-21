@@ -4,7 +4,7 @@ export default {
     WIDGET_CONFIG_ERR: 'Widget configuration is not available',
     INVALID_ACCESS_TOKEN: 'Error initalization of widget, invalid token',
     AUTH_PROVIDER_ERR: 'Could not authenticate with provider ',
-    ONCHAIN_CONFIG_NOT_FOUND_ERR: '',
+    ONCHAIN_CONFIG_NOT_FOUND_ERR: 'No on-chain config found, proceeding with offchain verification',
     SESSION_NOT_FOUND_ERR: 'Session not found, proceeding to generate one',
     SESSION_ID_INVALID: 'Session ID is invalid or missing, close this window and try again from service provider app',
   },

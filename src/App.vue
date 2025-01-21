@@ -1,7 +1,12 @@
 <template>
-  <div id="app">
+  <v-app>
+    <v-container>
+      <router-view />
+    </v-container>
+  </v-app>
+  <!-- <div id="app">
     <router-view />
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -60,7 +65,7 @@ export default {
           id: 4,
           isActive: false,
           stepName: 'IdDocs4',
-          name: 'Gov-Issued ID',
+          name: 'ID Verification',
           previous: 3,
           isEnabled: false,
           stepTitle: 'Submit your ID document and recieve your KYC credential',
@@ -72,48 +77,48 @@ export default {
           id: 5,
           isActive: false,
           stepName: 'ZkProofs',
-          name: 'Generate Proofs',
+          name: 'Proofs Generation',
           previous: 4,
           isEnabled: false,
-          stepTitle: 'Generate zkProof',
+          stepTitle: 'Generate ZK Proof(s) & Mint your on-chain Identity',
           logo: 'proof.png',
           requiredCredentialTypes: ['zkProofOfKYC', 'zkProofOfAge', 'zkProofOfPersonHood'],
           hasDone: false,
         },
+        // {
+        //   id: 5,
+        //   isActive: false,
+        //   stepName: 'OnChainId4',
+        //   name: 'OnChain ID Minting',
+        //   previous: 4,
+        //   isEnabled: false,
+        //   stepTitle: 'Generate Zero Knowledge Proof(s) & Mint your on-chain Identity',
+        //   logo: 'proof.png',
+        //   requiredCredentialTypes: ['SBTCredential'],
+        //   hasDone: false,
+        // },
         {
           id: 6,
           isActive: false,
-          stepName: 'OnChainId4',
-          name: 'On Chain Identity',
+          stepName: 'UserConsent',
+          name: 'User Consent',
           previous: 5,
-          isEnabled: false,
-          stepTitle: 'Generate zkProof & Mint your on-chain Identity',
-          logo: 'proof.png',
-          requiredCredentialTypes: ['SBTCredential'],
-          hasDone: false,
+          isEnabled: true,
+          stepTitle: 'Provide consent of your data to the verifier app',
+          logo: 'consent.png',
         },
         {
           id: 7,
           isActive: false,
-          stepName: 'UserConsent',
-          name: 'Provide User Consent',
+          stepName: 'FinalResult',
           previous: 6,
           isEnabled: true,
-          stepTitle: 'Provide consent of your data to be shared with the verifier app',
-          logo: 'consent.png',
         },
         {
           id: 8,
           isActive: false,
-          stepName: 'FinalResult',
-          previous: 7,
-          isEnabled: true,
-        },
-        {
-          id: 9,
-          isActive: false,
           stepName: 'SessionExpired',
-          previous: 8,
+          previous: 7,
           isEnabled: true,
         },
       ]

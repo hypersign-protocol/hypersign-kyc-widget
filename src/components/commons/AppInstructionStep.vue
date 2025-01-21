@@ -1,13 +1,15 @@
 <template>
   <div class="row">
     <div class="col-2 center align-items-center">
-      <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
-        <!-- {{ stepNumber }} -->
+      <v-avatar style="padding: 1rem; font-size: large; font-weight: bolder; width: 50px; height: 50px; border: 1px solid lightgrey">
         <img :src="logoUrl" alt="Avatar" class="avatar" />
-      </div>
+      </v-avatar>
+      <!-- <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
+        <img :src="logoUrl" alt="Avatar" class="avatar" />
+      </div> -->
     </div>
     <div class="col-8" style="text-align: left">
-      <span style="font-size: medium; font-weight: bold; word-wrap: break-word">
+      <span class="app-font" style="font-weight: bold; word-wrap: break-word">
         {{ stepTitle }}
       </span>
     </div>
@@ -50,8 +52,8 @@ export default {
 <style scoped>
 .avatar {
   /* vertical-align: middle; */
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   /* border-radius: 50%; */
 }
 </style>

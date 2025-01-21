@@ -1,15 +1,13 @@
 import { HYPERSIGN_SERVICE_BASE_URL_FORMAT } from '../../config'
 import SignStoreConfig from './config'
 export default {
-  getActiveStep: (state) => {
-    const step = state.steps.find((x) => {
-      if (x.isActive === true && x.isEnabled === true) {
-        return x
-      }
-    })
-    return step
-  },
-  // -----------------------------------------------------------------e-kyc
+  enabledSteps: (state) => state.steps.filter((step) => step.isEnabled),
+  currentStep: (state, getters) => getters.enabledSteps[state.currentStepIndex],
+  enabledStepsToShow: (state, getters) => getters.enabledSteps.filter((x) => x.name != null),
+  isFirstStep: (state) => state.currentStepIndex === 0,
+  isLastStep: (state, getters) => state.currentStepIndex === getters.enabledSteps.length - 1,
+  totalConfiguredSteps: (state, getters) => getters.enabledSteps.length,
+  currentStepNumber: (state) => state.currentStepIndex + 1, // 1-based index for display
   getSession() {
     return localStorage.getItem(SignStoreConfig.LOCAL_STATES.SESSIONS)
   },
@@ -59,10 +57,6 @@ export default {
 
   getOnChainIssuerConfig: () => {
     const t = localStorage.getItem(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG)
-    console.log(SignStoreConfig.LOCAL_STATES.ON_CHAIN_CONFIG)
-
-    console.log(t)
-
     if (t) {
       return JSON.parse(t)
     } else {

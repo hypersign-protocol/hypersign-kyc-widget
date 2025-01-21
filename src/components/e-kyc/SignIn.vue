@@ -1,32 +1,16 @@
 <template>
-  <div>
+  <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
       <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
-      <div class="mt-4 p-4 width" style="margin: auto">
+      <div class="mt-4 p-4 widget-card-width" style="margin: auto">
         <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
         <GoogleButton :is-disable="error" />
         <ConsentBox />
       </div>
     </div>
-
-    <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
-    </div>
   </div>
 </template>
-
-<style scoped>
-.width {
-  width: 70%;
-}
-
-@media (max-width: 768px) {
-  .width {
-    width: 100%;
-  }
-}
-</style>
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
@@ -125,7 +109,7 @@ export default {
           masterWalletAddress: onchainconfig?.options?.masterWalletAddress,
         })
       } else {
-        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
+        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'success')
       }
     },
     preparePresentationRequest() {
