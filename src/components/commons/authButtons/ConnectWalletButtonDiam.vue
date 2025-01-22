@@ -72,7 +72,7 @@ export default {
         throw new Error(result.message)
       }
 
-      const walletAddress = result.walletAddress ? result.walletAddress : result.message[0].diamPublicKey
+      const walletAddress = result.walletAddress ? result.walletAddress : result.message[0]?.diamPublicKey ? result.message[0].diamPublicKey : result.message.data[0].diamPublicKey
 
       if (!walletAddress) {
         throw new Error('No wallet address found')
