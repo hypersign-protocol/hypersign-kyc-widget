@@ -48,39 +48,31 @@
     align-items: center;
     text-align: center;
   }
-
   .card-title {
     text-align: center;
   }
-
   .card-text {
     text-align: center;
   }
-
   .card-body {
     display: grid;
   }
-
   img {
     max-width: 80px;
     max-height: 80px;
   }
-
   h5 {
     font-size: 1.3rem;
   }
-
   p {
     font-size: 0.875rem;
   }
-
   .center-footer {
     display: flex;
     justify-content: center;
     align-items: center;
     color: green;
   }
-
   .show-verified {
     display: block;
   }
