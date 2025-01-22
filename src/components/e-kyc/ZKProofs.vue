@@ -255,6 +255,7 @@ import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-met
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
 import NibiruMainnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/cataclysm-1/chains'
 import DiamTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/diam/Diamante Testnet 2024/chains'
+import LunaTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/terra/rebel-2/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
 import { getCosmosChainConfig, HYPERSIGN_PROOF_TYPES } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createNonSigningClient, calculateFee } from '../utils/cosmos-client'
@@ -300,6 +301,7 @@ export default {
         return {}
       }
       const { ecosystem, blockchain, chainId } = this.getOnChainIssuerConfig
+
       let SupportedChains
 
       if (ecosystem === 'cosmos' && blockchain === 'nibi' && chainId === 'nibiru-localnet-0') {
@@ -312,6 +314,8 @@ export default {
         SupportedChains = NibiruMainnetChainJson
       } else if (ecosystem === 'stellar' && blockchain === 'diam' && chainId === 'Diamante Testnet 2024') {
         SupportedChains = DiamTestnetChainJson
+      } else if (ecosystem === 'cosmos' && blockchain === 'terra' && chainId === 'rebel-2') {
+        SupportedChains = LunaTestnetChainJson
       }
 
       if (!SupportedChains) {
@@ -1600,7 +1604,7 @@ export default {
       const chainCoinDenom = chainConfig?.feeCurrencies[0]?.coinMinimalDenom
       const gasPriceAvg = chainConfig?.gasPriceStep?.average
       /* eslint-disable-next-line */
-      const fee = calculateFee(700_000, (gasPriceAvg + chainCoinDenom).toString())
+      const fee = calculateFee(500_000_0, (gasPriceAvg + chainCoinDenom).toString())
 
       /* eslint-disable-next-line */
       return await smartContractExecuteRPC(this.cosmosConnection.signingClient, chainCoinDenom, this.connectedWalletAddress, this.getOnChainIssuerConfig.contractAddress, smartContractMsg, fee)
