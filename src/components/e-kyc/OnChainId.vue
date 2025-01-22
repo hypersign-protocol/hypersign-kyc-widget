@@ -150,6 +150,7 @@ import ConnectWalletButton from '../commons/authButtons/ConnectWalletButton.vue'
 import NibiruLocalNetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-localnet-0/chains'
 import NibiruTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/nibi/nibiru-testnet-1/chains'
 import OsmosisTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/osmo/osmo-test-5/chains'
+import LunaTestnetChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/terra/rebel-2/chains'
 
 // import ComdexChainJson from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/comdex/chains'
 import { constructKYCSBTMintMsg, constructQuerySBTContractMetadata } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/contract/msg'
@@ -177,6 +178,8 @@ export default {
         SupportedChains = NibiruTestnetChainJson
       } else if (ecosystem === 'cosmos' && blockchain === 'osmo' && chainId === 'osmo-test-5') {
         SupportedChains = OsmosisTestnetChainJson
+      } else if (ecosystem === 'cosmos' && blockchain === 'terra' && chainId === 'rebel-2') {
+        SupportedChains = LunaTestnetChainJson
       }
 
       if (!SupportedChains) {
