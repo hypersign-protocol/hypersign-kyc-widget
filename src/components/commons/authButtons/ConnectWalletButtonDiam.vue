@@ -4,7 +4,7 @@
       <img :src="getChainDetail().logoUrl" class="rounded" style="width: 20px" alt="Avatar" />
       Connect DIAM Wallet
     </v-btn>
-    <small style="color: indianred; text-decoration: underline" v-if="!ifDiamInstalled"><a href="https://chromewebstore.google.com/detail/diam-wallet/oakkognifoojdbfjaccegangippipdmn?hl=en" target="_blank">DIAM Wallet extention</a> not installed in your browser</small>
+    <small style="color: indianred; text-decoration: underline" v-if="!ifDiamInstalled"><a href="https://chromewebstore.google.com/detail/diam-wallet/ghncoolaiahphiaccmhdofdfkdokbljk?hl=en" target="_blank">DIAM Wallet extention</a> not installed in your browser</small>
   </div>
 </template>
 <script>
