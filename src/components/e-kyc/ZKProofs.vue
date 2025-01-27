@@ -134,14 +134,14 @@
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
       <!-- <PageHeading :header="'Proof & OnChain ID'" :subHeader="'Get Proof and Mint Your Onchain ID'" :beta="true" /> -->
-      <div class="row" v-if="connectedWalletAddress">
+      <!-- <div class="row" v-if="connectedWalletAddress">
         <div class="col-md-12" style="text-align: start">
           <v-btn text class="btn btn-link" @click="disconnectWallet()" style="text-decoration: underline; color: grey; cursor: pointer" title="Disconnect Wallet">
             {{ shorten(connectedWalletAddress) }}
             <i class="bi bi-box-arrow-right"></i>
           </v-btn>
-        </div>
-      </div>
+        </div> 
+      </div> -->
       <v-row dense class="kyc-container">
         <v-col cols="12">
           <v-card class="mx-auto mb-2" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
@@ -225,7 +225,7 @@
               </v-btn>
             </template>
 
-            <ConnectWalletButton :ecosystem="this.SelectedOnChainIssuerConfig.ecosystem" :blockchain="this.SelectedOnChainIssuerConfig.blockchain" :chainId="this.SelectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" v-if="!showConnectWallet" />
+            <ConnectWalletButton :ecosystem="this.selectedOnChainIssuerConfig.ecosystem" :blockchain="this.selectedOnChainIssuerConfig.blockchain" :chainId="this.selectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" v-if="!showConnectWallet" />
           </div>
         </div>
       </div>
@@ -239,13 +239,13 @@
       </div>
       <!-- center align -->
       <div class="row" style="margin: 12px !important; justify-content: center">
-        <div class="col-5" style="justify-content: center">
+        <div class="col-10" style="justify-content: center">
           <div class="row" style="justify-content: center">
-            <v-select v-model="SelectedOnChainIssuerConfig" style="text-align: center" :items="getOnChainIssuerConfig" item-text="chainId" label="Select Chain" dense outlined clearable return-object class="no-primary-style"> </v-select>
+            <v-select v-model="selectedOnChainIssuerConfig" style="text-align: center" :items="getOnChainIssuerConfig" item-text="chainId" label="Select Chain" dense outlined clearable return-object class="no-primary-style"> </v-select>
           </div>
-          <div class="row" v-if="SelectedOnChainIssuerConfig" style="justify-content: center">
-            <ConnectWalletButton :ecosystem="SelectedOnChainIssuerConfig.ecosystem" v-if="SelectedOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="SelectedOnChainIssuerConfig.blockchain" :chainId="SelectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
-            <ConnectWalletButtonDiam :ecosystem="SelectedOnChainIssuerConfig.ecosystem" v-if="SelectedOnChainIssuerConfig.blockchain == 'diam'" :blockchain="SelectedOnChainIssuerConfig.blockchain" :chainId="SelectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
+          <div class="row" v-if="selectedOnChainIssuerConfig" style="justify-content: center">
+            <ConnectWalletButton :ecosystem="selectedOnChainIssuerConfig.ecosystem" v-if="selectedOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="selectedOnChainIssuerConfig.blockchain" :chainId="selectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
+            <ConnectWalletButtonDiam :ecosystem="selectedOnChainIssuerConfig.ecosystem" v-if="selectedOnChainIssuerConfig.blockchain == 'diam'" :blockchain="selectedOnChainIssuerConfig.blockchain" :chainId="selectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
           </div>
         </div>
       </div>
@@ -307,10 +307,10 @@ export default {
       }
     },
     getChainConfig() {
-      if (!this.SelectedOnChainIssuerConfig) {
+      if (!this.selectedOnChainIssuerConfig) {
         return {}
       }
-      const { ecosystem, blockchain, chainId } = this.SelectedOnChainIssuerConfig
+      const { ecosystem, blockchain, chainId } = this.selectedOnChainIssuerConfig
 
       let SupportedChains
 
@@ -331,7 +331,7 @@ export default {
       if (!SupportedChains) {
         throw new Error(MESSAGE.WALLET.ECO_SYSTEM_NOT_SUPPORTED)
       }
-      const requestedChainId = this.SelectedOnChainIssuerConfig.chainId
+      const requestedChainId = this.selectedOnChainIssuerConfig.chainId
       const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
 
       if (!chainConfig) {
@@ -347,7 +347,7 @@ export default {
       }
     },
     blockchainLabel() {
-      return `${this.SelectedOnChainIssuerConfig.ecosystem}:${this.SelectedOnChainIssuerConfig.blockchain}:${this.SelectedOnChainIssuerConfig.chainId}`
+      return `${this.selectedOnChainIssuerConfig.ecosystem}:${this.selectedOnChainIssuerConfig.blockchain}:${this.selectedOnChainIssuerConfig.chainId}`
     },
     isNextEnabled() {
       let result
@@ -381,7 +381,7 @@ export default {
       showModal: false,
       credentials: [],
       zkproofLoader: [],
-      SelectedOnChainIssuerConfig: null,
+      selectedOnChainIssuerConfig: null,
     }
   },
   methods: {
@@ -1618,14 +1618,14 @@ export default {
       const fee = calculateFee(500_000_0, (gasPriceAvg + chainCoinDenom).toString())
 
       /* eslint-disable-next-line */
-      return await smartContractExecuteRPC(this.cosmosConnection.signingClient, chainCoinDenom, this.connectedWalletAddress, this.SelectedOnChainIssuerConfig.contractAddress, smartContractMsg, fee)
+      return await smartContractExecuteRPC(this.cosmosConnection.signingClient, chainCoinDenom, this.connectedWalletAddress, this.selectedOnChainIssuerConfig.contractAddress, smartContractMsg, fee)
     },
 
     async mintDiamToken(credential) {
       ///  call asset generation api
       const payload = {
         credential,
-        onchainConfigId: this.SelectedOnChainIssuerConfig.id,
+        onchainConfigId: this.selectedOnChainIssuerConfig.id,
         walletAddress: this.connectedWalletAddress,
         blockchainLabel: this.blockchainLabel,
       }
@@ -1660,9 +1660,9 @@ export default {
 
         let result
 
-        if (this.SelectedOnChainIssuerConfig.ecosystem === 'cosmos') {
+        if (this.selectedOnChainIssuerConfig.ecosystem === 'cosmos') {
           result = await this.mintCosmosToken(credential, proof)
-        } else if (this.SelectedOnChainIssuerConfig.ecosystem === 'stellar' && this.SelectedOnChainIssuerConfig.blockchain === 'diam') {
+        } else if (this.selectedOnChainIssuerConfig.ecosystem === 'stellar' && this.selectedOnChainIssuerConfig.blockchain === 'diam') {
           result = await this.mintDiamToken(credential)
         } else {
           throw new Error('Ecosystem or blockchain not supported')
@@ -1673,23 +1673,23 @@ export default {
 
           let sbtMintPayload
 
-          if (this.SelectedOnChainIssuerConfig.ecosystem === 'cosmos') {
+          if (this.selectedOnChainIssuerConfig.ecosystem === 'cosmos') {
             sbtMintPayload = {
               blockchainLabel: this.blockchainLabel,
-              sbtContractAddress: this.SelectedOnChainIssuerConfig.contractAddress,
+              sbtContractAddress: this.selectedOnChainIssuerConfig.contractAddress,
               ownerWalletAddress: this.connectedWalletAddress,
               // tokenId: sbtTokenId, // TODO what is this token ID.
               transactionHash: result.transactionHash,
               proofType: proof.proofType,
             }
-          } else if (this.SelectedOnChainIssuerConfig.ecosystem === 'stellar' && this.SelectedOnChainIssuerConfig.blockchain === 'diam') {
+          } else if (this.selectedOnChainIssuerConfig.ecosystem === 'stellar' && this.selectedOnChainIssuerConfig.blockchain === 'diam') {
             sbtMintPayload = {
               blockchainLabel: this.blockchainLabel,
               ownerWalletAddress: this.connectedWalletAddress,
               transactionHash: result.transactionHash,
               proofType: proof.proofType,
               assetIssuerWalletAddress: result?.assetMetadata?.issuer, // intermediatory account
-              issuerWalletAddress: this.SelectedOnChainIssuerConfig.masterWalletAddress, // master wallet or source account
+              issuerWalletAddress: this.selectedOnChainIssuerConfig.masterWalletAddress, // master wallet or source account
             }
           }
 
