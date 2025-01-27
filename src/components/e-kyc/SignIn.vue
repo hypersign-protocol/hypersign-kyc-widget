@@ -78,6 +78,8 @@ export default {
       return JSON.parse(jsonPayload)
     },
     async validationForOnChainIdConfig() {
+      this.isLoading = true
+      const onChainIssuerConfigs = []
       if (this.getWidgetConfigFromDb.onChainId.enabled) {
         const onchainIdConfiguration = this.getWidgetConfigFromDb.onChainId.selectedOnChainKYCconfiguration
         if (!onchainIdConfiguration) {
@@ -87,30 +89,35 @@ export default {
           }
           throw new Error('Incorrect configuration: OnChainConfig Id must be passed for onchainId step')
         }
+        for (let i = 0; i < onchainIdConfiguration.length; i++) {
+          const onchainconfig = await this.getOnChainConfigByIdAction(onchainIdConfiguration[i])
+          const { blockchainLabel, kycContractAddress, sbtContractAddress } = onchainconfig
 
-        const onchainconfig = await this.getOnChainConfigByIdAction(onchainIdConfiguration)
-        const { blockchainLabel, kycContractAddress, sbtContractAddress } = onchainconfig
+          // chainID format: <ecosystem>:<blockchain>:<chainId>
+          //  e.g: cosmos:comdex:localnet-1
+          //  e.g: evm:polygon:134
+          //  e.g: cosmos:nibiru:nibi-localnet-1
+          const chainIdComponents = blockchainLabel.split(':')
+          // at 0: ecosystem
+          // at 1: blockchain
+          // at 2: chainId
 
-        // chainID format: <ecosystem>:<blockchain>:<chainId>
-        //  e.g: cosmos:comdex:localnet-1
-        //  e.g: evm:polygon:134
-        //  e.g: cosmos:nibiru:nibi-localnet-1
-        const chainIdComponents = blockchainLabel.split(':')
-        // at 0: ecosystem
-        // at 1: blockchain
-        // at 2: chainId
+          onChainIssuerConfigs.push({
+            id: onchainIdConfiguration[i],
+            ecosystem: chainIdComponents[0],
+            blockchain: chainIdComponents[1],
+            chainId: chainIdComponents[2],
+            contractAddress: kycContractAddress,
+            sbtContractAddress,
+            masterWalletAddress: onchainconfig?.options?.masterWalletAddress,
+          })
+        }
 
-        this.setOnChainIssuerConfig({
-          ecosystem: chainIdComponents[0],
-          blockchain: chainIdComponents[1],
-          chainId: chainIdComponents[2],
-          contractAddress: kycContractAddress,
-          sbtContractAddress,
-          masterWalletAddress: onchainconfig?.options?.masterWalletAddress,
-        })
+        this.setOnChainIssuerConfig(onChainIssuerConfigs)
       } else {
         this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'success')
       }
+      this.isLoading = false
     },
     preparePresentationRequest() {
       if (!this.getWidgetConfigFromDb) {

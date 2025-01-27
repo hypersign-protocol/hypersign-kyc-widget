@@ -7,7 +7,7 @@
   </div>
 </template>
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations } from 'vuex'
 import { getUserAddressFromOfflineSigner, getCosmosCoinLogo } from '@hypersign-protocol/hypersign-kyc-chains-metadata/cosmos/wallet/cosmos-wallet-utils'
 import { createClient, createNonSigningClient } from '../../utils/cosmos-client'
 export const AUTH_PROVIDERS = Object.freeze({
@@ -22,12 +22,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    ecosystem: {
+      type: String,
+      default: 'cosmos',
+    },
+    blockchain: {
+      type: String,
+      default: 'nibiru',
+    },
+    chainId: {
+      type: String,
+      default: 'nibiru-localnet-0',
+    },
   },
   computed: {
-    ...mapGetters(['getOnChainIssuerConfig']),
-
     selectedBlockchainLogo() {
-      return getCosmosCoinLogo(`${this.getOnChainIssuerConfig.ecosystem}:${this.getOnChainIssuerConfig.blockchain}:${this.getOnChainIssuerConfig.chainId}`)
+      return getCosmosCoinLogo(`${this.ecosystem}:${this.blockchain}:${this.chainId}`)
     },
   },
   methods: {
@@ -37,14 +47,15 @@ export default {
       await window.keplr.disable()
     },
     async connectWallet() {
-      const { ecosystem, blockchain } = this.getOnChainIssuerConfig
-      const { default: SupportedChains } = await import(`@hypersign-protocol/hypersign-kyc-chains-metadata/${ecosystem}/wallet/${blockchain}/${this.getOnChainIssuerConfig.chainId}/chains`)
+      const { ecosystem, blockchain } = { ecosystem: this.ecosystem, blockchain: this.blockchain }
+      const { default: SupportedChains } = await import(`@hypersign-protocol/hypersign-kyc-chains-metadata/${ecosystem}/wallet/${blockchain}/${this.chainId}/chains`)
 
       if (!SupportedChains) {
         throw new Error('Ecosysem or blockchain is not supported')
       }
 
-      const requestedChainId = this.getOnChainIssuerConfig.chainId
+      const requestedChainId = this.chainId
+      console.log(requestedChainId)
       const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
       if (!chainConfig) {
         throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
