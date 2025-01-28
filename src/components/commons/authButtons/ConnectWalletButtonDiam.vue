@@ -1,12 +1,18 @@
 <template>
   <div>
-    <v-btn type="button" class="btn btn-outline-dark btn-lg mb-2" @click="connectWallet()" :disabled="isDisable || !ifDiamInstalled">
+    <v-btn type="button" class="btn btn-outline-dark btn-lg mb-2 diam" @click="connectWallet()" :disabled="isDisable || !ifDiamInstalled">
       <img :src="getChainDetail().logoUrl" class="rounded" style="width: 20px" alt="Avatar" />
       Connect DIAM Wallet
     </v-btn>
     <small style="color: indianred; text-decoration: underline" v-if="!ifDiamInstalled"><a href="https://chromewebstore.google.com/detail/diam-wallet/ghncoolaiahphiaccmhdofdfkdokbljk?hl=en" target="_blank">DIAM Wallet extention</a> not installed in your browser</small>
   </div>
 </template>
+<style>
+.diam {
+  padding: 0 22px !important;
+  margin: 0;
+}
+</style>
 <script>
 import { mapMutations } from 'vuex'
 import { getStellarCoinLogo, getStellarChainConfig } from '@hypersign-protocol/hypersign-kyc-chains-metadata/stellar/wallet/stellar-wallet-utils'
