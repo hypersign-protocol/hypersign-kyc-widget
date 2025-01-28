@@ -110,6 +110,7 @@ export default {
             contractAddress: kycContractAddress,
             sbtContractAddress,
             masterWalletAddress: onchainconfig?.options?.masterWalletAddress,
+            name: chainIdComponents[1] + ':' + chainIdComponents[2],
           })
         }
 

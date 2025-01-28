@@ -238,10 +238,10 @@
         </div>
       </div>
       <!-- center align -->
-      <div class="row" style="margin: 12px !important; justify-content: center">
-        <div class="col-10" style="justify-content: center">
+      <div class="row" style="justify-content: center">
+        <div class="col" style="justify-content: center; max-width: 260px; min-width: 260px">
           <div class="row" style="justify-content: center">
-            <v-select v-model="selectedOnChainIssuerConfig" style="text-align: center" :items="getOnChainIssuerConfig" item-text="chainId" label="Select Chain" dense outlined clearable return-object class="no-primary-style"> </v-select>
+            <v-select v-model="selectedOnChainIssuerConfig" style="text-align: center" :items="getOnChainIssuerConfig" item-text="name" label="Select Network" dense outlined clearable return-object class="no-primary-style"> </v-select>
           </div>
           <div class="row" v-if="selectedOnChainIssuerConfig" style="justify-content: center">
             <ConnectWalletButton :ecosystem="selectedOnChainIssuerConfig.ecosystem" v-if="selectedOnChainIssuerConfig.ecosystem == 'cosmos'" :blockchain="selectedOnChainIssuerConfig.blockchain" :chainId="selectedOnChainIssuerConfig.chainId" @authEvent="myEventListener" />
@@ -1725,6 +1725,8 @@ export default {
   async mounted() {
     try {
       this.isLoading = true
+      this.selectedOnChainIssuerConfig = this.getOnChainIssuerConfig[0]
+
       if (this.getOnChainIssuerConfig && this.getOnChainIssuerConfig.ecosystem === 'cosmos') {
         this.toast('Fetching SBT contract metadata', 'success')
         this.nft.metadata = await this.getContractMetadata(this.getOnChainIssuerConfig.sbtContractAddress)
