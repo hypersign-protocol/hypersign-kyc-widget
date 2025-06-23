@@ -51,11 +51,11 @@ export default {
           text: 'Passport',
           type: 'PASSPORT',
         },
-        {
-          icon: require('../../assets/governament.png'),
-          text: 'Government ID Card',
-          type: 'ID_CARD',
-        },
+        // {
+        //   icon: require('../../assets/governament.png'),
+        //   text: 'Government ID Card',
+        //   type: 'ID_CARD',
+        // },
       ],
       govIdType: '',
     }
