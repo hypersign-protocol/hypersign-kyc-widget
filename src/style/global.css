@@ -34,12 +34,12 @@ body {
 }
 
 .app-font {
-  font-size: medium
+  font-size: medium;
 }
 
 @media (max-width: 450px) {
   .app-font {
-    font-size: small
+    font-size: small;
   }
 }
 /* h1 {
