@@ -64,6 +64,12 @@ export default {
       toastMessage: '',
       toastType: 'success',
       isToast: false,
+      failScreen: {
+        isFail: false,
+        message: '',
+        buttonText: '',
+        onAction: null,
+      },
     }
   },
 
@@ -91,6 +97,7 @@ export default {
     },
     prepare() {
       if (this.hasKycDone) {
+        console.log('Inside prepare this.hasKycDone = ' + this.hasKycDone)
         // then move to onchainIdStep step
         const nextStepIndex = this.getNextStepIndex()
         this.nextStep(nextStepIndex)
@@ -143,7 +150,9 @@ export default {
       this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, 'warning')
       this.extractOcrIdDoc({ documentType: this.selectedDocumentType })
         .then(async (res) => {
+          console.log('Inside. this.extractOcrIdDoc ...')
           if (res?.serviceDocument) {
+            console.log('Inside. res?.serviceDocument ...')
             let kycExtracted = {}
 
             kycExtracted = {
@@ -153,11 +162,18 @@ export default {
               ...kycExtracted,
             }
 
+            console.log('Before committing setKycExtractedData.. ')
             await this.$store.commit('setKycExtractedData', {
               data: {
                 extractionRaw: { ocr: kycExtracted },
               },
               status: true,
+            })
+          } else {
+            console.log('Inside else committing setKycExtractedData.. ')
+            await this.$store.commit('setKycExtractedData', {
+              data: {},
+              status: false,
             })
           }
 
@@ -165,11 +181,27 @@ export default {
           this.isLoading = false
           this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, 'success')
         })
-        .catch((e) => {
-          this.toast(e.message, 'error')
+        .catch(async (e) => {
+          console.log({ e })
+          console.log({ message: e.message })
           this.isLoading = false
           this.isWidgetStarted = false
+          await this.$store.commit('setKycExtractedData', {
+            data: {},
+            status: false,
+          })
+          this.toast(e.message, 'error')
+          EVENT.unSubscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
           this.back()
+
+          // TODO: Not working - Not moving to step 8
+          if (e.message.includes('Session with given ID')) {
+            console.log('Iside if of catch')
+            this.isLoading = false
+            this.nextStep(8)
+          } else {
+            console.log('Iside else of catch')
+          }
         })
       setTimeout(this.verifyOCRDocStatus, 4000)
     },
@@ -254,22 +286,44 @@ export default {
             this.isLoading = false
           }, 3000)
         })
-        .catch((e) => {
+        .catch(async (e) => {
+          await this.$store.commit('setKycExtractedData', {
+            data: {},
+            status: false,
+          })
+          // if (e.message) {
+          //   if (e.message.includes('Session with given ID')) {
+          //     this.isLoading = false
+          //     this.toast(e.message, 'error')
+          //     return this.nextStep(8)
+          //   } else {
+          //     this.toast(e.message, 'error')
+          //   }
+          // }
           if (e.message) {
-            if (e.message.includes('Session with given ID')) {
-              this.isLoading = false
-              return this.nextStep(8)
-            } else {
-              this.toast(e.message, 'error')
+            this.failScreen = {
+              isFail: true,
+              message: e.message,
+              buttonText: 'Back To Verifier App',
+              onAction: () => {
+                const data = JSON.stringify({
+                  status: 'error',
+                  message: e.message,
+                })
+                if (window.opener) {
+                  window.opener.postMessage(data, '*')
+                  self.close()
+                } else {
+                  window.close()
+                }
+              },
             }
           }
-          console.error(e)
-          this.toast(e.message, 'error')
+          // this.toast(e.message, 'error')
           this.isLoading = false
+          EVENT.unSubscribeEvent(EVENTS.IDDOCOCR, this.onVerifyIdOcrStatusEventRecieved)
           this.back()
         })
-
-      // setTimeout(this.verifyOCRDocStatus, 1000);
     },
 
     onVerifyIdOcrStatusEventRecieved(event) {
@@ -316,16 +370,18 @@ export default {
   <div class="card-body min-h-36">
     <!-- <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" /> -->
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-    <div class="row" v-if="!chooseDocumentType">
+    <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
+
+    <div class="row" v-if="!chooseDocumentType && !failScreen.isFail">
       <div class="col-12">
-        <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !ifExtractedData" style="height: 300px" />
+        <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !hasKycDone" style="height: 300px" />
       </div>
       <div class="col-12">
         <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
       </div>
     </div>
-    <div v-else>
-      <div class="row" style="text-align: left; min-height: 550px" v-if="!ifExtractedData && selectedDocumentType != ''">
+    <div v-else-if="!failScreen.isFail">
+      <div class="row" style="text-align: left; min-height: 550px" v-if="!hasKycDone && selectedDocumentType != ''">
         <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
           <facephi-selphid
             v-if="isWidgetStarted && selectedDocumentType != ''"

@@ -49,6 +49,12 @@ export default {
       toastMessage: '',
       toastType: 'success',
       isToast: false,
+      failScreen: {
+        isFail: false,
+        message: '',
+        buttonText: '',
+        onAction: null,
+      },
     }
   },
   created() {
@@ -106,7 +112,6 @@ export default {
 
     onExtractionFinish: async function (extractionResult) {
       if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
-        await this.$store.commit('setLivelinessDone', true)
         await this.$store.commit('setLivelinessCapturedData', {
           tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
           biometricTemplateRaw: extractionResult.detail.templateRaw,
@@ -117,21 +122,37 @@ export default {
         this.isLoading = true
         this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, 'warning')
         this.verifyLiveliness()
-          .then(() => {
+          .then(async () => {
+            await this.$store.commit('setLivelinessDone', true)
             const nextStepNumber = this.getNextStepIndex()
             this.nextStep(nextStepNumber)
             this.isLoading = false
           })
-          .catch((e) => {
+          .catch(async (e) => {
+            await this.$store.commit('setLivelinessCapturedData', {})
+            this.isLoading = false
             if (e.message) {
-              if (e.message.includes('Session with given ID')) {
-                this.isLoading = false
-                this.nextStep(8)
-                return
+              this.failScreen = {
+                isFail: true,
+                message: e.message,
+                buttonText: 'Back To Verifier App',
+                onAction: () => {
+                  if (window.opener) {
+                    const data = JSON.stringify({
+                      status: 'error',
+                      message: e.message,
+                    })
+                    window.opener.postMessage(data, '*')
+                    self.close()
+                  } else {
+                    window.close()
+                  }
+                },
               }
             }
-            this.toast(e.message, 'error')
+            // this.toast(e.message, 'error')
             this.isLoading = false
+            EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
           })
         setTimeout(this.verifyLivelinessStatus, 500)
       } else {
@@ -223,7 +244,8 @@ export default {
   <div class="card-body min-h-36">
     <!-- <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" /> -->
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-    <div class="row h-100">
+    <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
+    <div class="row h-100" v-if="!failScreen.isFail">
       <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
         <facephi-selphi
           v-if="isWidgetStarted"
@@ -255,7 +277,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="row" v-if="!isWidgetStarted && !isLoading">
+    <div class="row" v-if="!isWidgetStarted && !isLoading && !failScreen.isFail">
       <div class="col-12 center">
         <div class="col-md-4 d-flex flex-column widget-card-width">
           <v-btn type="v-btn" id="btnStartCapture" block color="secondary" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle mx-1"></i> Start Capture</v-btn>

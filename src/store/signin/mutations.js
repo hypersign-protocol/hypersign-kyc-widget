@@ -18,6 +18,7 @@ export default {
     }
   },
   PREVIOUS_STEP(state) {
+    console.log({ currentStepIndex: state.currentStepIndex })
     if (state.currentStepIndex > 0) {
       state.currentStepIndex--
     }

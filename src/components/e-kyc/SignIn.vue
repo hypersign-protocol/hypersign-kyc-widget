@@ -116,7 +116,7 @@ export default {
 
         this.setOnChainIssuerConfig(onChainIssuerConfigs)
       } else {
-        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'success')
+        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
       }
       this.isLoading = false
     },
@@ -261,6 +261,11 @@ export default {
       // this.isLoading = false;
     } catch (e) {
       this.error = true
+      if (e.message?.indexOf('jwt') === 0) {
+        this.toast(MESSAGE.SIGN.TOKEN_EXPIRED, 'error')
+        this.isLoading = false
+        return
+      }
       this.toast(e.message, 'error')
       this.isLoading = false
     }

@@ -1,33 +1,38 @@
-<style type="text/css" scoped>
+<style scoped>
 .toast1 {
-  bottom: 9%;
-  width: 100%;
-  height: 100%;
-  border-radius: 2px 2px 2px 2px;
-  z-index: 100;
-  text-align: left;
-  padding-left: 5px;
-  padding-right: 5px;
-  font-size: small;
-  color: black;
+  position: fixed;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 70%;
+  max-width: 90%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #000;
   word-wrap: break-word;
-  transition: opacity 0.5s ease-in-out;
+  text-align: center;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 0;
-  /* position: fixed */
-  left: 0;
-  right: 0;
-  position: absolute;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  pointer-events: none;
 }
 
+/* Visible state */
 .toast1.show {
   opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
+/* Hidden state */
 .toast1.hide {
   opacity: 0;
+  transform: translateX(-50%) translateY(20px);
 }
 </style>
-
 <template>
   <div :class="toastAction" :style="{ 'background-color': toastColor }">
     {{ shortenMesssage }}
