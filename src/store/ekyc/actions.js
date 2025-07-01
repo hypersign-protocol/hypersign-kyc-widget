@@ -37,7 +37,7 @@ export default {
   verifyLiveliness: ({ commit, state, getters, dispatch }) => {
     return new Promise(async (resolve, reject) => {
       // eslint-disable-line
-      if (state.livelinessCapturedData.tokenSelfiImage === '' || !state.hasLivelinessDone) {
+      if (state.livelinessCapturedData.tokenSelfiImage === '') {
         return reject(new Error('User has not performed liveliness check'))
       }
       try {
@@ -158,14 +158,6 @@ export default {
 
   extractOcrIdDoc: ({ state, getters, commit }, payload) => {
     return new Promise(async (resolve, reject) => {
-      // eslint-disable-line
-      // if (state.kycCapturedData.tokenFrontDocumentImage === "" || !state.hasKycDone) {
-      //     return reject('User has not performed ID capturing')
-      // }
-
-      // if (!state.livelinessCapturedData.bestImageTokenized) {
-      //     return reject('User has not performed Facial recognition')
-      // }
       try {
         const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/extract`
         const headers = {
@@ -189,9 +181,11 @@ export default {
           //  store the result to state
           return resolve(data)
         } else {
+          console.log('extractOcrIdDoc:: Inside else ' + new Error(json))
           return reject(new Error(json))
         }
       } catch (e) {
+        console.log('extractOcrIdDoc:: Inside catch ')
         return reject(new Error('Error verifying ID document ' + e.message))
       }
     })

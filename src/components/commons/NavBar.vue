@@ -3,7 +3,10 @@
     <v-col cols="12" offset-sm="0">
       <v-card>
         <v-toolbar color="white" flat>
-          <v-btn icon light @click="previousStep()">
+          <!-- <v-btn icon light @click="previousStep()">
+            <i class="bi bi-arrow-left"></i>
+          </v-btn> -->
+          <v-btn icon light>
             <i class="bi bi-arrow-left"></i>
           </v-btn>
           <v-toolbar-title class="grey--text text--darken-4"> {{ currentStep.name }} ({{ currentStepNumber }}/{{ totalConfiguredSteps }}) </v-toolbar-title>

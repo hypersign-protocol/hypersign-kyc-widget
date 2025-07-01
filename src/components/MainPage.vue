@@ -2,7 +2,7 @@
   <div>
     <template>
       <!-- eslint-disable -->
-      <v-card class="maincontainer main-container-height" style="text-align: center; background-color: #f5f5f5">
+      <v-card class="maincontainer main-container-height">
         <NavBar v-if="currentStep && currentStep.name && currentStep.isEnabled == true" />
         <component :is="currentStepComponent"></component>
         <div class="footer">

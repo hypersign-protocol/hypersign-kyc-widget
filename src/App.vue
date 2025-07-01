@@ -53,7 +53,7 @@ export default {
           id: 3,
           isActive: false,
           stepName: 'LiveLiness3',
-          name: 'Face Verification',
+          name: 'Liveliness Check',
           previous: 2,
           isEnabled: false,
           stepTitle: 'Conduct liveliness check to prove you are a human',

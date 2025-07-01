@@ -16,29 +16,30 @@ export default {
     commit('UPDATE_STEP_STATE', payload)
   },
   getNewSession: async ({ commit, dispatch, getters }, payload) => {
-    try {
-      const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`
-      const headers = {
-        Authorization: 'Bearer ' + getters.getCavachAccessToken,
-      }
-
-      try {
-        const ip = await dispatch('getClientIp')
-        headers['X-Forwarded-For'] = ip
-      } catch (e) {
-        console.error(e)
-      }
-
-      const data = await RequestHandler(url, 'POST', payload, headers)
-      if (data.sessionId) {
-        commit('setSession', data.sessionId)
-        return data
-      } else {
-        throw new Error(data)
-      }
-    } catch (e) {
-      throw new Error(`Error getting new session  ${e}`)
+    // try {
+    const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`
+    const headers = {
+      Authorization: 'Bearer ' + getters.getCavachAccessToken,
     }
+
+    try {
+      const ip = await dispatch('getClientIp')
+      headers['X-Forwarded-For'] = ip
+    } catch (e) {
+      console.error(e)
+    }
+
+    const data = await RequestHandler(url, 'POST', payload, headers)
+    if (data.sessionId) {
+      commit('setSession', data.sessionId)
+      return data
+    } else {
+      throw new Error(data)
+    }
+    // } catch (e) {
+    //   console.log({ e })
+    //   throw new Error(`Error getting new session  ${e}`)
+    // }
   },
 
   fetchAppsWidgetConfig: ({ dispatch, commit, getters }) => {

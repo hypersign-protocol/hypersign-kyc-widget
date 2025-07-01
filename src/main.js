@@ -6,8 +6,8 @@ import 'bootstrap-icons/font/bootstrap-icons'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import store from './store/store.js'
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/vue-loading.css'
+// import Loading from 'vue-loading-overlay'
+// import 'vue-loading-overlay/dist/vue-loading.css'
 import './style/global.css'
 import MessageBox from './components/commons/MessageBox.vue'
 import NavBar from './components/commons/NavBar.vue'
@@ -16,13 +16,15 @@ import PoweredBy from './components/commons/PoweredBy.vue'
 import ConsentBox from './components/commons/ConsentBox.vue'
 import InfoMessage from './components/commons/InfoMessage.vue'
 import StepNavigator from './components/commons/StepNavigator.vue'
+import LoadIng from './components/commons/LoadIng.vue'
+import FailureScreen from './components/commons/FailureScreen.vue'
 import router from './router'
 // import { BootstrapVue } from 'bootstrap-vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 Vue.config.productionTip = false
 // Vue.use(BootstrapVue)
-Vue.component('load-ing', Loading)
+Vue.component('load-ing', LoadIng)
 Vue.component('MessageBox', MessageBox)
 Vue.component('NavBar', NavBar)
 Vue.component('PageHeading', PageHeading)
@@ -30,6 +32,7 @@ Vue.component('PoweredBy', PoweredBy)
 Vue.component('ConsentBox', ConsentBox)
 Vue.component('InfoMessage', InfoMessage)
 Vue.component('StepNavigator', StepNavigator)
+Vue.component('FailureScreen', FailureScreen)
 Vue.use(Vuetify)
 new Vue({
   router,

@@ -252,6 +252,35 @@ export default {
     }
   },
 
+  clearVaultAllData: async ({ getters }, payload) => {
+    try {
+      console.log('Inside clearVaultAllData() ....')
+      if (!payload) {
+        // throw new Error('Payload is required')
+      }
+      const vault = getters.getVault
+      if (vault) {
+        // const queryResult = await vault.Query({
+        //   equals: [
+        //     {
+        //       'content.metaData.namespace': payload.namespace,
+        //     },
+        //   ],
+        // })
+
+        // for (let i = 0; i < queryResult.length; i++) {
+        //   vault.DeleteDocument(queryResult[i].id)
+        // }
+        console.log('Inside clearVaultAllData():: Before deleting vault data')
+        vault.Delete()
+      } else {
+        throw new Error('Vault has not been initialized')
+      }
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  },
+
   retriveVaultCredentials: async ({ dispatch }) => {
     try {
       await dispatch('getDocumentIdsByNamespace', {

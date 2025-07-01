@@ -33,3 +33,12 @@ export const ZK_PROOF_TYPES = Object.freeze({
   zkProofOfPersonHood: 'zkProofOfPersonHood',
   zkProofKYC: 'zkProofOfKYC',
 })
+
+export const FaicalAuthenticationError = {
+  CHECK_COULD_NOT_PERFORMED: 'Face check could not be performed',
+  FACE_DOESNOT_MATACH: 'Faces does not match', /// runtime
+  FACE_NOT_FOUND: 'Face not found in the image',
+  FAILED_POSE_OF_FACE: 'Failed to perform face check due to the pose of the face',
+  FAILED_FACIAL_PATTERN: 'Failed, due to problems in the extraction of the facial pattern',
+  ALREADY_BEEN_VERIFIED: 'Failed, because document has already been verified in some other account with this service', /// runtime
+}

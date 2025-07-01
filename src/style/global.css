@@ -10,8 +10,9 @@ body {
   padding: 10px;
 }
 .maincontainer {
-  background-color: #f5f5f5;
+  /* background-color: #f5f5f5; */
   border: 1px solid grey;
+  text-align: center;
   /* border-radius: 20px; */
   /* box-shadow: 2px 5px 5px #80808087; */
   margin: 0 auto;
