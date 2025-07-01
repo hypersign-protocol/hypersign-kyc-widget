@@ -304,7 +304,7 @@ export default {
             /// /
             // We can do specific error handling here
             //
-            if (e.message.includes(FaicalAuthenticationError[0]) || e.message.includes(FaicalAuthenticationError[1]) || e.message.includes(FaicalAuthenticationError[4]) || e.message.includes(FaicalAuthenticationError[5])) {
+            if (e.message.includes(FaicalAuthenticationError.FACE_DOESNOT_MATACH) || e.message.includes(FaicalAuthenticationError.CHECK_COULD_NOT_PERFORMED) || e.message.includes(FaicalAuthenticationError.FAILED_POSE_OF_FACE) || e.message.includes(FaicalAuthenticationError.FAILED_FACIAL_PATTERN)) {
               console.log('Error to clear data valut')
               this.clearVaultAllData()
             }
