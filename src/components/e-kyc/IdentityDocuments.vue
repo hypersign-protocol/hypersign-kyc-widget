@@ -3,7 +3,7 @@ import { FPhi } from '@facephi/selphid-widget-web'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import PreviewData from '../commons/Preview.vue'
 import ChooseDocumentType from '../commons/ChooseDocumentType.vue'
-import { STEP_NAMES } from '@/config'
+import { STEP_NAMES, FaicalAuthenticationError } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import { EVENT, EVENTS } from '../utils/eventBus'
 export default {
@@ -82,7 +82,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['nextStep', 'verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc']),
+    ...mapActions(['nextStep', 'verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc', 'clearVaultAllData']),
     getStepIndex(step) {
       return this.enabledSteps.indexOf(step)
     },
@@ -301,6 +301,15 @@ export default {
           //   }
           // }
           if (e.message) {
+            /// /
+            // We can do specific error handling here
+            //
+            if (e.message.includes(FaicalAuthenticationError[0]) || e.message.includes(FaicalAuthenticationError[1]) || e.message.includes(FaicalAuthenticationError[4]) || e.message.includes(FaicalAuthenticationError[5])) {
+              console.log('Error to clear data valut')
+              this.clearVaultAllData()
+            }
+
+            /// /
             this.failScreen = {
               isFail: true,
               message: e.message,
@@ -311,6 +320,7 @@ export default {
                   message: e.message,
                 })
                 if (window.opener) {
+                  // TODO: WARNING this should not be *, rather it should be right URL
                   window.opener.postMessage(data, '*')
                   self.close()
                 } else {

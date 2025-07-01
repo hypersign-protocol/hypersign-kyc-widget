@@ -273,7 +273,7 @@ export default {
           @ontrackstatus="onTrackStatus"
         ></facephi-selphi>
         <div v-else>
-          <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
+          <img src="../../assets/fr-instruction.gif" v-if="!isLoading" style="height: 350px" />
         </div>
       </div>
     </div>

@@ -115,4 +115,12 @@ export class VaultClient {
   async Delete() {
     return await this.vault.deleteVaultData({ edvId: this.edvId })
   }
+
+  async DeleteDocument(id) {
+    const resp = await this.vault.deleteDoc({
+      edvId: this.edvId,
+      documentId: id,
+    })
+    return resp
+  }
 }
