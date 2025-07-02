@@ -43,7 +43,7 @@ new Vue({
       themes: {
         light: {
           colors: {
-            primary: '#1E88E5', // Blue primary color
+            primary: '#222222', // Blue primary color
             secondary: '#8E24AA', // Purple secondary color
             accent: '#FFC107', // Yellow accent color
             background: '#F5F5F5', // Light background color

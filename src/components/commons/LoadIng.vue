@@ -1,7 +1,7 @@
 <template>
   <v-overlay v-model="localActive" :value="localActive" :absolute="!isFullPage" :opacity="0.7" :z-index="zIndex" :class="{ 'full-screen': isFullPage }" @click="handleCancel">
     <v-card class="d-flex flex-column align-center justify-center pa-4" elevation="8" color="white" style="border-radius: 12px; min-width: 120px">
-      <v-progress-circular :size="40" :width="4" color="primary" indeterminate></v-progress-circular>
+      <v-progress-circular :size="40" :width="4" color="black" indeterminate></v-progress-circular>
       <div class="mt-3 text-subtitle-2 grey--text">Loading...</div>
     </v-card>
   </v-overlay>
