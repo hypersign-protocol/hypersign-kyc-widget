@@ -55,7 +55,7 @@ export default {
             did,
           },
           isThridPartyAuth: true,
-          expirationDate: '2030-12-31T00:00:00.000Z',
+          expirationDate: '2030-12-31T00:00:00.000Z', // TODO: make it dynamic
           authProvider: 'Google',
           accessToken,
           secret: mnemonic,
@@ -69,7 +69,8 @@ export default {
             }
 
             if (json) {
-              await commit('setAuthServerAuthToken', json.message.authToken)
+              // await commit('setAuthServerAuthToken', json.message.authToken)
+              await dispatch('authenticateKYC')
               const { kmsIds, vaultId } = json.message
               if (kmsIds && kmsIds.length > 0) {
                 await dispatch('getKMSById', { kmsId: kmsIds[0] })

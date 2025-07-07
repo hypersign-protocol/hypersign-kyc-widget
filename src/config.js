@@ -7,6 +7,9 @@ export const KAVACH_SERVER_BASE_URL = 'https://stage.hypermine.in/kavach'
 export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = process.env.NODE_ENV === 'production' ? 'https://<subdomain>.api.cavach.hypersign.id/api/v1' : 'http://localhost:3001/api/v1'
 // export const HYPERSIGN_SERVICE_BASE_URL_FORMAT = 'http://<subdomain>.localhost:3001/api/v1'
 
+export const HYPERSIGN_EXPLORER_BASE_URL = 'https://api.prajna.hypersign.id/hypersign-protocol/hidnode'
+export const HYPERSIGN_EXPLORER_SSI_API_DID_PATH = '/ssi/did'
+export const IP_RESOLVER_URL = 'https://api.ipify.org?format=json'
 export const AUTH_PROVIDERS = Object.freeze({
   GOOGLE: 'google',
   KEPLR: 'keplr',

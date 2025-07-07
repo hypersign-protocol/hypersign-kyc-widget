@@ -142,7 +142,7 @@ export default {
                       status: 'error',
                       message: e.message,
                     })
-                    window.opener.postMessage(data, '*')
+                    window.opener.postMessage(data, '*') // TODO: replace '*' with the actual origin of the opener
                     self.close()
                   } else {
                     window.close()

@@ -11,5 +11,6 @@ export default {
     PR: `${storePrefix}presentationRequest`,
     WIDGET_CONFIG: `${storePrefix}widgetConfigFromDb`,
     ON_CHAIN_CONFIG: `${storePrefix}onChainIssuerConfig`,
+    KYC_SERVICE_USER_ACCESS_TOKEN: `${storePrefix}kycServiceUserAccessToken`,
   },
 }

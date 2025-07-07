@@ -89,8 +89,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['verifyResult']),
-    ...mapMutations(['nextStep', 'previousStep']),
+    ...mapActions(['verifyResult', 'nextStep']),
+    ...mapMutations(['previousStep']),
     toast(msg, type = 'success') {
       EVENT.emitEvent(
         EVENTS.NOTIFY,
