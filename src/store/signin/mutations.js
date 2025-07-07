@@ -62,7 +62,9 @@ export default {
   setTrustedSchemaIdsAndIssuers: (state, schemaIds) => {
     state.schemaIds = schemaIds
   },
-
+  setKycServiceUserAccessToken: (state, payload) => {
+    localStorage.setItem(SignStoreConfig.LOCAL_STATES.KYC_SERVICE_USER_ACCESS_TOKEN, payload)
+  },
   setAuthorization: (state, authorization) => {
     state.authorization = authorization
     localStorage.setItem(SignStoreConfig.LOCAL_STATES.AUTHORIZATION, authorization)
