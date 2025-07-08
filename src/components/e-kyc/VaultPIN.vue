@@ -3,7 +3,7 @@
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <PageHeading :header="'Vault Setup'" :subHeader="'Setup a PIN to secure your vault'" />
+      <PageHeading :header="'Vault Setup'" :subHeader="'Setup/Enter a PIN to unlock your vault'" />
       <div class="center" v-if="ifNewUser">
         <RegisterPIN class="width" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
       </div>

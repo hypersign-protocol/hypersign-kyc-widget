@@ -1,12 +1,17 @@
 <template>
   <div>
     <template>
-      <!-- eslint-disable -->
-      <v-card class="maincontainer main-container-height">
-        <NavBar v-if="currentStep && currentStep.name && currentStep.isEnabled == true" />
-        <component :is="currentStepComponent"></component>
-        <div class="footer">
-          <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+      <v-card class="maincontainer d-flex flex-column">
+        <NavBar v-if="currentStep?.name && currentStep?.isEnabled" />
+
+        <div class="flex-grow-1">
+          <component :is="currentStepComponent" />
+        </div>
+
+        <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+
+        <div class="footer_main_page">
+          <PoweredBy />
         </div>
       </v-card>
     </template>
@@ -38,6 +43,7 @@ import ZkProofs from './e-kyc/ZKProofs.vue'
 import SessionExpired from './SessionExpired.vue'
 import { EVENT, EVENTS } from './utils/eventBus'
 import { mapGetters } from 'vuex'
+import PoweredBy from './commons/PoweredBy.vue'
 export default {
   name: 'HelloWorld',
   components: {
@@ -50,6 +56,7 @@ export default {
     VaultPIN,
     UserConsent,
     SessionExpired,
+    PoweredBy,
   },
   computed: {
     ...mapGetters(['currentStep']),

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="widget-card">
+    <v-card class="widget-card hypersign-box">
       <div class="" style="text-align: left">
         <span>Enter 5 digits PIN:</span>
         <PIN @pinTakenEvent="getPin" inputType="password" />

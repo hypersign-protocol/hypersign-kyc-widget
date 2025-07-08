@@ -1,22 +1,21 @@
 <template>
-  <div class="row">
-    <div class="col-2 center align-items-center">
-      <v-avatar style="padding: 1rem; font-size: large; font-weight: bolder; width: 50px; height: 50px; border: 1px solid lightgrey">
-        <img :src="logoUrl" alt="Avatar" class="avatar" />
+  <div class="instruction-step d-flex align-items-center">
+    <!-- Avatar/Icon -->
+    <div class="icon-wrapper">
+      <v-avatar size="50" class="avatar-border">
+        <img :src="logoUrl" alt="Step Icon" class="avatar-img" />
       </v-avatar>
-      <!-- <div class="border rounded-circle bg-light text-white center" style="padding: 1rem; font-size: large; font-weight: bolder; width: 60px; height: 60px">
-        <img :src="logoUrl" alt="Avatar" class="avatar" />
-      </div> -->
     </div>
-    <div class="col-8" style="text-align: left">
-      <span class="app-font" style="font-weight: bold; word-wrap: break-word">
-        {{ stepTitle }}
-      </span>
+
+    <!-- Instruction Text -->
+    <div class="flex-grow-1 text-left step-text pl-3 pr-2">
+      {{ stepTitle }}
     </div>
-    <div class="col-2">
-      <span>
-        <i class="bi bi-check2-circle" style="font-size: xx-large" v-if="isDone"></i>
-      </span>
+
+    <!-- Square checkbox-style icon -->
+    <div class="status-icon ml-1">
+      <i v-if="isDone" class="bi bi-check-square-fill text-success" :style="iconStyle"></i>
+      <i v-else class="bi bi-square text-muted" :style="iconStyle"></i>
     </div>
   </div>
 </template>
@@ -24,13 +23,9 @@
 <script>
 export default {
   props: {
-    stepNumber: {
-      type: String,
-      default: '0',
-    },
     stepTitle: {
       type: String,
-      default: 'Conduct a liveliess check to prove you are a human',
+      default: 'Conduct a liveliness check to prove you are a human',
     },
     isDone: {
       type: Boolean,
@@ -45,15 +40,55 @@ export default {
     logoUrl() {
       return require('@/assets/' + this.logo)
     },
+    iconStyle() {
+      return {
+        fontSize: '1.2rem',
+      }
+    },
   },
 }
 </script>
 
 <style scoped>
-.avatar {
-  /* vertical-align: middle; */
-  width: 30px;
-  height: 30px;
-  /* border-radius: 50%; */
+.instruction-step {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px; /* Reduced spacing between steps */
+  padding: 6px 8px;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+.avatar-border {
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  padding: 2px;
+}
+
+.avatar-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.step-text {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+@media (min-width: 600px) {
+  .step-text {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 960px) {
+  .step-text {
+    font-size: 20px;
+  }
+}
+
+.status-icon i {
+  transition: all 0.2s ease-in-out;
 }
 </style>
