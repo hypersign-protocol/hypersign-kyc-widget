@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h1 class="position-relative">
+    <div class="position-relative header">
       {{ header }}
       <span class="badge position-absolute top-10 translate-middle rounded" v-if="beta"> Beta </span>
-    </h1>
-    <h6 style="color: grey">
+    </div>
+    <div class="subheader">
       {{ subHeader }}
-    </h6>
+    </div>
 
     <!-- <button type="button" class="position-relative btn btn-light">
       <h1>{{ header }}</h1>
@@ -47,5 +47,36 @@ export default {
   text-align: center;
   align-content: center;
   margin-left: 5px;
+}
+
+.subheader {
+  font-size: 16px;
+  color: grey;
+  margin-top: 2px;
+  /* margin-bottom: 10px; */
+}
+
+.header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  position: relative;
+}
+@media (min-width: 600px) {
+  .header {
+    font-size: 40px;
+  }
+  .subheader {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 960px) {
+  .header {
+    font-size: 45px;
+  }
+  .subheader {
+    font-size: 20px;
+  }
 }
 </style>

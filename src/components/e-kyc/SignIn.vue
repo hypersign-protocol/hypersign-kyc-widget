@@ -2,11 +2,13 @@
   <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" />
+      <!-- <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" /> -->
+      <VerifierInfoCard :logoUrl="getWidgetConfigFromDb?.userConsent?.logoUrl" :domain="getWidgetConfigFromDb?.userConsent?.domain" :name="getWidgetConfigFromDb?.userConsent?.name" />
       <div class="mt-4 p-4 widget-card-width" style="margin: auto">
         <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
-        <GoogleButton :is-disable="error" />
-        <ConsentBox />
+        <ConsentBox @consent-changed="onConsentChanged" />
+        <GoogleButton :is-disable="error || !isConsentChecked" />
+        <!-- <ConsentBox /> -->
       </div>
     </div>
   </div>
@@ -21,6 +23,7 @@ import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import SignStoreConfig from '@/store/signin/config'
 import { EVENT, EVENTS } from '../utils/eventBus'
+import VerifierInfoCard from '../commons/VerifierInfoCard.vue'
 export default {
   name: STEP_NAMES.SignIn,
   computed: {
@@ -30,9 +33,11 @@ export default {
   components: {
     // ConnectWalletButton,
     GoogleButton,
+    VerifierInfoCard,
   },
   data() {
     return {
+      isConsentChecked: false,
       isLoading: false,
       fullPage: true,
       toastMessage: '',
@@ -116,7 +121,8 @@ export default {
 
         this.setOnChainIssuerConfig(onChainIssuerConfigs)
       } else {
-        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
+        // this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
+        console.warn(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR)
       }
       this.isLoading = false
     },
@@ -239,6 +245,9 @@ export default {
       }
       this.setSession(params.sessionId)
     },
+    onConsentChanged(value) {
+      this.isConsentChecked = value
+    },
   },
   async created() {
     try {
@@ -259,6 +268,7 @@ export default {
       // this.isLoading = true;
       // await this.getNewSession()
       // this.isLoading = false;
+      this.toast(MESSAGE.SIGN.WIDGET_READY_TO_USE, 'success')
     } catch (e) {
       this.error = true
       if (e.message?.indexOf('jwt') === 0) {
@@ -272,3 +282,15 @@ export default {
   },
 }
 </script>
+<style scoped>
+.widget-card-width {
+  width: 80%;
+  margin: auto;
+}
+
+@media (max-width: 200px) {
+  .widget-card-width {
+    width: 100%;
+  }
+}
+</style>

@@ -1,67 +1,46 @@
 <template>
-  <div class="kyc-container widget-card-width">
-    <!-- <v-row>
-      <v-col>
-        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
-        <InfoMessage message="Verify Your Information" class="showOnMobile" />
-      </v-col>
-    </v-row> -->
-    <div class="row">
-      <div class="col-md-12">
-        <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile" />
-        <!-- <InfoMessage message="Verify Your Information" class="showOnMobile" /> -->
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12" style="text-align: left">
-        <v-card class="preview profile-card">
-          <div class="profile-image">
-            <v-avatar size="100" class="elevation-3">
-              <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
-            </v-avatar>
-          </div>
-          <div class="profile-details">
-            <v-simple-table style="text-align: left" dense>
-              <template v-slot:default>
-                <tbody>
-                  <tr v-for="(data, idx) in Object.entries(extractedData)" v-bind:key="idx">
-                    <td>
-                      <strong>{{ snakeToPascal(data[0]) }}</strong>
-                    </td>
-                    <td style="">{{ data[1] }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </div>
-        </v-card>
-      </div>
-    </div>
+  <div class="widget-card-width">
+    <!-- Header Message -->
+    <InfoMessage message="Please verify if your informations are correct" class="notShowOnMobile mb-2" />
 
-    <div class="container">
-      <div class="row center mt-1">
-        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
-        <v-btn outlined class="mt-1" block color="secondary" @click="rescan()">Rescan</v-btn>
-      </div>
-    </div>
+    <!-- Card with Face & Details -->
+    <v-card class="mb-2">
+      <v-row align="center">
+        <!-- Face Image -->
+        <v-col cols="12" sm="4" class="text-center">
+          <v-avatar size="100" class="elevation-3 mx-auto">
+            <img :src="`data:image/png;base64, ${$store.state.kycExtractedData.extractionRaw.ocr.FACE}`" />
+          </v-avatar>
+        </v-col>
 
-    <!-- <v-row>
-      <v-col>
-        <v-btn block color="secondary" @click="submit()">Continue</v-btn>
+        <!-- Extracted Table -->
+        <v-col cols="12" sm="8">
+          <v-simple-table dense>
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(data, idx) in Object.entries(extractedData)" :key="idx">
+                  <td class="font-weight-medium text-left" style="width: 40%">
+                    {{ snakeToPascal(data[0]) }}
+                  </td>
+                  <td class="text-left">
+                    {{ data[1] }}
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <!-- Buttons -->
+    <v-row>
+      <v-col cols="12">
+        <!-- <v-btn block color="primary" @click="submit()">✔ Continue</v-btn> -->
+        <v-btn block color="secondary" @click="submit()">✔ Continue</v-btn>
+        <v-btn outlined block color="secondary" class="mt-1" @click="rescan()">↻ Rescan</v-btn>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <v-btn text color="secondary" @click="rescan()">Rescan</v-btn>
-      </v-col>
-    </v-row> -->
-
-    <!-- <div class="row mt-2">
-      <div class="col-md-12">
-        
-      </div>
-      <div class="col-md"></div>
-    </div> -->
   </div>
 </template>
 

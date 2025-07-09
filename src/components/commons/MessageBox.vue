@@ -4,8 +4,8 @@
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  min-width: 70%;
-  max-width: 90%;
+  min-width: 60%;
+  max-width: 60%;
   padding: 12px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -19,6 +19,13 @@
     opacity 0.4s ease,
     transform 0.4s ease;
   pointer-events: none;
+}
+
+@media (max-width: 450px) {
+  .toast1 {
+    min-width: 85%;
+    max-width: 90%;
+  }
 }
 
 /* Visible state */

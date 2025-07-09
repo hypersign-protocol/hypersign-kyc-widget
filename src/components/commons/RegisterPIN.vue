@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="widget-card">
+    <v-card class="widget-card hypersign-box">
       <div class="" style="text-align: left">
         <span>Enter 5 digits PIN:</span>
         <PIN @pinTakenEvent="getPin" inputType="password" />
@@ -11,8 +11,9 @@
         <PIN @pinTakenEvent="getRenterPin" inputType="number" />
       </div>
 
-      <div class="mb-1">
-        <InfoMessage :message="warningMessage" />
+      <div class="mb-2 text-left">
+        <a href="#" @click.prevent="showSlider = true" style="text-decoration: none"><InfoMessage :message="`${warningMessage} Click me to know more about data vault`" /></a>
+        <BottomupSliderPopup :modelValue="showSlider" :introSlides="introSlides" @update:modelValue="closeSliderPopup" />
       </div>
     </v-card>
     <div class="container">
@@ -51,7 +52,7 @@
 
 <style scoped>
 .width {
-  width: 70%;
+  width: 80%;
 }
 
 @media (max-width: 450px) {
@@ -64,11 +65,15 @@
 <script type="text/javascript">
 import PIN from '../commons/PIN.vue'
 import { mapMutations } from 'vuex'
-
+import { UserInstructions } from '../../config'
+import BottomupSliderPopup from './BottomupSliderPopup.vue'
+// import BottomupSlider from './BottomupSlider.vue'
 export default {
   name: 'VaultPin',
   components: {
     PIN,
+    BottomupSliderPopup,
+    // BottomupSlider,
   },
   data() {
     return {
@@ -76,13 +81,17 @@ export default {
       errorDialog: false,
       pin: '',
       reEnterPin: '',
-      warningMessage: `The PIN secures your data vault, ensuring that no one else, including us, can access your data. You own your data! 
-      The PIN will be needed to access your encrypted data vault, so kindly keep it safe.`,
+      warningMessage: `This PIN is to secure your data vault. This ensures that you do not trust any one with your data, not even us. The PIN is used to access your encrypted data vault.`,
       errorMessage: '',
+      showSlider: false,
+      introSlides: UserInstructions.DataVault,
     }
   },
   methods: {
     ...mapMutations(['nextStep', 'setVaultPin']),
+    closeSliderPopup(value) {
+      this.showSlider = value
+    },
     async submit() {
       if (this.pin === this.reEnterPin) {
         this.confirmationDialog = true

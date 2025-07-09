@@ -10,20 +10,41 @@ body {
   padding: 10px;
 }
 .maincontainer {
-  /* background-color: #f5f5f5; */
-  border: 1px solid grey;
   text-align: center;
-  /* border-radius: 20px; */
-  /* box-shadow: 2px 5px 5px #80808087; */
-  margin: 0 auto;
-  max-width: 650px;
+
+  min-height: 100vh; /* Take full screen height */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
+
+.hypersign-box {
+  border-radius: 8px !important;
+  -webkit-box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+}
+
+.verifier-card {
+  border-radius: 10px;
+  max-width: 100%;
+  margin: 0 auto 20px;
+  background-color: #fff;
+}
+
+@media (max-width: 480px) {
+  .verifier-card {
+    /* transform: scale(1.1); */
+    font-size: 14px;
+    max-width: 100%;
+  }
+}
+
 .btn-dark {
   color: black;
 }
 
 .widget-card-width {
-  width: 70%;
+  width: 80%;
   margin: auto;
 }
 
@@ -68,19 +89,18 @@ body {
   /* border: 1px solid #8080801a; */
   box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  padding: 20px;
-  border-radius: 20px;
+  padding: 10px;
+  /* border-radius: 20px; */
   background: white;
   margin-top: 5%;
 }
 
 @media (max-width: 450px) {
   .widget-card {
-    /* border: 1px solid #8080801a; */
     box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    /* padding: 15px; */
-    border-radius: 20px;
+    padding: 20px;
+    border-radius: 10px;
     background: white;
     margin-top: 5%;
   }
@@ -99,6 +119,14 @@ body {
   padding: 10px;
   display: flex;
   height: 20px;
+}
+
+.footer_main_page {
+  margin-top: auto; /* Pushes it to bottom inside maincontainer */
+  padding: 10px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
 }
 
 .parent {
