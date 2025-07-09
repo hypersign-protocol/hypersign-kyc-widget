@@ -1,6 +1,6 @@
 <template>
-  <div class="kyc-container">
-    <v-card class="mx-auto widget-card-width" tile>
+  <div class="">
+    <v-card class="mx-auto" tile>
       <v-list flat>
         <!-- <v-subheader>Choose Document Type</v-subheader> -->
         <v-list-item-group color="secondary">

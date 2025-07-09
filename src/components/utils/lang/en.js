@@ -8,6 +8,7 @@ export default {
     SESSION_NOT_FOUND_ERR: 'Session not found, proceeding to generate one',
     SESSION_ID_INVALID: 'Session ID is invalid or missing, close this window and try again from service provider app',
     TOKEN_EXPIRED: 'Access Token Expired, please contact the admin',
+    WIDGET_READY_TO_USE: 'Widget is ready to use',
   },
   LIVELINESS: {
     VERIFYING_SELFI: 'Verifying your selfie...',
@@ -34,6 +35,7 @@ export default {
     SETUP_CONFIRMATION_POPUP_TITLE: 'Setup Vault Confirmation!',
     SETUP_CONFIRMATION_POPUP: 'The PIN secures your data vault, ensuring that no one else, including us, can access your data. You own your data! The PIN will be needed to access your encrypted data vault, so kindly keep it safe.',
     PIN_MISMATCHED: 'PINs did not match, please re-enter your PINs',
+    NO_PIN_ENTERED: 'Please enter your PIN to proceed',
   },
   OTHERS: {
     SESSION_EXPIRED: 'Session Expired',

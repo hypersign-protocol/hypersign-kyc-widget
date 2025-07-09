@@ -383,11 +383,23 @@ export default {
     <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
 
     <div class="row" v-if="!chooseDocumentType && !failScreen.isFail">
-      <div class="col-12">
-        <img src="../../assets/ocr-instruction.gif" v-if="!isLoading && !hasKycDone" style="height: 300px" />
+      <div class="col-12 mb-0 pb-0">
+        <img src="../../assets/ocr-instruction.gif" class="d-block mx-auto" style="max-width: 100%" v-if="!isLoading && !hasKycDone" />
       </div>
-      <div class="col-12">
-        <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
+      <div class="col-12 mb-0 pb-0">
+        <v-card class="pa-4 verifier-card hypersign-box" elevation="2">
+          <v-card-title class="text-h6 font-weight-bold pa-0 mb-2"><i class="bi bi-lightbulb"></i> Tips</v-card-title>
+          <v-card-text class="pa-0 text-left">
+            <ul class="ma-0 pa-0" style="list-style: none">
+              <li class="d-flex align-center mb-0">
+                <span>Choose document type, make sure that all the information on the photo is visible and easy to read</span>
+              </li>
+            </ul>
+          </v-card-text>
+        </v-card>
+      </div>
+      <div class="col-12 mb-0 pb-0">
+        <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" class="verifier-card hypersign-box mt-0" />
       </div>
     </div>
     <div v-else-if="!failScreen.isFail">
@@ -433,3 +445,26 @@ export default {
     </div>
   </div>
 </template>
+
+<style scoped>
+.hypersign-box {
+  border-radius: 8px !important;
+  -webkit-box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+}
+
+.verifier-card {
+  border-radius: 10px;
+  max-width: 80%;
+  margin: 0 auto 20px;
+  background-color: #fff;
+}
+
+@media (max-width: 480px) {
+  .verifier-card {
+    /* transform: scale(1.1); */
+    font-size: 14px;
+    max-width: 100%;
+  }
+}
+</style>

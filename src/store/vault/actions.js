@@ -69,7 +69,7 @@ export default {
             }
 
             if (json) {
-              // await commit('setAuthServerAuthToken', json.message.authToken)
+              await commit('setAuthServerAuthToken', json.message.authToken)
               await dispatch('authenticateKYC')
               const { kmsIds, vaultId } = json.message
               if (kmsIds && kmsIds.length > 0) {

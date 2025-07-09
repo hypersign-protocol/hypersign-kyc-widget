@@ -121,7 +121,8 @@ export default {
 
         this.setOnChainIssuerConfig(onChainIssuerConfigs)
       } else {
-        this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
+        // this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
+        console.warn(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR)
       }
       this.isLoading = false
     },
@@ -251,22 +252,23 @@ export default {
   async created() {
     try {
       // validation of access tokens
-      // this.validationForAccessTokens()
+      this.validationForAccessTokens()
 
       /// /  Mandatory validations of params dapps passed in the widget url
-      // await this.validationSessionId()
+      await this.validationSessionId()
 
       await this.fetchAppsWidgetConfig()
 
-      // this.validatePresentationRequest()
+      this.validatePresentationRequest()
 
       // validation of onchainId params, if enabled
-      // this.validationForOnChainIdConfig()
+      this.validationForOnChainIdConfig()
 
       /// // service provider has to set the session...
       // this.isLoading = true;
       // await this.getNewSession()
       // this.isLoading = false;
+      this.toast(MESSAGE.SIGN.WIDGET_READY_TO_USE, 'success')
     } catch (e) {
       this.error = true
       if (e.message?.indexOf('jwt') === 0) {

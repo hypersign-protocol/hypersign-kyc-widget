@@ -204,6 +204,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {

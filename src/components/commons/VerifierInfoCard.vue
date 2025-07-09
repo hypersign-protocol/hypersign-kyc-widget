@@ -40,11 +40,11 @@ export default {
     },
     domain: {
       type: String,
-      default: 'Unknown Verifier',
+      default: 'Verifier App',
     },
     name: {
       type: String,
-      default: 'Unknown Verifier',
+      default: 'Verifier App',
     },
   },
   data() {

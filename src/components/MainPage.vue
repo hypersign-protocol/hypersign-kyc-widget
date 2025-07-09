@@ -1,9 +1,8 @@
 <template>
   <div>
     <template>
+      <NavBar v-if="currentStep?.name && currentStep?.isEnabled" />
       <v-card class="maincontainer d-flex flex-column">
-        <NavBar v-if="currentStep?.name && currentStep?.isEnabled" />
-
         <div class="flex-grow-1">
           <component :is="currentStepComponent" />
         </div>

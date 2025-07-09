@@ -22,10 +22,31 @@ body {
   box-sizing: border-box;
 }
 
+/* @media (min-width: 960px) {
+    .container {
+        max-width: 600px;
+    }
+} */
+
 .hypersign-box {
   border-radius: 8px !important;
   -webkit-box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
   box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+}
+
+.verifier-card {
+  border-radius: 10px;
+  max-width: 100%;
+  margin: 0 auto 20px;
+  background-color: #fff;
+}
+
+@media (max-width: 480px) {
+  .verifier-card {
+    /* transform: scale(1.1); */
+    font-size: 14px;
+    max-width: 100%;
+  }
 }
 
 .btn-dark {
