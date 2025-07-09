@@ -1,5 +1,5 @@
 <template>
-  <v-container fill-height fluid class="d-flex flex-column justify-center align-center pa-6">
+  <v-container fill-height fluid class="widget-card-width d-flex flex-column justify-center align-center pa-6">
     <!-- Red circle with X -->
 
     <i class="bi bi-x-circle final-msg-icon fail"></i>

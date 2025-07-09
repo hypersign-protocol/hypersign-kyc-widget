@@ -247,7 +247,7 @@ export default {
 </script>
 
 <template>
-  <div class="card-body">
+  <div class="card-body kyc-container">
     <!-- <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" /> -->
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />

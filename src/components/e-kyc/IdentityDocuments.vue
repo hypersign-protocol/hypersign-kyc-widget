@@ -377,7 +377,7 @@ export default {
 </script>
 
 <template>
-  <div class="card-body min-h-36">
+  <div class="card-body min-h-36 kyc-container">
     <!-- <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" /> -->
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
