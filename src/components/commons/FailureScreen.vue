@@ -49,4 +49,16 @@ export default {
 .fail {
   color: red;
 }
+
+.widget-card-width {
+  width: 70%;
+  margin: auto;
+}
+
+@media (max-width: 450px) {
+  .widget-card-width {
+    margin: auto;
+    width: 100%;
+  }
+}
 </style>
