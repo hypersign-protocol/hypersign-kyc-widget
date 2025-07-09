@@ -25,7 +25,7 @@
 
 <style scoped>
 .width {
-  width: 70%;
+  width: 90%;
 }
 
 @media (max-width: 450px) {

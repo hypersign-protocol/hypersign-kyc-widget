@@ -51,7 +51,7 @@ export default {
 }
 
 .widget-card-width {
-  width: 70%;
+  width: 80%;
   margin: auto;
 }
 

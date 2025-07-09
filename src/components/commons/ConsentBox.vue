@@ -72,7 +72,7 @@ export default {
   text-decoration: underline;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 450px) {
   .large-checkbox {
     transform: scale(1.1);
   }

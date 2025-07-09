@@ -181,11 +181,11 @@ export default {
 </script>
 <style lang="css">
 .btn-width {
-  width: 70%;
+  width: 80%;
 }
 @media (max-width: 450px) {
   .btn-width {
-    width: 70%;
+    width: 80%;
   }
 }
 </style>

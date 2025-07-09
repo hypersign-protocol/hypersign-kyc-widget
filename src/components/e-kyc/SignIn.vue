@@ -282,3 +282,15 @@ export default {
   },
 }
 </script>
+<style scoped>
+.widget-card-width {
+  width: 80%;
+  margin: auto;
+}
+
+@media (max-width: 200px) {
+  .widget-card-width {
+    width: 100%;
+  }
+}
+</style>

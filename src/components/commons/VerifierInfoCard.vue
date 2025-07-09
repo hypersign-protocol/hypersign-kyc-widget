@@ -84,12 +84,12 @@ export default {
 
 .verifier-card {
   border-radius: 10px;
-  max-width: 70%;
+  max-width: 80%;
   margin: 0 auto 20px;
   background-color: #fff;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 450px) {
   .verifier-card {
     /* transform: scale(1.1); */
     font-size: 14px;
