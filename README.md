@@ -37,7 +37,7 @@ https://icons.getbootstrap.com/
 - [ ] Cache all contexts (many API calls are being made when click on Get Proof Now button)
 - [x] Remove hardcoding of ProofType at line no. `1766` in `zkProofs.vue` file.
 - [x] Fix the Wallet modal popup
-- [ ] Add checkmark on the AppInstruction page if all proofs and SBT are done.
+- [X] Add checkmark on the AppInstruction page if all proofs and SBT are done.
 - [ ] Remove hardcoing of credential
 - [ ] Remove hardcoding of Issuer DID resolution
 
