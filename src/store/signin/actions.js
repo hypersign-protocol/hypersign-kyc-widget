@@ -1,4 +1,5 @@
 import { RequestHandler } from '../../components/utils/utils'
+import { IP_RESOLVER_URL } from '../../config'
 export default {
   // nextStep({ commit, getters }) {
   //   commit('NEXT_STEP', getters)
@@ -15,6 +16,7 @@ export default {
   updateStepState({ commit }, payload) {
     commit('UPDATE_STEP_STATE', payload)
   },
+
   getNewSession: async ({ commit, dispatch, getters }, payload) => {
     // try {
     const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/session`
@@ -105,7 +107,9 @@ export default {
 
   async getClientIp() {
     try {
-      const resp = await fetch('https://api.ipify.org?format=json')
+      // TODO: Remove hardcoded URL
+
+      const resp = await fetch(IP_RESOLVER_URL)
       const json = await resp.json()
       return json.ip
     } catch (e) {

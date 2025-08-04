@@ -1,52 +1,45 @@
 <template>
-  <v-row>
-    <v-col cols="12" offset-sm="0">
-      <v-card>
-        <v-toolbar color="white" flat>
-          <!-- <v-btn icon light @click="previousStep()">
-            <i class="bi bi-arrow-left"></i>
-          </v-btn> -->
-          <v-btn icon light>
-            <i class="bi bi-arrow-left"></i>
+  <v-card class="pa-0">
+    <!-- Flat and zero padding -->
+    <v-toolbar color="white" flat dense class="pa-0 ma-0">
+      <v-btn icon light>
+        <i class="bi bi-arrow-left"></i>
+      </v-btn>
+      <v-toolbar-title class="grey--text text--darken-4"> {{ currentStep.name }} ({{ currentStepNumber }}/{{ totalConfiguredSteps }}) </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu bottom left :offset-y="true">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon text v-bind="attrs" v-on="on">
+            <i class="bi bi-three-dots-vertical"></i>
           </v-btn>
-          <v-toolbar-title class="grey--text text--darken-4"> {{ currentStep.name }} ({{ currentStepNumber }}/{{ totalConfiguredSteps }}) </v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-menu bottom left :offset-y="true">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon text v-bind="attrs" v-on="on">
-                <i class="bi bi-three-dots-vertical"></i>
-              </v-btn>
-            </template>
-            <v-card class="mx-auto" max-width="300" tile>
-              <v-list dense>
-                <v-list-item-group color="primary">
-                  <v-list-item class="center">
-                    <v-avatar size="40">
-                      <!-- <v-img v-if="getProfile.picture" :src="getProfile.picture"></v-img> -->
-                      <v-img :src="logoUrl"></v-img>
-                    </v-avatar>
-                  </v-list-item>
-                  <v-list-item class="center">
-                    <v-list-item-content>
-                      <v-list-item-title>{{ getProfile.name }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <i class="bi bi-envelope-at"></i>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ getProfile.email }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
-          </v-menu>
-        </v-toolbar>
-      </v-card>
-    </v-col>
-  </v-row>
+        </template>
+        <v-card class="mx-auto" max-width="300" tile>
+          <v-list dense>
+            <v-list-item-group color="primary">
+              <v-list-item class="center">
+                <v-avatar size="40">
+                  <v-img :src="logoUrl"></v-img>
+                </v-avatar>
+              </v-list-item>
+              <v-list-item class="center">
+                <v-list-item-content>
+                  <v-list-item-title>{{ getProfile.name }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <i class="bi bi-envelope-at"></i>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>{{ getProfile.email }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-menu>
+    </v-toolbar>
+  </v-card>
 </template>
 
 <script>

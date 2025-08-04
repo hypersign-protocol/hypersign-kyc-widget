@@ -35,27 +35,27 @@
   <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <PageHeading :header="'Hypersign KYC'" :subHeader="'Follow these simple instructions to complete your KYC request'" />
+      <PageHeading :header="'Let\'s get you verified'" :subHeader="'Follow the simple steps below'" />
 
-      <v-card class="widget-card widget-card-width">
-        <div class="row mb-4" v-if="getIfLivelinessStep.isEnabled == true">
+      <v-card class="widget-card widget-card-width hypersign-box">
+        <div class="row mb-1" v-if="getIfLivelinessStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />
           </div>
         </div>
-        <div class="row mb-4" v-if="getIfIdDocumentStep.isEnabled == true">
+        <div class="row mb-1" v-if="getIfIdDocumentStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="2" :logo="getIfIdDocumentStep.logo" :stepTitle="getIfIdDocumentStep.stepTitle" :isDone="hasKycDone" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="getIfzkProofStep.isEnabled == true">
+        <div class="row mb-1" v-if="getIfzkProofStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep stepNumber="3" :stepTitle="getIfzkProofStep.stepTitle" :logo="getIfzkProofStep.logo" :isDone="false" />
           </div>
         </div>
 
-        <div class="row mb-4" v-if="getIfUserConsentStep.isEnabled == true">
+        <div class="row mb-1" v-if="getIfUserConsentStep.isEnabled == true">
           <div class="col">
             <AppInstructionStep :stepNumber="getIfzkProofStep.isEnabled ? '5' : '4'" :stepTitle="getIfUserConsentStep.stepTitle" :logo="getIfUserConsentStep.logo" :isDone="false" />
           </div>
@@ -181,11 +181,11 @@ export default {
 </script>
 <style lang="css">
 .btn-width {
-  width: 70%;
+  width: 80%;
 }
 @media (max-width: 450px) {
   .btn-width {
-    width: 70%;
+    width: 80%;
   }
 }
 </style>

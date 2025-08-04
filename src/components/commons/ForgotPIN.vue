@@ -4,7 +4,7 @@
     <v-row justify="center">
       <v-dialog v-model="confirmationDialog" max-width="310">
         <v-card>
-          <v-card-title class="text-h6">Account Reset Confirmation! </v-card-title>
+          <v-card-title class="text-h6">Account Reset Required! </v-card-title>
           <v-card-text>{{ lostPinMessage }}</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -22,7 +22,10 @@ export default {
   data() {
     return {
       confirmationDialog: false,
-      lostPinMessage: `It looks like you forgot your PIN. Since this is a non-custodial data vault, we can not recover your account or data. The only option is to reset your account, which means we will delete all your old data and require you to request credentials again from issuers. Are you sure you want to proceed with the account reset?`,
+      lostPinMessage: `
+      It looks like you forgot your PIN. Since this is a non-custodial data vault, 
+      we can not recover your account or data for security reasons. The only option is to reset your account, 
+      which means we will delete all your old encrypted data and require you to re-verify your identity. Are you sure you want to proceed with the account reset?`,
     }
   },
   methods: {

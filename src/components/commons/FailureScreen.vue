@@ -1,5 +1,5 @@
 <template>
-  <v-container fill-height fluid class="d-flex flex-column justify-center align-center pa-6">
+  <v-container fill-height fluid class="widget-card-width d-flex flex-column justify-center align-center pa-6">
     <!-- Red circle with X -->
 
     <i class="bi bi-x-circle final-msg-icon fail"></i>
@@ -13,7 +13,7 @@
     <div class="text-center mb-8" style="color: #757575; font-size: 14px">Please click the button below to retry from the verifier app.</div>
 
     <!-- Dynamic action button -->
-    <v-btn outlined color="black" rounded @click="onAction" class="px-8 py-4">
+    <v-btn outlined block color="secondary" @click="onAction" class="px-8 py-4">
       {{ buttonText }}
     </v-btn>
   </v-container>
@@ -48,5 +48,17 @@ export default {
 }
 .fail {
   color: red;
+}
+
+.widget-card-width {
+  width: 80%;
+  margin: auto;
+}
+
+@media (max-width: 450px) {
+  .widget-card-width {
+    margin: auto;
+    width: 100%;
+  }
 }
 </style>

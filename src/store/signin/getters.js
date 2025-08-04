@@ -63,6 +63,9 @@ export default {
       return null
     }
   },
+  getKycServiceUserAccessToken() {
+    return localStorage.getItem(SignStoreConfig.LOCAL_STATES.KYC_SERVICE_USER_ACCESS_TOKEN)
+  },
   getWidgetConfigFromDb: (state) => {
     console.log(state.hasKycDone)
     const t = localStorage.getItem(SignStoreConfig.LOCAL_STATES.WIDGET_CONFIG)

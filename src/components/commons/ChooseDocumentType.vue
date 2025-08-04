@@ -1,6 +1,6 @@
 <template>
-  <div class="kyc-container">
-    <v-card class="mx-auto widget-card-width" tile>
+  <div class="">
+    <v-card class="mx-auto" tile>
       <v-list flat>
         <!-- <v-subheader>Choose Document Type</v-subheader> -->
         <v-list-item-group color="secondary">
@@ -51,11 +51,11 @@ export default {
           text: 'Passport',
           type: 'PASSPORT',
         },
-        {
-          icon: require('../../assets/governament.png'),
-          text: 'Government ID Card',
-          type: 'ID_CARD',
-        },
+        // {
+        //   icon: require('../../assets/governament.png'),
+        //   text: 'Government ID Card',
+        //   type: 'ID_CARD',
+        // },
       ],
       govIdType: '',
     }

@@ -1,7 +1,43 @@
 import { parseJwt, RequestHandler } from '../../components/utils/utils'
 import { EVENT, EVENTS } from '../../components/utils/eventBus'
-
+import { HYPERSIGN_EXPLORER_BASE_URL, HYPERSIGN_EXPLORER_SSI_API_DID_PATH } from '../../config'
 export default {
+  authenticateKYC: ({ state, getters, commit }, payload) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/auth`
+        const headers = {
+          Authorization: 'Bearer ' + getters.getCavachAccessToken,
+          'x-ssi-access-token': getters.getSSIAccessToken,
+          'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
+          'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-authserver-access-token': getters.getAuthServerAuthToken,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
+        }
+        const body = {
+          provider: 'hypersign-auth-service',
+          sessionId: getters.getSession,
+        }
+        const json = await RequestHandler(url, 'POST', body, headers)
+
+        if (json) {
+          if (json.kycServiceUserAccessToken) {
+            commit('setKycServiceUserAccessToken', json.kycServiceUserAccessToken)
+            return resolve()
+          } else {
+            return reject(new Error('Error authenticating to kyc service, kycServiceUserAccessToken not found in response'))
+          }
+        } else {
+          console.log('authenticateKYC:: Inside else ' + new Error(json))
+          return reject(new Error(json))
+        }
+      } catch (e) {
+        console.log('authenticateKYC:: Inside catch ')
+        return reject(new Error('Error authenticating to kyc service ' + e.message))
+      }
+    })
+  },
+
   // TODO: Change name of this method to somethin liek, submitUserConsent()
   verifyResult: ({ commit, getters, state }) => {
     return new Promise(async (resolve, reject) => {
@@ -14,6 +50,7 @@ export default {
         const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/user-consent`
         const headers = {
           Authorization: 'Bearer ' + getters.getCavachAccessToken,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -47,6 +84,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -121,6 +159,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
 
@@ -165,6 +204,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -231,6 +271,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -268,6 +309,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
         const body = {
@@ -296,6 +338,7 @@ export default {
           'x-ssi-access-token': getters.getSSIAccessToken,
           'x-issuer-did': getters.getPresentationRequestParsed.issuerDID,
           'x-issuer-did-ver-method': getters.getPresentationRequestParsed.issuerDIDVerificationMethod,
+          'x-kycservice-user-access-token': getters.getKycServiceUserAccessToken,
         }
         headers['X-AuthServer-Access-Token'] = getters.getAuthServerAuthToken
 
@@ -329,7 +372,8 @@ export default {
     return new Promise(async (resolve, reject) => {
       // eslint-disable-line
       try {
-        const url = `https://api.prajna.hypersign.id/hypersign-protocol/hidnode/ssi/did/${payload.issuerDid}`
+        // TODO: remove hardcoded URL
+        const url = `${HYPERSIGN_EXPLORER_BASE_URL}${HYPERSIGN_EXPLORER_SSI_API_DID_PATH}/${payload.issuerDid}`
 
         const resp = await fetch(url)
 
