@@ -28,11 +28,11 @@ export default {
             return reject(new Error('Error authenticating to kyc service, kycServiceUserAccessToken not found in response'))
           }
         } else {
-          console.log('authenticateKYC:: Inside else ' + new Error(json))
+          // authenticateKYC:: Inside else
           return reject(new Error(json))
         }
       } catch (e) {
-        console.log('authenticateKYC:: Inside catch ')
+        // authenticateKYC:: Inside catch
         return reject(new Error('Error authenticating to kyc service ' + e.message))
       }
     })
@@ -117,7 +117,7 @@ export default {
     const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/passive-liveliness/status/` + sessionId
     const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
     eventSource.onopen = function (event) {
-      console.log('Connection opened', event)
+      // Connection opened
     }
     eventSource.onmessage = function (event) {
       // console.log('New message:', event.data);
@@ -136,7 +136,10 @@ export default {
       EVENT.emitEvent(EVENTS.LIVELINESS, payload)
     }
     eventSource.onerror = function (error) {
-      console.error('EventSource failed:', error)
+      // EventSource failed
+      if (error) {
+        // Optionally log or handle the error
+      }
       eventSource.close()
     }
   },
@@ -181,7 +184,7 @@ export default {
           commit('setOcrIdDocResult', json)
           if (json.credentials && json.credentials.length > 0) {
             json.credentials.forEach((credential) => {
-              console.log('Updating each credentila in vault credential id ' + credential.id)
+              // Updating each credential in vault credential id
               dispatch('updateVaultCredentials', credential)
             })
           }
@@ -221,11 +224,11 @@ export default {
           //  store the result to state
           return resolve(data)
         } else {
-          console.log('extractOcrIdDoc:: Inside else ' + new Error(json))
+          // extractOcrIdDoc:: Inside else
           return reject(new Error(json))
         }
       } catch (e) {
-        console.log('extractOcrIdDoc:: Inside catch ')
+        // extractOcrIdDoc:: Inside catch
         return reject(new Error('Error verifying ID document ' + e.message))
       }
     })
@@ -236,7 +239,7 @@ export default {
     const url = `${getters.getTenantKycServiceBaseUrl}/e-kyc/verification/doc-ocr/status/` + sessionId
     const eventSource = new EventSource(url + '?' + `authorization=Bearer ${getters.getCavachAccessToken}`, {})
     eventSource.onopen = function (event) {
-      console.log('Connection opened', event)
+      // Connection opened
     }
     eventSource.onmessage = function (event) {
       // console.log('New message:', event.data);
@@ -255,7 +258,10 @@ export default {
       EVENT.emitEvent(EVENTS.IDDOCOCR, payload)
     }
     eventSource.onerror = function (error) {
-      console.error('EventSource failed:', error)
+      // EventSource failed
+      if (error) {
+        // Optionally log or handle the error
+      }
       eventSource.close()
     }
   },
@@ -286,7 +292,7 @@ export default {
         if (json.credentials && json.credentials.length > 0) {
           commit('setSbtMintDone', true)
           json.credentials.forEach((credential) => {
-            console.log('Updating each credentila in vault credential id ' + credential.id)
+            // Updating each credentila in vault credential id
             dispatch('updateVaultCredentials', credential)
           })
           return resolve(json)
@@ -351,11 +357,11 @@ export default {
         }
         const json = await RequestHandler(url, 'POST', body, headers)
 
-        console.log(json)
+        // console.log(json)
 
         if (json.credential && json.verifyResult) {
           // commit('setSbtMintDone', true);
-          console.log('Updating each credentila in vault credential id ' + json.credential.id)
+          // console.log('Updating each credentila in vault credential id ' + json.credential.id)
           dispatch('updateVaultCredentials', json.credential)
           return resolve(json)
         } else {

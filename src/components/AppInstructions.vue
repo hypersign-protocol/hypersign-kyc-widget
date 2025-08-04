@@ -128,7 +128,7 @@ export default {
           const iszkProofConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
           if (iszkProofConfigured) {
             if (!this.hasSbtMintDone) {
-              console.log('Sbt minint not done')
+              // Sbt minting not done
               // if yes, then go to onchainId page
               this.nextStepNumeber = this.enabledSteps.indexOf(iszkProofConfigured) // isOnChainIdConfigured.id
             } else {

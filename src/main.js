@@ -43,15 +43,21 @@ new Vue({
       themes: {
         light: {
           colors: {
-            primary: '#222222', // Blue primary color
-            secondary: '#8E24AA', // Purple secondary color
-            accent: '#FFC107', // Yellow accent color
-            background: '#F5F5F5', // Light background color
-            surface: '#FFFFFF', // Card/Component background color
+            primary: '#000000', // Black primary color
+            secondary: '#FFFFFF', // White secondary color
+            accent: '#666666', // Grey accent color
+            background: '#FFFFFF', // Clean white background
+            surface: '#FFFFFF', // White surface color
             error: '#D32F2F', // Error color
             info: '#1976D2', // Info color
             success: '#388E3C', // Success color
             warning: '#F57C00', // Warning color
+            grey: {
+              lighten1: '#F5F5F5',
+              lighten2: '#EEEEEE',
+              darken1: '#757575',
+              darken2: '#424242',
+            },
           },
         },
       },

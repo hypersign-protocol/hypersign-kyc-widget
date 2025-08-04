@@ -97,7 +97,7 @@ export default {
     },
     prepare() {
       if (this.hasKycDone) {
-        console.log('Inside prepare this.hasKycDone = ' + this.hasKycDone)
+        // Inside prepare this.hasKycDone = true
         // then move to onchainIdStep step
         const nextStepIndex = this.getNextStepIndex()
         this.nextStep(nextStepIndex)
@@ -150,9 +150,9 @@ export default {
       this.toast(MESSAGE.IDDOCUMENT.VERIFYING_ID, 'warning')
       this.extractOcrIdDoc({ documentType: this.selectedDocumentType })
         .then(async (res) => {
-          console.log('Inside. this.extractOcrIdDoc ...')
+          // Inside. this.extractOcrIdDoc ...
           if (res?.serviceDocument) {
-            console.log('Inside. res?.serviceDocument ...')
+            // Inside. res?.serviceDocument ...
             let kycExtracted = {}
 
             kycExtracted = {
@@ -162,7 +162,7 @@ export default {
               ...kycExtracted,
             }
 
-            console.log('Before committing setKycExtractedData.. ')
+            // Before committing setKycExtractedData..
             await this.$store.commit('setKycExtractedData', {
               data: {
                 extractionRaw: { ocr: kycExtracted },
@@ -170,7 +170,7 @@ export default {
               status: true,
             })
           } else {
-            console.log('Inside else committing setKycExtractedData.. ')
+            // Inside else committing setKycExtractedData..
             await this.$store.commit('setKycExtractedData', {
               data: {},
               status: false,
@@ -182,8 +182,7 @@ export default {
           this.toast(MESSAGE.IDDOCUMENT.DOC_EXTRACTION_FINISED, 'success')
         })
         .catch(async (e) => {
-          console.log({ e })
-          console.log({ message: e.message })
+          // Error occurred during extraction
           this.isLoading = false
           this.isWidgetStarted = false
           await this.$store.commit('setKycExtractedData', {
@@ -196,11 +195,11 @@ export default {
 
           // TODO: Not working - Not moving to step 8
           if (e.message.includes('Session with given ID')) {
-            console.log('Iside if of catch')
+            // Inside if of catch
             this.isLoading = false
             this.nextStep(8)
           } else {
-            console.log('Iside else of catch')
+            // Inside else of catch
           }
         })
       setTimeout(this.verifyOCRDocStatus, 4000)
@@ -211,23 +210,23 @@ export default {
 
       switch (exceptionResult.detail.exceptionType) {
         case FPhi.SelphID.ExceptionType.CameraError:
-          console.error('Camera Error')
+          // Camera Error
           // ...
           break
         case FPhi.SelphID.ExceptionType.UnexpectedCaptureError:
-          console.error('Unexpected Error')
+          // Unexpected Error
           // ...
           break
         case FPhi.SelphID.ExceptionType.InitializingEngineError:
-          console.error('Engine Error')
+          // Engine Error
           // ...
           break
         case FPhi.SelphID.ExceptionType.LicenseError:
-          console.error('License Error')
+          // License Error
           // ...
           break
         default:
-          console.error(exceptionResult.detail.message)
+        // Error: exceptionResult.detail.message
       }
 
       this.isWidgetStarted = false
@@ -257,7 +256,7 @@ export default {
 
     onTrackStatus: function (eventData) {
       // const trackStatusCode = Object.entries(FPhi.SelphID.TrackStatus).find((e) => e[1] === eventData.detail.code)
-      console.warn(eventData.detail.code)
+      // Track status: eventData.detail.code
     },
 
     // Widget methods
@@ -305,7 +304,7 @@ export default {
             // We can do specific error handling here
             //
             if (e.message.includes(FaicalAuthenticationError.FACE_DOESNOT_MATACH) || e.message.includes(FaicalAuthenticationError.CHECK_COULD_NOT_PERFORMED) || e.message.includes(FaicalAuthenticationError.FAILED_POSE_OF_FACE) || e.message.includes(FaicalAuthenticationError.FAILED_FACIAL_PATTERN)) {
-              console.log('Error to clear data valut')
+              // Error to clear data vault
               this.clearVaultAllData()
             }
 
@@ -350,7 +349,7 @@ export default {
     },
 
     EventChoosenDocumentTypeHandler(data) {
-      console.log('Inside EventChoosenDocumentTypeHandler data ' + JSON.stringify(data))
+      // Inside EventChoosenDocumentTypeHandler data
       if (!data || !data.docType) {
         return
       }
@@ -361,14 +360,14 @@ export default {
     },
 
     back() {
-      console.log('Inside back..')
+      // Inside back..
       this.disableWidget()
       this.selectedDocumentType = ''
       this.chooseDocumentType = false
     },
 
     rescanHandler(result) {
-      console.log('Inside rescan handler... ' + result)
+      // Inside rescan handler...
       this.prepare()
       this.back()
     },

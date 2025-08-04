@@ -55,7 +55,6 @@ export default {
       }
 
       const requestedChainId = this.chainId
-      console.log(requestedChainId)
       const chainConfig = SupportedChains.find((x) => x.chainId === requestedChainId)
       if (!chainConfig) {
         throw new Error('Chain not supported for chainId requestedChainId ' + requestedChainId)
@@ -63,16 +62,16 @@ export default {
       const chainId = chainConfig.chainId
 
       if (!window.getOfflineSigner || !window.keplr) {
-        console.error('Please install keplr extension')
+        // Please install keplr extension
       } else {
         if (window.keplr.experimentalSuggestChain) {
           try {
             await window.keplr.experimentalSuggestChain(chainConfig)
           } catch {
-            console.error('Failed to suggest the chain')
+            // Failed to suggest the chain
           }
         } else {
-          console.error('Please use the recent version of keplr extension')
+          // Please use the recent version of keplr extension
         }
       }
 

@@ -1,22 +1,12 @@
 <template>
-  <div>
-    <div class="position-relative header">
+  <div class="page-heading-container">
+    <div class="position-relative header page-heading-title">
       {{ header }}
       <span class="badge position-absolute top-10 translate-middle rounded" v-if="beta"> Beta </span>
     </div>
-    <div class="subheader">
+    <div class="subheader page-heading-subtitle">
       {{ subHeader }}
     </div>
-
-    <!-- <button type="button" class="position-relative btn btn-light">
-      <h1>{{ header }}</h1>
-      <span class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-light border" v-if="!beta">
-        beta
-      </span>
-      <h6 style="color: grey">
-        {{ subHeader }}
-      </h6>
-    </button> -->
   </div>
 </template>
 
@@ -34,37 +24,54 @@ export default {
 </script>
 
 <style scoped>
+.page-heading-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.page-heading-title {
+  color: #000000;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.page-heading-subtitle {
+  color: #666666;
+  font-weight: 400;
+}
+
 .badge {
   padding: 5px;
   float: right;
-  background-color: #ffd900ce;
-  /* border-radius: 40%; */
+  background-color: #ffd900;
   font-size: x-small;
-  /* font-weight: bold; */
-  color: black;
+  color: #000000;
   font-weight: bold;
   width: auto;
   text-align: center;
   align-content: center;
   margin-left: 5px;
+  border-radius: 4px;
 }
 
 .subheader {
   font-size: 16px;
-  color: grey;
-  margin-top: 2px;
-  /* margin-bottom: 10px; */
+  color: #666666;
+  margin-top: 8px;
+  font-weight: 400;
 }
 
 .header {
   font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 8px;
   position: relative;
+  color: #000000;
 }
+
 @media (min-width: 600px) {
   .header {
-    font-size: 40px;
+    font-size: 32px;
   }
   .subheader {
     font-size: 18px;
@@ -73,10 +80,19 @@ export default {
 
 @media (min-width: 960px) {
   .header {
-    font-size: 45px;
+    font-size: 36px;
   }
   .subheader {
     font-size: 20px;
+  }
+}
+
+@media (max-width: 450px) {
+  .header {
+    font-size: 20px;
+  }
+  .subheader {
+    font-size: 14px;
   }
 }
 </style>

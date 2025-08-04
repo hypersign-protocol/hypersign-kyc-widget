@@ -1571,7 +1571,7 @@ export default {
         // eslint-disable-next-line no-unreachable
         proof.isLoading = false
       } catch (e) {
-        console.log(e)
+        // Error occurred during proof generation
 
         this.toast(e.message, 'error')
       } finally {

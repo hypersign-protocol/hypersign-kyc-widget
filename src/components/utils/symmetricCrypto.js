@@ -47,7 +47,7 @@ async function decrypt(transitmessage, password, salt = null) {
     }
     return decrypted.toString(CryptoJS.enc.Utf8)
   } catch (e) {
-    console.error(e)
+    // Decryption error occurred
     throw new Error('Could not decrypt data, your PIN may be wrong')
   }
 }

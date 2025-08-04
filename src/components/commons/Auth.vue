@@ -26,7 +26,7 @@ export default {
         const that = this
         webAuth.client.userInfo(accessToken, function (err, user) {
           if (err) {
-            console.error(err)
+            // Error getting user info
           }
           that.$store.commit('setProfile', { ...user, accessToken })
         })

@@ -1,54 +1,45 @@
 <template>
-  <div>
+  <div class="kyc-container">
     <div class="card-body min-h-36">
       <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <div class="kyc-container">
-        <v-card class="mx-auto" outlined style="text-align: start">
-          <v-list-item three-line>
-            <v-list-item-content>
-              <div v-if="getPresentationRequestParsed.domain">{{ getPresentationRequestParsed.domain }}</div>
-              <v-list-item-subtitle v-if="getPresentationRequestParsed.reason">{{ getPresentationRequestParsed.reason }}</v-list-item-subtitle>
-              <v-list-item-subtitle v-else>The verifier app needs the following information to allow you use their serivce</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-avatar tile size="80">
-              <img :src="getPresentationRequestParsed.logoUrl" class="avatar" v-if="getPresentationRequestParsed.logoUrl" />
-              <i class="bi bi-robot avatar" style="font-size: xxx-large; display: inline-block" v-else></i>
-            </v-list-item-avatar>
-          </v-list-item>
+      <VerifierInfoCard :logoUrl="getPresentationRequestParsed.logoUrl" :domain="getPresentationRequestParsed.domain" :name="getPresentationRequestParsed.name" />
+      <div class="mt-4 p-4 widget-card-width" style="margin: auto">
+        <v-card class="mx-auto" max-width="400">
+          <v-card-title class="text-h6">Credentials to Share</v-card-title>
+          <v-card-text>
+            <div v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id" class="d-flex align-center mb-3">
+              <v-icon class="mr-3" color="primary">
+                <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
+                <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
+                <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
+                <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
+                <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
+              </v-icon>
+              <div class="flex-grow-1">
+                <div class="text-subtitle-2">{{ eachCredential.type[1] }}</div>
+                <div class="text-caption text-grey">{{ shorten(eachCredential.id) }}</div>
+              </div>
+              <v-checkbox :model-value="shouldShare(eachCredential)" color="primary"></v-checkbox>
+            </div>
+          </v-card-text>
         </v-card>
-      </div>
-      <div class="mt-1 kyc-container" style="overflow-y: auto; max-height: 335px; text-align: left">
-        <v-card>
-          <v-list two-line subheader>
-            <v-list-item link v-for="eachCredential in getTrustedIssuersCredentials" v-bind:key="eachCredential.id">
-              <v-list-item-avatar style="border: 1px solid lightgrey">
-                <v-avatar>
-                  <i class="bi bi-person-bounding-box" v-if="eachCredential.type[1] == 'PersonhoodCredential'"></i>
-                  <i class="bi bi-calendar3-week" v-if="eachCredential.type[1] == 'DateOfBirthCredential'"></i>
-                  <i class="bi bi-globe" v-if="eachCredential.type[1] == 'CitizenshipCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'PassportCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1] == 'GovernmentIdCredential'"></i>
-                  <i class="bi bi-person-vcard" v-if="eachCredential.type[1].includes('zkProof') && !eachCredential.type[1].includes('SbtCredential') && listOfEnabledZkCredential"></i>
-                  <i class="bi bi-person-badge" v-if="eachCredential.type[1].includes('SbtCredential')"></i>
-                </v-avatar>
-              </v-list-item-avatar>
 
-              <v-list-item-content>
-                <v-list-item-title class="text-overline">{{ eachCredential.type[1] }}</v-list-item-title>
-                <v-list-item-subtitle>{{ shorten(eachCredential.id) }}</v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-action>
-                <v-btn icon ripple>
-                  <v-switch :input-value="shouldShare(eachCredential)" flat disabled></v-switch>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
+        <v-card class="mx-auto mt-4" max-width="400">
+          <v-card-text>
+            <v-checkbox v-model="consentChecked" :rules="[(v) => !!v || 'You must agree to continue']" required class="consent-checkbox">
+              <template v-slot:label>
+                <div class="consent-text">
+                  <span>I understand, have read and agree to the</span>
+                  <span><a href="#" class="consent-link">Terms of Use</a> and <a href="#" class="consent-link">Privacy Policy</a></span>
+                </div>
+              </template>
+            </v-checkbox>
+          </v-card-text>
         </v-card>
-      </div>
-      <div class="mt-1 kyc-container">
-        <v-btn block color="secondary" @click="submit()"><i class="bi bi-check-circle mx-1"></i> Authorize</v-btn>
+
+        <v-btn block color="primary" @click="submit()" :disabled="!consentChecked" class="mt-4"> Continue </v-btn>
       </div>
     </div>
   </div>
@@ -71,6 +62,7 @@ export default {
       toastType: 'success',
       isToast: false,
       hypersignVP: null,
+      consentChecked: false,
     }
   },
   created() {
@@ -199,52 +191,29 @@ export default {
 </script>
 
 <style scoped>
-.credential-row {
-  padding: 10px;
-  font-size: x-large;
-}
-
-.credential-row-type {
-  text-align: left;
-}
-
-.credential-row-switch {
-  align-content: right;
-}
-
-.form-switch {
-  padding-left: 1.5em;
-}
-
-.conset-message {
-  color: grey;
-  font-size: x-small;
-}
-
 .widget-card-width {
-  width: 95%;
+  width: 80%;
   margin: auto;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 200px) {
   .widget-card-width {
-    margin: auto;
     width: 100%;
-  }
-  .center-text-align {
-    text-align: center;
-  }
-  .credential-row {
-    padding: 0px;
   }
 }
 
-.avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #f8f9fa;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+.consent-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.consent-link {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.consent-link:hover {
+  text-decoration: underline;
 }
 </style>
