@@ -1,9 +1,9 @@
 <template>
   <div>
     <template>
-      <v-card class="maincontainer d-flex flex-column">
+      <v-card class="maincontainer d-flex flex-column main-page-container">
         <NavBar v-if="currentStep?.name && currentStep?.isEnabled" />
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 main-content">
           <component :is="currentStepComponent" />
         </div>
 
@@ -18,14 +18,31 @@
 </template>
 
 <style scoped>
+.main-page-container {
+  background-color: #ffffff;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  padding: 20px 0;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .main-container-height {
-  min-height: 90dvh;
-  max-height: 100dvh;
+  height: 100vh;
+  max-height: 100vh;
+  background-color: #ffffff;
 }
 
 @media (max-width: 450px) {
   .main-container-height {
-    height: 100dvh;
+    height: 100vh;
+    background-color: #ffffff;
   }
 }
 </style>
