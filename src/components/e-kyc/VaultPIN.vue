@@ -1,32 +1,39 @@
 <template>
   <div class="kyc-container">
-    <div class="card-body min-h-36">
+    <div class="">
       <load-ing :active.sync="isLoadingPage" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <PageHeading :header="'Vault Setup'" :subHeader="'Setup/Enter a PIN to unlock your vault'" />
-      <div class="center" v-if="ifNewUser">
-        <RegisterPIN class="width" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
+      <div v-if="ifNewUser">
+        <RegisterPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" />
       </div>
 
-      <div v-else class="center">
-        <AskPIN class="width" @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
+      <div v-else>
+        <AskPIN @proceedWithUnlockVaultAndSyncDataEvent="unlockVaultAndSyncData" @proceedWithAccountDeletionFinal="proceedWithAccountDeletionFinalHandler" />
       </div>
-    </div>
-    <div class="footer">
-      <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.width {
-  width: 80%;
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px);
 }
 
-@media (max-width: 450px) {
-  .width {
-    width: 100%;
-  }
+.footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  z-index: 100;
 }
 </style>
 
