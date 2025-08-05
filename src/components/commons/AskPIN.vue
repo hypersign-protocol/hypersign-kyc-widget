@@ -31,10 +31,10 @@
         <i class="bi bi-unlock-fill"></i>
         Unlock Vault
       </button>
-      <button class="btn btn-secondary" @click="submit()">
+      <!-- <button class="btn btn-secondary" @click="submit()">
         <i class="bi bi-shield-lock-fill"></i>
         Setup Vault
-      </button>
+      </button> -->
     </div>
 
     <!-- Forgot Password Link -->
