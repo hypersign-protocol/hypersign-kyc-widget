@@ -1,30 +1,46 @@
 <style scoped>
 .toast1 {
   position: fixed;
-  bottom: 5%;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  min-width: 60%;
-  max-width: 60%;
-  padding: 12px 16px;
+  min-width: 280px;
+  max-width: 320px;
+  padding: 16px 20px;
   border-radius: 12px;
   font-size: 14px;
-  color: #000;
+  color: #333333;
   word-wrap: break-word;
   text-align: center;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   opacity: 0;
   transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
+    opacity 0.3s ease,
+    transform 0.3s ease;
   pointer-events: none;
+  border: 1px solid #e0e0e0;
+  font-weight: 500;
 }
 
-@media (max-width: 450px) {
+/* Mobile-first responsive design */
+@media (max-width: 375px) {
   .toast1 {
-    min-width: 85%;
-    max-width: 90%;
+    min-width: 260px;
+    max-width: 300px;
+    bottom: 16px;
+    padding: 14px 18px;
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 376px) {
+  .toast1 {
+    min-width: 300px;
+    max-width: 360px;
+    bottom: 24px;
+    padding: 18px 22px;
+    font-size: 15px;
   }
 }
 
@@ -75,12 +91,12 @@ export default {
     },
     toastColor() {
       if (this.type === 'error') {
-        return 'rgba(253, 170, 170, 0.972)'
+        return '#ffebee'
       }
       if (this.type === 'warning') {
-        return '#ffcc00'
+        return '#fff3e0'
       } else {
-        return 'rgb(184, 230, 184)'
+        return '#e8f5e8'
       }
     },
   },

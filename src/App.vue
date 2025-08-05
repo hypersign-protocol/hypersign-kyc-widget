@@ -1,5 +1,5 @@
 <template>
-  <v-app style="width: 100%; height: 100%; background-color: #ffffff">
+  <v-app class="mobile-app">
     <router-view />
   </v-app>
 </template>
@@ -132,13 +132,21 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+.mobile-app {
   width: 100%;
   height: 100%;
   background-color: #ffffff;
+  overflow: hidden;
+}
+
+#app {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333333;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  overflow: hidden;
 }
 </style>
