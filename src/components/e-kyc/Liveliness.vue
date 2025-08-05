@@ -36,8 +36,8 @@ export default {
       // Widget configuration
       bundlePath: window.location.origin + '/assets/selphi',
       language: 'en',
-      cameraWidth: 1280,
-      cameraHeight: 720,
+      cameraWidth: 1920,
+      cameraHeight: 1080,
       cameraType: FPhi.Selphi.CameraType.Front,
       interactible: true,
       stabilizationStage: true,
@@ -69,7 +69,15 @@ export default {
       return
     }
 
+    // Ensure widget starts in initial state
+    this.isWidgetStarted = false
+    this.isLoading = false
+
     EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
+  },
+  mounted() {
+    // Ensure widget is in initial state when mounted
+    this.resetWidget()
   },
   beforeDestroy() {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
@@ -100,6 +108,12 @@ export default {
       } else {
         this.toast('Device not supported', 'error')
       }
+    },
+
+    resetWidget: function () {
+      this.isWidgetStarted = false
+      this.isLoading = false
+      this.widgetResult = ''
     },
 
     disableWidget: function () {
@@ -200,7 +214,7 @@ export default {
 
       <!-- Widget Container -->
       <div class="widget-section" v-if="isWidgetStarted">
-        <div class="widget-container">
+        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
           <facephi-selphi
             :bundlePath="bundlePath"
             :language="language"
@@ -230,7 +244,9 @@ export default {
 
       <!-- Instructions Section -->
       <div class="instructions-section" v-else>
-        <img src="../../assets/fr-instruction.gif" class="instruction-gif" v-if="!isLoading" />
+        <div class="col-md-12">
+          <img src="../../assets/fr-instruction.gif" v-if="!isLoading" height="250px" />
+        </div>
       </div>
 
       <!-- Tips Section -->
@@ -276,14 +292,15 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 20px;
+  padding: 10px;
   background-color: #ffffff;
+  padding-bottom: 0px; /* Reduced from 80px to 0px */
 }
 
 /* Header Section */
 .header-section {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 0px; /* Reduced from 24px to 0px */
 }
 
 .main-title {
@@ -308,33 +325,19 @@ export default {
   margin-bottom: 24px;
 }
 
-.widget-container {
-  position: relative;
-  min-height: 450px;
-  max-height: 90%;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
 /* Instructions Section */
 .instructions-section {
   flex: 1;
   min-height: 0;
-  margin-bottom: 24px;
+  margin-bottom: 0px; /* Reduced from 24px to 0px */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.instruction-gif {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
 /* Tips Section */
 .tips-section {
-  margin-bottom: 24px;
+  margin-bottom: 10px; /* Reduced from 24px to 10px */
 }
 
 .tips-box {
@@ -396,6 +399,7 @@ export default {
 /* Action Section */
 .action-section {
   margin-top: auto;
+  margin-bottom: 10px; /* Reduced from 20px to 10px */
 }
 
 .btn-primary {
@@ -433,6 +437,7 @@ export default {
 @media (max-width: 450px) {
   .liveliness-container {
     padding: 16px;
+    padding-bottom: 80px; /* Maintain space for footer on mobile */
   }
 
   .main-title {
