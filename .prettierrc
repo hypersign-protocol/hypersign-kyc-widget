@@ -3,5 +3,6 @@
   "semi": false,
   "trailingComma": "es5",
   "singleAttributePerLine": false,
-  "printWidth": 500
+  "printWidth": 500,
+  "endOfLine": "lf"
 }
