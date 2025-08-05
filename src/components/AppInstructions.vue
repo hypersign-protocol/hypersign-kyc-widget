@@ -1,72 +1,35 @@
-<style scoped>
-.checkbox-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.checkbox-item {
-  margin-top: 30px;
-  margin-bottom: 35px;
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-item-input {
-  width: 2.5em;
-  height: 2.5em;
-}
-
-.container {
-  display: flex;
-}
-
-.box {
-  margin: 10px;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-.checkbox-item input {
-  margin-right: 5px;
-}
-</style>
-
 <template>
-  <div class="kyc-container">
-    <div class="card-body min-h-36">
-      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <PageHeading :header="'Let\'s get you verified'" :subHeader="'Follow the simple steps below'" />
+  <div class="instructions-container">
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
-      <v-card class="widget-card widget-card-width hypersign-box">
-        <div class="row mb-1" v-if="getIfLivelinessStep.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />
-          </div>
-        </div>
-        <div class="row mb-1" v-if="getIfIdDocumentStep.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="2" :logo="getIfIdDocumentStep.logo" :stepTitle="getIfIdDocumentStep.stepTitle" :isDone="hasKycDone" />
-          </div>
-        </div>
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">Let's get you verified</h1>
+      <p class="subtitle">Follow the simple steps below</p>
+    </div>
 
-        <div class="row mb-1" v-if="getIfzkProofStep.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep stepNumber="3" :stepTitle="getIfzkProofStep.stepTitle" :logo="getIfzkProofStep.logo" :isDone="false" />
-          </div>
-        </div>
-
-        <div class="row mb-1" v-if="getIfUserConsentStep.isEnabled == true">
-          <div class="col">
-            <AppInstructionStep :stepNumber="getIfzkProofStep.isEnabled ? '5' : '4'" :stepTitle="getIfUserConsentStep.stepTitle" :logo="getIfUserConsentStep.logo" :isDone="false" />
-          </div>
-        </div>
-      </v-card>
-
-      <div class="mt-3">
-        <div class="d-grid gap-1 widget-card-width" style="margin: auto">
-          <v-btn block color="secondary" @click="nextStep(nextStepNumeber)">Let's go!</v-btn>
-        </div>
+    <!-- Steps Section -->
+    <div class="steps-section">
+      <div class="step-item" v-if="getIfLivelinessStep.isEnabled == true">
+        <AppInstructionStep stepNumber="1" :stepTitle="getIfLivelinessStep.stepTitle" :isDone="hasLivelinessDone" :logo="getIfLivelinessStep.logo" />
       </div>
+
+      <div class="step-item" v-if="getIfIdDocumentStep.isEnabled == true">
+        <AppInstructionStep stepNumber="2" :logo="getIfIdDocumentStep.logo" :stepTitle="getIfIdDocumentStep.stepTitle" :isDone="hasKycDone" />
+      </div>
+
+      <div class="step-item" v-if="getIfzkProofStep.isEnabled == true">
+        <AppInstructionStep stepNumber="3" :stepTitle="getIfzkProofStep.stepTitle" :logo="getIfzkProofStep.logo" :isDone="false" />
+      </div>
+
+      <div class="step-item" v-if="getIfUserConsentStep.isEnabled == true">
+        <AppInstructionStep :stepNumber="getIfzkProofStep.isEnabled ? '5' : '4'" :stepTitle="getIfUserConsentStep.stepTitle" :logo="getIfUserConsentStep.logo" :isDone="false" />
+      </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section">
+      <button class="btn-primary" @click="nextStep(nextStepNumeber)">Let's go!</button>
     </div>
   </div>
 </template>
@@ -76,6 +39,7 @@ import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
 import AppInstructionStep from './commons/AppInstructionStep.vue'
 import { STEP_NAMES } from '@/config'
 import { EVENT, EVENTS } from './utils/eventBus'
+
 export default {
   name: 'AppInstructions',
   components: {
@@ -87,66 +51,44 @@ export default {
   },
   async created() {
     await this.checkIfCredentialAlreadyExistsInVault()
-    // this.hasLivelinessDone
-    // this.hasKycDone
-    // this.hasSbtMintDone
-    // const livelinessVerifcationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.LiveLiness)
-    // const zkProofVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
-    // const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
-    // const idDocVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
-    // TODO: this entire code block is not optimized, we MUST optimize it later.
+
     if (this.hasLivelinessDone) {
-      // next step: id verfcaiton
       if (this.hasKycDone) {
-        // next step: check if on chain id is configured or not
         const isOnChainIdConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
 
         if (isOnChainIdConfigured) {
-          // if yes, then go to onchainId page
           if (!this.hasSbtMintDone) {
-            // if minting already done..
             this.nextStepNumeber = this.enabledSteps.indexOf(isOnChainIdConfigured)
           } else {
-            // go to user consent page
-            const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs) // TODO remove
-            // const userConsentStep = this.enabledSteps.find(step => (step.stepName == STEP_NAMES.UserConsent && step.isEnabled == true))
+            const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
             this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
           }
         } else {
-          // go to user consent page
           const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
           this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
         }
       } else {
         const isKYCConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
         if (isKYCConfigured) {
-          // next step: go to Id verifcaiton
-          // const isVerificationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.IdDocs)
           this.nextStepNumeber = this.enabledSteps.indexOf(isKYCConfigured)
         } else {
-          // next step: check if on chain id is configured or not
           const iszkProofConfigured = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.ZkProofs)
           if (iszkProofConfigured) {
             if (!this.hasSbtMintDone) {
-              console.log('Sbt minint not done')
-              // if yes, then go to onchainId page
-              this.nextStepNumeber = this.enabledSteps.indexOf(iszkProofConfigured) // isOnChainIdConfigured.id
+              this.nextStepNumeber = this.enabledSteps.indexOf(iszkProofConfigured)
             } else {
-              // if yes, then go to onchainId page
               const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
-              this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep) // userConsentStep.id
+              this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
             }
           } else {
-            // go to user consent page
             const userConsentStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.UserConsent)
-            this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep) // userConsentStep.id
+            this.nextStepNumeber = this.enabledSteps.indexOf(userConsentStep)
           }
         }
       }
     } else {
-      // next step: go to liveliness
       const livelinessVerifcationStep = this.enabledSteps.find((step) => step.stepName === STEP_NAMES.LiveLiness)
-      this.nextStepNumeber = this.enabledSteps.indexOf(livelinessVerifcationStep) // livelinessVerifcationStep?.id
+      this.nextStepNumeber = this.enabledSteps.indexOf(livelinessVerifcationStep)
     }
   },
   data() {
@@ -179,13 +121,97 @@ export default {
   },
 }
 </script>
-<style lang="css">
-.btn-width {
-  width: 80%;
+
+<style scoped>
+.instructions-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
 }
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Steps Section */
+.steps-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  margin-bottom: 24px;
+}
+
+.step-item {
+  margin-bottom: 12px;
+}
+
+/* Action Section */
+.action-section {
+  margin-top: auto;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Mobile Responsive */
 @media (max-width: 450px) {
-  .btn-width {
-    width: 80%;
+  .instructions-container {
+    padding: 16px;
+  }
+
+  .main-title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 36px;
   }
 }
 </style>
