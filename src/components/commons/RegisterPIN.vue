@@ -184,22 +184,30 @@ export default {
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  padding: 16px;
+  padding: 20px;
   margin-bottom: 20px;
-  width: 100%;
   margin-left: 16px;
   margin-right: 16px;
+  box-sizing: border-box;
+  max-width: calc(100% - 32px);
+  overflow: hidden;
 }
 
 .info-content {
   text-align: left;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .info-text {
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
   color: #666666;
   margin: 0 0 10px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .learn-more-link {
