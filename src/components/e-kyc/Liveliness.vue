@@ -78,6 +78,8 @@ export default {
   mounted() {
     // Ensure widget is in initial state when mounted
     this.resetWidget()
+
+
   },
   beforeDestroy() {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
@@ -109,6 +111,8 @@ export default {
         this.toast('Device not supported', 'error')
       }
     },
+
+
 
     resetWidget: function () {
       this.isWidgetStarted = false
@@ -279,6 +283,8 @@ export default {
           <i class="bi bi-play-circle"></i>
           Start Capture
         </button>
+
+
       </div>
     </div>
   </div>
