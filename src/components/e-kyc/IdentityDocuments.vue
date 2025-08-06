@@ -1,6 +1,6 @@
 <script type="text/javascript">
 import { FPhi } from '@facephi/selphid-widget-web'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import PreviewData from '../commons/Preview.vue'
 import ChooseDocumentType from '../commons/ChooseDocumentType.vue'
 import { STEP_NAMES, FaicalAuthenticationError } from '@/config'
@@ -25,6 +25,7 @@ export default {
       chooseDocumentType: false,
       selectedDocumentType: '',
       manualMode: false,
+
       // Demo configuration
       isWidgetStarted: false,
       FPhiCameraResolutions: {
@@ -84,6 +85,7 @@ export default {
 
   methods: {
     ...mapActions(['nextStep', 'verifyOcrIDDoc', 'verifyOCRDocStatus', 'extractOcrIdDoc', 'clearVaultAllData']),
+    ...mapMutations(['setKycCapturedData', 'setKycDone']),
     getStepIndex(step) {
       return this.enabledSteps.indexOf(step)
     },
@@ -373,6 +375,8 @@ export default {
       this.prepare()
       this.back()
     },
+
+
   },
 }
 </script>
@@ -423,6 +427,8 @@ export default {
       <!-- Document Type Selection -->
       <div class="document-selection-section" v-if="!chooseDocumentType && !hasKycDone">
         <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
+
+
       </div>
 
       <!-- Widget Container -->

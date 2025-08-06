@@ -1,38 +1,51 @@
 <template>
-  <div class="card-body">
-    <PageHeading :header="'Congratulations!'" style="text-align: center" />
-    <div class="center mt-3">
-      <div class="row" v-if="getFinalResult">
-        <div class="col-md-12 center">
-          <ul style="list-style-type: none">
-            <li>
-              <i class="bi bi-check-circle final-msg-icon successt"></i>
-            </li>
-            <li>
-              <h5>Your identity is verified!</h5>
-            </li>
-            <li>
-              <h6>You will be redirected back to the verifier app in {{ maxTimeOut }}</h6>
-            </li>
-          </ul>
-        </div>
-      </div>
+  <div class="result-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title" v-if="getFinalResult">Congratulations!</h1>
+      <h1 class="main-title" v-else>Verification Complete</h1>
+      <p class="subtitle" v-if="getFinalResult">Your identity has been successfully verified</p>
+      <p class="subtitle" v-else>We have completed the verification process</p>
+    </div>
 
-      <div class="row" v-else>
-        <div class="col-md-12">
-          <ul style="list-style-type: none">
-            <li>
-              <i class="bi bi-x-circle final-msg-icon fail"></i>
-            </li>
-            <li>
-              <h5>We are sorry!</h5>
-            </li>
-            <li>
-              <h6>We could not verify your identity</h6>
-            </li>
-          </ul>
+    <!-- Result Icon Section -->
+    <div class="icon-section">
+      <div class="icon-container">
+        <i v-if="getFinalResult" class="bi bi-check-circle result-icon success"></i>
+        <i v-else class="bi bi-x-circle result-icon fail"></i>
+      </div>
+    </div>
+
+    <!-- Message Section -->
+    <div class="message-section">
+      <div class="message-box">
+        <div class="message-header">
+          <i v-if="getFinalResult" class="bi bi-shield-check"></i>
+          <i v-else class="bi bi-exclamation-triangle"></i>
+          <span class="message-title" v-if="getFinalResult">Verification Successful</span>
+          <span class="message-title" v-else>Verification Failed</span>
+        </div>
+        <div class="message-content">
+          <div class="message-item">
+            <i v-if="getFinalResult" class="bi bi-check-circle message-icon-success"></i>
+            <i v-else class="bi bi-x-circle message-icon-error"></i>
+            <span class="message-text" v-if="getFinalResult">Your identity is verified!</span>
+            <span class="message-text" v-else>We could not verify your identity</span>
+          </div>
+          <div class="message-item" v-if="getFinalResult">
+            <i class="bi bi-clock message-icon-info"></i>
+            <span class="message-text">You will be redirected back to the verifier app in {{ maxTimeOut }} seconds</span>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section" v-if="!getFinalResult">
+      <button class="btn-primary" @click="goBack()">
+        <i class="bi bi-arrow-left"></i>
+        Try Again
+      </button>
     </div>
   </div>
 </template>
@@ -88,20 +101,214 @@ export default {
         close()
       }
     },
+    goBack() {
+      // Navigate back to the previous step
+      this.$router.go(-1)
+    },
   },
 }
 </script>
 
-<style type="text/css" scoped>
-.final-msg-icon {
-  font-size: 200px;
+<style scoped>
+.result-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  padding-bottom: 0px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Icon Section */
+.icon-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container {
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 120px;
+  margin-bottom: 16px;
+}
+
+.success {
+  color: #28a745;
 }
 
 .fail {
-  color: red;
+  color: #dc3545;
 }
 
-.successt {
-  color: green;
+/* Message Section */
+.message-section {
+  margin-bottom: 10px;
+}
+
+.message-box {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.message-header i {
+  font-size: 16px;
+  color: #6c757d;
+  margin-right: 8px;
+}
+
+.message-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-item {
+  display: flex;
+  align-items: center;
+}
+
+.message-icon-success {
+  font-size: 14px;
+  color: #28a745;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.message-icon-error {
+  font-size: 14px;
+  color: #dc3545;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.message-icon-info {
+  font-size: 14px;
+  color: #17a2b8;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.message-icon-warning {
+  font-size: 14px;
+  color: #ffc107;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.message-text {
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Action Section */
+.action-section {
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 450px) {
+  .result-container {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  .main-title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .result-icon {
+    font-size: 100px;
+  }
+
+  .message-box {
+    padding: 12px;
+  }
+
+  .message-title {
+    font-size: 13px;
+  }
+
+  .message-text {
+    font-size: 12px;
+  }
+
+  .btn-primary {
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 36px;
+  }
 }
 </style>

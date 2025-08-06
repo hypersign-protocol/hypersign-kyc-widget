@@ -70,6 +70,8 @@
           <v-icon left>mdi-check-circle</v-icon>
           {{ isLoading ? 'Processing...' : 'Authorize & Continue' }}
         </v-btn>
+
+
       </div>
     </div>
   </div>
@@ -93,6 +95,7 @@ export default {
       toastType: 'success',
       isToast: false,
       hypersignVP: null,
+
     }
   },
   created() {
@@ -212,6 +215,8 @@ export default {
       }
       return await this.hypersignVP.generate(params)
     },
+
+
   },
 }
 </script>

@@ -200,8 +200,6 @@ export default {
         this.toast(message, 'error')
       }
     },
-
-
   },
 }
 </script>
@@ -288,8 +286,6 @@ export default {
           <i class="bi bi-play-circle"></i>
           Start Capture
         </button>
-
-
 
         <!-- Debug Info -->
         <div style="margin-top: 5px; font-size: 10px; color: #666; text-align: center">Debug: isWidgetStarted={{ isWidgetStarted }}, isLoading={{ isLoading }}, componentName={{ $options.name }}</div>

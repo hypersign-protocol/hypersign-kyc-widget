@@ -365,7 +365,7 @@ export default {
 }
 
 .description {
-  font-size: 14px;
+  font-size: 12px;
   color: #666666;
   line-height: 1.5;
   margin-bottom: 20px;
@@ -462,7 +462,7 @@ export default {
   }
 
   .description {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .data-box {
