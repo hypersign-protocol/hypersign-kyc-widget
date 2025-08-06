@@ -25,6 +25,7 @@ export default {
       fullPage: true,
       // Demo configuration
       isWidgetStarted: false,
+
       FPhiCameraResolutions: {
         res480p: { title: '640x480', width: 640, height: 480 },
         res600p: { title: '800x600', width: 800, height: 600 },
@@ -64,12 +65,16 @@ export default {
     }
   },
   created() {
+    console.log('Liveliness component created, hasLivelinessDone:', this.hasLivelinessDone)
+
     if (this.hasLivelinessDone) {
+      console.log('Liveliness already done, moving to next step')
       const nextStepNumber = this.getNextStepIndex()
       this.nextStep(nextStepNumber)
       return
     }
 
+    console.log('Setting up liveliness component...')
     // Ensure widget starts in initial state
     this.isWidgetStarted = false
     this.isLoading = false
@@ -77,6 +82,7 @@ export default {
     EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   mounted() {
+    console.log('Liveliness component mounted')
     // Ensure widget is in initial state when mounted
     this.resetWidget()
   },
@@ -84,7 +90,7 @@ export default {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   methods: {
-    ...mapMutations(['previousStep']),
+    ...mapMutations(['previousStep', 'setLivelinessCapturedData', 'setLivelinessDone']),
     ...mapActions(['verifyLiveliness', 'verifyLivelinessStatus', 'nextStep']),
     getStepIndex(step) {
       return this.enabledSteps.indexOf(step)
@@ -194,6 +200,8 @@ export default {
         this.toast(message, 'error')
       }
     },
+
+
   },
 }
 </script>
@@ -280,6 +288,8 @@ export default {
           <i class="bi bi-play-circle"></i>
           Start Capture
         </button>
+
+
 
         <!-- Debug Info -->
         <div style="margin-top: 5px; font-size: 10px; color: #666; text-align: center">Debug: isWidgetStarted={{ isWidgetStarted }}, isLoading={{ isLoading }}, componentName={{ $options.name }}</div>
