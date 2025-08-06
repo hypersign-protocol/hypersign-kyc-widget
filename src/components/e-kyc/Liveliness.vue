@@ -11,6 +11,7 @@ import { FPhi } from '@facephi/selphi-widget-web'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { STEP_NAMES } from '@/config'
 import { EVENT, EVENTS } from '../utils/eventBus'
+
 export default {
   name: STEP_NAMES.LiveLiness,
   components: {},
@@ -78,8 +79,6 @@ export default {
   mounted() {
     // Ensure widget is in initial state when mounted
     this.resetWidget()
-
-
   },
   beforeDestroy() {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
@@ -111,8 +110,6 @@ export default {
         this.toast('Device not supported', 'error')
       }
     },
-
-
 
     resetWidget: function () {
       this.isWidgetStarted = false
@@ -284,7 +281,8 @@ export default {
           Start Capture
         </button>
 
-
+        <!-- Debug Info -->
+        <div style="margin-top: 5px; font-size: 10px; color: #666; text-align: center">Debug: isWidgetStarted={{ isWidgetStarted }}, isLoading={{ isLoading }}, componentName={{ $options.name }}</div>
       </div>
     </div>
   </div>

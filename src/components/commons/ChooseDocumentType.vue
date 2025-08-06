@@ -72,8 +72,6 @@ export default {
 
     chooseDoc(docType) {
       this.govIdType = docType
-      // Immediately emit the event to trigger FacePhi widget
-      this.$emit('EventChoosenDocumentType', { docType: docType })
     },
 
     submit() {
