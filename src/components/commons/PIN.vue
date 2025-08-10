@@ -1,7 +1,7 @@
 <template>
   <div class="pin-container">
     <div class="pin-inputs">
-      <input v-for="(digit, index) in 5" :key="index" :ref="`input${index}`" v-model="pinDigits[index]" type="text" maxlength="1" class="pin-input" :class="{ active: activeIndex === index }" @input="handleInput($event, index)" @keydown="handleKeydown($event, index)" @focus="activeIndex = index" @blur="activeIndex = null" inputmode="numeric" pattern="[0-9]*" />
+      <input v-for="(digit, index) in 5" :key="index" :ref="`input${index}`" v-model="pinDigits[index]" type="password" maxlength="1" class="pin-input" :class="{ active: activeIndex === index }" @input="handleInput($event, index)" @keydown="handleKeydown($event, index)" @focus="activeIndex = index" @blur="activeIndex = null" inputmode="numeric" pattern="[0-9]*" />
     </div>
   </div>
 </template>

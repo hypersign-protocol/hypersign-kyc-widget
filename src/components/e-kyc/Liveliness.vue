@@ -10,6 +10,7 @@
 import { FPhi } from '@facephi/selphi-widget-web'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { STEP_NAMES } from '@/config'
+import MESSAGE from '../utils/lang/en'
 import { EVENT, EVENTS } from '../utils/eventBus'
 
 export default {
@@ -38,8 +39,8 @@ export default {
       // Widget configuration
       bundlePath: window.location.origin + '/assets/selphi',
       language: 'en',
-      cameraWidth: 1920,
-      cameraHeight: 1080,
+      cameraWidth: 1280,
+      cameraHeight: 1000,
       cameraType: FPhi.Selphi.CameraType.Front,
       interactible: true,
       stabilizationStage: true,
@@ -137,11 +138,54 @@ export default {
       // console.warn("[Selphi] onModuleLoaded");
     },
 
-    onExtractionFinish: function (eventData) {
-      // console.warn("[Selphi] onExtractionFinish", eventData);
-      this.widgetResult = 'Success! Face captured successfully.'
-      this.isWidgetStarted = false
-      this.verifyLiveliness(eventData)
+    onExtractionFinish: async function (extractionResult) {
+      if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
+        await this.$store.commit('setLivelinessCapturedData', {
+          tokenSelfiImage: extractionResult.detail.bestImageCropped.currentSrc,
+          biometricTemplateRaw: extractionResult.detail.templateRaw,
+          bestImageTokenized: extractionResult.detail.bestImageTokenized,
+        })
+
+        this.isWidgetStarted = false
+        this.isLoading = true
+        this.toast(MESSAGE.LIVELINESS.VERIFYING_SELFI, 'warning')
+        this.verifyLiveliness()
+          .then(async () => {
+            await this.$store.commit('setLivelinessDone', true)
+            const nextStepNumber = this.getNextStepIndex()
+            this.nextStep(nextStepNumber)
+            this.isLoading = false
+          })
+          .catch(async (e) => {
+            await this.$store.commit('setLivelinessCapturedData', {})
+            this.isLoading = false
+            if (e.message) {
+              this.failScreen = {
+                isFail: true,
+                message: e.message,
+                buttonText: 'Back To Verifier App',
+                onAction: () => {
+                  if (window.opener) {
+                    const data = JSON.stringify({
+                      status: 'error',
+                      message: e.message,
+                    })
+                    window.opener.postMessage(data, '*') // TODO: replace '*' with the actual origin of the opener
+                    self.close()
+                  } else {
+                    window.close()
+                  }
+                },
+              }
+            }
+            // this.toast(e.message, 'error')
+            this.isLoading = false
+            EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
+          })
+        setTimeout(this.verifyLivelinessStatus, 500)
+      } else {
+        // ...
+      }
     },
 
     onUserCancel: function () {
@@ -150,10 +194,28 @@ export default {
       this.isWidgetStarted = false
     },
 
-    onExceptionCaptured: function (eventData) {
-      // console.warn("[Selphi] onExceptionCaptured", eventData);
-      this.widgetResult = 'Error! ' + eventData.detail.message
+    onExceptionCaptured: function (exceptionResult) {
+      // console.warn("[Selphi] onExceptionCaptured");
+
+      switch (exceptionResult.detail.exceptionType) {
+        case FPhi.Selphi.ExceptionType.CameraError:
+          this.toast('Camera Error', 'error')
+          // ...
+          break
+        case FPhi.Selphi.ExceptionType.UnexpectedCaptureError:
+          this.toast('Unexpected Error', 'error')
+          // ...
+          break
+        case FPhi.Selphi.ExceptionType.InitializingEngineError:
+          this.toast('Engine Error', 'error')
+          // ...
+          break
+        default:
+          this.toast(exceptionResult.detail.message, 'error')
+      }
+
       this.isWidgetStarted = false
+      this.toast('Error: Something went wrong', 'error')
     },
 
     onExtractionTimeout: function () {

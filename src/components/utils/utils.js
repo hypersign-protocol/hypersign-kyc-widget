@@ -40,7 +40,7 @@ export async function RequestHandler(url, method = 'GET', body = {}, headers = {
   if (!response.ok) {
     if (response.status !== 200) {
       if (json.error && json.success === false) {
-        const erro = json.error.details?.join(' ')
+        const erro = Array.isArray(json.error.details) ? json.error.details?.join(' ') : json.error.details
         // throw new Error(erro)
         return erro
       } else if (json.error && json.message) {
