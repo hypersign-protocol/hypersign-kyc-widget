@@ -6,34 +6,67 @@
     <div>
       <!-- Header Section -->
       <div class="header-section">
-        <p class="subtitle">Review and authorize data sharing</p>
+        <h2 class="main-title">Review and authorize data sharing</h2>
       </div>
 
       <!-- Verifier Info Section -->
       <div class="verifier-section" v-if="getPresentationRequestParsed">
-        <v-card class="verifier-card" outlined>
+        <v-card class="verifier-card" outlined @click="showVerifierModal = true">
           <v-list-item>
-            <v-list-item-avatar tile size="60" class="verifier-avatar-left">
+            <v-list-item-avatar size="60" class="verifier-avatar-left">
               <img :src="getPresentationRequestParsed.logoUrl" class="avatar" v-if="getPresentationRequestParsed.logoUrl" alt="Verifier Logo" />
               <i class="bi bi-robot avatar-placeholder" v-else></i>
             </v-list-item-avatar>
             <v-list-item-content class="verifier-content-left">
               <v-list-item-title class="verifier-domain" v-if="getPresentationRequestParsed.domain">
-                {{ getPresentationRequestParsed.domain }}
+                {{ truncateText(getPresentationRequestParsed.domain, 30) }}
+                <i class="bi bi-info-circle verifier-info-icon"></i>
               </v-list-item-title>
               <v-list-item-subtitle v-if="getPresentationRequestParsed.reason">
-                {{ getPresentationRequestParsed.reason }}
+                {{ truncateText(getPresentationRequestParsed.reason, 50) }}
               </v-list-item-subtitle>
-              <v-list-item-subtitle v-else>The app is requesting the following information to verify your identity</v-list-item-subtitle>
+              <v-list-item-subtitle v-else>{{ truncateText('The app is requesting the following information to verify your identity', 50) }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-card>
       </div>
 
+      <!-- Verifier Modal -->
+      <div v-if="showVerifierModal" class="modal-overlay" @click="showVerifierModal = false">
+        <div class="modal-container" @click.stop>
+          <div class="modal-header">
+            <h3 class="modal-title">Verifier Information</h3>
+            <button class="modal-close" @click="showVerifierModal = false">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="modal-content">
+            <div class="verifier-modal-info">
+              <div class="verifier-modal-logo">
+                <img :src="getPresentationRequestParsed.logoUrl" class="modal-avatar" v-if="getPresentationRequestParsed.logoUrl" alt="Verifier Logo" />
+                <i class="bi bi-robot modal-avatar-placeholder" v-else></i>
+              </div>
+              <div class="verifier-modal-details">
+                <h4 class="verifier-modal-domain" v-if="getPresentationRequestParsed.domain">
+                  {{ getPresentationRequestParsed.domain }}
+                </h4>
+                <p class="verifier-modal-reason" v-if="getPresentationRequestParsed.reason">
+                  {{ getPresentationRequestParsed.reason }}
+                </p>
+                <p class="verifier-modal-reason" v-else>The app is requesting the following information to verify your identity</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" @click="showVerifierModal = false">Close</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Credentials Section -->
       <div class="credentials-section" v-if="getTrustedIssuersCredentials.length > 0">
         <div class="credentials-header">
-          <p class="section-subtitle-bold">The following credentials will be shared with the verifier</p>
+          <h3 class="section-subtitle-bold">The following credentials will be shared with the verifier</h3>
         </div>
 
         <v-card class="credentials-card" outlined>
@@ -93,6 +126,7 @@ export default {
       toastType: 'success',
       isToast: false,
       hypersignVP: null,
+      showVerifierModal: false,
     }
   },
   created() {
@@ -171,8 +205,21 @@ export default {
       const lastPart = str.slice(-15)
       return `${firstPart}...${lastPart}`
     },
+    truncateText(text, maxLength) {
+      if (!text || text.length <= maxLength) {
+        return text
+      }
+      return text.slice(0, maxLength) + '...'
+    },
     shouldShare(eachCredential) {
+      console.log('shouldShare called for:', eachCredential.type[1])
+      console.log('checkIfLivelinessIsEnabled:', this.checkIfLivelinessIsEnabled)
+      console.log('checkIfzkProofIsEnabled:', this.checkIfzkProofIsEnabled)
+      console.log('checkIfIdDocumentIsEnabled:', this.checkIfIdDocumentIsEnabled)
+      console.log('checkIfOncainIdIsEnabled:', this.checkIfOncainIdIsEnabled)
+
       if (eachCredential.type[1] === 'PersonhoodCredential' && this.checkIfLivelinessIsEnabled && !this.checkIfzkProofIsEnabled) {
+        console.log('PersonhoodCredential should be true')
         return true
       } else if (eachCredential.type[1] === 'GovernmentIdCredential' && this.checkIfIdDocumentIsEnabled && !this.checkIfzkProofIsEnabled && !this.checkIfOncainIdIsEnabled) {
         return true
@@ -183,6 +230,7 @@ export default {
       } else if (eachCredential.type[1].includes('SbtCredential') && this.checkIfOncainIdIsEnabled && this.interSect(this.listOfEnabledSBTCredential, new Set([eachCredential.type[1]]))) {
         return true
       }
+      console.log('Returning false for:', eachCredential.type[1])
       return false
     },
     async submit() {
@@ -228,13 +276,14 @@ export default {
 
 /* Header Section */
 .header-section {
-  text-align: center;
-  margin-bottom: 0px;
+  text-align: left;
+  margin-bottom: 24px;
 }
 
-.subtitle {
-  font-size: 16px;
-  color: #666666;
+.main-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333333;
   margin: 0;
   line-height: 1.3;
 }
@@ -248,6 +297,13 @@ export default {
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verifier-card:hover {
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
 }
 
 .verifier-avatar-left {
@@ -257,6 +313,20 @@ export default {
 .verifier-content-left {
   flex: 1;
   min-width: 0;
+}
+
+.verifier-content-left .v-list-item__title {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.verifier-content-left .v-list-item__subtitle {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
 }
 
 .verifier-domain {
@@ -271,6 +341,21 @@ export default {
   white-space: normal !important;
   word-wrap: break-word !important;
   font-size: 0.9rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.verifier-info-icon {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  opacity: 0.7 !important;
+  transition: opacity 0.2s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.verifier-card:hover .verifier-info-icon {
+  opacity: 1 !important;
 }
 
 .verifier-content-left .v-list-item__title {
@@ -316,7 +401,7 @@ export default {
 }
 
 .section-subtitle-bold {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #333333;
   margin: 0;
@@ -378,6 +463,8 @@ export default {
   justify-content: flex-start !important;
   font-size: 11px !important;
   line-height: 1.2 !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
 }
 
 .credential-type {
@@ -429,5 +516,155 @@ export default {
 
 .btn-primary:active {
   transform: translateY(1px);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #f8f9fa;
+  color: #333333;
+}
+
+.modal-content {
+  padding: 24px;
+}
+
+.verifier-modal-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.verifier-modal-logo {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e9ecef;
+}
+
+.modal-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  border: 3px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #6c757d;
+}
+
+.verifier-modal-details {
+  width: 100%;
+}
+
+.verifier-modal-domain {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 12px 0;
+  word-wrap: break-word;
+}
+
+.verifier-modal-reason {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666666;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px 24px 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Mobile Responsive */
+@media (max-width: 450px) {
+  .modal-container {
+    width: 95%;
+    max-height: 95%;
+  }
+
+  .modal-header {
+    padding: 16px 20px 12px 20px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .modal-actions {
+    padding: 12px 20px 20px 20px;
+  }
+
+  .modal-avatar,
+  .modal-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+  }
+
+  .modal-avatar-placeholder {
+    font-size: 24px;
+  }
 }
 </style>
