@@ -1,51 +1,46 @@
 <template>
   <div class="result-container">
-    <!-- Header Section -->
-    <div class="header-section">
-      <h1 class="main-title" v-if="getFinalResult">Congratulations!</h1>
-      <h1 class="main-title" v-else>Verification Complete</h1>
-      <p class="subtitle" v-if="getFinalResult">Your identity has been successfully verified</p>
-      <p class="subtitle" v-else>We have completed the verification process</p>
-    </div>
-
-    <!-- Result Icon Section -->
-    <div class="icon-section">
-      <div class="icon-container">
-        <i v-if="getFinalResult" class="bi bi-check-circle result-icon success"></i>
-        <i v-else class="bi bi-x-circle result-icon fail"></i>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+      <!-- Header Section -->
+      <div class="header-section">
+        <h1 class="main-title" v-if="getFinalResult">Congratulations!</h1>
+        <h1 class="main-title" v-else>Verification Complete</h1>
       </div>
-    </div>
 
-    <!-- Message Section -->
-    <div class="message-section">
-      <div class="message-box">
-        <div class="message-header">
-          <i v-if="getFinalResult" class="bi bi-shield-check"></i>
-          <i v-else class="bi bi-exclamation-triangle"></i>
-          <span class="message-title" v-if="getFinalResult">Verification Successful</span>
-          <span class="message-title" v-else>Verification Failed</span>
-        </div>
-        <div class="message-content">
-          <div class="message-item">
-            <i v-if="getFinalResult" class="bi bi-check-circle message-icon-success"></i>
-            <i v-else class="bi bi-x-circle message-icon-error"></i>
-            <span class="message-text" v-if="getFinalResult">Your identity is verified!</span>
-            <span class="message-text" v-else>We could not verify your identity</span>
+      <!-- Success Icon Section -->
+      <div class="icon-section">
+        <div class="success-icon-container" v-if="getFinalResult">
+          <div class="success-icon">
+            <i class="bi bi-check-lg"></i>
           </div>
-          <div class="message-item" v-if="getFinalResult">
-            <i class="bi bi-clock message-icon-info"></i>
-            <span class="message-text">You will be redirected back to the verifier app in {{ maxTimeOut }} seconds</span>
+        </div>
+        <div class="fail-icon-container" v-else>
+          <div class="fail-icon">
+            <i class="bi bi-x-lg"></i>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Section -->
-    <div class="action-section" v-if="!getFinalResult">
-      <button class="btn-primary" @click="goBack()">
-        <i class="bi bi-arrow-left"></i>
-        Try Again
-      </button>
+      <!-- Subtitle Section -->
+      <div class="subtitle-section">
+        <h2 class="subtitle" v-if="getFinalResult">Your Identity is verified!</h2>
+        <h2 class="subtitle" v-else>We could not verify your identity</h2>
+      </div>
+
+      <!-- Redirect Message -->
+      <div class="redirect-section" v-if="getFinalResult">
+        <p class="redirect-text">You will be redirected to the verifier Apps</p>
+        <p class="redirect-time">in {{ maxTimeOut }} mins</p>
+      </div>
+
+      <!-- Action Section -->
+      <div class="action-section" v-if="!getFinalResult">
+        <button class="btn-primary" @click="goBack()">
+          <i class="bi bi-arrow-left"></i>
+          Try Again
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -113,157 +108,134 @@ export default {
 .result-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 10px;
+  height: 100vh;
   background-color: #ffffff;
-  padding-bottom: 0px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
 }
 
 /* Header Section */
 .header-section {
-  text-align: center;
-  margin-bottom: 0px;
+  margin-bottom: 32px;
 }
 
 .main-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: #000000;
-  margin: 0 0 8px 0;
-  line-height: 1.3;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #666666;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.2;
 }
 
 /* Icon Section */
 .icon-section {
-  flex: 1;
-  min-height: 0;
   margin-bottom: 24px;
+}
+
+.success-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  background-color: #000000;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.icon-container {
-  text-align: center;
+.success-icon i {
+  font-size: 50px;
+  color: #ffffff;
 }
 
-.result-icon {
-  font-size: 120px;
-  margin-bottom: 16px;
+.fail-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.success {
-  color: #28a745;
-}
-
-.fail {
-  color: #dc3545;
-}
-
-/* Message Section */
-.message-section {
-  margin-bottom: 10px;
-}
-
-.message-box {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.message-header {
+.fail-icon {
+  width: 100px;
+  height: 100px;
+  background-color: #dc3545;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  justify-content: center;
 }
 
-.message-header i {
-  font-size: 16px;
-  color: #6c757d;
-  margin-right: 8px;
+.fail-icon i {
+  font-size: 50px;
+  color: #ffffff;
 }
 
-.message-title {
-  font-size: 14px;
+/* Subtitle Section */
+.subtitle-section {
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  font-size: 18px;
   font-weight: 600;
-  color: #333333;
+  color: #000000;
+  margin: 0;
+  line-height: 1.3;
 }
 
-.message-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* Redirect Section */
+.redirect-section {
+  margin-bottom: 32px;
 }
 
-.message-item {
-  display: flex;
-  align-items: center;
-}
-
-.message-icon-success {
+.redirect-text {
   font-size: 14px;
-  color: #28a745;
-  margin-right: 8px;
-  flex-shrink: 0;
+  color: #000000;
+  margin: 0 0 4px 0;
+  line-height: 1.4;
 }
 
-.message-icon-error {
+.redirect-time {
   font-size: 14px;
-  color: #dc3545;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
-.message-icon-info {
-  font-size: 14px;
-  color: #17a2b8;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
-.message-icon-warning {
-  font-size: 14px;
-  color: #ffc107;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
-.message-text {
-  font-size: 13px;
-  color: #666666;
+  color: #000000;
+  margin: 0;
   line-height: 1.4;
 }
 
 /* Action Section */
 .action-section {
-  margin-top: auto;
-  margin-bottom: 10px;
+  margin-top: 32px;
 }
 
 .btn-primary {
-  width: 100%;
-  padding: 10px 16px;
+  padding: 12px 24px;
   background-color: #000000;
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 40px;
+  min-width: 120px;
 }
 
 .btn-primary:hover {
@@ -278,37 +250,39 @@ export default {
 @media (max-width: 450px) {
   .result-container {
     padding: 16px;
-    padding-bottom: 80px;
+  }
+
+  .content-wrapper {
+    max-width: 100%;
   }
 
   .main-title {
-    font-size: 16px;
+    font-size: 20px;
   }
 
   .subtitle {
+    font-size: 16px;
+  }
+
+  .success-icon,
+  .fail-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .success-icon i,
+  .fail-icon i {
+    font-size: 40px;
+  }
+
+  .redirect-text,
+  .redirect-time {
     font-size: 13px;
-  }
-
-  .result-icon {
-    font-size: 100px;
-  }
-
-  .message-box {
-    padding: 12px;
-  }
-
-  .message-title {
-    font-size: 13px;
-  }
-
-  .message-text {
-    font-size: 12px;
   }
 
   .btn-primary {
-    padding: 8px 14px;
-    font-size: 13px;
-    height: 36px;
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
 </style>
