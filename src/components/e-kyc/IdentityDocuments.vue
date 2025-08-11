@@ -19,6 +19,14 @@ export default {
     ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getWidgetConfigFromDb', 'getIdDocumentLicenseKey', 'getIfzkProofStep', 'getIfUserConsentStep']),
     ...mapState(['steps', 'hasKycDone']),
   },
+  watch: {
+    '$store.state.rescanFlag'(newValue) {
+      if (newValue) {
+        this.rescanHandler(true)
+        this.$store.commit('setRescanFlag', false)
+      }
+    },
+  },
   data: function () {
     return {
       chooseDocumentType: false,
@@ -417,7 +425,7 @@ export default {
     </div>
     <div v-else-if="!failScreen.isFail">
       <div class="row" style="text-align: left; min-height: 550px" v-if="!hasKycDone && selectedDocumentType != ''">
-        <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
+        <div class="col-md-12 mx-auto" style="position: relative; min-height: 400px; max-height: 100%">
           <facephi-selphid
             v-if="isWidgetStarted && selectedDocumentType != ''"
             :licenseKey="licenseKey"
@@ -464,9 +472,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-height: 100%;
   padding: 10px;
   background-color: #ffffff;
   padding-bottom: 0px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Header Section */

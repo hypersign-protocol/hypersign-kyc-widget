@@ -40,7 +40,7 @@ export default {
       bundlePath: window.location.origin + '/assets/selphi',
       language: 'en',
       cameraWidth: 1280,
-      cameraHeight: 1000,
+      cameraHeight: 1500,
       cameraType: FPhi.Selphi.CameraType.Front,
       interactible: true,
       stabilizationStage: true,
@@ -283,7 +283,7 @@ export default {
 
       <!-- Widget Container -->
       <div class="widget-section" v-if="isWidgetStarted">
-        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 90%">
+        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 100%">
           <facephi-selphi
             :bundlePath="bundlePath"
             :language="language"

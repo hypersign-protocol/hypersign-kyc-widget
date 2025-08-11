@@ -19,6 +19,36 @@ html {
   border: none !important;
 }
 
+/* ID Document Page Specific Fixes - CSS Only */
+/* Target the main container when ID Document component is active */
+.main-page-container .main-content .identity-container {
+  max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding-bottom: 20px; /* Add bottom padding to ensure buttons are visible */
+}
+
+/* Ensure tips section doesn't cause overflow */
+.identity-container .tips-section {
+  max-width: 100%;
+  overflow: hidden;
+  margin-bottom: 16px; /* Ensure proper spacing */
+}
+
+/* Fix for instruction gif */
+.identity-container img[src*='ocr-instruction.gif'] {
+  max-width: 100%;
+  height: auto;
+  max-height: 200px;
+  margin-bottom: 16px; /* Ensure proper spacing */
+}
+
+/* Ensure document selection section has proper spacing */
+.identity-container .document-selection-section {
+  margin-bottom: 16px;
+  padding-bottom: 8px; /* Extra padding to ensure button borders are visible */
+}
+
 /* Mobile-first design - app always in mobile view */
 #app {
   width: 100%;

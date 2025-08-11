@@ -1,10 +1,5 @@
 <template>
   <div class="preview-container">
-    <!-- Header Section -->
-    <div class="header-section">
-      <p class="subtitle">Please verify your document details</p>
-    </div>
-
     <!-- Face Image Section -->
     <div class="face-section">
       <div class="face-container">
@@ -22,7 +17,7 @@
         <div class="details-content">
           <div class="details-table">
             <div v-for="(data, idx) in Object.entries(extractedData)" :key="idx" class="detail-item">
-              <div class="detail-label">{{ snakeToPascal(data[0]) }}</div>
+              <div class="detail-label">{{ snakeToPascal(data[0]) }}:</div>
               <div class="detail-value">{{ data[1] }}</div>
             </div>
           </div>
@@ -112,7 +107,14 @@ export default {
         tokenFaceImage: '',
         countryCode: '',
       })
+      // Reset rescan flag to allow rescanning, Using store because the component
+      // is not re-rendered when rescan is called
+      // This is a workaround to allow rescanning
+      // TODO: Find a better way to handle this
+      // TODO: Find a better way to handle this
+      this.$store.commit('setRescanFlag', true)
       this.$emit('EventrescanIDDoc', true)
+
       // this.nextStep(4)
     },
   },
@@ -144,9 +146,8 @@ export default {
 
 /* Face Section */
 .face-section {
-  flex: 1;
-  min-height: 0;
-  margin-bottom: 24px;
+  flex-shrink: 0;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,22 +168,28 @@ export default {
 
 /* Details Section */
 .details-section {
-  margin-bottom: 10px;
+  margin-bottom: 16px;
+  flex: 1;
+  min-height: 0;
+  max-height: 300px;
 }
 
 .details-box {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 16px;
-  max-height: 300px;
-  overflow-y: auto;
+  background-color: #ffffff;
+  max-height: 280px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
 
 .details-header {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #ffffff;
+  flex-shrink: 0;
 }
 
 .details-header i {
@@ -198,21 +205,43 @@ export default {
 }
 
 .details-content {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.details-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.details-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.details-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.details-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .details-table {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 12px 0;
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 8px 0;
+  padding: 4px 0;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -224,26 +253,27 @@ export default {
   font-size: 13px;
   font-weight: 600;
   color: #333333;
-  flex: 0 0 40%;
   line-height: 1.4;
+  flex: 0 0 40%;
+  text-align: left;
 }
 
 .detail-value {
   font-size: 13px;
   color: #666666;
-  flex: 0 0 60%;
   line-height: 1.4;
-  text-align: right;
   word-wrap: break-word;
+  text-align: left;
+  flex: 0 0 60%;
 }
 
 /* Action Section */
 .action-section {
-  margin-top: auto;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-primary {
@@ -303,7 +333,7 @@ export default {
 /* Mobile Responsive */
 @media (max-width: 450px) {
   .preview-container {
-    padding: 16px;
+    padding: 8px;
     padding-bottom: 80px;
   }
 

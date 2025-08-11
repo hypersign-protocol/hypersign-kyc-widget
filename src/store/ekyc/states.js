@@ -8,6 +8,7 @@ export default {
   ocrIDDocResult: {},
   extractionToken: {},
   finalResult: {},
+  rescanFlag: false,
   livelinessCapturedData: {
     tokenSelfiImage: '',
     biometricTemplateRaw: '',
