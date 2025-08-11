@@ -136,6 +136,14 @@
   border-color: #333333 !important;
 }
 
+.proof-btn:disabled,
+.proof-btn.v-btn--disabled {
+  background-color: #e0e0e0 !important;
+  border-color: #cccccc !important;
+  color: #666666 !important;
+  opacity: 0.8 !important;
+}
+
 .proof-title {
   font-weight: bold !important;
   font-size: 13px !important;
@@ -206,6 +214,33 @@
 .no-primary-style {
   background-color: transparent !important;
   color: inherit !important;
+}
+
+/* Fix for Continue button text color */
+.v-btn[color='secondary'] {
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+.v-btn[color='secondary']:hover {
+  background-color: #333333 !important;
+}
+
+.v-btn[color='secondary']:active,
+.v-btn[color='secondary'].v-btn--active {
+  color: #ffffff !important;
+  background-color: #333333 !important;
+}
+
+.v-btn[color='secondary']:focus {
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+.v-btn[color='secondary'].v-btn--disabled {
+  color: #666666 !important;
+  background-color: #e0e0e0 !important;
+  opacity: 0.8 !important;
 }
 </style>
 
