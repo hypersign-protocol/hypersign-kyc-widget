@@ -1,10 +1,10 @@
 <template>
-  <v-overlay v-model="localActive" :value="localActive" :absolute="!isFullPage" :opacity="0.8" :z-index="zIndex" :class="{ 'full-screen': isFullPage }" @click="handleCancel">
-    <v-card class="loading-card d-flex flex-column align-center justify-center pa-4" elevation="8" color="white">
-      <v-progress-circular :size="48" :width="4" color="#000000" indeterminate></v-progress-circular>
-      <div class="mt-4 text-subtitle-1 loading-text">Please wait...</div>
-    </v-card>
-  </v-overlay>
+  <div v-if="localActive" class="loading-overlay" :class="{ 'full-screen': isFullPage }" @click="handleCancel">
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Please wait...</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -49,51 +49,93 @@ export default {
 </script>
 
 <style scoped>
-.full-screen {
-  position: fixed !important;
+.loading-overlay {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-.loading-card {
-  border-radius: 16px;
-  min-width: 140px;
-  max-width: 280px;
-  width: 90%;
+.loading-container {
   background: #ffffff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  padding: 24px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 140px;
+  width: auto;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .loading-text {
   color: #333333;
+  font-size: 14px;
   font-weight: 500;
-  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile-first responsive design */
 @media (max-width: 450px) {
-  .loading-card {
-    min-width: 140px;
-    max-width: 280px;
-    width: 90%;
-    padding: 20px;
-    margin: 16px;
+  .loading-container {
+    padding: 6px 10px;
+    max-width: 120px;
+    gap: 5px;
+  }
+
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
   }
 
   .loading-text {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 
 @media (min-width: 451px) {
-  .loading-card {
-    min-width: 160px;
-    max-width: 320px;
-    width: 80%;
+  .loading-container {
+    padding: 10px 16px;
+    max-width: 160px;
+    gap: 8px;
+  }
+
+  .loading-spinner {
+    width: 36px;
+    height: 36px;
+    border-width: 3px;
+  }
+
+  .loading-text {
+    font-size: 15px;
   }
 }
 </style>

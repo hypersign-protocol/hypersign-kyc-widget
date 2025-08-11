@@ -2,6 +2,11 @@
   <div class="instructions-container">
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
 
+    <!-- KYC Illustration Section -->
+    <div class="illustration-section">
+      <img src="@/assets/kyc-steps-illustration.png" alt="KYC Verification Process" class="kyc-illustration" />
+    </div>
+
     <!-- Header Section -->
     <div class="header-section">
       <h1 class="main-title">Let's get you verified</h1>
@@ -131,6 +136,19 @@ export default {
   background-color: #ffffff;
 }
 
+/* KYC Illustration Section */
+.illustration-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.kyc-illustration {
+  max-width: 100%;
+  height: auto;
+  max-height: 180px;
+  border-radius: 8px;
+}
+
 /* Header Section */
 .header-section {
   text-align: center;
@@ -198,6 +216,14 @@ export default {
 @media (max-width: 450px) {
   .instructions-container {
     padding: 16px;
+  }
+
+  .illustration-section {
+    margin-bottom: 16px;
+  }
+
+  .kyc-illustration {
+    max-height: 140px;
   }
 
   .main-title {
