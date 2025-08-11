@@ -105,14 +105,14 @@ export default {
 /* Mobile-first responsive design */
 @media (max-width: 450px) {
   .loading-container {
-    padding: 6px 10px;
+    padding: 12px 16px;
     max-width: 120px;
-    gap: 5px;
+    gap: 8px;
   }
 
   .loading-spinner {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-width: 2px;
   }
 

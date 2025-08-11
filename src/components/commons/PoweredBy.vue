@@ -2,7 +2,7 @@
   <div class="powered-wrapper">
     <a href="https://hypersign.id" target="_blank" rel="noopener" style="color: black">
       <span class="powered-text">Powered by</span>
-      <img src="../../../public/assets/img/hypersign_black_transparent_rect.png" width="70" height="20" alt="Hypersign logo" class="powered-logo" />
+      <img src="/assets/img/hypersign_black_transparent_rect.png" width="70" height="20" alt="Hypersign logo" class="powered-logo" />
     </a>
   </div>
 </template>

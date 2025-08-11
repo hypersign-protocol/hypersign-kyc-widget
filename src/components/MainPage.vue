@@ -60,6 +60,7 @@ import SessionExpired from './SessionExpired.vue'
 import { EVENT, EVENTS } from './utils/eventBus'
 import { mapGetters } from 'vuex'
 import PoweredBy from './commons/PoweredBy.vue'
+
 export default {
   name: 'HelloWorld',
   components: {
