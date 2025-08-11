@@ -535,8 +535,8 @@ export default {
 .modal-container {
   background-color: #ffffff;
   border-radius: 12px;
-  max-width: 400px;
-  width: 90%;
+  max-width: 320px;
+  width: 320px;
   max-height: 90%;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -641,7 +641,7 @@ export default {
 /* Mobile Responsive */
 @media (max-width: 450px) {
   .modal-container {
-    width: 95%;
+    width: 300px;
     max-height: 95%;
   }
 
