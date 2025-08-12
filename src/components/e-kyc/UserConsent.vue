@@ -263,13 +263,12 @@ export default {
   },
 }
 </script>
-
 <style scoped>
 .consent-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 10px;
+  padding: 20px;
   background-color: #ffffff;
   padding-bottom: 0px;
 }

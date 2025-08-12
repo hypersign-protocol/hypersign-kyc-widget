@@ -1,5 +1,5 @@
 <template>
-  <div class="step-container">
+  <div class="step-container" :class="{ completed: isDone }">
     <!-- Step Icon -->
     <div class="step-icon">
       <img :src="logoUrl" alt="Step Icon" class="icon-image" />
@@ -46,30 +46,47 @@ export default {
 .step-container {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  box-shadow: none;
+  padding: 8px 14px;
+  background-color: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.step-container:hover {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step-container:last-child {
+  margin-bottom: 0;
 }
 
 .step-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
+  width: 24px;
+  height: 24px;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 12px;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.step-container:hover .step-icon {
+  background-color: #f0f0f0;
 }
 
 .icon-image {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 
@@ -80,9 +97,9 @@ export default {
 
 .step-title {
   font-size: 13px;
-  font-weight: 400;
-  color: #666666;
-  line-height: 1.4;
+  font-weight: 500;
+  color: #424242;
+  line-height: 1.3;
   text-align: left;
 }
 
@@ -96,28 +113,48 @@ export default {
 }
 
 .status-done {
-  color: #28a745;
+  color: #4caf50;
 }
 
 .status-pending {
-  color: #dee2e6;
+  color: #9e9e9e;
+}
+
+.step-container.completed {
+  background-color: #f8fff8;
+  border-color: #c8e6c9;
+}
+
+.step-container.completed:hover {
+  background-color: #f1f8f1;
+  border-color: #a5d6a7;
+}
+
+.step-container.completed .step-icon {
+  background-color: #e8f5e8;
+}
+
+.step-container.completed .step-title {
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 /* Mobile Responsive */
 @media (max-width: 450px) {
   .step-container {
-    padding: 10px 12px;
+    padding: 6px 12px;
+    margin-bottom: 4px;
   }
 
   .step-icon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
   }
 
   .icon-image {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .step-title {

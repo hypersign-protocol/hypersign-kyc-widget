@@ -26,7 +26,6 @@ export default {
       fullPage: true,
       // Demo configuration
       isWidgetStarted: false,
-
       FPhiCameraResolutions: {
         res480p: { title: '640x480', width: 640, height: 480 },
         res600p: { title: '800x600', width: 800, height: 600 },
@@ -35,7 +34,6 @@ export default {
         res1080p: { title: '1920x1080 (1080p)', width: 1920, height: 1080 },
       },
       cameraResolution: 'res720p',
-
       // Widget configuration
       bundlePath: window.location.origin + '/assets/selphi',
       language: 'en',
