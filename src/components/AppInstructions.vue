@@ -139,7 +139,7 @@ export default {
 /* KYC Illustration Section */
 .illustration-section {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .kyc-illustration {
@@ -152,14 +152,14 @@ export default {
 /* Header Section */
 .header-section {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .main-title {
   font-size: 18px;
   font-weight: 600;
   color: #000000;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   line-height: 1.3;
 }
 
@@ -175,16 +175,17 @@ export default {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .step-item {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 /* Action Section */
 .action-section {
   margin-top: auto;
+  padding-top: 8px;
 }
 
 .btn-primary {
