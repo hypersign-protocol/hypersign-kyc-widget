@@ -7,7 +7,7 @@
           <component :is="currentStepComponent" />
         </div>
 
-        <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" />
+        <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" @close="closeToast" />
 
         <div class="footer_main_page">
           <PoweredBy />
@@ -112,6 +112,10 @@ export default {
         this.isToast = false
         this.toastMessage = ''
       }, 5000)
+    },
+    closeToast() {
+      this.isToast = false
+      this.toastMessage = ''
     },
   },
 }
