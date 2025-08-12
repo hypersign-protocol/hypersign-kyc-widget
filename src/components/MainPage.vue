@@ -9,7 +9,7 @@
 
         <MessageBox :msg="toastMessage" :type="toastType" :action="isToast ? 'show' : 'hide'" @close="closeToast" />
 
-        <div class="footer_main_page">
+        <div class="">
           <PoweredBy />
         </div>
       </v-card>
