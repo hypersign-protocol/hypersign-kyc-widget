@@ -1,10 +1,9 @@
 <template>
-  <form class="row center">
-    <div class="ma-auto position-relative" style="max-width: 500px">
-      <!-- <OTPInput v-model="pin" :length="5" :type="inputType" :autofocus="true"></OTPInput> -->
-      <v-otp-input :length="5" v-model="pin" @finish="done" :type="inputType" pattern="[0-9]*" inputmode="numeric" autofocus></v-otp-input>
+  <div class="pin-container">
+    <div class="pin-inputs">
+      <input v-for="(digit, index) in 5" :key="index" :ref="`input${index}`" v-model="pinDigits[index]" type="password" maxlength="1" class="pin-input" :class="{ active: activeIndex === index }" @input="handleInput($event, index)" @keydown="handleKeydown($event, index)" @focus="activeIndex = index" @blur="activeIndex = null" inputmode="numeric" pattern="[0-9]*" />
     </div>
-  </form>
+  </div>
 </template>
 
 <script>
@@ -12,42 +11,142 @@ export default {
   name: 'PIN',
   props: {
     inputType: {
-      default: 'number',
       type: String,
+      default: 'text',
     },
   },
   data() {
     return {
-      pin: '',
+      pinDigits: ['', '', '', '', ''],
+      activeIndex: null,
     }
   },
-
-  mounted() {
-    // this.$refs.input1.focus()
-  },
-
   methods: {
-    done() {
-      this.$emit('pinTakenEvent', this.pin)
+    handleInput(event, index) {
+      const value = event.target.value
+
+      // Only allow numbers
+      if (!/^\d*$/.test(value)) {
+        event.target.value = ''
+        return
+      }
+
+      // Update the digit
+      this.pinDigits[index] = value
+
+      // Move to next input if value entered
+      if (value && index < 4) {
+        this.$nextTick(() => {
+          this.$refs[`input${index + 1}`][0].focus()
+        })
+      }
+
+      // Check if all digits are filled
+      this.checkComplete()
+    },
+
+    handleKeydown(event, index) {
+      // Handle backspace
+      if (event.key === 'Backspace') {
+        if (this.pinDigits[index] === '' && index > 0) {
+          // Move to previous input if current is empty
+          this.$nextTick(() => {
+            this.$refs[`input${index - 1}`][0].focus()
+          })
+        } else {
+          // Clear current input
+          this.pinDigits[index] = ''
+        }
+      }
+    },
+
+    checkComplete() {
+      const pin = this.pinDigits.join('')
+      if (pin.length === 5) {
+        this.$emit('pinTakenEvent', pin)
+      }
+    },
+
+    // Method to clear all inputs
+    clear() {
+      this.pinDigits = ['', '', '', '', '']
+      this.activeIndex = null
+      this.$nextTick(() => {
+        this.$refs.input0[0].focus()
+      })
+    },
+
+    // Method to set a specific PIN
+    setPin(pin) {
+      if (pin && pin.length === 5) {
+        this.pinDigits = pin.split('')
+      }
     },
   },
 }
 </script>
 
 <style scoped>
-input {
-  font-size: 20px;
-  width: 50px;
-  margin-right: 10px;
+.pin-inputs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.pin-input {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   text-align: center;
-}
-
-.info {
-  font-size: 16px;
-}
-
-div {
-  margin-top: 16px;
   font-size: 24px;
+  font-weight: 500;
+  background-color: #ffffff;
+  color: #333333;
+  transition: all 0.2s ease;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pin-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.pin-input:hover {
+  border-color: #666666;
+}
+
+.pin-input.active {
+  border-color: #000000;
+  background-color: #f8f9fa;
+}
+
+/* Mobile responsive */
+@media (max-width: 375px) {
+  .pin-input {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .pin-inputs {
+    gap: 6px;
+  }
+}
+
+@media (min-width: 376px) {
+  .pin-input {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .pin-inputs {
+    gap: 8px;
+  }
 }
 </style>

@@ -1,22 +1,23 @@
 <template>
-  <v-container fill-height fluid class="widget-card-width d-flex flex-column justify-center align-center pa-6">
-    <!-- Red circle with X -->
+  <div class="failure-container">
+    <!-- Error Icon -->
+    <div class="error-icon">
+      <i class="bi bi-x-circle"></i>
+    </div>
 
-    <i class="bi bi-x-circle final-msg-icon fail"></i>
-
-    <!-- Dynamic message -->
-    <div class="text-center mb-8" style="color: #f44336; font-weight: 500">
+    <!-- Error Message -->
+    <div class="error-message">
       {{ message }}
     </div>
 
-    <!-- Subtext instruction -->
-    <div class="text-center mb-8" style="color: #757575; font-size: 14px">Please click the button below to retry from the verifier app.</div>
+    <!-- Instructions -->
+    <div class="instructions">Please click the button below to retry from the verifier app.</div>
 
-    <!-- Dynamic action button -->
-    <v-btn outlined block color="secondary" @click="onAction" class="px-8 py-4">
-      {{ buttonText }}
-    </v-btn>
-  </v-container>
+    <!-- Action Button -->
+    <div class="action-section">
+      <v-btn outlined color="secondary" @click="onAction"><i class="bi bi-reply"></i> {{ buttonText }}</v-btn>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -40,25 +41,92 @@ export default {
 </script>
 
 <style scoped>
-.final-msg-icon {
-  font-size: xxx-large;
-}
-.v-avatar {
-  border-radius: 50% !important;
-}
-.fail {
-  color: red;
-}
-
-.widget-card-width {
-  width: 80%;
-  margin: auto;
+.failure-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+  text-align: center;
 }
 
+.error-icon {
+  margin-bottom: 24px;
+}
+
+.error-icon i {
+  font-size: 64px;
+  color: #dc3545;
+}
+
+.error-message {
+  font-size: 16px;
+  font-weight: 500;
+  color: #dc3545;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.instructions {
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+
+.action-section {
+  width: 100%;
+  max-width: 300px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Mobile Responsive */
 @media (max-width: 450px) {
-  .widget-card-width {
-    margin: auto;
-    width: 100%;
+  .failure-container {
+    padding: 32px 16px;
+  }
+
+  .error-icon i {
+    font-size: 56px;
+  }
+
+  .error-message {
+    font-size: 15px;
+  }
+
+  .instructions {
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 36px;
   }
 }
 </style>

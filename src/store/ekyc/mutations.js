@@ -41,4 +41,8 @@ export default {
   setIdToken(state, payload) {
     state.idToken = payload
   },
+
+  setRescanFlag(state, payload) {
+    state.rescanFlag = payload
+  },
 }

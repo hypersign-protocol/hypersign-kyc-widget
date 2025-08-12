@@ -12,6 +12,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import { EVENT, EVENTS } from '../utils/eventBus'
+
 export default {
   name: STEP_NAMES.LiveLiness,
   components: {},
@@ -33,12 +34,11 @@ export default {
         res1080p: { title: '1920x1080 (1080p)', width: 1920, height: 1080 },
       },
       cameraResolution: 'res720p',
-
       // Widget configuration
       bundlePath: window.location.origin + '/assets/selphi',
       language: 'en',
       cameraWidth: 1280,
-      cameraHeight: 720,
+      cameraHeight: 1500,
       cameraType: FPhi.Selphi.CameraType.Front,
       interactible: true,
       stabilizationStage: true,
@@ -64,19 +64,32 @@ export default {
     }
   },
   created() {
+    console.log('Liveliness component created, hasLivelinessDone:', this.hasLivelinessDone)
+
     if (this.hasLivelinessDone) {
+      console.log('Liveliness already done, moving to next step')
       const nextStepNumber = this.getNextStepIndex()
       this.nextStep(nextStepNumber)
       return
     }
 
+    console.log('Setting up liveliness component...')
+    // Ensure widget starts in initial state
+    this.isWidgetStarted = false
+    this.isLoading = false
+
     EVENT.subscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
+  },
+  mounted() {
+    console.log('Liveliness component mounted')
+    // Ensure widget is in initial state when mounted
+    this.resetWidget()
   },
   beforeDestroy() {
     EVENT.unSubscribeEvent(EVENTS.LIVELINESS, this.onVerifyLivelinessStatusEventRecieved)
   },
   methods: {
-    ...mapMutations(['previousStep']),
+    ...mapMutations(['previousStep', 'setLivelinessCapturedData', 'setLivelinessDone']),
     ...mapActions(['verifyLiveliness', 'verifyLivelinessStatus', 'nextStep']),
     getStepIndex(step) {
       return this.enabledSteps.indexOf(step)
@@ -99,12 +112,17 @@ export default {
       if (capabilities.camera && capabilities.wasm && capabilities.browser) {
         this.isWidgetStarted = true
       } else {
-        // ...
+        this.toast('Device not supported', 'error')
       }
     },
 
-    disableWidget: function () {
+    resetWidget: function () {
+      this.isWidgetStarted = false
+      this.isLoading = false
       this.widgetResult = ''
+    },
+
+    disableWidget: function () {
       this.isWidgetStarted = false
     },
 
@@ -114,7 +132,9 @@ export default {
     },
 
     // Widget event handlers
-    onModuleLoaded: function () {},
+    onModuleLoaded: function () {
+      // console.warn("[Selphi] onModuleLoaded");
+    },
 
     onExtractionFinish: async function (extractionResult) {
       if (extractionResult.detail.bestImageCropped && extractionResult.detail.bestImageTokenized && extractionResult.detail.templateRaw) {
@@ -166,6 +186,12 @@ export default {
       }
     },
 
+    onUserCancel: function () {
+      // console.warn("[Selphi] onUserCancel");
+      this.widgetResult = 'User cancelled the operation'
+      this.isWidgetStarted = false
+    },
+
     onExceptionCaptured: function (exceptionResult) {
       // console.warn("[Selphi] onExceptionCaptured");
 
@@ -190,13 +216,6 @@ export default {
       this.toast('Error: Something went wrong', 'error')
     },
 
-    onUserCancel: function () {
-      // console.warn("[Selphi] onUserCancel");
-
-      this.isWidgetStarted = false
-      this.toast('Error: The extraction has been cancelled', 'error')
-    },
-
     onExtractionTimeout: function () {
       // console.warn("[Selphi] onExtractionTimeout");
       // this.widgetResult = 'Error! Time limit exceeded';
@@ -204,7 +223,6 @@ export default {
 
     onTimeoutErrorButtonClick: function () {
       // console.warn("[Selphi] onTimeoutErrorButtonClick");
-
       this.isWidgetStarted = false
     },
 
@@ -247,72 +265,275 @@ export default {
 </script>
 
 <template>
-  <div class="card-body kyc-container">
-    <!-- <PageHeading :header="'Face Verification'" :subHeader="'Prove you a real human being'" /> -->
+  <div class="liveliness-container">
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-    <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
-    <div class="row h-100" v-if="!failScreen.isFail">
-      <div class="col-md-12" v-if="isWidgetStarted" style="position: relative; min-height: 450px; max-height: 90%">
-        <facephi-selphi
-          :bundlePath="bundlePath"
-          :language="language"
-          :cameraWidth="cameraWidth"
-          :cameraHeight="cameraHeight"
-          :cameraType="cameraType"
-          :interactible="interactible"
-          :stabilizationStage="stabilizationStage"
-          :cameraSwitchButton="cameraSwitchButton"
-          :faceTracking="faceTracking"
-          :timeout="timeout"
-          :imageFormat="imageFormat"
-          :imageQuality="imageQuality"
-          :cropFactor="cropFactor"
-          :showLog="showLog"
-          @onmoduleloaded="onModuleLoaded"
-          @onstabilizing="onStabilizing"
-          @onextractionfinish="onExtractionFinish"
-          @onusercancel="onUserCancel"
-          @onexceptioncaptured="onExceptionCaptured"
-          @onextractiontimeout="onExtractionTimeout"
-          @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
-          @ontrackstatus="onTrackStatus"
-        ></facephi-selphi>
-      </div>
-      <div class="col-md-12" v-else>
-        <img src="../../assets/fr-instruction.gif" v-if="!isLoading" />
-      </div>
-    </div>
-    <div class="row" v-if="!isWidgetStarted && !isLoading && !failScreen.isFail">
-      <div class="col-12">
-        <v-card class="pa-4 verifier-card hypersign-box" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold pa-0 mb-2"><i class="bi bi-lightbulb"></i> Tips</v-card-title>
-          <v-card-text class="pa-0">
-            <ul class="ma-0 pa-0" style="list-style: none">
-              <li class="d-flex align-center mb-2">
-                <i class="bi bi-check-circle text-success mr-2"></i>
-                <span>Find a well lit place</span>
-              </li>
-              <li class="d-flex align-center mb-2">
-                <i class="bi bi-check-circle text-success mr-2"></i>
-                <span>Ensure your face is within the frame</span>
-              </li>
-              <li class="d-flex align-center">
-                <i class="bi bi-x-circle text-error mr-2"></i>
-                <span>Do not wear hats, glasses and masks</span>
-              </li>
-            </ul>
-          </v-card-text>
-        </v-card>
-      </div>
-    </div>
 
-    <div class="row" v-if="!isWidgetStarted && !isLoading && !failScreen.isFail">
-      <div class="col-12 center">
-        <div class="col-md-4 d-flex flex-column widget-card-width">
-          <v-btn type="v-btn" id="btnStartCapture" block color="secondary" :disabled="isWidgetStarted" title="Start Capture" @click="enableWidget()"><i class="bi bi-play-circle mx-1"></i> Start Capture</v-btn>
-          <!-- <button type="button" id="btnStopCapture" class="btn btn-link" :disabled="!isWidgetStarted" @click="disableWidget()" title="Stop Capture"><i class="bi bi-stop-circle"></i> Stop Capture</button> -->
+    <!-- Failure Screen -->
+    <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
+
+    <!-- Main Content -->
+    <div v-if="!failScreen.isFail">
+      <!-- Header Section -->
+      <div class="header-section">
+        <!-- <h1 class="main-title">Face Verification</h1> -->
+        <p class="subtitle">Prove you are a real human being</p>
+      </div>
+
+      <!-- Widget Container -->
+      <div class="widget-section" v-if="isWidgetStarted">
+        <div class="col-md-12" style="position: relative; min-height: 450px; max-height: 100%">
+          <facephi-selphi
+            :bundlePath="bundlePath"
+            :language="language"
+            :cameraWidth="cameraWidth"
+            :cameraHeight="cameraHeight"
+            :cameraType="cameraType"
+            :interactible="interactible"
+            :stabilizationStage="stabilizationStage"
+            :cameraSwitchButton="cameraSwitchButton"
+            :faceTracking="faceTracking"
+            :timeout="timeout"
+            :imageFormat="imageFormat"
+            :imageQuality="imageQuality"
+            :cropFactor="cropFactor"
+            :showLog="showLog"
+            @onmoduleloaded="onModuleLoaded"
+            @onstabilizing="onStabilizing"
+            @onextractionfinish="onExtractionFinish"
+            @onusercancel="onUserCancel"
+            @onexceptioncaptured="onExceptionCaptured"
+            @onextractiontimeout="onExtractionTimeout"
+            @ontimeouterrorbuttonclick="onTimeoutErrorButtonClick"
+            @ontrackstatus="onTrackStatus"
+          ></facephi-selphi>
         </div>
+      </div>
+
+      <!-- Instructions Section -->
+      <div class="instructions-section" v-else>
+        <div class="col-md-12">
+          <img src="../../assets/fr-instruction.gif" v-if="!isLoading" height="250px" />
+        </div>
+      </div>
+
+      <!-- Tips Section -->
+      <div class="tips-section" v-if="!isWidgetStarted && !isLoading">
+        <div class="tips-box">
+          <div class="tips-header">
+            <i class="bi bi-lightbulb"></i>
+            <span class="tips-title">Tips</span>
+          </div>
+          <div class="tips-content">
+            <div class="tip-item">
+              <i class="bi bi-check-circle tip-icon-success"></i>
+              <span class="tip-text">Find a well lit place</span>
+            </div>
+            <div class="tip-item">
+              <i class="bi bi-check-circle tip-icon-success"></i>
+              <span class="tip-text">Ensure your face is within the frame</span>
+            </div>
+            <div class="tip-item">
+              <i class="bi bi-x-circle tip-icon-error"></i>
+              <span class="tip-text">Do not wear hats, glasses and masks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Section -->
+      <div class="action-section" v-if="!isWidgetStarted && !isLoading">
+        <button class="btn-primary" :disabled="isWidgetStarted" @click="enableWidget()">
+          <i class="bi bi-play-circle"></i>
+          Start Capture
+        </button>
+
+        <!-- Debug Info -->
+        <!-- <div style="margin-top: 5px; font-size: 10px; color: #666; text-align: center">Debug: isWidgetStarted={{ isWidgetStarted }}, isLoading={{ isLoading }}, componentName={{ $options.name }}</div> -->
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.main-content {
+  padding-top: none;
+}
+.liveliness-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  padding-bottom: 0px; /* Reduced from 80px to 0px */
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 0px; /* Reduced from 24px to 0px */
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Widget Section */
+.widget-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 24px;
+}
+
+/* Instructions Section */
+.instructions-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 0px; /* Reduced from 24px to 0px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tips Section */
+.tips-section {
+  margin-bottom: 10px; /* Reduced from 24px to 10px */
+}
+
+.tips-box {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.tips-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tips-header i {
+  font-size: 16px;
+  color: #6c757d;
+  margin-right: 8px;
+}
+
+.tips-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+}
+
+.tip-icon-success {
+  font-size: 14px;
+  color: #28a745;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.tip-icon-error {
+  font-size: 14px;
+  color: #dc3545;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Action Section */
+.action-section {
+  margin-top: auto;
+  margin-bottom: 10px; /* Reduced from 20px to 10px */
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive */
+@media (max-width: 450px) {
+  .liveliness-container {
+    padding: 16px;
+    padding-bottom: 80px; /* Maintain space for footer on mobile */
+  }
+
+  .main-title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .tips-box {
+    padding: 12px;
+  }
+
+  .tips-title {
+    font-size: 13px;
+  }
+
+  .tip-text {
+    font-size: 12px;
+  }
+
+  .btn-primary {
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 36px;
+  }
+}
+</style>

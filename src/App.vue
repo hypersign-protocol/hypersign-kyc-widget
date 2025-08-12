@@ -1,12 +1,7 @@
 <template>
-  <v-app>
-    <v-container>
-      <router-view />
-    </v-container>
-  </v-app>
-  <!-- <div id="app">
+  <v-app class="mobile-app">
     <router-view />
-  </div> -->
+  </v-app>
 </template>
 
 <script>
@@ -85,18 +80,6 @@ export default {
           requiredCredentialTypes: ['zkProofOfKYC', 'zkProofOfAge', 'zkProofOfPersonHood'],
           hasDone: false,
         },
-        // {
-        //   id: 5,
-        //   isActive: false,
-        //   stepName: 'OnChainId4',
-        //   name: 'OnChain ID Minting',
-        //   previous: 4,
-        //   isEnabled: false,
-        //   stepTitle: 'Generate Zero Knowledge Proof(s) & Mint your on-chain Identity',
-        //   logo: 'proof.png',
-        //   requiredCredentialTypes: ['SBTCredential'],
-        //   hasDone: false,
-        // },
         {
           id: 6,
           isActive: false,
@@ -149,11 +132,21 @@ export default {
 </script>
 
 <style>
+.mobile-app {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
-  color: #2c3e50;
+  color: #333333;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  overflow: hidden;
 }
 </style>

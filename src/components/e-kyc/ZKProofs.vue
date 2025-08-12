@@ -82,11 +82,100 @@
   }
 }
 
-.proof-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0px 6px 12px rgba(0, 0, 0, 0.15),
-    0px 3px 6px rgba(0, 0, 0, 0.1);
+.proof-card {
+  border: 2px solid #e9ecef !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  background-color: #ffffff !important;
+  margin-bottom: 8px !important;
+  padding: 8px !important;
+}
+
+.proof-icon {
+  border-radius: 50% !important;
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.icon-image {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
+  opacity: 0.8 !important;
+}
+
+.proof-actions {
+  padding-left: 40px !important; /* Align with text content (32px icon + 8px margin) */
+  padding-top: 2px !important;
+  padding-bottom: 4px !important;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.proof-btn {
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  padding: 3px 6px !important;
+  min-width: 70px !important;
+  height: 24px !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+}
+
+.proof-btn:hover {
+  background-color: #333333 !important;
+  border-color: #333333 !important;
+}
+
+.proof-btn:disabled,
+.proof-btn.v-btn--disabled {
+  background-color: #e0e0e0 !important;
+  border-color: #cccccc !important;
+  color: #666666 !important;
+  opacity: 0.8 !important;
+}
+
+.proof-title {
+  font-weight: bold !important;
+  font-size: 13px !important;
+  color: #000000 !important;
+  margin-bottom: 2px !important;
+}
+
+.proof-list-item {
+  padding: 4px 8px !important;
+  min-height: auto !important;
+}
+
+.proof-content {
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+  padding: 0 !important;
+}
+
+.proof-description {
+  margin-bottom: 4px !important;
+  line-height: 1.3 !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  text-overflow: unset !important;
+  overflow: visible !important;
+  display: block !important;
+  max-width: none !important;
+  width: auto !important;
+  color: #666666 !important;
+  font-size: 12px !important;
 }
 
 /* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); */
@@ -126,6 +215,33 @@
   background-color: transparent !important;
   color: inherit !important;
 }
+
+/* Fix for Continue button text color */
+.v-btn[color='secondary'] {
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+.v-btn[color='secondary']:hover {
+  background-color: #333333 !important;
+}
+
+.v-btn[color='secondary']:active,
+.v-btn[color='secondary'].v-btn--active {
+  color: #ffffff !important;
+  background-color: #333333 !important;
+}
+
+.v-btn[color='secondary']:focus {
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+.v-btn[color='secondary'].v-btn--disabled {
+  color: #666666 !important;
+  background-color: #e0e0e0 !important;
+  opacity: 0.8 !important;
+}
 </style>
 
 <template>
@@ -144,42 +260,45 @@
       </div> -->
       <v-row dense class="kyc-container">
         <v-col cols="12">
-          <v-card class="mx-auto mb-2" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type" :style="`background-image: linear-gradient(to bottom right, ${hypersign_proof.bgColor} , lightgrey)`">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <div class="text-overline mb-4 title-font-size">
+          <v-card class="mx-auto mb-1 proof-card" style="text-align: start" v-for="hypersign_proof in hypersign_proofs" v-bind:key="hypersign_proof.type">
+            <v-list-item three-line class="proof-list-item">
+              <!-- Icon on the left side -->
+              <v-list-item-avatar class="proof-icon" size="28">
+                <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="icon-image" alt="..." />
+              </v-list-item-avatar>
+
+              <v-list-item-content class="proof-content">
+                <div class="text-overline mb-1 title-font-size proof-title">
                   {{ hypersign_proof.proofType.replace(/([a-z])([A-Z])/g, '$1 $2') }}
-                  <v-chip v-if="hypersign_proof.proofType == 'zkProofOfAge'">
+                  <v-chip v-if="hypersign_proof.proofType == 'zkProofOfAge'" small>
                     <span>{{ getCriteria(hypersign_proof) }} +</span>
                   </v-chip>
                 </div>
-                <v-list-item-subtitle>
+                <div class="proof-description">
                   {{ hypersign_proof.description }}
-                </v-list-item-subtitle>
+                </div>
               </v-list-item-content>
-
-              <v-list-item-avatar tile size="60">
-                <img v-bind:src="logoUrl(hypersign_proof.proof_type_image)" class="img-fluid rounded-start" alt="..." style="opacity: 0.6" />
-              </v-list-item-avatar>
             </v-list-item>
 
-            <v-card-actions>
-              <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
-                <v-btn outlined color="secondary" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                  <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
-                  <span v-if="!hypersign_proof.isLoading" class="sr-only">Get Proof</span>
-                  <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                  <span v-if="hypersign_proof.isLoading" class="sr-only">Generating Proof...</span>
-                </v-btn>
-              </template>
-              <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
-                <v-btn outlined color="secondary" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
-                  <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
-                  <span v-if="!hypersign_proof.isLoading" class="sr-only">Mint ID Token</span>
-                  <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                  <span v-if="hypersign_proof.isLoading" class="sr-only">Minting ID...</span>
-                </v-btn>
-              </template>
+            <v-card-actions class="proof-actions">
+              <div class="button-container">
+                <template v-if="!hypersign_proof.zkProof && getWidgetConfigFromDb.zkProof.enabled">
+                  <v-btn class="proof-btn" outlined color="secondary" @click="getProof(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                    <i v-if="!hypersign_proof.isLoading" class="bi bi-shield-lock"></i>
+                    <span v-if="!hypersign_proof.isLoading" class="sr-only">Get Proof</span>
+                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only">Generating Proof...</span>
+                  </v-btn>
+                </template>
+                <template v-else-if="!hypersign_proof.zkSBT && getWidgetConfigFromDb.onChainId.enabled">
+                  <v-btn class="proof-btn" outlined color="secondary" @click="mint(hypersign_proof)" :disabled="hypersign_proof.isLoading">
+                    <i v-if="!hypersign_proof.isLoading" class="bi bi-hammer"></i>
+                    <span v-if="!hypersign_proof.isLoading" class="sr-only">Mint ID Token</span>
+                    <span v-if="hypersign_proof.isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                    <span v-if="hypersign_proof.isLoading" class="sr-only">Minting ID...</span>
+                  </v-btn>
+                </template>
+              </div>
               <v-list-item>
                 <v-row align="center" justify="end">
                   <span v-if="checkIfOncainIdIsEnabled">

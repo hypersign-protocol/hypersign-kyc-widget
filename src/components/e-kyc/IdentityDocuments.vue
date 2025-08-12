@@ -19,6 +19,14 @@ export default {
     ...mapGetters(['checkIfUserConsentIsEnabled', 'checkIfOncainIdIsEnabled', 'checkIfIdDocumentIsEnabled', 'checkIfLivelinessIsEnabled', 'checkIfzkProofIsEnabled', 'enabledSteps', 'getWidgetConfigFromDb', 'getIdDocumentLicenseKey', 'getIfzkProofStep', 'getIfUserConsentStep']),
     ...mapState(['steps', 'hasKycDone']),
   },
+  watch: {
+    '$store.state.rescanFlag'(newValue) {
+      if (newValue) {
+        this.rescanHandler(true)
+        this.$store.commit('setRescanFlag', false)
+      }
+    },
+  },
   data: function () {
     return {
       chooseDocumentType: false,
@@ -377,7 +385,7 @@ export default {
 </script>
 
 <template>
-  <div class="card-body min-h-36 kyc-container">
+  <div class="identity-container">
     <!-- <PageHeading :header="'ID Verification'" :subHeader="`Please Upload Your ${selectedDocumentType == '' ? 'ID Document' : selectedDocumentType.replace('_', ' ')}`" style="text-align: center" /> -->
     <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
     <failure-screen :message="failScreen.message" :button-text="failScreen.buttonText" :on-action="failScreen.onAction" v-if="failScreen.isFail" />
@@ -387,24 +395,37 @@ export default {
         <img src="../../assets/ocr-instruction.gif" class="d-block mx-auto" style="max-width: 100%" v-if="!isLoading && !hasKycDone" />
       </div>
       <div class="col-12 mb-0 pb-0">
-        <v-card class="pa-4 verifier-card hypersign-box" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold pa-0 mb-2"><i class="bi bi-lightbulb"></i> Tips</v-card-title>
-          <v-card-text class="pa-0 text-left">
-            <ul class="ma-0 pa-0" style="list-style: none">
-              <li class="d-flex align-center mb-0">
-                <span>Choose document type, make sure that all the information on the photo is visible and easy to read</span>
-              </li>
-            </ul>
-          </v-card-text>
-        </v-card>
+        <!-- Tips Section -->
+        <div class="tips-section" v-if="!chooseDocumentType && !hasKycDone">
+          <div class="tips-box">
+            <div class="tips-header">
+              <i class="bi bi-lightbulb"></i>
+              <span class="tips-title">Tips</span>
+            </div>
+            <div class="tips-content">
+              <div class="tip-item">
+                <i class="bi bi-check-circle tip-icon-success"></i>
+                <span class="tip-text">Choose document type</span>
+              </div>
+              <div class="tip-item">
+                <i class="bi bi-check-circle tip-icon-success"></i>
+                <span class="tip-text">Ensure all information is visible and readable</span>
+              </div>
+              <div class="tip-item">
+                <i class="bi bi-check-circle tip-icon-success"></i>
+                <span class="tip-text">Place document in a well-lit area</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-12 mb-0 pb-0">
-        <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" class="verifier-card hypersign-box mt-0" />
+      <div class="col-12 mb-0 pb-0 document-selection-section">
+        <ChooseDocumentType @EventChoosenDocumentType="EventChoosenDocumentTypeHandler" />
       </div>
     </div>
     <div v-else-if="!failScreen.isFail">
       <div class="row" style="text-align: left; min-height: 550px" v-if="!hasKycDone && selectedDocumentType != ''">
-        <div class="col-md-8 mx-auto" style="position: relative; min-height: 400px; max-height: 80%">
+        <div class="col-md-12 mx-auto" style="position: relative; min-height: 400px; max-height: 100%">
           <facephi-selphid
             v-if="isWidgetStarted && selectedDocumentType != ''"
             :licenseKey="licenseKey"
@@ -447,24 +468,145 @@ export default {
 </template>
 
 <style scoped>
-.hypersign-box {
-  border-radius: 8px !important;
-  -webkit-box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
-  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+.identity-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  padding-bottom: 0px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.verifier-card {
-  border-radius: 10px;
-  max-width: 80%;
-  margin: 0 auto 20px;
-  background-color: #fff;
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 0px;
 }
 
-@media (max-width: 480px) {
-  .verifier-card {
-    /* transform: scale(1.1); */
-    font-size: 14px;
-    max-width: 100%;
+.subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Instructions Section */
+.instructions-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instruction-gif {
+  max-width: 100%;
+  height: 250px;
+  border-radius: 8px;
+}
+
+/* Tips Section */
+.tips-section {
+  margin-bottom: 10px;
+}
+
+.tips-box {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.tips-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tips-header i {
+  font-size: 16px;
+  color: #6c757d;
+  margin-right: 8px;
+}
+
+.tips-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+}
+
+.tip-icon-success {
+  font-size: 14px;
+  color: #28a745;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Document Selection Section */
+.document-selection-section {
+  margin-bottom: 10px;
+}
+
+/* Widget Section */
+.widget-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 24px;
+}
+
+/* Preview Section */
+.preview-section {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 24px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 450px) {
+  .identity-container {
+    padding: 16px;
+    padding-bottom: 0px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .tips-box {
+    padding: 12px;
+  }
+
+  .tips-title {
+    font-size: 13px;
+  }
+
+  .tip-text {
+    font-size: 12px;
+  }
+
+  .instruction-gif {
+    height: 200px;
   }
 }
 </style>

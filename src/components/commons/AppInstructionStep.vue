@@ -1,21 +1,19 @@
 <template>
-  <div class="instruction-step d-flex align-items-center">
-    <!-- Avatar/Icon -->
-    <div class="icon-wrapper">
-      <v-avatar size="50" class="avatar-border">
-        <img :src="logoUrl" alt="Step Icon" class="avatar-img" />
-      </v-avatar>
+  <div class="step-container" :class="{ completed: isDone }">
+    <!-- Step Icon -->
+    <div class="step-icon">
+      <img :src="logoUrl" alt="Step Icon" class="icon-image" />
     </div>
 
-    <!-- Instruction Text -->
-    <div class="flex-grow-1 text-left step-text pl-3 pr-2">
-      {{ stepTitle }}
+    <!-- Step Content -->
+    <div class="step-content">
+      <div class="step-title">{{ stepTitle }}</div>
     </div>
 
-    <!-- Square checkbox-style icon -->
-    <div class="status-icon ml-1">
-      <i v-if="isDone" class="bi bi-check-square-fill text-success" :style="iconStyle"></i>
-      <i v-else class="bi bi-square text-muted" :style="iconStyle"></i>
+    <!-- Status Icon -->
+    <div class="status-icon">
+      <i v-if="isDone" class="bi bi-check-circle-fill status-done"></i>
+      <i v-else class="bi bi-circle status-pending"></i>
     </div>
   </div>
 </template>
@@ -40,55 +38,131 @@ export default {
     logoUrl() {
       return require('@/assets/' + this.logo)
     },
-    iconStyle() {
-      return {
-        fontSize: '1.2rem',
-      }
-    },
   },
 }
 </script>
 
 <style scoped>
-.instruction-step {
+.step-container {
   display: flex;
   align-items: center;
-  margin-bottom: 8px; /* Reduced spacing between steps */
-  padding: 6px 8px;
-  border-radius: 8px;
-  background-color: #fdfdfd;
-}
-
-.avatar-border {
+  padding: 8px 14px;
+  background-color: transparent;
   border: 1px solid #e0e0e0;
-  background-color: #fff;
-  padding: 2px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.avatar-img {
-  width: 90%;
-  height: 90%;
+.step-container:hover {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step-container:last-child {
+  margin-bottom: 0;
+}
+
+.step-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.step-container:hover .step-icon {
+  background-color: #f0f0f0;
+}
+
+.icon-image {
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 
-.step-text {
-  font-size: 14px;
-  line-height: 1.2;
+.step-content {
+  flex: 1;
+  min-width: 0;
 }
 
-@media (min-width: 600px) {
-  .step-text {
-    font-size: 18px;
-  }
+.step-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #424242;
+  line-height: 1.3;
+  text-align: left;
 }
 
-@media (min-width: 960px) {
-  .step-text {
-    font-size: 20px;
-  }
+.status-icon {
+  margin-left: 12px;
+  flex-shrink: 0;
 }
 
 .status-icon i {
-  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+}
+
+.status-done {
+  color: #4caf50;
+}
+
+.status-pending {
+  color: #9e9e9e;
+}
+
+.step-container.completed {
+  background-color: #f8fff8;
+  border-color: #c8e6c9;
+}
+
+.step-container.completed:hover {
+  background-color: #f1f8f1;
+  border-color: #a5d6a7;
+}
+
+.step-container.completed .step-icon {
+  background-color: #e8f5e8;
+}
+
+.step-container.completed .step-title {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+/* Mobile Responsive */
+@media (max-width: 450px) {
+  .step-container {
+    padding: 6px 12px;
+    margin-bottom: 4px;
+  }
+
+  .step-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  .icon-image {
+    width: 14px;
+    height: 14px;
+  }
+
+  .step-title {
+    font-size: 12px;
+  }
+
+  .status-icon i {
+    font-size: 14px;
+  }
 }
 </style>

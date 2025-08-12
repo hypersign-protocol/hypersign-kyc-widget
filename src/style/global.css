@@ -1,80 +1,197 @@
 body {
-  background-color: #191127;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  overflow: hidden;
+  height: 100vh;
+}
+
+html {
+  height: 100%;
+}
+
+/* Override Vuetify box shadows */
+.v-sheet,
+.v-card,
+.v-card--flat {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ID Document Page Specific Fixes - CSS Only */
+/* Target the main container when ID Document component is active */
+.main-page-container .main-content .identity-container {
+  max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding-bottom: 20px; /* Add bottom padding to ensure buttons are visible */
+}
+
+/* Ensure tips section doesn't cause overflow */
+.identity-container .tips-section {
+  max-width: 100%;
+  overflow: hidden;
+  margin-bottom: 16px; /* Ensure proper spacing */
+}
+
+/* Fix for instruction gif */
+.identity-container img[src*='ocr-instruction.gif'] {
+  max-width: 100%;
+  height: auto;
+  max-height: 200px;
+  margin-bottom: 16px; /* Ensure proper spacing */
+}
+
+/* Ensure document selection section has proper spacing */
+.identity-container .document-selection-section {
+  margin-bottom: 16px;
+  padding-bottom: 8px; /* Extra padding to ensure button borders are visible */
+}
+
+/* Mobile-first design - app always in mobile view */
+#app {
+  width: 100%;
+  max-width: 375px;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 60px);
+}
+
+/* On larger screens, center the mobile app */
+@media (min-width: 376px) {
+  #app {
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 60px);
+  }
+}
+
+@media (min-width: 1700px) {
+  #app {
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 170px);
+  }
+}
+/* On actual mobile devices, full width */
+@media (max-width: 375px) {
+  #app {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100vh;
+    max-height: calc(100vh - 170px);
+  }
 }
 
 .bottom {
   position: absolute;
   bottom: 0;
 }
+
 .kyc-container {
-  padding: 10px;
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
+
 .maincontainer {
   text-align: center;
-
-  min-height: 100vh; /* Take full screen height */
+  height: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background-color: #ffffff;
+  max-width: 100%;
+  overflow: hidden;
+  flex: 1;
+  box-shadow: none;
 }
 
 .hypersign-box {
-  border-radius: 8px !important;
-  -webkit-box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
-  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
+  border-radius: 12px !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: none !important;
+  background-color: #ffffff !important;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
 .verifier-card {
-  border-radius: 10px;
+  border-radius: 12px;
   max-width: 100%;
   margin: 0 auto 20px;
-  background-color: #fff;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: none;
 }
 
 @media (max-width: 480px) {
   .verifier-card {
-    /* transform: scale(1.1); */
     font-size: 14px;
     max-width: 100%;
+    margin: 0 auto 16px;
   }
 }
 
 .btn-dark {
-  color: black;
+  color: #000000;
 }
 
 .widget-card-width {
-  width: 80%;
+  width: 100%;
   margin: auto;
+  max-width: 400px;
 }
 
 @media (max-width: 450px) {
   .widget-card-width {
     margin: auto;
     width: 100%;
+    padding: 0 16px;
   }
 }
 
 .app-font {
-  font-size: medium;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
 }
 
 @media (max-width: 450px) {
   .app-font {
-    font-size: small;
+    font-size: 14px;
   }
 }
-/* h1 {
-  font-size: revert;
-} */
 
 @media (max-width: 450px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 24px;
+    font-weight: 600;
+    color: #000000;
   }
 
   h6 {
-    font-size: 0.6rem;
+    font-size: 14px;
+    color: #666666;
   }
 }
 
@@ -86,23 +203,24 @@ body {
 }
 
 .widget-card {
-  /* border: 1px solid #8080801a; */
-  box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   transition: all 0.3s ease;
-  padding: 10px;
-  /* border-radius: 20px; */
-  background: white;
-  margin-top: 5%;
+  padding: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  margin-top: 16px;
 }
 
 @media (max-width: 450px) {
   .widget-card {
-    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     transition: all 0.3s ease;
     padding: 20px;
-    border-radius: 10px;
-    background: white;
-    margin-top: 5%;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    margin-top: 16px;
   }
 }
 
@@ -122,11 +240,31 @@ body {
 }
 
 .footer_main_page {
-  margin-top: auto; /* Pushes it to bottom inside maincontainer */
-  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 375px;
+  padding: 20px 0;
   text-align: center;
   font-size: 12px;
-  color: #888;
+  color: #666666;
+  background-color: #ffffff;
+  z-index: 10;
+  box-shadow: none;
+}
+
+@media (min-width: 376px) {
+  .footer_main_page {
+    max-width: 375px;
+  }
+}
+
+@media (max-width: 375px) {
+  .footer_main_page {
+    max-width: 100%;
+  }
 }
 
 .parent {

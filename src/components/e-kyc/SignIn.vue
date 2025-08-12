@@ -1,15 +1,44 @@
 <template>
-  <div class="kyc-container">
-    <div class="card-body min-h-36">
-      <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
-      <!-- <PageHeading :header="'Login'" :subHeader="'Create/Retrive your decentralized identity'" /> -->
-      <VerifierInfoCard :logoUrl="getWidgetConfigFromDb?.userConsent?.logoUrl" :domain="getWidgetConfigFromDb?.userConsent?.domain" :name="getWidgetConfigFromDb?.userConsent?.name" />
-      <div class="mt-4 p-4 widget-card-width" style="margin: auto">
-        <!-- <ConnectWalletButton @authEvent="myEventListener" :is-disable="error" /> -->
-        <ConsentBox @consent-changed="onConsentChanged" />
-        <GoogleButton :is-disable="error || !isConsentChecked" />
-        <!-- <ConsentBox /> -->
+  <div class="signin-container">
+    <load-ing :active.sync="isLoading" :can-cancel="true" :is-full-page="fullPage"></load-ing>
+
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="logo-container">
+        <img :src="getWidgetConfigFromDb?.userConsent?.logoUrl" class="logo" v-if="getWidgetConfigFromDb?.userConsent?.logoUrl" />
+        <div class="logo-placeholder" v-else>H</div>
       </div>
+      <h1 class="main-title" v-if="getWidgetConfigFromDb?.userConsent?.domain">Verification for {{ getWidgetConfigFromDb?.userConsent?.domain }}</h1>
+      <h1 class="main-title" v-else>Verification for Verifier App</h1>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      <p class="description">You are about to share your personal data with <strong>hypersign-kyc-demo.netlify.app</strong> for identity verification.</p>
+
+      <!-- Data Collection Box -->
+      <div class="data-box">
+        <div class="box-header">
+          <div class="info-icon">
+            <i class="bi bi-info-circle"></i>
+          </div>
+          <span class="box-title">Data Collection</span>
+        </div>
+        <div class="box-content">
+          <p>The following information will be collected:</p>
+          <ul class="box-list">
+            <li>A selfie (used for face verification)</li>
+            <li>A government-issued identity document</li>
+            <li>Your basic personal details such as full name, date of birth, and gender</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section">
+      <ConsentBox @consent-changed="onConsentChanged" />
+      <GoogleButton :is-disable="error || !isConsentChecked" />
     </div>
   </div>
 </template>
@@ -23,7 +52,6 @@ import { STEP_NAMES } from '@/config'
 import MESSAGE from '../utils/lang/en'
 import SignStoreConfig from '@/store/signin/config'
 import { EVENT, EVENTS } from '../utils/eventBus'
-import VerifierInfoCard from '../commons/VerifierInfoCard.vue'
 export default {
   name: STEP_NAMES.SignIn,
   computed: {
@@ -33,7 +61,6 @@ export default {
   components: {
     // ConnectWalletButton,
     GoogleButton,
-    VerifierInfoCard,
   },
   data() {
     return {
@@ -122,7 +149,7 @@ export default {
         this.setOnChainIssuerConfig(onChainIssuerConfigs)
       } else {
         // this.toast(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR, 'warning')
-        console.warn(MESSAGE.SIGN.ONCHAIN_CONFIG_NOT_FOUND_ERR)
+        // Warning: ONCHAIN_CONFIG_NOT_FOUND_ERR
       }
       this.isLoading = false
     },
@@ -283,9 +310,176 @@ export default {
 }
 </script>
 <style scoped>
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logo-container {
+  margin-bottom: 12px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.logo-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Content Section */
+.content-section {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.description {
+  font-size: 12px;
+  color: #666666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Data Collection Box */
+.data-box {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  background-color: #6c757d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
+.info-icon i {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.box-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.box-content p {
+  font-size: 13px;
+  color: #666666;
+  margin-bottom: 8px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.box-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.box-list li {
+  font-size: 12px;
+  color: #666666;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.box-list li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #6c757d;
+  font-weight: bold;
+}
+
+/* Action Section */
+.action-section {
+  margin-top: 16px;
+}
+
 .widget-card-width {
-  width: 80%;
+  width: 100%;
   margin: auto;
+}
+
+@media (max-width: 450px) {
+  .signin-container {
+    padding: 16px;
+  }
+
+  .main-title {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .data-box {
+    padding: 12px;
+  }
+
+  .box-title {
+    font-size: 13px;
+  }
+
+  .box-content p {
+    font-size: 12px;
+  }
+
+  .box-list li {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 200px) {
