@@ -59,7 +59,7 @@
     <!-- Error Dialog -->
     <div v-if="errorDialog" class="dialog-overlay">
       <div class="dialog">
-        <h3 class="dialog-title">Error!</h3>
+        <h3 class="dialog-title">Error</h3>
         <p class="dialog-text">{{ errorMessage }}</p>
         <div class="dialog-actions">
           <button class="btn btn-primary" @click="errorDialog = false">OK</button>
