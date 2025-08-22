@@ -70,7 +70,7 @@ export default {
 .popup-container {
   background-color: #ffffff;
   border-radius: 8px;
-  max-width: 600px;
+  max-width: 370px;
   width: 90%;
   max-height: 90%;
   overflow-y: auto;

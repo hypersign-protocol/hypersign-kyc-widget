@@ -15,9 +15,7 @@
 
     <!-- Action Button -->
     <div class="action-section">
-      <button class="btn-primary" @click="onAction">
-        {{ buttonText }}
-      </button>
+      <v-btn outlined color="secondary" @click="onAction"><i class="bi bi-reply"></i> {{ buttonText }}</v-btn>
     </div>
   </div>
 </template>
