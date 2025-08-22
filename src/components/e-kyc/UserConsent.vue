@@ -18,8 +18,8 @@
               <i class="bi bi-robot avatar-placeholder" v-else></i>
             </v-list-item-avatar>
             <v-list-item-content class="verifier-content-left">
-              <v-list-item-title class="verifier-domain" v-if="getPresentationRequestParsed.domain">
-                {{ truncateText(getPresentationRequestParsed.domain, 30) }}
+              <v-list-item-title class="verifier-domain" v-if="getWidgetConfigFromDb?.serviceName">
+                {{ truncateText(getWidgetConfigFromDb?.serviceName, 30) }}
                 <i class="bi bi-info-circle verifier-info-icon"></i>
               </v-list-item-title>
               <v-list-item-subtitle v-if="getPresentationRequestParsed.reason">
@@ -47,9 +47,12 @@
                 <i class="bi bi-robot modal-avatar-placeholder" v-else></i>
               </div>
               <div class="verifier-modal-details">
-                <h4 class="verifier-modal-domain" v-if="getPresentationRequestParsed.domain">
-                  {{ getPresentationRequestParsed.domain }}
+                <h4 class="verifier-modal-domain" v-if="getWidgetConfigFromDb?.serviceName">
+                  {{ getWidgetConfigFromDb?.serviceName }}
                 </h4>
+                <h3 class="verifier-modal-domain" v-if="getPresentationRequestParsed.domain">
+                  {{ getPresentationRequestParsed.domain }}
+                </h3>
                 <p class="verifier-modal-reason" v-if="getPresentationRequestParsed.reason">
                   {{ getPresentationRequestParsed.reason }}
                 </p>

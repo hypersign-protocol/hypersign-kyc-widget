@@ -8,7 +8,7 @@
         <img :src="getWidgetConfigFromDb?.userConsent?.logoUrl" class="logo" v-if="getWidgetConfigFromDb?.userConsent?.logoUrl" />
         <div class="logo-placeholder" v-else>H</div>
       </div>
-      <h1 class="main-title" v-if="getWidgetConfigFromDb?.userConsent?.domain">Verification for {{ getWidgetConfigFromDb?.userConsent?.domain }}</h1>
+      <h1 class="main-title" v-if="getWidgetConfigFromDb?.serviceName">Verification for {{ getWidgetConfigFromDb?.serviceName }}</h1>
       <h1 class="main-title" v-else>Verification for Verifier App</h1>
     </div>
 
