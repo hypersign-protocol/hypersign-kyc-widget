@@ -8,14 +8,16 @@
         <img :src="getWidgetConfigFromDb?.userConsent?.logoUrl" class="logo" v-if="getWidgetConfigFromDb?.userConsent?.logoUrl" />
         <div class="logo-placeholder" v-else>H</div>
       </div>
-      <h1 class="main-title" v-if="getWidgetConfigFromDb?.userConsent?.domain">Verification for {{ getWidgetConfigFromDb?.userConsent?.domain }}</h1>
+      <h1 class="main-title" v-if="getWidgetConfigFromDb?.serviceName">Verification for {{ getWidgetConfigFromDb?.serviceName }}</h1>
       <h1 class="main-title" v-else>Verification for Verifier App</h1>
     </div>
 
     <!-- Content Section -->
     <div class="content-section">
-      <p class="description">You are about to share your personal data with <strong>hypersign-kyc-demo.netlify.app</strong> for identity verification.</p>
-
+      <p class="description" v-if="getWidgetConfigFromDb?.serviceName">
+        You are about to share your personal data with <strong>{{ getWidgetConfigFromDb?.serviceName }}</strong> for identity verification.
+      </p>
+      <p class="description" v-else>You are about to share your personal data with <strong>hypersign-kyc-demo.netlify.app</strong> for identity verification.</p>
       <!-- Data Collection Box -->
       <div class="data-box">
         <div class="box-header">

@@ -31,7 +31,7 @@
       <!-- Redirect Message -->
       <div class="redirect-section" v-if="getFinalResult">
         <p class="redirect-text">You will be redirected to the verifier Apps</p>
-        <p class="redirect-time">in {{ maxTimeOut }} mins</p>
+        <p class="redirect-time">in {{ maxTimeOut }} sec.</p>
       </div>
 
       <!-- Action Section -->
