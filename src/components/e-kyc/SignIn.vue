@@ -14,8 +14,10 @@
 
     <!-- Content Section -->
     <div class="content-section">
-      <p class="description">You are about to share your personal data with <strong>hypersign-kyc-demo.netlify.app</strong> for identity verification.</p>
-
+      <p class="description" v-if="getWidgetConfigFromDb?.serviceName">
+        You are about to share your personal data with <strong>{{ getWidgetConfigFromDb?.serviceName }}</strong> for identity verification.
+      </p>
+      <p class="description" v-else>You are about to share your personal data with <strong>hypersign-kyc-demo.netlify.app</strong> for identity verification.</p>
       <!-- Data Collection Box -->
       <div class="data-box">
         <div class="box-header">
